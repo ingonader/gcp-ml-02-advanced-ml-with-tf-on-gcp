@@ -21,6 +21,29 @@ coursera-dl -u ingo.nader@gmail.com end-to-end-ml-tensorflow-gcp --download-quiz
 
 
 
+### Add stuff to git
+
+* SSH into cloudvm instance
+
+  * either by selecting the SSH button in the VM instances list (GCP sandwich menu)
+
+  * or by running
+
+    ```bash
+    gcloud compute --project project-id ssh \
+      --zone zone instance-name
+    ```
+
+* then execute an interactive bash session in the docker container that runs the lab:
+
+  ```bash
+  sudo docker ps
+  docker exec -it <container-id> bash
+  cd content/datalab/
+  ```
+
+
+
 
 
 # End to End ML Lab 1: Explore dataset

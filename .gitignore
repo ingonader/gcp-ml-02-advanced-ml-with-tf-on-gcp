@@ -1,3 +1,11 @@
+## ====================================================== ##
+## .gitignore file (manual and via gitignore.io)
+## ====================================================== ##
+
+## ignore quizzes files:
+
+01-end-to-end-ml-with-tf-on-gcp/quizzes-gcp-ml-02_v*.odt
+01-end-to-end-ml-with-tf-on-gcp/.~lock.quizzes-gcp-ml-02_v001.*
 
 ## ignore materials downloaded for this course, because
 ## they will be added to course materials where appropriate
