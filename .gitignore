@@ -1,4 +1,10 @@
 
+## ignore materials downloaded for this course, because
+## they will be added to course materials where appropriate
+## (copied into locations that actually make sense):
+training-data-analyst-cloned/*
+
+
 # Created by https://www.gitignore.io/api/video,macos,python,jupyternotebook
 # Edit at https://www.gitignore.io/?templates=video,macos,python,jupyternotebook
 
