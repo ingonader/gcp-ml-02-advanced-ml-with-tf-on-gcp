@@ -1,0 +1,387 @@
+1
+00:00:00,000 --> 00:00:05,860
+Now that we have quickly reviewed how to write a TensorFlow Estimator API model,
+
+2
+00:00:05,860 --> 00:00:07,825
+let's put that into practice.
+
+3
+00:00:07,825 --> 00:00:09,335
+In the previous lab,
+
+4
+00:00:09,335 --> 00:00:13,200
+you created a sample or small dataset so that you can
+
+5
+00:00:13,200 --> 00:00:17,365
+develop your TensorFlow model without having to read all of the data.
+
+6
+00:00:17,365 --> 00:00:24,240
+In this lab, you will develop the model and try it out locally on that small dataset.
+
+7
+00:00:24,240 --> 00:00:26,460
+Once you have the model working,
+
+8
+00:00:26,460 --> 00:00:27,960
+in the next lab,
+
+9
+00:00:27,960 --> 00:00:31,160
+you will train the model on the full dataset.
+
+10
+00:00:31,160 --> 00:00:37,810
+In this lab, you'll use the high-level Estimator API to create a TensorFlow model.
+
+11
+00:00:37,810 --> 00:00:40,880
+But which model, a linear regressor,
+
+12
+00:00:40,880 --> 00:00:44,160
+a DNN regressor, you could do this?
+
+13
+00:00:44,160 --> 00:00:49,895
+In fact, I encourage you to use one of the basic Estimator models.
+
+14
+00:00:49,895 --> 00:00:56,380
+But, in addition, perhaps you could also try a wide and deep model.
+
+15
+00:00:56,380 --> 00:01:01,985
+A wide and deep model tends to work very well on structured data.
+
+16
+00:01:01,985 --> 00:01:07,120
+To understand why, consider a typical structured data problem.
+
+17
+00:01:07,120 --> 00:01:14,420
+Let's say we are building a model to predict customer satisfaction in an ice cream store.
+
+18
+00:01:14,420 --> 00:01:19,090
+Our input features might include the price of the ice cream,
+
+19
+00:01:19,090 --> 00:01:21,780
+which employee served the ice cream,
+
+20
+00:01:21,780 --> 00:01:24,490
+how long the customer waited, et cetera.
+
+21
+00:01:24,490 --> 00:01:27,645
+Inputs like price and wait time,
+
+22
+00:01:27,645 --> 00:01:29,370
+they are dense features.
+
+23
+00:01:29,370 --> 00:01:35,505
+They're continuous and you can imagine that if the price is $3 instead of $2.5,
+
+24
+00:01:35,505 --> 00:01:37,705
+then customer satisfaction goes down.
+
+25
+00:01:37,705 --> 00:01:41,310
+As price increases or wait time increases,
+
+26
+00:01:41,310 --> 00:01:43,265
+customer satisfaction goes down.
+
+27
+00:01:43,265 --> 00:01:44,870
+On the other hand,
+
+28
+00:01:44,870 --> 00:01:46,935
+consider the employee ID.
+
+29
+00:01:46,935 --> 00:01:53,480
+It is not that a customer who served by employee 72345 is
+
+30
+00:01:53,480 --> 00:02:00,140
+nine times more likely to be satisfied than if they were served by employee 8345.
+
+31
+00:02:00,140 --> 00:02:03,155
+The employee ID is not a numeric feature.
+
+32
+00:02:03,155 --> 00:02:06,120
+If our ice cream store has 10 employees,
+
+33
+00:02:06,120 --> 00:02:09,620
+then we normally one hot encoded and we end
+
+34
+00:02:09,620 --> 00:02:13,275
+up with nine or 10 columns for the employee ID.
+
+35
+00:02:13,275 --> 00:02:18,455
+So, employee ID is an example of a sparse feature.
+
+36
+00:02:18,455 --> 00:02:22,310
+In problems that involve structured data like
+
+37
+00:02:22,310 --> 00:02:26,335
+the ice cream store example and like the baby weight example,
+
+38
+00:02:26,335 --> 00:02:32,385
+we tend to have some sparse features and some dense features.
+
+39
+00:02:32,385 --> 00:02:35,850
+Deep neural nets (DNNs),
+
+40
+00:02:35,850 --> 00:02:41,455
+tend to work very well when your inputs are dense and highly-correlated.
+
+41
+00:02:41,455 --> 00:02:45,790
+Images are canonical examples of such inputs.
+
+42
+00:02:45,790 --> 00:02:50,065
+Neural networks are adding and subtracting machines.
+
+43
+00:02:50,065 --> 00:02:54,310
+So they work well when you feed dense values that you can add and
+
+44
+00:02:54,310 --> 00:02:59,320
+subtract easily to get fine representations of the input space.
+
+45
+00:02:59,320 --> 00:03:03,750
+Nearby pixels tend to be highly-correlated.
+
+46
+00:03:03,750 --> 00:03:06,490
+So, by putting them through a neural network,
+
+47
+00:03:06,490 --> 00:03:13,290
+we have the possibility that inputs that get decorrelated and map to a lower dimension.
+
+48
+00:03:13,290 --> 00:03:18,894
+Intuitively, this is what happens when your input layer takes each pixel value
+
+49
+00:03:18,894 --> 00:03:25,515
+and the number of hidden nodes is much less than the number of input nodes.
+
+50
+00:03:25,515 --> 00:03:30,030
+But this is what a sparse matrix looks like,
+
+51
+00:03:30,030 --> 00:03:34,420
+very, very wide with lots and lots of features.
+
+52
+00:03:34,420 --> 00:03:38,000
+So, it looks like a sea of zeros.
+
+53
+00:03:38,000 --> 00:03:40,515
+Adding and subtracting these,
+
+54
+00:03:40,515 --> 00:03:42,875
+you still have a bunch of zeros.
+
+55
+00:03:42,875 --> 00:03:47,050
+Columns here also tend to be independent.
+
+56
+00:03:47,050 --> 00:03:49,345
+They are not correlated with each other.
+
+57
+00:03:49,345 --> 00:03:53,545
+So, deep neural nets don't work all that well.
+
+58
+00:03:53,545 --> 00:03:55,720
+If your data are sparse,
+
+59
+00:03:55,720 --> 00:03:59,455
+then linear models work a whole lot better.
+
+60
+00:03:59,455 --> 00:04:01,665
+By using linear models,
+
+61
+00:04:01,665 --> 00:04:05,840
+you can minimize the number of free parameters and if the columns are
+
+62
+00:04:05,840 --> 00:04:11,070
+independent, linear models [inaudible].
+
+63
+00:04:11,070 --> 00:04:12,455
+In the real world,
+
+64
+00:04:12,455 --> 00:04:17,585
+on structured datasets, you will have both types of features,
+
+65
+00:04:17,585 --> 00:04:21,650
+both dense inputs for which DNNs are
+
+66
+00:04:21,650 --> 00:04:26,315
+better and sparse inputs for which linear models are better.
+
+67
+00:04:26,315 --> 00:04:28,580
+So, which one should you use?
+
+68
+00:04:28,580 --> 00:04:32,870
+Should you use a DNN because you have dense inputs or
+
+69
+00:04:32,870 --> 00:04:37,040
+a linear regressor or classifier because you have sparse inputs?
+
+70
+00:04:37,040 --> 00:04:39,350
+Well, you don't have to choose.
+
+71
+00:04:39,350 --> 00:04:42,730
+A wide and deep model lets you handle both.
+
+72
+00:04:42,730 --> 00:04:53,200
+The idea is that you take your sparse inputs and connect them directly to the output,
+
+73
+00:04:53,200 --> 00:04:57,700
+the way you would do if you are doing a linear regressor,
+
+74
+00:04:57,700 --> 00:05:00,835
+and then you take your dense inputs,
+
+75
+00:05:00,835 --> 00:05:04,385
+and you pass them through multiple layers
+
+76
+00:05:04,385 --> 00:05:08,810
+the way you would if you were building a DNN regressor.
+
+77
+00:05:08,810 --> 00:05:14,420
+The combined model is called a wide and deep estimator.
+
+78
+00:05:14,420 --> 00:05:19,540
+The wide and deep model helps you get the best of both works.
+
+79
+00:05:19,540 --> 00:05:26,335
+Linear models help memorize the input space and are appropriate when you want to
+
+80
+00:05:26,335 --> 00:05:31,690
+essentially train separate linearly independent models
+
+81
+00:05:31,690 --> 00:05:34,540
+for different values of a categorical variable.
+
+82
+00:05:34,540 --> 00:05:40,165
+Deep learning models help to decorrelate the inputs and generalized
+
+83
+00:05:40,165 --> 00:05:45,785
+better by capturing the relationship between dense inputs and the label.
+
+84
+00:05:45,785 --> 00:05:48,715
+By using a wide and deep model,
+
+85
+00:05:48,715 --> 00:05:52,540
+you get to trade-off relevance and diversity
+
+86
+00:05:52,540 --> 00:05:57,360
+by treating some of your inputs as wide and others as deep.
+
+87
+00:05:57,360 --> 00:06:00,390
+To create a wide and deep model,
+
+88
+00:06:00,390 --> 00:06:07,689
+simply use a DNN linear combined classifier or linear combined regressor.
+
+89
+00:06:07,689 --> 00:06:12,500
+A DNN classifier would just take one list of columns,
+
+90
+00:06:12,500 --> 00:06:15,525
+but a wide and deep takes two lists.
+
+91
+00:06:15,525 --> 00:06:19,455
+One list is of the wide features, the linear features.
+
+92
+00:06:19,455 --> 00:06:22,170
+The other list is of the dense features,
+
+93
+00:06:22,170 --> 00:06:24,360
+the DNN feature columns.
+
+94
+00:06:24,360 --> 00:06:30,525
+Then also specify the number of nodes in each layer of the DNN part.
+
+95
+00:06:30,525 --> 00:06:35,055
+Now, go ahead and work on the labs to create a TensorFlow model,
+
+96
+00:06:35,055 --> 00:06:36,395
+and my colleague, Chris,
+
+97
+00:06:36,395 --> 00:06:39,090
+will walk you through the solutions.

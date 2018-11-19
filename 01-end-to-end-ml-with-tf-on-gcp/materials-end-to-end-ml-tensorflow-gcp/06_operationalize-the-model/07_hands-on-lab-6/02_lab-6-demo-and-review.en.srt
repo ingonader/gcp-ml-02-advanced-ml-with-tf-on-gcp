@@ -1,0 +1,435 @@
+1
+00:00:00,000 --> 00:00:04,935
+So, now we're on the sixth lab and we need to deploy and predict with the model.
+
+2
+00:00:04,935 --> 00:00:07,650
+So, as before, we change our bucket and
+
+3
+00:00:07,650 --> 00:00:11,910
+project to reflect the quick labs bucket and project.
+
+4
+00:00:11,910 --> 00:00:16,100
+So, let me go ahead and do that, and run that.
+
+5
+00:00:16,100 --> 00:00:19,020
+The TensorFlow version, this is going to,
+
+6
+00:00:19,020 --> 00:00:22,020
+know obviously there's new version of TensorFlow coming all the time,
+
+7
+00:00:22,020 --> 00:00:23,640
+so you can go ahead and change it to
+
+8
+00:00:23,640 --> 00:00:26,300
+reflect the current TensorFlow version that you have.
+
+9
+00:00:26,300 --> 00:00:27,870
+If you're wondering what that is,
+
+10
+00:00:27,870 --> 00:00:33,070
+you can create a new code cell and you can say "import tensorflow as
+
+11
+00:00:33,070 --> 00:00:38,550
+tf" and "print" I think it's "tf version".
+
+12
+00:00:38,550 --> 00:00:40,770
+Let's see if that works.
+
+13
+00:00:45,300 --> 00:00:48,305
+So, this works and I now have,
+
+14
+00:00:48,305 --> 00:00:50,810
+when I'm recording it, I have 1.8.
+
+15
+00:00:50,810 --> 00:00:53,585
+So, I've changed this to be now 1.8.
+
+16
+00:00:53,585 --> 00:00:55,055
+I can run that.
+
+17
+00:00:55,055 --> 00:00:56,965
+So, that's my TensorFlow version,
+
+18
+00:00:56,965 --> 00:01:01,810
+and now the question is do you actually have the data or are you
+
+19
+00:01:01,810 --> 00:01:04,105
+continuing from the previous quick lab where
+
+20
+00:01:04,105 --> 00:01:07,010
+you did the training and you have your model or you don't?
+
+21
+00:01:07,010 --> 00:01:08,530
+In my case, I didn't do it;
+
+22
+00:01:08,530 --> 00:01:09,835
+Chris trained the model.
+
+23
+00:01:09,835 --> 00:01:12,880
+So, what I'm going to do is I'm going to basically go
+
+24
+00:01:12,880 --> 00:01:15,995
+ahead and copy the canonical model over.
+
+25
+00:01:15,995 --> 00:01:17,460
+So, I'll go ahead and do this.
+
+26
+00:01:17,460 --> 00:01:22,785
+I'll do bash and copy the canonical model,
+
+27
+00:01:22,785 --> 00:01:26,595
+the thing that we had trained much earlier when we are developing the course
+
+28
+00:01:26,595 --> 00:01:31,090
+and copy it into my bucket here on Quick Labs.
+
+29
+00:01:31,090 --> 00:01:32,720
+So, at this point,
+
+30
+00:01:32,720 --> 00:01:35,140
+the entire thing should be copied over.
+
+31
+00:01:35,140 --> 00:01:37,580
+So, you notice that all of the checkpoints and
+
+32
+00:01:37,580 --> 00:01:41,695
+everything that was there when we trained it,
+
+33
+00:01:41,695 --> 00:01:43,560
+it has now been copied over,
+
+34
+00:01:43,560 --> 00:01:51,360
+and what we could do is that we can now check whether how to deploy it.
+
+35
+00:01:51,360 --> 00:01:55,200
+So, we can make sure that now that we've copied it,
+
+36
+00:01:55,200 --> 00:01:56,780
+does it actually exist?
+
+37
+00:01:56,780 --> 00:01:57,990
+Nope, it doesn't exist.
+
+38
+00:01:57,990 --> 00:02:01,840
+Why doesn't it exist? Let's see.
+
+39
+00:02:02,420 --> 00:02:11,755
+Let's go ahead and do a gsutil ls to see what the actual path needs to be,
+
+40
+00:02:11,755 --> 00:02:22,470
+where it was written gsutil ls.
+
+41
+00:02:22,470 --> 00:02:28,000
+So, there's baby weight and there is a trained model,
+
+42
+00:02:30,670 --> 00:02:35,780
+and under trained model there is
+
+43
+00:02:35,780 --> 00:02:45,865
+an export and its export Servo
+
+44
+00:02:45,865 --> 00:02:49,610
+is the name of it, Servo.
+
+45
+00:02:49,790 --> 00:02:57,710
+So, this was actually written out with something called Servo instead of exporter.
+
+46
+00:02:57,710 --> 00:02:59,160
+So, there it is.
+
+47
+00:02:59,160 --> 00:03:00,730
+So, we can do that.
+
+48
+00:03:00,730 --> 00:03:02,315
+So, now it exists.
+
+49
+00:03:02,315 --> 00:03:03,920
+So, at this point now,
+
+50
+00:03:03,920 --> 00:03:05,860
+this thing is called Servo.
+
+51
+00:03:05,860 --> 00:03:10,030
+Again, this is going to check what your output directory is
+
+52
+00:03:10,030 --> 00:03:15,240
+called and what I'll do is now I'm going to make a model called baby weight.
+
+53
+00:03:15,240 --> 00:03:17,785
+My version is going to be ml_on_gcp,
+
+54
+00:03:17,785 --> 00:03:21,920
+and I'm basically trying to find this timestamp here,
+
+55
+00:03:21,920 --> 00:03:26,630
+that's the model location and then we don't have anything deployed already.
+
+56
+00:03:26,630 --> 00:03:28,125
+So, there's nothing to delete.
+
+57
+00:03:28,125 --> 00:03:33,175
+So, what we'll do first is that we'll go ahead and create the model.
+
+58
+00:03:33,175 --> 00:03:35,830
+So, let's go ahead and create the model.
+
+59
+00:03:35,830 --> 00:03:37,950
+Having created the model,
+
+60
+00:03:37,950 --> 00:03:40,760
+we'll create a model with this appropriate version.
+
+61
+00:03:40,760 --> 00:03:43,345
+So, we haven't created a model.
+
+62
+00:03:43,345 --> 00:03:46,120
+I'll now create the version
+
+63
+00:03:51,640 --> 00:03:55,315
+and this will take a couple of minutes.
+
+64
+00:03:55,315 --> 00:03:58,485
+Once the version has been created,
+
+65
+00:03:58,485 --> 00:04:01,070
+we should be able to go to the GCP console and
+
+66
+00:04:01,070 --> 00:04:04,800
+see that there is an ML model already deployed.
+
+67
+00:04:04,800 --> 00:04:07,395
+So, we can go to the GCP console,
+
+68
+00:04:07,395 --> 00:04:10,370
+go to the ML Engine and we can say,
+
+69
+00:04:10,370 --> 00:04:11,945
+"What are my models?"
+
+70
+00:04:11,945 --> 00:04:13,860
+and there is a baby weight,
+
+71
+00:04:13,860 --> 00:04:16,690
+it's not yet fully deployed yet,
+
+72
+00:04:16,690 --> 00:04:19,550
+but once it's deployed, you will see a version and so on.
+
+73
+00:04:19,550 --> 00:04:21,815
+So, at that point,
+
+74
+00:04:21,815 --> 00:04:23,900
+all the deployment happens.
+
+75
+00:04:23,900 --> 00:04:25,360
+It takes a couple of minutes,
+
+76
+00:04:25,360 --> 00:04:29,715
+and at that point we should be able to send JSON request to the model,
+
+77
+00:04:29,715 --> 00:04:32,510
+and get JSON responses back.
+
+78
+00:04:34,100 --> 00:04:37,730
+While we are waiting we should probably explain where
+
+79
+00:04:37,730 --> 00:04:41,310
+the Servo or export or whatever comes from.
+
+80
+00:04:41,310 --> 00:04:46,240
+It comes from your model code itself.
+
+81
+00:04:46,240 --> 00:04:48,170
+So, this is something that again,
+
+82
+00:04:48,170 --> 00:04:52,690
+it depends on the name that you gave it when you wrote your train and eval loop.
+
+83
+00:04:52,690 --> 00:04:55,775
+So, when we go into the train and eval loop,
+
+84
+00:04:55,775 --> 00:05:00,465
+you could go down here in the train and evaluation loop and when you export,
+
+85
+00:05:00,465 --> 00:05:03,315
+you basically specify the name of a directory.
+
+86
+00:05:03,315 --> 00:05:05,660
+It really depends on when you wrote the code,
+
+87
+00:05:05,660 --> 00:05:08,080
+what you specified the name of the directory was.
+
+88
+00:05:08,080 --> 00:05:10,150
+It could be export or it could be Servo.
+
+89
+00:05:10,150 --> 00:05:11,355
+It could be whatever it is.
+
+90
+00:05:11,355 --> 00:05:16,050
+So, you do want to find what that name was and that's the one that we are copying.
+
+91
+00:05:16,050 --> 00:05:17,500
+So, in this case,
+
+92
+00:05:17,500 --> 00:05:21,280
+that was Servo, that's why we had to change it from exporter,
+
+93
+00:05:21,280 --> 00:05:23,500
+which is what the current solution is,
+
+94
+00:05:23,500 --> 00:05:28,100
+to Servo, which is what it was when we started developing the course.
+
+95
+00:05:31,460 --> 00:05:40,870
+Still waiting. Just check here, still not done.
+
+96
+00:05:42,110 --> 00:05:44,910
+Now, the version creation is complete.
+
+97
+00:05:44,910 --> 00:05:51,120
+We can go into the GCP details and go ahead and look at the baby weight model.
+
+98
+00:05:51,120 --> 00:05:54,100
+You should see a default version, click on it,
+
+99
+00:05:54,100 --> 00:05:58,740
+and you will see the creation time when it was last used et cetera.
+
+100
+00:05:58,740 --> 00:06:05,270
+We can go ahead and try to run the model by going in and running the next cell,
+
+101
+00:06:05,270 --> 00:06:08,510
+which basically has the data in the form that you expected.
+
+102
+00:06:08,510 --> 00:06:11,930
+So, make sure that when you're calling the model,
+
+103
+00:06:11,930 --> 00:06:16,460
+these columns that you're specifying are the exact same columns and have
+
+104
+00:06:16,460 --> 00:06:21,150
+appropriate types as you trained your model to expect the raw data.
+
+105
+00:06:21,150 --> 00:06:25,175
+With that, you go ahead and you run it and you should get your predictions.
+
+106
+00:06:25,175 --> 00:06:30,210
+At this point, you have walked through the ML process end to end.
+
+107
+00:06:30,210 --> 00:06:35,390
+You started in lab number one by exploring the dataset, and now,
+
+108
+00:06:35,390 --> 00:06:36,840
+in lab number six,
+
+109
+00:06:36,840 --> 00:06:42,500
+you deployed the trained machine learning model as a web service.

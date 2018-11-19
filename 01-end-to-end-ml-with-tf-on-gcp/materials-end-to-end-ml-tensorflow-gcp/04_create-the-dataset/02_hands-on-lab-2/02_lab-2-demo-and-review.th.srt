@@ -1,0 +1,36 @@
+1
+00:00:00,460 --> 00:00:02,720
+What field should you use the hash on?
+
+2
+00:00:02,720 --> 00:00:04,900
+You want it to be randomly
+spread throughout.
+
+3
+00:00:06,310 --> 00:00:11,810
+You cannot split by year because baby's
+weights actually have a long-term trend.
+
+4
+00:00:11,810 --> 00:00:13,446
+Check it out, it's in the data.
+
+5
+00:00:13,446 --> 00:00:16,650
+I'd suggest a concatenated
+string of year and month.
+
+6
+00:00:17,920 --> 00:00:23,350
+In this lab, you sample the full Big Query
+dataset to create a smaller dataset for
+
+7
+00:00:23,350 --> 00:00:25,780
+model development and for local training.
+
+8
+00:00:25,780 --> 00:00:29,170
+Make sure that this smaller dataset is
+representative of the full dataset.

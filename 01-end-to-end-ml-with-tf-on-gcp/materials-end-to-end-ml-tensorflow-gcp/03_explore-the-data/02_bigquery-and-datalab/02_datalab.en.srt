@@ -1,0 +1,199 @@
+1
+00:00:00,000 --> 00:00:03,600
+Besides BigQuery, the other piece of technology
+
+2
+00:00:03,600 --> 00:00:07,245
+you will use in the first lab is Cloud Datalab.
+
+3
+00:00:07,245 --> 00:00:11,610
+This is the Jupiter notebook that you can use to run Python code.
+
+4
+00:00:11,610 --> 00:00:14,430
+It handles authentication to GCP,
+
+5
+00:00:14,430 --> 00:00:17,200
+so that you can easily access BigQuery.
+
+6
+00:00:17,200 --> 00:00:23,650
+Datalab notebooks are developed in an iterative collaborative process.
+
+7
+00:00:23,650 --> 00:00:26,030
+You can write code in Python.
+
+8
+00:00:26,030 --> 00:00:27,820
+You can hit the Run button,
+
+9
+00:00:27,820 --> 00:00:31,795
+and the output shows up right on the page itself.
+
+10
+00:00:31,795 --> 00:00:33,610
+Along with the code,
+
+11
+00:00:33,610 --> 00:00:39,010
+you can write commentary in markdown format and share the notebook with your colleagues.
+
+12
+00:00:39,010 --> 00:00:41,750
+This is what the user interface looks like;
+
+13
+00:00:41,750 --> 00:00:44,185
+number 1 is a Python code.
+
+14
+00:00:44,185 --> 00:00:46,475
+In this case, it's a plot command.
+
+15
+00:00:46,475 --> 00:00:48,735
+So, when you hit the Run button,
+
+16
+00:00:48,735 --> 00:00:51,510
+you get the graph as shown by Number 3.
+
+17
+00:00:51,510 --> 00:00:54,830
+You can add Markdown text that's shown in number
+
+18
+00:00:54,830 --> 00:00:59,210
+4 and share the notebook and that's number 5.
+
+19
+00:00:59,210 --> 00:01:03,300
+Datalab works with the same technologies you're familiar with,
+
+20
+00:01:03,300 --> 00:01:06,990
+so you can start developing now and then work on scale later.
+
+21
+00:01:06,990 --> 00:01:10,430
+For example, we will be doing an exercise where we read
+
+22
+00:01:10,430 --> 00:01:13,910
+from a CSV File and then you can process the data
+
+23
+00:01:13,910 --> 00:01:16,790
+in Pandas and Apache Beam before training
+
+24
+00:01:16,790 --> 00:01:21,090
+your model in TensorFlow and then improve the model to through training.
+
+25
+00:01:21,090 --> 00:01:24,110
+Eventually though, when you're ready to scale,
+
+26
+00:01:24,110 --> 00:01:27,530
+you can use Google Cloud Storage to hold your data initially.
+
+27
+00:01:27,530 --> 00:01:31,340
+Process it in Cloud Dataflow on an ephemeral cluster,
+
+28
+00:01:31,340 --> 00:01:38,190
+and then run distributed training and hyper-parameter optimization on Cloud ML Engine.
+
+29
+00:01:38,560 --> 00:01:42,335
+Cloud also frees you from being constrained by
+
+30
+00:01:42,335 --> 00:01:45,320
+hardware limitations not only can you run
+
+31
+00:01:45,320 --> 00:01:48,619
+Datalab on any Compute Engine instance that you want,
+
+32
+00:01:48,619 --> 00:01:52,085
+you can also change the machine specs after it's been provisioned.
+
+33
+00:01:52,085 --> 00:01:55,235
+You can go into the web console find the running VM
+
+34
+00:01:55,235 --> 00:01:58,925
+stop it and restart it with a new machine configuration.
+
+35
+00:01:58,925 --> 00:02:01,915
+As a developer, to work in Datalab,
+
+36
+00:02:01,915 --> 00:02:05,895
+you simply connect to the VM that's running the notebook server.
+
+37
+00:02:05,895 --> 00:02:11,865
+The notebook themselves can be persisted in Git or in a Cloud repository,
+
+38
+00:02:11,865 --> 00:02:14,820
+so you can delete the VM if you don't need it anymore.
+
+39
+00:02:14,820 --> 00:02:16,605
+When you run the notebook,
+
+40
+00:02:16,605 --> 00:02:22,205
+the computation is carried out on the Compute Engine instance.
+
+41
+00:02:22,205 --> 00:02:25,960
+To Start Up Cloud Datalab,
+
+42
+00:02:25,960 --> 00:02:30,655
+you go into Cloud Shell and you type in Datalab create.
+
+43
+00:02:30,655 --> 00:02:34,300
+If you have G-Cloud installed on your local computer,
+
+44
+00:02:34,300 --> 00:02:36,640
+you can run this Datalab create command from
+
+45
+00:02:36,640 --> 00:02:39,770
+your own computer instead of from Cloud Shell.
+
+46
+00:02:39,770 --> 00:02:44,145
+Finally, if you prefer some other Jupiter environment,
+
+47
+00:02:44,145 --> 00:02:48,815
+perhaps you use Jupiter lab or you use Colab from Google.
+
+48
+00:02:48,815 --> 00:02:52,120
+Py Datalab is available as a Python package,
+
+49
+00:02:52,120 --> 00:02:55,570
+you can simply install the package and you can get all of
+
+50
+00:02:55,570 --> 00:03:02,690
+the GCP authentication things that we rely on in parts of this course.

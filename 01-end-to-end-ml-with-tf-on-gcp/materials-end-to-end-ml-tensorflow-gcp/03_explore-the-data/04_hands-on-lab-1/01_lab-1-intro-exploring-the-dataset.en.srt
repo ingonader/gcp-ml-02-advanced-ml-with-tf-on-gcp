@@ -1,0 +1,66 @@
+1
+00:00:00,730 --> 00:00:03,810
+The goal of this lab is to investigate
+
+2
+00:00:03,810 --> 00:00:09,190
+which features have influence on what
+you want to predict the baby's weight.
+
+3
+00:00:09,190 --> 00:00:13,710
+For example, if you want to know
+whether the field plurality or
+
+4
+00:00:13,710 --> 00:00:18,680
+the field is male has some
+influence on the weight,
+
+5
+00:00:18,680 --> 00:00:22,730
+you can generate a bar chart for
+the average weight of babies
+
+6
+00:00:22,730 --> 00:00:26,542
+sharing the same plurality value,
+or the same is male value.
+
+7
+00:00:27,800 --> 00:00:31,150
+However, it's not enough to just check
+
+8
+00:00:31,150 --> 00:00:35,820
+whether the average weight of the baby in
+these different conditions is different.
+
+9
+00:00:35,820 --> 00:00:41,520
+Normally, you would also look at
+the whole distribution of values.
+
+10
+00:00:41,520 --> 00:00:45,650
+Checking the number of babies for
+each value is necessary
+
+11
+00:00:45,650 --> 00:00:50,860
+because if you don't have enough sample
+data for any range of input values,
+
+12
+00:00:50,860 --> 00:00:56,420
+predictions using those values
+may not be very accurate either.
+
+13
+00:00:56,420 --> 00:00:59,370
+So go ahead, do lab number one.
+
+14
+00:00:59,370 --> 00:01:03,885
+And when you come back, my colleague
+Chris will walk you through the solution.

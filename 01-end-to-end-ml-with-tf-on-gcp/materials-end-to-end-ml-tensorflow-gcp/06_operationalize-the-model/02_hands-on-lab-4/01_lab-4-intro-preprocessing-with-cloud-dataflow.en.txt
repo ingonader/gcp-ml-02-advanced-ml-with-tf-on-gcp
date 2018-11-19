@@ -1,0 +1,1 @@
+In this lab, we will be doing preprocessing using Cloud Dataflow, and we will be working with the entire dataset. Although pandas is fine for experimenting, for operationalization of your workflow, it is better to do preprocessing using Apache Beam and Cloud Dataflow. Go ahead and get started in the lab, and my colleague, Lak, will walk you through the solution.

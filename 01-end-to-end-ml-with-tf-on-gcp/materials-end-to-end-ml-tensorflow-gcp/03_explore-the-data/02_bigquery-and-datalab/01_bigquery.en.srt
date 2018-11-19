@@ -1,0 +1,239 @@
+1
+00:00:00,000 --> 00:00:03,940
+The dataset of births is in BigQuery,
+
+2
+00:00:03,940 --> 00:00:07,515
+the data warehouse on Google Cloud Platform.
+
+3
+00:00:07,515 --> 00:00:14,800
+Let's do a quick review of what BigQuery is and how you can use it for data exploration.
+
+4
+00:00:14,800 --> 00:00:21,335
+BigQuery is a serverless data warehouse that operates at massive scale.
+
+5
+00:00:21,335 --> 00:00:22,665
+It's serverless.
+
+6
+00:00:22,665 --> 00:00:26,800
+To use BigQuery, you don't have to store your data in a cluster.
+
+7
+00:00:26,800 --> 00:00:28,330
+To query the data,
+
+8
+00:00:28,330 --> 00:00:30,350
+you don't need a massive machine either.
+
+9
+00:00:30,350 --> 00:00:32,685
+All you need is an API call.
+
+10
+00:00:32,685 --> 00:00:35,875
+You invoke BigQuery from just a web browser.
+
+11
+00:00:35,875 --> 00:00:39,870
+You can analyze terabytes to petabytes of data,
+
+12
+00:00:39,870 --> 00:00:41,070
+and it won't take you hours.
+
+13
+00:00:41,070 --> 00:00:45,245
+Your query will often finished in a few seconds to a couple of minutes.
+
+14
+00:00:45,245 --> 00:00:50,735
+The queries that you write are in a familiar SQL 2011 query language.
+
+15
+00:00:50,735 --> 00:00:53,180
+There are many ways to ingest, transform,
+
+16
+00:00:53,180 --> 00:00:56,325
+load, export data to and from BigQuery.
+
+17
+00:00:56,325 --> 00:00:59,555
+You can ingest CSV, JSON, Avro,
+
+18
+00:00:59,555 --> 00:01:01,385
+Google Sheets, et cetera,
+
+19
+00:01:01,385 --> 00:01:04,010
+and you can also export to those formats.
+
+20
+00:01:04,010 --> 00:01:08,250
+Usually, tables in BigQuery are in denormalized form.
+
+21
+00:01:08,250 --> 00:01:10,110
+In other words, they're flat,
+
+22
+00:01:10,110 --> 00:01:14,145
+but BigQuery also supports nested and repeated fields,
+
+23
+00:01:14,145 --> 00:01:16,415
+and this is why it can support, for example,
+
+24
+00:01:16,415 --> 00:01:20,455
+JSON because Jason is a hierarchical format.
+
+25
+00:01:20,455 --> 00:01:24,095
+In BigQuery, storage and compute are separate.
+
+26
+00:01:24,095 --> 00:01:28,300
+So you'll pay a low cost for storage and pay for what you use.
+
+27
+00:01:28,300 --> 00:01:31,209
+A flat rate pricing is also available,
+
+28
+00:01:31,209 --> 00:01:34,870
+but most people go for the on-demand pricing model.
+
+29
+00:01:35,530 --> 00:01:38,420
+To run a BigQuery query,
+
+30
+00:01:38,420 --> 00:01:42,045
+simply visit the BigQuery web page,
+
+31
+00:01:42,045 --> 00:01:47,615
+bigquery.cloud.google.com, and type in your SQL query and hit Run Query.
+
+32
+00:01:47,615 --> 00:01:49,610
+Before running a query,
+
+33
+00:01:49,610 --> 00:01:54,230
+you can click on the Validate button to see how much data would get processed.
+
+34
+00:01:54,230 --> 00:01:58,385
+Queries are charged based on the amount of data processed.
+
+35
+00:01:58,385 --> 00:02:03,190
+Everything that you can do with a web console can also be done with a Python client.
+
+36
+00:02:03,190 --> 00:02:09,895
+So, options include the destination BigQuery table where they are to cash, et cetera.
+
+37
+00:02:09,895 --> 00:02:11,905
+You will get to look at this in the lab,
+
+38
+00:02:11,905 --> 00:02:14,990
+but if you want to copy and paste and try out a query,
+
+39
+00:02:14,990 --> 00:02:18,735
+try out a query on the query that's on the next slide.
+
+40
+00:02:18,735 --> 00:02:21,385
+So, here's a quick demo.
+
+41
+00:02:21,385 --> 00:02:31,200
+So, here I'm going to go to console or bigquery.cloud.google.com.
+
+42
+00:02:31,770 --> 00:02:34,540
+I'm inside BigQuery.
+
+43
+00:02:34,540 --> 00:02:38,495
+So let me just move the window a little bit so you can see it.
+
+44
+00:02:38,495 --> 00:02:39,840
+So there you are.
+
+45
+00:02:39,840 --> 00:02:41,050
+You're in BigQuery.
+
+46
+00:02:41,050 --> 00:02:43,075
+I'll go ahead and say composed query,
+
+47
+00:02:43,075 --> 00:02:49,970
+and I'll pick the query from here.
+
+48
+00:02:59,810 --> 00:03:01,960
+So, here's a query.
+
+49
+00:03:01,960 --> 00:03:03,940
+It's a standardsql query.
+
+50
+00:03:03,940 --> 00:03:10,265
+I'm basically going ahead and selecting a couple of columns from this particular table,
+
+51
+00:03:10,265 --> 00:03:11,780
+grouping it by date,
+
+52
+00:03:11,780 --> 00:03:15,470
+and ordering it by the total claim in seconds.
+
+53
+00:03:15,470 --> 00:03:18,290
+Then I'll go ahead and run the query.
+
+54
+00:03:19,200 --> 00:03:22,215
+This is our standardsql.
+
+55
+00:03:22,215 --> 00:03:23,855
+No spaces there.
+
+56
+00:03:23,855 --> 00:03:25,760
+I'll run the query.
+
+57
+00:03:25,760 --> 00:03:31,584
+There we go. It turns out that
+
+58
+00:03:31,584 --> 00:03:38,010
+California had 116 million claims and Florida had 91 million claims, et cetera.
+
+59
+00:03:38,010 --> 00:03:42,250
+The point being that we are able to process a dataset with millions of
+
+60
+00:03:42,250 --> 00:03:46,880
+rows and we were able to do this query in less than three seconds.

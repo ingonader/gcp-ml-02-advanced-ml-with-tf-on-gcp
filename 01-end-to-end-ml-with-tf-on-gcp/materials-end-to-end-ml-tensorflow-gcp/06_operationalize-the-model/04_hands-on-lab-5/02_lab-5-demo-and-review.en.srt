@@ -1,0 +1,1164 @@
+1
+00:00:00,930 --> 00:00:02,720
+Now that we have created our training and
+
+2
+00:00:02,720 --> 00:00:06,790
+testing data sets,
+let's train a model on Cloud ML Engine.
+
+3
+00:00:08,030 --> 00:00:13,766
+Among many reasons it allows you to train
+on large amounts of data with plentiful
+
+4
+00:00:13,766 --> 00:00:19,260
+compute, and perhaps even training
+models in parallel as we will be doing.
+
+5
+00:00:19,260 --> 00:00:23,250
+Training in the cloud also allows you to
+take advantage of hyperparameter tuning.
+
+6
+00:00:25,350 --> 00:00:28,270
+So how do you actually
+train a model on the cloud?
+
+7
+00:00:29,480 --> 00:00:33,314
+Well, the key is packaging
+up your model logic,
+
+8
+00:00:33,314 --> 00:00:36,690
+and then submitting that job to ML Engine.
+
+9
+00:00:36,690 --> 00:00:40,460
+So that's what we are really
+going to be focusing on in this lab.
+
+10
+00:00:40,460 --> 00:00:44,602
+And then once we're finished with this lab
+we're going to move on to the next step
+
+11
+00:00:44,602 --> 00:00:48,242
+where we will be ready to serve
+predictions from the model that we're
+
+12
+00:00:48,242 --> 00:00:49,830
+about to train the end users.
+
+13
+00:00:49,830 --> 00:00:55,150
+But for right now, let's focus on
+training our model using Cloud ML Engine.
+
+14
+00:00:55,150 --> 00:00:59,009
+So you can go ahead and
+go to the fifth lab,
+
+15
+00:00:59,009 --> 00:01:04,315
+which is going to be 5_train,
+and open up that notebook.
+
+16
+00:01:04,315 --> 00:01:07,982
+In this notebook we're going to specify
+the bucket and project and region,
+
+17
+00:01:07,982 --> 00:01:09,590
+as we normally have been doing.
+
+18
+00:01:09,590 --> 00:01:12,240
+And we want to set this as
+environmental variables.
+
+19
+00:01:14,717 --> 00:01:18,544
+This command will copy over the CSV files
+
+20
+00:01:18,544 --> 00:01:23,590
+from the cloud chain
+demos babyweight example.
+
+21
+00:01:23,590 --> 00:01:28,240
+From the babyweight folder in case you
+are unable to complete the prior lab.
+
+22
+00:01:28,240 --> 00:01:33,600
+Regardless, you should have
+a list of pre-processing
+
+23
+00:01:33,600 --> 00:01:37,940
+CSV files that we
+completed in the prior lab.
+
+24
+00:01:37,940 --> 00:01:38,850
+And what do these contain?
+
+25
+00:01:38,850 --> 00:01:45,070
+Well if I run this we can do gsutil ls,
+and we can look at a couple of examples.
+
+26
+00:01:45,070 --> 00:01:46,853
+So these are going to be eval and
+
+27
+00:01:46,853 --> 00:01:49,760
+train.csv files across
+the entire data set.
+
+28
+00:01:49,760 --> 00:01:53,709
+So this means we're now going to be able
+to train our model on a very large data
+
+29
+00:01:53,709 --> 00:01:56,189
+set, because we're going to
+be using ML Engine.
+
+30
+00:01:58,670 --> 00:02:03,156
+So what did two labs ago was we
+verify that our code will be
+
+31
+00:02:03,156 --> 00:02:05,750
+working on a subset of the data.
+
+32
+00:02:05,750 --> 00:02:08,302
+We verified that the code
+was able to learn and
+
+33
+00:02:08,302 --> 00:02:10,530
+that there are some signal on our data.
+
+34
+00:02:10,530 --> 00:02:15,794
+But now, let's package up this
+TensorFlow code as a Python module which
+
+35
+00:02:15,794 --> 00:02:21,160
+would primarily involve adding a set
+up.py file, and an init.py file.
+
+36
+00:02:21,160 --> 00:02:24,452
+Those are two requirements for
+Python packages.
+
+37
+00:02:24,452 --> 00:02:28,059
+And then we'll also add a test.py
+file which will be responsible for
+
+38
+00:02:28,059 --> 00:02:29,248
+parsing user inputs.
+
+39
+00:02:36,316 --> 00:02:40,883
+Once we package up our Python code,
+we can then submit the code,
+
+40
+00:02:40,883 --> 00:02:43,600
+the training code to Cloud ML Engine.
+
+41
+00:02:43,600 --> 00:02:48,630
+And the code in the model.py will be
+the same as the TensorFlow notebook.
+
+42
+00:02:48,630 --> 00:02:51,250
+So let's take a look at more
+detail at the structure.
+
+43
+00:02:51,250 --> 00:02:55,962
+So if I go back to the root
+directory that we've been looking
+
+44
+00:02:55,962 --> 00:02:59,270
+at there's a folder called babyweight.
+
+45
+00:03:00,440 --> 00:03:01,795
+The babyweight contains a couple examples.
+
+46
+00:03:01,795 --> 00:03:06,140
+It contains a package info and
+a setup.cfg.
+
+47
+00:03:06,140 --> 00:03:12,189
+These are options metadata files, but
+what is required is the setup.py.
+
+48
+00:03:12,189 --> 00:03:17,362
+If we look at this, this contains
+essentially instructions on how to install
+
+49
+00:03:17,362 --> 00:03:21,989
+our Python package, this is
+a requirement for all python packages.
+
+50
+00:03:25,910 --> 00:03:31,120
+Or the meat of this package is
+though is in the trainer directory.
+
+51
+00:03:31,120 --> 00:03:32,999
+There's three files here.
+
+52
+00:03:32,999 --> 00:03:38,710
+There's the empty init.py file which is
+just a requirement for Python packages.
+
+53
+00:03:38,710 --> 00:03:42,796
+There's the model.py code,
+which is what we had already written in
+
+54
+00:03:42,796 --> 00:03:45,760
+the prior labs that contains
+all the model logic.
+
+55
+00:03:45,760 --> 00:03:50,169
+And there's the task.py which
+contains argument parsing logic so
+
+56
+00:03:50,169 --> 00:03:53,492
+we can have command line
+arguments that are input,
+
+57
+00:03:53,492 --> 00:03:57,140
+that are used to execute
+the model that we've created.
+
+58
+00:03:58,940 --> 00:04:05,120
+So, for example by open up the task.py
+file, we can look at what's going on.
+
+59
+00:04:05,120 --> 00:04:08,337
+We're going to input argparse library, and
+
+60
+00:04:08,337 --> 00:04:13,890
+you're going to see a lot of this code
+is going to be argument parsing, right?
+
+61
+00:04:13,890 --> 00:04:18,156
+So we're adding all sorts of arguments,
+training examples,
+
+62
+00:04:18,156 --> 00:04:22,110
+batch size, number of embeddings,
+neuro network size.
+
+63
+00:04:22,110 --> 00:04:26,830
+So the bulk of this code really is
+going to be parsing out user arguments,
+
+64
+00:04:26,830 --> 00:04:32,110
+and then we're going to call our
+model code train and evaluate.
+
+65
+00:04:32,110 --> 00:04:32,910
+Where is that located?
+
+66
+00:04:32,910 --> 00:04:36,659
+Well, that's located in the model.py file.
+
+67
+00:04:38,838 --> 00:04:42,176
+So if we open up model.py,
+
+68
+00:04:42,176 --> 00:04:47,258
+this is going to contain
+the code that we've
+
+69
+00:04:47,258 --> 00:04:53,079
+already worked with and
+we developed locally.
+
+70
+00:04:55,650 --> 00:05:00,447
+So returning to the notebook,
+we can look at a high level, and
+
+71
+00:05:00,447 --> 00:05:04,707
+all of the functions that
+we defined in the model.py.
+
+72
+00:05:04,707 --> 00:05:07,629
+Read dataset, get wide and
+deep, train and evaluate,
+
+73
+00:05:07,629 --> 00:05:10,940
+these all look familiar because
+we created them in a prior lab.
+
+74
+00:05:13,200 --> 00:05:15,760
+So now that we've packaged
+up our Python code,
+
+75
+00:05:15,760 --> 00:05:19,410
+let's test it out locally before
+we turn our model Cloud ML Engine.
+
+76
+00:05:19,410 --> 00:05:20,121
+So first,
+
+77
+00:05:20,121 --> 00:05:26,580
+let's remove babyweight_trained in case
+there is a model that start from scratch.
+
+78
+00:05:26,580 --> 00:05:29,180
+Then we'll set our Python
+path to babyweight.
+
+79
+00:05:29,180 --> 00:05:33,030
+This will allow us to execute all of our
+code from within the babyweight package.
+
+80
+00:05:35,130 --> 00:05:39,225
+Then, we will call the trainer package and
+the task,
+
+81
+00:05:39,225 --> 00:05:43,866
+that's the task.py module and
+we'll specify the bucket,
+
+82
+00:05:43,866 --> 00:05:49,060
+which we've already set above
+a certain environmental variable.
+
+83
+00:05:49,060 --> 00:05:51,400
+The output directory.
+
+84
+00:05:51,400 --> 00:05:53,193
+What is the output directory?
+
+85
+00:05:53,193 --> 00:05:56,540
+The output directory is where we're
+going to store our trained model.
+
+86
+00:05:56,540 --> 00:06:00,087
+This is will be really important when want
+to serve our model because we need to
+
+87
+00:06:00,087 --> 00:06:03,594
+actually push this training model to
+the cloud, but that will be for later.
+
+88
+00:06:03,594 --> 00:06:06,033
+We need to specify job directory,
+
+89
+00:06:06,033 --> 00:06:11,260
+we'll just set it to temp because it's
+not utilized but we need to provide it.
+
+90
+00:06:12,590 --> 00:06:15,840
+And we need to specify how we're
+going to read our input data,
+
+91
+00:06:15,840 --> 00:06:18,840
+how many training examples we have and
+how many steps.
+
+92
+00:06:18,840 --> 00:06:24,853
+So these are all arguments that
+we specified in our task.py file.
+
+93
+00:06:27,710 --> 00:06:29,725
+So you can go ahead and call this, and
+
+94
+00:06:29,725 --> 00:06:33,760
+this will take a couple minutes as you
+run locally, if you run it locally.
+
+95
+00:06:37,868 --> 00:06:40,822
+So after waiting about 30 seconds or so,
+
+96
+00:06:40,822 --> 00:06:45,350
+we trained our model just
+using one training step.
+
+97
+00:06:45,350 --> 00:06:49,495
+Of course, this is not predictive model,
+we don't actually expect to make
+
+98
+00:06:49,495 --> 00:06:53,080
+operations with this, because it's
+trained with such little data.
+
+99
+00:06:53,080 --> 00:06:59,689
+But what we can do is we can verify our
+code logic, our monologic is working.
+
+100
+00:06:59,689 --> 00:07:03,805
+So let's scroll down and we can see
+our model has successfully trained.
+
+101
+00:07:05,989 --> 00:07:11,083
+And now let's write some test data,
+or rather let's write some example
+
+102
+00:07:11,083 --> 00:07:16,530
+features that we can use to make
+a prediction using the Predict API.
+
+103
+00:07:16,530 --> 00:07:18,530
+So we'll use the writefile magic.
+
+104
+00:07:18,530 --> 00:07:24,232
+What this allows us to do is
+write a file called inputs.json,
+
+105
+00:07:24,232 --> 00:07:31,810
+and write out JSON files that are going to
+contain the features that we talked about.
+
+106
+00:07:31,810 --> 00:07:35,571
+So, in this case is male will be true,
+we'll specify mother's age etc.
+
+107
+00:07:35,571 --> 00:07:38,660
+This is just made up data that we're
+going to use to test our model.
+
+108
+00:07:40,905 --> 00:07:42,177
+We want to specify the model location.
+
+109
+00:07:42,177 --> 00:07:45,665
+And remember, this was the output
+dir that we specified above.
+
+110
+00:07:47,035 --> 00:07:50,805
+And then we can use this gcloud
+ml-engine local predict.
+
+111
+00:07:50,805 --> 00:07:54,487
+This is a local function that you
+should just use for testing but
+
+112
+00:07:54,487 --> 00:07:59,144
+what thi will do is allow us to ensure
+that our serving function is working okay,
+
+113
+00:07:59,144 --> 00:08:02,620
+and that our model logic
+is functioning properly.
+
+114
+00:08:02,620 --> 00:08:04,697
+So we can do that,
+point it to the model location,
+
+115
+00:08:04,697 --> 00:08:06,830
+import it to this example
+inputs that we've made.
+
+116
+00:08:12,140 --> 00:08:14,090
+So we did a run input.json.
+
+117
+00:08:14,090 --> 00:08:17,973
+And I'll run gcloud ml-engine
+local predict and for
+
+118
+00:08:17,973 --> 00:08:22,210
+each one of these keys we'll
+get some sort of prediction.
+
+119
+00:08:22,210 --> 00:08:26,800
+Of course we have a negative prediction
+for babyweight but this was expected.
+
+120
+00:08:26,800 --> 00:08:30,256
+We didn't actually train a model,
+we trained it for one step so
+
+121
+00:08:30,256 --> 00:08:33,401
+we shouldn't expect these
+predictions to be accurate.
+
+122
+00:08:33,401 --> 00:08:38,787
+All right, with that, now we've shown
+the code works well in standalone mode.
+
+123
+00:08:40,030 --> 00:08:43,110
+So, now let's run it on Cloud ML Engine.
+
+124
+00:08:43,110 --> 00:08:46,630
+And because this is on the entire
+data set it will take a long time,
+
+125
+00:08:46,630 --> 00:08:50,860
+depending on which scale to use, in this
+case the training took about an hour.
+
+126
+00:08:52,870 --> 00:08:57,384
+Let's go over the job quickly and
+then we'll show
+
+127
+00:08:57,384 --> 00:09:02,129
+how you can monitor the job
+using the Cloud console.
+
+128
+00:09:02,129 --> 00:09:05,760
+So in this case we specified
+the output directory.
+
+129
+00:09:05,760 --> 00:09:09,630
+This is going to be where
+we want to save our model.
+
+130
+00:09:09,630 --> 00:09:12,080
+We want to specify the job name.
+
+131
+00:09:12,080 --> 00:09:17,995
+We're just going to add a date time
+stamp so we can make it a unique name.
+
+132
+00:09:17,995 --> 00:09:21,530
+We're going to remove the output
+directory if it exists.
+
+133
+00:09:21,530 --> 00:09:24,780
+That way we can start from scratch.
+
+134
+00:09:24,780 --> 00:09:29,140
+And, then we're going to run gcloud
+ml-engine jobs submit training.
+
+135
+00:09:29,140 --> 00:09:33,880
+So this is the code to submit
+a training job to ml-engine.
+
+136
+00:09:33,880 --> 00:09:38,300
+We want to say the job name, the region
+where we're going to train the model.
+
+137
+00:09:38,300 --> 00:09:41,700
+What to actually execute
+which is that trainer.task.
+
+138
+00:09:41,700 --> 00:09:46,110
+Remember the task.py file
+we'll call our model logic and
+
+139
+00:09:46,110 --> 00:09:50,710
+the model.py file, but
+we want to call the task file first.
+
+140
+00:09:50,710 --> 00:09:54,280
+We need to specify where
+the package path is.
+
+141
+00:09:54,280 --> 00:09:58,285
+That's babyweight/trainer.
+
+142
+00:10:00,910 --> 00:10:05,440
+The job directory which we'll just use
+in this case the same as our $OUTDIR.
+
+143
+00:10:05,440 --> 00:10:10,862
+A staging bucket,
+which will be our bucket.
+
+144
+00:10:10,862 --> 00:10:16,670
+And then we'll specify the scale tier and
+the TensorFlow runtime version.
+
+145
+00:10:16,670 --> 00:10:21,785
+One important thing I really want
+to call out is this dash dash that
+
+146
+00:10:21,785 --> 00:10:26,970
+you see separates arguments
+that are specific to ML Engine.
+
+147
+00:10:26,970 --> 00:10:31,305
+Versus argument that are specific to
+our file as defined in our task.py.
+
+148
+00:10:31,305 --> 00:10:36,493
+So, these one's are all
+the arguments that we created in
+
+149
+00:10:36,493 --> 00:10:42,680
+our task.py where the arguments
+before are specific to ML Engine.
+
+150
+00:10:42,680 --> 00:10:45,590
+So we're going to use the bucket,
+we're going to use our own bucket.
+
+151
+00:10:45,590 --> 00:10:50,279
+The output directory that we specified,
+and now we're going to train for
+
+152
+00:10:50,279 --> 00:10:52,168
+200,000 examples.
+
+153
+00:10:54,240 --> 00:10:55,940
+So go ahead and run that.
+
+154
+00:10:57,760 --> 00:11:04,080
+Once we submit our job,
+we can monitor it in several ways.
+
+155
+00:11:04,080 --> 00:11:09,330
+One way is we can use TensorBoard in
+a manner that we did perform earlier.
+
+156
+00:11:10,500 --> 00:11:13,930
+Another approach that we can do is we
+can monitor it using the Cloud console.
+
+157
+00:11:13,930 --> 00:11:22,185
+So what you can do is you can
+go to console.cloud.google.com.
+
+158
+00:11:25,086 --> 00:11:29,410
+And then in this case,
+let's search for ML Engine at the top.
+
+159
+00:11:30,960 --> 00:11:32,410
+We can do ML Engine jobs.
+
+160
+00:11:35,427 --> 00:11:41,178
+In this case, I've already ran the
+babyweight job, and so it's complete but
+
+161
+00:11:41,178 --> 00:11:46,510
+we can click there and we can actually
+see logs for our model in real time.
+
+162
+00:11:58,540 --> 00:12:00,020
+All right, let's go back.
+
+163
+00:12:05,940 --> 00:12:10,450
+So what we specified above was we
+specified command line parameters that we
+
+164
+00:12:10,450 --> 00:12:12,320
+wanted to use for our program.
+
+165
+00:12:13,700 --> 00:12:15,137
+These parameters though,
+
+166
+00:12:15,137 --> 00:12:19,390
+there's an optimal set of parameters that
+will give us the best result, right?
+
+167
+00:12:19,390 --> 00:12:22,000
+Chances are the first parameter
+we chose are not going to
+
+168
+00:12:22,000 --> 00:12:24,176
+necessarily the best model.
+
+169
+00:12:24,176 --> 00:12:29,229
+A better approach is to use hyperparameter
+tuning which allows us to try a range or
+
+170
+00:12:29,229 --> 00:12:33,168
+a set of different parameters to
+figure out what are the optimal
+
+171
+00:12:33,168 --> 00:12:36,830
+hyperparameters that result and
+the best model results.
+
+172
+00:12:36,830 --> 00:12:40,930
+And the way that you do so
+is by creating hyperparam.yaml file.
+
+173
+00:12:43,480 --> 00:12:47,940
+For this file, there's a couple
+things that we need to specify.
+
+174
+00:12:47,940 --> 00:12:51,398
+We need to specify most importantly
+what are the parameters that we want to
+
+175
+00:12:51,398 --> 00:12:52,740
+optimize over?
+
+176
+00:12:52,740 --> 00:12:56,900
+So in this case we want to specify,
+we want to optimize over the batch size,
+
+177
+00:12:56,900 --> 00:13:00,083
+the number of embeddings for
+the wide and deep model for.
+
+178
+00:13:00,083 --> 00:13:04,813
+Specifically the deep part of the model,
+the neural network size that we're
+
+179
+00:13:04,813 --> 00:13:07,520
+going to use,
+the dimensions of our network.
+
+180
+00:13:09,970 --> 00:13:13,670
+So those are the three perimeters
+that we're going to use to optimize.
+
+181
+00:13:13,670 --> 00:13:18,316
+We specify the scaleTier that we want to
+use, what is the metric we're interested
+
+182
+00:13:18,316 --> 00:13:21,820
+in and this case it's going to
+be root means square to.
+
+183
+00:13:21,820 --> 00:13:24,120
+We want to minimize our messy.
+
+184
+00:13:25,620 --> 00:13:28,380
+We specify how many trials
+we're going to run it for, and
+
+185
+00:13:28,380 --> 00:13:31,210
+then also how many trials we're
+going to run in parallel.
+
+186
+00:13:31,210 --> 00:13:34,460
+In this case we have 5.
+
+187
+00:13:34,460 --> 00:13:38,820
+Why might you want to
+set more ParallelTrials.
+
+188
+00:13:38,820 --> 00:13:41,090
+Well, it will go faster, right?
+
+189
+00:13:41,090 --> 00:13:43,550
+When we run more jobs in
+parallel we'll finish earlier.
+
+190
+00:13:43,550 --> 00:13:48,203
+But if you set too many parallel trials
+you won't be able to learn from your prior
+
+191
+00:13:48,203 --> 00:13:51,690
+trials as it won't become
+a sequential learning process.
+
+192
+00:13:51,690 --> 00:13:54,976
+So it's important to not set
+too many max ParallelTrials,
+
+193
+00:13:54,976 --> 00:13:58,600
+otherwise you're just going to perform for
+min naive grid search.
+
+194
+00:14:03,150 --> 00:14:05,646
+And what we can do is we
+can specify a range for
+
+195
+00:14:05,646 --> 00:14:10,250
+the different parameters we're interested
+in a range that we want to search for.
+
+196
+00:14:10,250 --> 00:14:15,300
+So for batch size we want to say,
+a minimum value could be 8 and
+
+197
+00:14:15,300 --> 00:14:17,986
+maximum value would be 512.
+
+198
+00:14:17,986 --> 00:14:22,940
+All right, so we can run this, and
+we'll create a hyperparam.yaml file.
+
+199
+00:14:24,400 --> 00:14:27,537
+And now, we're going to do
+exactly what we performed above,
+
+200
+00:14:27,537 --> 00:14:29,870
+except there's going to
+be a key difference.
+
+201
+00:14:29,870 --> 00:14:32,180
+We specify the config file.
+
+202
+00:14:34,160 --> 00:14:38,713
+The config file is the hyperparam.yaml
+that we've built above, and
+
+203
+00:14:38,713 --> 00:14:43,356
+this will automatically submit
+a hyper parameter training job for us.
+
+204
+00:14:43,356 --> 00:14:50,820
+So if we go back to our jobs in ML Engine,
+you can look at the different types.
+
+205
+00:14:50,820 --> 00:14:54,480
+So you'll notice that I already
+submitted a hyperparameter training job.
+
+206
+00:14:54,480 --> 00:14:57,703
+So let's go ahead and look at it.
+
+207
+00:14:57,703 --> 00:15:03,380
+So the hyperparameter logs contain
+a couple points of interest.
+
+208
+00:15:03,380 --> 00:15:04,116
+Number 1,
+
+209
+00:15:04,116 --> 00:15:09,280
+it contains the information that we just
+specified in our hyperparameter.yaml.
+
+210
+00:15:09,280 --> 00:15:12,440
+We want to optimize batch_size,
+number of embeds, etc.
+
+211
+00:15:13,760 --> 00:15:18,660
+But perhaps the most important thing
+that it contains is the actual output
+
+212
+00:15:18,660 --> 00:15:21,910
+of your results of your
+hyperparametering job.
+
+213
+00:15:21,910 --> 00:15:28,400
+So in this case, out of all the 20 trials
+it sorts it by order of performance.
+
+214
+00:15:28,400 --> 00:15:33,301
+So in this case, the best performing
+model had a neural network size of 511,
+
+215
+00:15:33,301 --> 00:15:36,680
+a batch size of 511 and
+the number of embeds into 7.
+
+216
+00:15:36,680 --> 00:15:41,433
+And the objective value was 1.09.
+
+217
+00:15:41,433 --> 00:15:47,600
+After that, we got a pretty similar result
+using the slightly different setting.
+
+218
+00:15:47,600 --> 00:15:51,897
+So generally you want to look
+at some of these top, if not,
+
+219
+00:15:51,897 --> 00:15:57,980
+usually the top parameter combination and
+use that for your model going forward.
+
+220
+00:16:04,338 --> 00:16:08,180
+So finally, let's repeat our
+training using the tuned parameters.
+
+221
+00:16:10,330 --> 00:16:14,220
+So in this case we're not
+specifying a hyperparam.yaml file.
+
+222
+00:16:14,220 --> 00:16:17,160
+We're just going to use a set
+of batch-sized embeddings and
+
+223
+00:16:17,160 --> 00:16:19,820
+neural network size
+that we learned before.
+
+224
+00:16:19,820 --> 00:16:21,694
+This was tuned with
+a slightly different setup.
+
+225
+00:16:21,694 --> 00:16:24,630
+So the parameters are different
+than what we just talked about.
+
+226
+00:16:24,630 --> 00:16:27,897
+But this is where you should put
+the parameters that you tune during your
+
+227
+00:16:27,897 --> 00:16:29,096
+hyperparameter tuning,
+
+228
+00:16:29,096 --> 00:16:32,050
+and this will be the model that
+we'll want to use going forward.
+
+229
+00:16:34,880 --> 00:16:38,700
+Great, that's it for
+training on ML Engine.
+
+230
+00:16:38,700 --> 00:16:42,389
+We actually trained several different
+models, and in the case of hyperparameter
+
+231
+00:16:42,389 --> 00:16:45,120
+tuning, we trained several
+different models in parallel.
+
+232
+00:16:45,120 --> 00:16:48,880
+We were able to use tensor
+board to visualize our results.
+
+233
+00:16:48,880 --> 00:16:55,700
+And we also got a console.cloud.google.com
+to look at the actual logs of our files.
+
+234
+00:16:55,700 --> 00:17:00,453
+This is really useful for training
+hyperparameter change jobs where you want
+
+235
+00:17:00,453 --> 00:17:04,853
+to see what are the optimal parameters
+that came out of model training.
+
+236
+00:17:04,853 --> 00:17:07,093
+Next, we're going to use Google,
+
+237
+00:17:07,093 --> 00:17:11,480
+we're going to use ML Engine to
+surf predictions for a model.
+
+238
+00:17:11,480 --> 00:17:15,184
+our model is currently stored in
+a Google Cloud Storage bucket, so
+
+239
+00:17:15,184 --> 00:17:19,153
+we're going to point ML Engine to our
+trained model which was specified by
+
+240
+00:17:19,153 --> 00:17:23,010
+that model file and then we're going to
+use that to serve predictions.
+
+241
+00:17:23,010 --> 00:17:25,780
+So let's talk about that going forward.
+
+242
+00:17:25,780 --> 00:17:28,738
+Now that you've used ML Engine
+to train your model,
+
+243
+00:17:28,738 --> 00:17:32,990
+let's talk about the next step of
+actually serving our model to end users.

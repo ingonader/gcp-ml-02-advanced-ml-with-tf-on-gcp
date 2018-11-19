@@ -1,0 +1,667 @@
+1
+00:00:00,000 --> 00:00:06,450
+At this point, we have explored the data and chosen the features that we want to use.
+
+2
+00:00:06,450 --> 00:00:09,415
+Now, we are ready to build the model.
+
+3
+00:00:09,415 --> 00:00:11,405
+Once we build the model,
+
+4
+00:00:11,405 --> 00:00:15,460
+we'll spend the rest of the course taking the model and operationalizing it.
+
+5
+00:00:15,460 --> 00:00:19,520
+First though, let's do a quick recap of what we learned in
+
+6
+00:00:19,520 --> 00:00:24,205
+the first specialization about building machine learning models.
+
+7
+00:00:24,205 --> 00:00:28,775
+We learned to build machine learning models using TensorFlow.
+
+8
+00:00:28,775 --> 00:00:33,895
+TensorFlow is an open-source high-performance library for numerical computation.
+
+9
+00:00:33,895 --> 00:00:37,130
+The way TensorFlow works is that you create
+
+10
+00:00:37,130 --> 00:00:40,645
+a directed graph to represent your computation.
+
+11
+00:00:40,645 --> 00:00:45,960
+In this schematic, the nodes represent mathematical operations,
+
+12
+00:00:45,960 --> 00:00:48,745
+things like adding, subtracting and multiplying.
+
+13
+00:00:48,745 --> 00:00:51,840
+Connecting the nodes are the edges,
+
+14
+00:00:51,840 --> 00:00:54,990
+the input and output of the mathematical operations.
+
+15
+00:00:54,990 --> 00:00:59,210
+The edges represent arrays of data.
+
+16
+00:00:59,220 --> 00:01:03,370
+So, where does the name TensorFlow come from?
+
+17
+00:01:03,400 --> 00:01:07,300
+A tensor is an N-dimensional array of data,
+
+18
+00:01:07,300 --> 00:01:09,910
+so your data in TensorFlow are tensors,
+
+19
+00:01:09,910 --> 00:01:14,110
+they flow through the graph, hence TensorFlow.
+
+20
+00:01:14,110 --> 00:01:19,210
+Estimators are part of the high-level TensorFlow API.
+
+21
+00:01:19,210 --> 00:01:24,375
+So, this is the high-level API that you will use in the upcoming lab.
+
+22
+00:01:24,375 --> 00:01:27,210
+To work with the estimator API,
+
+23
+00:01:27,210 --> 00:01:28,695
+there are two parts,
+
+24
+00:01:28,695 --> 00:01:31,240
+the first part is a noun.
+
+25
+00:01:31,240 --> 00:01:33,130
+It is a static part,
+
+26
+00:01:33,130 --> 00:01:36,970
+it is how to set the machine learning problem up.
+
+27
+00:01:36,970 --> 00:01:39,970
+Imagine that you want to create a machine learning model to predict
+
+28
+00:01:39,970 --> 00:01:43,179
+the cost of a house given the square footage.
+
+29
+00:01:43,179 --> 00:01:44,905
+So, the first question is,
+
+30
+00:01:44,905 --> 00:01:47,355
+is this regression or classification?
+
+31
+00:01:47,355 --> 00:01:50,780
+You're predicting price, price is a number,
+
+32
+00:01:50,780 --> 00:01:52,615
+so this is a regression model.
+
+33
+00:01:52,615 --> 00:01:56,060
+What is the label? The label is a price.
+
+34
+00:01:56,060 --> 00:01:57,860
+What are the features?
+
+35
+00:01:57,860 --> 00:02:00,305
+Here, there's only one feature,
+
+36
+00:02:00,305 --> 00:02:08,405
+the Square Footage The second part of working with the estimator API is the verb.
+
+37
+00:02:08,405 --> 00:02:10,980
+Once you have a machine-learning model,
+
+38
+00:02:10,980 --> 00:02:13,050
+what things can you do with it?
+
+39
+00:02:13,050 --> 00:02:15,450
+Well, you can train the model,
+
+40
+00:02:15,450 --> 00:02:19,045
+you can evaluate the model to see how well it performs,
+
+41
+00:02:19,045 --> 00:02:22,170
+and you can predict with the model.
+
+42
+00:02:23,250 --> 00:02:28,705
+So, this is how to write an estimator API model.
+
+43
+00:02:28,705 --> 00:02:33,520
+First, we import the TensorFlow package.
+
+44
+00:02:33,520 --> 00:02:39,390
+Then we define a list of feature columns,
+
+45
+00:02:39,390 --> 00:02:41,315
+the square bracket here,
+
+46
+00:02:41,315 --> 00:02:44,300
+the square bracket in Python is a list.
+
+47
+00:02:44,300 --> 00:02:49,750
+In this case, the list contains only one feature column,
+
+48
+00:02:49,750 --> 00:02:54,679
+is numeric and its name is square footage,
+
+49
+00:02:54,679 --> 00:03:00,510
+and then we instantiate a linear regression model.
+
+50
+00:03:00,510 --> 00:03:06,140
+You do that by calling the linear regressor constructor passing
+
+51
+00:03:06,140 --> 00:03:12,150
+in the list of feature columns and the output directory for the trained model,
+
+52
+00:03:12,150 --> 00:03:14,295
+that's the noun part.
+
+53
+00:03:14,295 --> 00:03:16,900
+You've created the machine learning model.
+
+54
+00:03:16,900 --> 00:03:19,260
+Now, for the verbs.
+
+55
+00:03:19,260 --> 00:03:24,385
+To train the model, you call model.train.
+
+56
+00:03:24,385 --> 00:03:29,965
+But instead of passing in a training dataset directly,
+
+57
+00:03:29,965 --> 00:03:36,450
+instead, you pass in a Python function that returns features and labels.
+
+58
+00:03:36,450 --> 00:03:43,060
+This way, it is possible to hold data that is larger than what you can hold in memory.
+
+59
+00:03:43,060 --> 00:03:47,000
+The other input to model.train is
+
+60
+00:03:47,000 --> 00:03:51,615
+a number of steps of gradient descent for you to perform.
+
+61
+00:03:51,615 --> 00:03:54,410
+Once you have trained the model,
+
+62
+00:03:54,410 --> 00:03:57,540
+you can call model.predict.
+
+63
+00:03:57,580 --> 00:04:01,430
+To predict, you need to send in
+
+64
+00:04:01,430 --> 00:04:06,130
+the features or rather a function that returns the features.
+
+65
+00:04:06,130 --> 00:04:12,240
+Then the predict returns the predictions for those features.
+
+66
+00:04:12,650 --> 00:04:14,855
+Yani, önceki slaytta
+
+67
+00:04:14,855 --> 00:04:21,750
+we created a numeric column because the input square footage is just a number.
+
+68
+00:04:21,750 --> 00:04:29,190
+But what if you have a categorical column such as the city name or zip code?
+
+69
+00:04:29,830 --> 00:04:35,695
+If you note the full set of possible values beforehand,
+
+70
+00:04:35,695 --> 00:04:38,995
+then use categorical column with vocabulary list,
+
+71
+00:04:38,995 --> 00:04:40,330
+so that's what I'm doing here,
+
+72
+00:04:40,330 --> 00:04:43,130
+categorical column with vocabulary list,
+
+73
+00:04:43,130 --> 00:04:46,230
+the name of the column is zip code and the vocabulary lists.
+
+74
+00:04:46,230 --> 00:04:50,080
+The full set of zip codes for my particular problem,
+
+75
+00:04:50,080 --> 00:04:52,275
+the problem of predicting house prices,
+
+76
+00:04:52,275 --> 00:04:55,370
+I know that these are the five zip codes I care about and so
+
+77
+00:04:55,370 --> 00:04:58,490
+I pass them in as a list of strings,
+
+78
+00:04:58,490 --> 00:05:02,650
+so that is one way to create a categorical column.
+
+79
+00:05:02,650 --> 00:05:08,505
+The second option is if your categorical column is already indexed,
+
+80
+00:05:08,505 --> 00:05:11,420
+maybe you have a list of states and
+
+81
+00:05:11,420 --> 00:05:14,830
+the states are stored in your database as number codes,
+
+82
+00:05:14,830 --> 00:05:17,350
+zero, one, two, et cetera,
+
+83
+00:05:17,350 --> 00:05:21,945
+then, use categorical column with identity,
+
+84
+00:05:21,945 --> 00:05:26,230
+the name of the column is state ID and there are 50 states,
+
+85
+00:05:26,230 --> 00:05:28,585
+so the number of buckets is 50.
+
+86
+00:05:28,585 --> 00:05:31,370
+Once you have the categorical column,
+
+87
+00:05:31,370 --> 00:05:35,360
+whether it is from a vocabulary list or from an identity,
+
+88
+00:05:35,360 --> 00:05:40,375
+you can one-hot encoded using the indicator column,
+
+89
+00:05:40,375 --> 00:05:44,260
+and then you pass the indicator column to,
+
+90
+00:05:44,260 --> 00:05:47,580
+for example, a deep neural net regressor.
+
+91
+00:05:47,580 --> 00:05:53,245
+So, create a categorical column and then pass it to an indicator column.
+
+92
+00:05:53,245 --> 00:05:57,880
+A linear model can handle the sparse data directly.
+
+93
+00:05:57,880 --> 00:06:01,605
+So you could pass in the categorical column directly to a linear model.
+
+94
+00:06:01,605 --> 00:06:06,135
+But if you want to pass in it to a deep neural net,
+
+95
+00:06:06,135 --> 00:06:10,220
+you need to take the sparse column and make it dense,
+
+96
+00:06:10,220 --> 00:06:14,530
+and one option to make a sparse column dense is to use
+
+97
+00:06:14,530 --> 00:06:20,060
+an indicator column and another option is to use an embedding column.
+
+98
+00:06:20,150 --> 00:06:25,850
+We also learned how to write an input function that was capable
+
+99
+00:06:25,850 --> 00:06:31,020
+of reading and parsing comma separated files.
+
+100
+00:06:31,020 --> 00:06:33,480
+To read CSV files,
+
+101
+00:06:33,480 --> 00:06:36,170
+create a text line dataset,
+
+102
+00:06:36,170 --> 00:06:39,965
+you pass in a file name or more commonly,
+
+103
+00:06:39,965 --> 00:06:42,800
+you use TensorFlow's glob operator to do
+
+104
+00:06:42,800 --> 00:06:46,370
+pattern matching and pass that into tax line dataset,
+
+105
+00:06:46,370 --> 00:06:50,965
+and then you call the map function,
+
+106
+00:06:50,965 --> 00:06:53,935
+and by calling map,
+
+107
+00:06:53,935 --> 00:06:57,740
+we ensure that for each line of text that's read
+
+108
+00:06:57,740 --> 00:07:02,285
+from these files that decode CSV function is called.
+
+109
+00:07:02,285 --> 00:07:05,054
+In the decode CSV function,
+
+110
+00:07:05,054 --> 00:07:13,165
+I'm calling tf.decode_csv, getting back the column values.
+
+111
+00:07:13,165 --> 00:07:17,550
+The zip function in Python attaches a header names,
+
+112
+00:07:17,550 --> 00:07:19,340
+square footage, city, amount,
+
+113
+00:07:19,340 --> 00:07:23,345
+et cetera, to the column values.
+
+114
+00:07:23,345 --> 00:07:26,910
+The dictionary now, the features dictionary,
+
+115
+00:07:26,910 --> 00:07:30,225
+also includes the label, the amount.
+
+116
+00:07:30,225 --> 00:07:35,110
+So, we can basically pop to the label column and that way
+
+117
+00:07:35,110 --> 00:07:40,870
+I have features which is a dict and label which is simply the label value.
+
+118
+00:07:41,340 --> 00:07:45,285
+You typically do a few things on the dataset.
+
+119
+00:07:45,285 --> 00:07:46,930
+If we are training,
+
+120
+00:07:46,930 --> 00:07:50,890
+we shuffle the data and we read the data indefinitely,
+
+121
+00:07:50,890 --> 00:07:52,410
+so that's what we're doing here.
+
+122
+00:07:52,410 --> 00:07:58,595
+In training, number of epochs none to read it indefinitely and we're calling shuffle.
+
+123
+00:07:58,595 --> 00:08:01,280
+If we're evaluating, on the other hand,
+
+124
+00:08:01,280 --> 00:08:04,210
+we read the data just once,
+
+125
+00:08:04,210 --> 00:08:09,400
+and then we also read the data in batches.
+
+126
+00:08:09,400 --> 00:08:12,960
+The gradients are computed not on the entire dataset,
+
+127
+00:08:12,960 --> 00:08:15,080
+but on just the batch.
+
+128
+00:08:15,080 --> 00:08:19,070
+Even during evaluation, batching is helpful so that
+
+129
+00:08:19,070 --> 00:08:23,730
+we can read large datasets without overwhelming the machine's memory.
+
+130
+00:08:24,020 --> 00:08:28,920
+Although we can call train and evaluate separately,
+
+131
+00:08:28,920 --> 00:08:31,130
+it is better to call, train,
+
+132
+00:08:31,130 --> 00:08:37,865
+and evaluate, passing in the training parameters and the evaluation parameters.
+
+133
+00:08:37,865 --> 00:08:40,395
+This method is very, very nice.
+
+134
+00:08:40,395 --> 00:08:42,370
+It does distributed training,
+
+135
+00:08:42,370 --> 00:08:46,845
+managing all the necessary book keeping to distribute the graph,
+
+136
+00:08:46,845 --> 00:08:52,095
+share the variables, and evaluate not just at the end but periodically,
+
+137
+00:08:52,095 --> 00:08:56,920
+every say a thousand training steps or every 60 minutes or something like that.
+
+138
+00:08:56,920 --> 00:08:58,960
+When training is happening,
+
+139
+00:08:58,960 --> 00:09:01,600
+it's possible that the machines might fail,
+
+140
+00:09:01,600 --> 00:09:03,145
+so train and evaluate stores
+
+141
+00:09:03,145 --> 00:09:07,520
+periodic checkpoint files so that it can recover from failures.
+
+142
+00:09:07,520 --> 00:09:09,890
+It also saves summaries to tensor
+
+143
+00:09:09,890 --> 00:09:13,030
+board so that you can look at the loss functions et cetera.
+
+144
+00:09:13,030 --> 00:09:15,060
+When you call train and evaluate,
+
+145
+00:09:15,060 --> 00:09:19,160
+you pass in the estimator that you created on the previous slides but
+
+146
+00:09:19,160 --> 00:09:24,200
+you also pass in a train_spec and an eval_spec.
+
+147
+00:09:24,310 --> 00:09:31,260
+The TrainSpec consists of the things that you normally pass into the train method,
+
+148
+00:09:31,260 --> 00:09:33,830
+nor what do you do to the train method.
+
+149
+00:09:33,830 --> 00:09:37,760
+You'd normally pass in an input function that gives back
+
+150
+00:09:37,760 --> 00:09:42,320
+features and labels corresponding to the training dataset,
+
+151
+00:09:42,320 --> 00:09:48,800
+the number of steps that you want to train on and the mode is that it is string.
+
+152
+00:09:48,800 --> 00:09:51,635
+When you're doing distributed training,
+
+153
+00:09:51,635 --> 00:09:56,225
+think in terms of steps and not in terms of epochs.
+
+154
+00:09:56,225 --> 00:09:59,070
+An epoch is rather arbitrary,
+
+155
+00:09:59,070 --> 00:10:02,180
+especially because your training dataset will keep
+
+156
+00:10:02,180 --> 00:10:07,505
+growing and you might want to focus only on the fresh data when you retrain a model.
+
+157
+00:10:07,505 --> 00:10:10,250
+So, it's helpful to think in terms of the number of
+
+158
+00:10:10,250 --> 00:10:14,950
+examples that you want to show the model to retrain it.
+
+159
+00:10:15,250 --> 00:10:22,475
+The way it works is that the training loop saves the model into a checkpoint.
+
+160
+00:10:22,475 --> 00:10:25,760
+The evaluation loop restores a model
+
+161
+00:10:25,760 --> 00:10:29,305
+from the checkpoint and uses it to evaluate the model.
+
+162
+00:10:29,305 --> 00:10:31,275
+When we check point,
+
+163
+00:10:31,275 --> 00:10:36,780
+we want to make sure that the model we save is complete and can be used for prediction.
+
+164
+00:10:36,780 --> 00:10:40,160
+Because it's possible that in the steps that follow
+
+165
+00:10:40,160 --> 00:10:43,215
+the model will start to overfit, and in that case,
+
+166
+00:10:43,215 --> 00:10:46,790
+we want to use a use a current checkpoint as the best model,
+
+167
+00:10:46,790 --> 00:10:53,870
+hence we think of checkpointing as exporting and we'll use an exporter to do this.

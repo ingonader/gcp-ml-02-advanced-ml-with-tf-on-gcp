@@ -1,0 +1,235 @@
+1
+00:00:00,000 --> 00:00:04,285
+So, the model training is key but we're not quite finished yet.
+
+2
+00:00:04,285 --> 00:00:06,635
+We still need to serve our model.
+
+3
+00:00:06,635 --> 00:00:09,360
+After all, what is the point of building
+
+4
+00:00:09,360 --> 00:00:13,920
+an ML model unless our end users can actually consume our model?
+
+5
+00:00:14,010 --> 00:00:18,495
+In the previous lab, we stored our model parameters, graphs,
+
+6
+00:00:18,495 --> 00:00:22,950
+and other model information using the model dir argument.
+
+7
+00:00:22,950 --> 00:00:27,120
+This save the model information containing our serving input function
+
+8
+00:00:27,120 --> 00:00:32,155
+and preprocessing pipeline along with the actual model logic.
+
+9
+00:00:32,155 --> 00:00:35,060
+Now, we will point Cloud ML Engine to
+
+10
+00:00:35,060 --> 00:00:39,240
+this model directory so we can make predictions using our trained model.
+
+11
+00:00:39,240 --> 00:00:41,090
+The end users, i.e.
+
+12
+00:00:41,090 --> 00:00:46,795
+the clients, will be able to consume our model via a REST API call with input variables.
+
+13
+00:00:46,795 --> 00:00:51,415
+You can't reuse the training input function that we built earlier for serving.
+
+14
+00:00:51,415 --> 00:00:55,160
+As a reminder, the serving input function is what will be
+
+15
+00:00:55,160 --> 00:01:00,390
+used to parse what comes from the user at predict time.
+
+16
+00:01:00,390 --> 00:01:02,660
+In the serving input function,
+
+17
+00:01:02,660 --> 00:01:07,610
+we might need to parse different input formats than was used for training.
+
+18
+00:01:07,610 --> 00:01:14,870
+For example, training input could be in CSV while serving could be expecting JSON.
+
+19
+00:01:14,870 --> 00:01:17,775
+Also, serving input function doesn't need labels.
+
+20
+00:01:17,775 --> 00:01:20,240
+Finally, features received from the user might
+
+21
+00:01:20,240 --> 00:01:23,190
+be a smaller set of variables we didn't use during training.
+
+22
+00:01:23,190 --> 00:01:25,625
+For example, train with hour of day,
+
+23
+00:01:25,625 --> 00:01:28,515
+day of week as inputs to the neural network.
+
+24
+00:01:28,515 --> 00:01:31,060
+But during prediction, we can get these from
+
+25
+00:01:31,060 --> 00:01:34,530
+the system clock so the user doesn't need to supply them.
+
+26
+00:01:34,530 --> 00:01:40,260
+In the prior lab, we defined a serving function in the babyweight trainer model.py file.
+
+27
+00:01:40,260 --> 00:01:44,475
+This file is where we define the API for serving our model.
+
+28
+00:01:44,475 --> 00:01:49,105
+In addition, it can also contain preprocessing logic as well.
+
+29
+00:01:49,105 --> 00:01:52,035
+For example, per the previous example,
+
+30
+00:01:52,035 --> 00:01:55,260
+if we need to get the current time and add the day of week,
+
+31
+00:01:55,260 --> 00:01:56,855
+Monday, Wednesday, et cetera,
+
+32
+00:01:56,855 --> 00:01:58,260
+this is where it would go.
+
+33
+00:01:58,260 --> 00:02:02,130
+Once we have built our serving API via the serving function,
+
+34
+00:02:02,130 --> 00:02:06,240
+we're now ready to deploy our trained model to GCP.
+
+35
+00:02:06,780 --> 00:02:10,755
+As you can see, this is done in a couple lines of code.
+
+36
+00:02:10,755 --> 00:02:14,320
+In this case, we're deploying a model named taxifare
+
+37
+00:02:14,320 --> 00:02:18,025
+and we're deploying the first version of it, V1.
+
+38
+00:02:18,025 --> 00:02:20,650
+We specify the model location.
+
+39
+00:02:20,650 --> 00:02:24,240
+Remember, this was the model dir that we specified during
+
+40
+00:02:24,240 --> 00:02:28,725
+model training and we point our model to this exact location.
+
+41
+00:02:28,725 --> 00:02:33,195
+Then we run gcloud ml-engine models create,
+
+42
+00:02:33,195 --> 00:02:36,415
+which creates the model that we specified.
+
+43
+00:02:36,415 --> 00:02:43,040
+Then we create the version pointing it to the model location that we have above.
+
+44
+00:02:43,040 --> 00:02:45,350
+Once you do that, that's it.
+
+45
+00:02:45,350 --> 00:02:49,285
+We've deployed our model and we can now get predictions from it.
+
+46
+00:02:49,285 --> 00:02:58,000
+So, the client code can make REST calls and this is done in a couple of lines of code.
+
+47
+00:02:58,000 --> 00:02:59,600
+So, what we need to do is first of all,
+
+48
+00:02:59,600 --> 00:03:02,840
+we need to get the credentials for the user.
+
+49
+00:03:02,840 --> 00:03:06,650
+We need to run API equals discovery.build,
+
+50
+00:03:06,650 --> 00:03:09,010
+which creates a service object where we define
+
+51
+00:03:09,010 --> 00:03:12,180
+the Google API and the version we want to use.
+
+52
+00:03:12,180 --> 00:03:15,775
+In this case, we want to use ML Engine and version one.
+
+53
+00:03:15,775 --> 00:03:19,065
+We then want to create example data.
+
+54
+00:03:19,065 --> 00:03:21,460
+We will create this in JSON format and it will
+
+55
+00:03:21,460 --> 00:03:25,040
+contain example features that we will use to get our prediction.
+
+56
+00:03:25,040 --> 00:03:29,520
+We will then call the API projects.predict,
+
+57
+00:03:29,520 --> 00:03:32,850
+point it to the model that we just deployed earlier,
+
+58
+00:03:32,850 --> 00:03:37,120
+and also point it to this request data that we've created contain example features.
+
+59
+00:03:37,120 --> 00:03:41,870
+This response that came back will contain the predictions that our model made.

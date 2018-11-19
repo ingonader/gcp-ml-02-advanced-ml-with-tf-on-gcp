@@ -1,0 +1,151 @@
+1
+00:00:00,000 --> 00:00:04,560
+In this lesson, we will quickly recap how to train,
+
+2
+00:00:04,560 --> 00:00:09,705
+serve and monitor production machine learning models using Cloud ML Engine.
+
+3
+00:00:09,705 --> 00:00:13,085
+Now this diagram, you've already seen before.
+
+4
+00:00:13,085 --> 00:00:17,040
+You've seen the different abstraction layers are distributed training,
+
+5
+00:00:17,040 --> 00:00:22,580
+but how do you actually run distributed TensorFlow at scale in production?
+
+6
+00:00:22,580 --> 00:00:25,785
+For that, use Cloud Machine Learning Engine.
+
+7
+00:00:25,785 --> 00:00:28,290
+Cloud ML Engine is an execution environment for
+
+8
+00:00:28,290 --> 00:00:31,430
+TensorFlow code on a variety of cloud hardware.
+
+9
+00:00:31,430 --> 00:00:36,040
+Whether it's CPUs, GPUs or even TPUs.
+
+10
+00:00:36,040 --> 00:00:40,620
+Use the gcloud command to submit the training job.
+
+11
+00:00:40,620 --> 00:00:46,305
+You can try it locally using "gcloud ml- engine local train",
+
+12
+00:00:46,305 --> 00:00:52,545
+but primarily what you want to do is "gcloud ml-engine jobs submit training".
+
+13
+00:00:52,545 --> 00:00:55,585
+This will take your Python code,
+
+14
+00:00:55,585 --> 00:00:58,475
+your Python module, and submit it.
+
+15
+00:00:58,475 --> 00:01:01,240
+This is specified using "--
+
+16
+00:01:01,240 --> 00:01:05,795
+module-name" and then it will call the main method on your module.
+
+17
+00:01:05,795 --> 00:01:10,040
+The Python modules should be staged in the staging bucket,
+
+18
+00:01:10,040 --> 00:01:13,470
+the logs will show up in the job-dir.
+
+19
+00:01:13,470 --> 00:01:18,750
+I recommend that you also use a job-dir as the output directory as well.
+
+20
+00:01:18,750 --> 00:01:22,694
+The scale-tier controls the execution environment.
+
+21
+00:01:22,694 --> 00:01:27,770
+Basic_GPU would run on a single GPU, for example.
+
+22
+00:01:27,770 --> 00:01:31,305
+The list of scale-tiers keeps expanding,
+
+23
+00:01:31,305 --> 00:01:34,340
+so please look at the documentation for what scale-tiers are
+
+24
+00:01:34,340 --> 00:01:38,790
+available and what the machine configuration is for each tier.
+
+25
+00:01:38,790 --> 00:01:43,660
+The GCP web console has a great UI for monitoring your jobs.
+
+26
+00:01:43,660 --> 00:01:46,110
+You can see exactly how they were invoked,
+
+27
+00:01:46,110 --> 00:01:50,630
+checkout their logs, and see how much CPU and memory they're consuming.
+
+28
+00:01:50,630 --> 00:01:52,730
+You can also view CPU and
+
+29
+00:01:52,730 --> 00:01:57,930
+memory utilization for a training job with StackDriver Monitoring.
+
+30
+00:01:57,930 --> 00:02:03,475
+While inspecting log entries may help you debug technical issues like an exception,
+
+31
+00:02:03,475 --> 00:02:08,495
+it's really not the right tool to investigate machine learning performance.
+
+32
+00:02:08,495 --> 00:02:10,405
+TensorBoard let's you do that.
+
+33
+00:02:10,405 --> 00:02:15,230
+To use TensorBoard make sure that your job saves summary data to
+
+34
+00:02:15,230 --> 00:02:18,020
+a Google Cloud storage location and then when
+
+35
+00:02:18,020 --> 00:02:21,040
+you start TensorBoard, provide that directory.
+
+36
+00:02:21,040 --> 00:02:26,315
+It can even handle multiple jobs per folder and if you're using pre-made estimators,
+
+37
+00:02:26,315 --> 00:02:29,150
+they automatically populate summary data so you
+
+38
+00:02:29,150 --> 00:02:32,790
+can examine and visualize them using TensorBoard.

@@ -1,0 +1,195 @@
+1
+00:00:00,000 --> 00:00:02,500
+Hello. I'm Lak.
+
+2
+00:00:02,500 --> 00:00:05,085
+I lead the team that is putting together
+
+3
+00:00:05,085 --> 00:00:09,735
+the advanced machine learning with TensorFlow on Google Cloud Platform.
+
+4
+00:00:09,735 --> 00:00:13,405
+This is the first course of this specialization.
+
+5
+00:00:13,405 --> 00:00:17,920
+In this course, we will recap what we learned in the previous specialization.
+
+6
+00:00:17,920 --> 00:00:22,155
+That specialization is called machine learning with TensorFlow on Google Cloud Platform.
+
+7
+00:00:22,155 --> 00:00:25,080
+This one has advanced in the name.
+
+8
+00:00:25,080 --> 00:00:28,470
+One of the best ways to review something is
+
+9
+00:00:28,470 --> 00:00:31,875
+to work with the concepts and technologies that you have learned.
+
+10
+00:00:31,875 --> 00:00:35,320
+So this course is set up as a workshop.
+
+11
+00:00:35,320 --> 00:00:38,570
+In this workshop, you will do end-to-end machine
+
+12
+00:00:38,570 --> 00:00:42,120
+learning with TensorFlow on Google Cloud Platform.
+
+13
+00:00:42,120 --> 00:00:47,355
+You will learn how to explore large datasets for features,
+
+14
+00:00:47,355 --> 00:00:51,035
+create training and evaluation datasets,
+
+15
+00:00:51,035 --> 00:00:56,245
+build models with the Estimator API in TensorFlow,
+
+16
+00:00:56,245 --> 00:01:00,710
+train at scale and deploy those models into
+
+17
+00:01:00,710 --> 00:01:05,895
+production with Google Cloud Platform machine learning tools.
+
+18
+00:01:05,895 --> 00:01:09,050
+In this workshop, we walk through
+
+19
+00:01:09,050 --> 00:01:13,725
+the process of building a complete machine learning pipeline.
+
+20
+00:01:13,725 --> 00:01:17,025
+So, it covers ingest, exploration,
+
+21
+00:01:17,025 --> 00:01:21,520
+training, evaluation, deployment, and prediction.
+
+22
+00:01:21,520 --> 00:01:26,985
+So, the course consists of seven labs and it's primarily hands-on.
+
+23
+00:01:26,985 --> 00:01:32,480
+The way it works is that we will quickly review the key concepts that
+
+24
+00:01:32,480 --> 00:01:37,895
+you will need for the following lab and then we will drop you off into the lab.
+
+25
+00:01:37,895 --> 00:01:41,080
+Do the lab and then come back.
+
+26
+00:01:41,080 --> 00:01:47,515
+We will recap the lab and then move on to the next set of concepts and the next lab.
+
+27
+00:01:47,515 --> 00:01:49,365
+So, along the way,
+
+28
+00:01:49,365 --> 00:01:51,105
+you explore the data,
+
+29
+00:01:51,105 --> 00:01:53,255
+visualize the dataset, pick
+
+30
+00:01:53,255 --> 00:01:56,790
+features for your machine learning model. That's the first lab.
+
+31
+00:01:56,790 --> 00:01:59,105
+Then, in the second lab,
+
+32
+00:01:59,105 --> 00:02:05,345
+you create a sample dataset so that you can do local development of a TensorFlow model.
+
+33
+00:02:05,345 --> 00:02:07,165
+In the third lab,
+
+34
+00:02:07,165 --> 00:02:10,955
+you will develop a TensorFlow Estimator API model.
+
+35
+00:02:10,955 --> 00:02:14,780
+At this point, we have the prototype in place.
+
+36
+00:02:14,780 --> 00:02:17,035
+Once we have the prototype in place,
+
+37
+00:02:17,035 --> 00:02:20,070
+we will change over to productionization.
+
+38
+00:02:20,070 --> 00:02:23,285
+The first step of productionization is to
+
+39
+00:02:23,285 --> 00:02:27,505
+create full-sized training and evaluation datasets.
+
+40
+00:02:27,505 --> 00:02:29,080
+In order to do that,
+
+41
+00:02:29,080 --> 00:02:32,450
+the pre-processing operations will be implemented in
+
+42
+00:02:32,450 --> 00:02:35,990
+Cloud Dataflow so that the same pre-processing that
+
+43
+00:02:35,990 --> 00:02:43,365
+you apply during training can be applied during prediction in streaming mode as well.
+
+44
+00:02:43,365 --> 00:02:47,005
+The fifth lab is to train the model.
+
+45
+00:02:47,005 --> 00:02:53,795
+The training of the model will be distributed and scaled out on Cloud ML Engine.
+
+46
+00:02:53,795 --> 00:02:55,910
+In the sixth lab,
+
+47
+00:02:55,910 --> 00:03:01,425
+the trained model will be deployed as a micro service and in the seventh lab,
+
+48
+00:03:01,425 --> 00:03:05,185
+predictions invoked from a web application.
+
+49
+00:03:05,185 --> 00:03:07,320
+So, let's get started.

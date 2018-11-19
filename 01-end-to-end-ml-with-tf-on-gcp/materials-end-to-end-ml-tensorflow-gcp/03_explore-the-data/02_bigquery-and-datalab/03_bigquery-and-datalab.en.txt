@@ -1,0 +1,26 @@
+In the previous lessons, we quickly
+reviewed BigQuery and python notebooks. Let's now look at them in combination because the two technologies
+complement each other very well. So here, I have the query as a string and I'm using a Python package
+google.datalab.bigquery. That's Python package. To execute the query, that's the execute. So I'm take the query, passing in
+the string and calling the execute method. And then I'm taking the result
+that comes back and converting the result
+into a Pandas data frame. DF is a Pandas data frame, df.head shows
+the first few rows of the result set. Now, this is an extremely powerful
+paradigm because BigQuery allows you to compute aggregate statistics
+on very large data sets interactively. And then, you can use Python plotting
+commands to create impact for visualizations. For example, take this, so
+that's what you're seeing here. So using Pandas and
+BigQuery together in a notebook. The combination of Python and
+BigQuery in a notebook rocks. In this code snippet,
+get_distinct_values is like the code in the previous slide,
+it's like this code. This is essentially carried
+out using a SQL query, and there's probably a count
+distinct in the SQL and the result is coming
+back into a data frame. And once we have that data frame, we can now use the Pandas
+functionality to sort and to plot. So we are using BigQuery to carry out
+aggregation using SQL on millions of rows in the first command, and
+then getting back a Pandas data frame and using the Pandas functionality to sort and
+to plot the data that we got back. And we are basically getting the results
+in a Python notebook, so we get to work interactively in a Python notebook on
+data sets that are tremendously large. So this is what you will
+do in the first lab.

@@ -1,0 +1,107 @@
+1
+00:00:00,000 --> 00:00:04,810
+You are now ready to operationalize the training of your TensorFlow model.
+
+2
+00:00:04,810 --> 00:00:07,950
+In this lab, you will package up your model code
+
+3
+00:00:07,950 --> 00:00:11,445
+and submit it to Cloud ML Engine for distributed training.
+
+4
+00:00:11,445 --> 00:00:16,670
+You will train the model on data produced by the Cloud Dataflow job.
+
+5
+00:00:16,670 --> 00:00:19,275
+In addition to distributed training,
+
+6
+00:00:19,275 --> 00:00:24,325
+you will also see how to do hyperparameter tuning using Cloud ML Engine.
+
+7
+00:00:24,325 --> 00:00:29,335
+By making all the configurable parameters as command line parameters,
+
+8
+00:00:29,335 --> 00:00:33,660
+you are getting yourself set to be able to do hyperparameter tuning.
+
+9
+00:00:33,660 --> 00:00:36,330
+All that you then need to do is to write
+
+10
+00:00:36,330 --> 00:00:40,395
+a configuration file with the parameters that you want to tune.
+
+11
+00:00:40,395 --> 00:00:45,945
+But remember that we want to allow the user to be able to change the batch size.
+
+12
+00:00:45,945 --> 00:00:49,130
+But typically, users will want to specify
+
+13
+00:00:49,130 --> 00:00:53,175
+the number of training examples that they want to train on.
+
+14
+00:00:53,175 --> 00:00:56,820
+But the training steps depends on the batch size.
+
+15
+00:00:56,820 --> 00:00:59,270
+So, you want to compute the number of
+
+16
+00:00:59,270 --> 00:01:04,220
+training steps from the number of training examples and the batch size,
+
+17
+00:01:04,220 --> 00:01:07,805
+and you want to do this computation in your code.
+
+18
+00:01:07,805 --> 00:01:12,230
+We want to make our hyper-parameters command-line parameters,
+
+19
+00:01:12,230 --> 00:01:16,765
+so that we can quickly try different training configurations.
+
+20
+00:01:16,765 --> 00:01:20,330
+By doing this, by making them command-line parameters,
+
+21
+00:01:20,330 --> 00:01:25,770
+it happens to also facilitate running hyper-parameter tuning jobs.
+
+22
+00:01:25,770 --> 00:01:28,135
+Once you submit the training job,
+
+23
+00:01:28,135 --> 00:01:32,050
+monitor the progress of training using TensorBoard.
+
+24
+00:01:32,050 --> 00:01:35,870
+Verify that your loss metric converges and
+
+25
+00:01:35,870 --> 00:01:39,855
+that your evaluation metric doesn't start going back up.
+
+26
+00:01:39,855 --> 00:01:45,730
+Make sure that your layers don't die as demonstrated by the fraction of zero values.
+
+27
+00:01:45,730 --> 00:01:49,990
+With that, please go ahead and do lab number 5.

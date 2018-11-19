@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:04,720
+In this lab, we will be doing preprocessing using Cloud Dataflow,
+
+2
+00:00:04,720 --> 00:00:08,330
+and we will be working with the entire dataset.
+
+3
+00:00:08,330 --> 00:00:11,135
+Although pandas is fine for experimenting,
+
+4
+00:00:11,135 --> 00:00:13,610
+for operationalization of your workflow,
+
+5
+00:00:13,610 --> 00:00:18,645
+it is better to do preprocessing using Apache Beam and Cloud Dataflow.
+
+6
+00:00:18,645 --> 00:00:20,720
+Go ahead and get started in the lab,
+
+7
+00:00:20,720 --> 00:00:21,875
+and my colleague, Lak,
+
+8
+00:00:21,875 --> 00:00:24,170
+will walk you through the solution.

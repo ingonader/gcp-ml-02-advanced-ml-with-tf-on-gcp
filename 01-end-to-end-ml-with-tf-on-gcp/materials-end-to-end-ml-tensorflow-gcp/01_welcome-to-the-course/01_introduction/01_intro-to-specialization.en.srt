@@ -1,0 +1,99 @@
+1
+00:00:00,000 --> 00:00:03,240
+In this specialization, you will learn how to do
+
+2
+00:00:03,240 --> 00:00:06,195
+machine learning at scale and how to build
+
+3
+00:00:06,195 --> 00:00:11,965
+specialized machine-learning models for images, sequences, and recommendations.
+
+4
+00:00:11,965 --> 00:00:16,460
+Hi I'm Lak, I lead the team that put together this specialization.
+
+5
+00:00:16,460 --> 00:00:21,330
+We start with a course that recaps the first specialization.
+
+6
+00:00:21,330 --> 00:00:24,570
+It involves building an end-to-end model from
+
+7
+00:00:24,570 --> 00:00:30,810
+data exploration all the way to deploying an ML model and getting predictions from it.
+
+8
+00:00:30,810 --> 00:00:35,510
+The second course is on building production machine learning models.
+
+9
+00:00:35,510 --> 00:00:38,940
+The considerations behind them, static training,
+
+10
+00:00:38,940 --> 00:00:41,925
+dynamic training, static inference,
+
+11
+00:00:41,925 --> 00:00:45,100
+dynamic inference, distributed TensorFlow.
+
+12
+00:00:45,100 --> 00:00:48,890
+TensorFlow processing units, when would you use what.
+
+13
+00:00:48,890 --> 00:00:52,635
+The third course is on building image models.
+
+14
+00:00:52,635 --> 00:00:55,760
+You will learn about convolutional neural networks and
+
+15
+00:00:55,760 --> 00:00:59,310
+build image classification models of various types.
+
+16
+00:00:59,310 --> 00:01:03,365
+The fourth course is on building sequence models.
+
+17
+00:01:03,365 --> 00:01:05,420
+These are the types of models used in
+
+18
+00:01:05,420 --> 00:01:10,035
+natural language problems like text classification and translation.
+
+19
+00:01:10,035 --> 00:01:13,385
+There can also be used for time series forecasting.
+
+20
+00:01:13,385 --> 00:01:16,370
+Although as we'll see in this course it's
+
+21
+00:01:16,370 --> 00:01:20,240
+often overkill and hard to train for this purpose.
+
+22
+00:01:20,240 --> 00:01:27,165
+Finally, we end the specialization with building real-world recommendation systems.
+
+23
+00:01:27,165 --> 00:01:30,800
+This brings together all the concepts that we will have
+
+24
+00:01:30,800 --> 00:01:35,390
+learned in both the previous specialization and in this one.
+
+25
+00:01:35,390 --> 00:01:37,520
+I'm excited to have you join me.

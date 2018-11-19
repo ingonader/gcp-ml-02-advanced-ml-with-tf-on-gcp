@@ -1,0 +1,503 @@
+1
+00:00:00,000 --> 00:00:04,345
+Of course, creating the dataset is normally 80 percent of your work.
+
+2
+00:00:04,345 --> 00:00:07,040
+But here, we'll assume that the data already exists.
+
+3
+00:00:07,040 --> 00:00:08,610
+So, all we need to do is
+
+4
+00:00:08,610 --> 00:00:12,560
+some basic prep work to get our dataset ready for machine learning.
+
+5
+00:00:12,560 --> 00:00:14,915
+There's really going to be two key steps here.
+
+6
+00:00:14,915 --> 00:00:17,730
+First, creating the subsample of our data so
+
+7
+00:00:17,730 --> 00:00:20,875
+that we can quickly prototype our machine learning model.
+
+8
+00:00:20,875 --> 00:00:24,780
+Second, once we have built this modelling infrastructure,
+
+9
+00:00:24,780 --> 00:00:29,740
+we will then split our dataset into a training and evaluation dataset.
+
+10
+00:00:29,740 --> 00:00:35,445
+Building a machine learning model involves several steps: creating the dataset,
+
+11
+00:00:35,445 --> 00:00:39,290
+building the model, and then operationalizing the model.
+
+12
+00:00:39,290 --> 00:00:43,940
+The cooking analogy here is choosing high-quality grocery ingredients,
+
+13
+00:00:43,940 --> 00:00:46,090
+preparing them together with your expertise,
+
+14
+00:00:46,090 --> 00:00:48,410
+and then serving up delicious meals.
+
+15
+00:00:48,410 --> 00:00:51,870
+Each of these steps will be discussed in detail.
+
+16
+00:00:52,310 --> 00:00:55,705
+What makes a feature "good"?
+
+17
+00:00:55,705 --> 00:00:59,000
+You want to basically take your raw data and you want to
+
+18
+00:00:59,000 --> 00:01:02,285
+represent it in a form that's amenable to machine learning.
+
+19
+00:01:02,285 --> 00:01:05,320
+So, it has to be related to the objective.
+
+20
+00:01:05,320 --> 00:01:08,065
+You don't want to just throw random data in there.
+
+21
+00:01:08,065 --> 00:01:11,345
+You have to make sure that it's known at prediction time.
+
+22
+00:01:11,345 --> 00:01:13,495
+This can be surprisingly tricky.
+
+23
+00:01:13,495 --> 00:01:15,950
+We'll talk about some instances of this.
+
+24
+00:01:15,950 --> 00:01:18,500
+Your data also has to be numeric.
+
+25
+00:01:18,500 --> 00:01:21,350
+At the end of the day, computers deal with numbers,
+
+26
+00:01:21,350 --> 00:01:23,375
+not text or categories.
+
+27
+00:01:23,375 --> 00:01:26,690
+So, for example, if our data is represented in text form,
+
+28
+00:01:26,690 --> 00:01:30,310
+we need to find a way to convert it to a scaled numeric value.
+
+29
+00:01:30,310 --> 00:01:35,235
+It also has to have enough examples for different feature values.
+
+30
+00:01:35,235 --> 00:01:38,110
+Finally, you need to have some human insights.
+
+31
+00:01:38,110 --> 00:01:43,980
+Often, the most impactful features incorporate domain knowledge from human experts.
+
+32
+00:01:44,730 --> 00:01:47,685
+Let's take the second aspect here.
+
+33
+00:01:47,685 --> 00:01:50,645
+You need to know the value at the time that you're predicting.
+
+34
+00:01:50,645 --> 00:01:52,790
+Remember that the whole reason to build
+
+35
+00:01:52,790 --> 00:01:55,425
+the machine learning model is so that you can predict with it.
+
+36
+00:01:55,425 --> 00:01:56,770
+If you can't predict with it,
+
+37
+00:01:56,770 --> 00:01:59,095
+there's no point of building the machine learning model.
+
+38
+00:01:59,095 --> 00:02:02,270
+So, a common mistake that a lot of people make is to just look
+
+39
+00:02:02,270 --> 00:02:05,540
+into their data warehouse and just take all the data you find in there,
+
+40
+00:02:05,540 --> 00:02:06,650
+all the related fields,
+
+41
+00:02:06,650 --> 00:02:08,065
+and throw them into the model.
+
+42
+00:02:08,065 --> 00:02:12,200
+So, if you take all these fields and you just use it in your machine learning model,
+
+43
+00:02:12,200 --> 00:02:14,515
+what happens when you're going to predict with it?
+
+44
+00:02:14,515 --> 00:02:16,305
+When you go to predict with it,
+
+45
+00:02:16,305 --> 00:02:18,590
+maybe you'll discover that your data warehouse had
+
+46
+00:02:18,590 --> 00:02:22,810
+sales data like how many things were sold the previous day.
+
+47
+00:02:22,810 --> 00:02:25,445
+That was an input into your model.
+
+48
+00:02:25,445 --> 00:02:31,435
+But then, it turns out that daily sales data actually comes in a month later.
+
+49
+00:02:31,435 --> 00:02:34,965
+It takes some time for information to come out from your store.
+
+50
+00:02:34,965 --> 00:02:37,445
+There's a delay in collecting this data.
+
+51
+00:02:37,445 --> 00:02:40,870
+Your data warehouse has information because somebody went through the trouble of
+
+52
+00:02:40,870 --> 00:02:44,895
+taking all the data or joining the tables and putting them in there.
+
+53
+00:02:44,895 --> 00:02:48,000
+But in production, at prediction time,
+
+54
+00:02:48,000 --> 00:02:50,255
+at real time, you don't have it.
+
+55
+00:02:50,255 --> 00:02:53,465
+Will we know all of these things at prediction time,
+
+56
+00:02:53,465 --> 00:02:58,595
+as in the sex of the baby and plurality? Well, it depends.
+
+57
+00:02:58,595 --> 00:03:00,060
+If we have ultrasound,
+
+58
+00:03:00,060 --> 00:03:01,855
+yes, we'll probably know these.
+
+59
+00:03:01,855 --> 00:03:06,050
+Without ultrasound, it's doubtful that we'll be able to get these values.
+
+60
+00:03:06,050 --> 00:03:09,740
+Mothers often have ultrasounds for a foreign but not always.
+
+61
+00:03:09,740 --> 00:03:13,120
+Thus, in practice, it would be a good idea to build two models,
+
+62
+00:03:13,120 --> 00:03:16,625
+one with sex and plurality and one without.
+
+63
+00:03:16,625 --> 00:03:20,270
+Another approach is that instead of building two separate models,
+
+64
+00:03:20,270 --> 00:03:22,900
+we can build only one model but train the model both
+
+65
+00:03:22,900 --> 00:03:26,035
+with fully known data and with masked data.
+
+66
+00:03:26,035 --> 00:03:29,835
+That way, the same model can be used in both situations.
+
+67
+00:03:29,835 --> 00:03:35,125
+So, switching gears, how are we going to create our datasets?
+
+68
+00:03:35,125 --> 00:03:39,445
+Well, the simplest option is to sample rows randomly.
+
+69
+00:03:39,445 --> 00:03:43,570
+Remember that we need to create a training dataset and evaluation dataset,
+
+70
+00:03:43,570 --> 00:03:46,885
+and maybe even an independent test dataset.
+
+71
+00:03:46,885 --> 00:03:50,515
+How will we split this data into these three parts?
+
+72
+00:03:50,515 --> 00:03:54,385
+Well, simplest option is to sample rows randomly.
+
+73
+00:03:54,385 --> 00:03:58,260
+Each data point is a birth record from the natality dataset.
+
+74
+00:03:58,260 --> 00:04:03,305
+Random sampling eliminates potential biases due to the order of the training examples.
+
+75
+00:04:03,305 --> 00:04:07,135
+But there are a few issues with taking random samples for
+
+76
+00:04:07,135 --> 00:04:12,200
+training and evaluation datasets. Can you think of any?
+
+77
+00:04:14,460 --> 00:04:18,195
+Well, what about triplets, for example?
+
+78
+00:04:18,195 --> 00:04:21,015
+These are three rows with essentially the same data,
+
+79
+00:04:21,015 --> 00:04:23,170
+three babies for whom the mother's age,
+
+80
+00:04:23,170 --> 00:04:26,125
+gestation weeks, and other features are all the same.
+
+81
+00:04:26,125 --> 00:04:28,135
+We don't want what are essentially
+
+82
+00:04:28,135 --> 00:04:31,575
+nearly identical data points to be in both training and evaluation.
+
+83
+00:04:31,575 --> 00:04:34,200
+We want them to fall into one or the other.
+
+84
+00:04:34,200 --> 00:04:36,890
+That would result in leakage of information from
+
+85
+00:04:36,890 --> 00:04:39,690
+the training dataset to the evaluation dataset,
+
+86
+00:04:39,690 --> 00:04:42,560
+and that's something we want to avoid as much as we can.
+
+87
+00:04:42,560 --> 00:04:43,875
+Well, how can we solve this?
+
+88
+00:04:43,875 --> 00:04:48,065
+How can we make the two datasets be non-overlapping?
+
+89
+00:04:48,065 --> 00:04:50,990
+For machine learning, you want to be able to
+
+90
+00:04:50,990 --> 00:04:53,990
+repeatedly sample the data you have in BigQuery.
+
+91
+00:04:53,990 --> 00:04:57,470
+One way to achieve this is to use the last few digits of
+
+92
+00:04:57,470 --> 00:05:01,345
+the hash function on the field that you're using to split your data.
+
+93
+00:05:01,345 --> 00:05:04,990
+One such hash function available in BigQuery is the farm fingerprint.
+
+94
+00:05:04,990 --> 00:05:09,660
+Farm fingerprint will take a value like a string of December 10th,
+
+95
+00:05:09,660 --> 00:05:13,640
+2018 and turn it into a hashed numeric type.
+
+96
+00:05:13,640 --> 00:05:20,205
+This hash value will be identical for every other field that is December 10th, 2018.
+
+97
+00:05:20,205 --> 00:05:22,360
+This will now be repeatable because
+
+98
+00:05:22,360 --> 00:05:24,040
+the farm fingerprint function returns
+
+99
+00:05:24,040 --> 00:05:27,245
+the same value anytime and is invoked on a specific date.
+
+100
+00:05:27,245 --> 00:05:31,730
+You can be sure that you will get the exact same 80 percent of the data each time.
+
+101
+00:05:31,730 --> 00:05:36,045
+I'm showing you an example of splitting an airline dataset based on the date.
+
+102
+00:05:36,045 --> 00:05:38,155
+If you want to split your data by
+
+103
+00:05:38,155 --> 00:05:42,345
+arrival airport so that 80 percent of airports are in the training dataset,
+
+104
+00:05:42,345 --> 00:05:46,870
+compute the farm fingerprint on arrival airport instead of date.
+
+105
+00:05:46,870 --> 00:05:48,985
+Looking at the query here,
+
+106
+00:05:48,985 --> 00:05:54,040
+how would you get a new 10 percent data sample for evaluation?
+
+107
+00:05:54,200 --> 00:06:01,330
+Well, you could change the less than eight and the query above to equals eight,
+
+108
+00:06:01,330 --> 00:06:02,630
+and for the testing data,
+
+109
+00:06:02,630 --> 00:06:05,080
+you could change it to equals nine.
+
+110
+00:06:05,080 --> 00:06:10,385
+This way, you'll get 10 percent of samples in evaluation and 10 percent in testing.
+
+111
+00:06:10,385 --> 00:06:15,334
+Developing the machine learning model software on the entire dataset can be expensive,
+
+112
+00:06:15,334 --> 00:06:19,790
+and it is better to develop your modeling pipeline on a smaller sample.
+
+113
+00:06:19,790 --> 00:06:23,045
+This is a mistake I see a lot of data scientists make.
+
+114
+00:06:23,045 --> 00:06:27,530
+They start out trying to build their fully-fledged model on the whole dataset.
+
+115
+00:06:27,530 --> 00:06:30,590
+But a much better approach is to start out
+
+116
+00:06:30,590 --> 00:06:35,270
+simple and develop your TensorFlow code on a small subset of data,
+
+117
+00:06:35,270 --> 00:06:38,010
+then scale it out to the cloud.
+
+118
+00:06:38,010 --> 00:06:42,990
+Chances are your model isn't going to execute properly the very first time.
+
+119
+00:06:42,990 --> 00:06:46,865
+It's much better to debug on a small data set.
+
+120
+00:06:46,865 --> 00:06:48,770
+If you were to use the full dataset,
+
+121
+00:06:48,770 --> 00:06:52,535
+it can take hours or even days to make updates to your code.
+
+122
+00:06:52,535 --> 00:06:55,535
+Then, once the application is working,
+
+123
+00:06:55,535 --> 00:06:59,215
+you can run it on the full dataset and scale it out to the cloud.
+
+124
+00:06:59,215 --> 00:07:03,960
+So, we can take just a random subsample of our training dataset using
+
+125
+00:07:03,960 --> 00:07:10,820
+the rand less than 0.01 combined with the farm fingerprint sampling technique.
+
+126
+00:07:10,820 --> 00:07:14,590
+This will allow us to keep only one percent of the training dataset.

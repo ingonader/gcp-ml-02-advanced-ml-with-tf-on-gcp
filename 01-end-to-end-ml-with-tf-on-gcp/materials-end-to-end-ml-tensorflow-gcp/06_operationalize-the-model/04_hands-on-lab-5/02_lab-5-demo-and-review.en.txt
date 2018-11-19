@@ -1,0 +1,194 @@
+Now that we have created our training and testing data sets,
+let's train a model on Cloud ML Engine. Among many reasons it allows you to train
+on large amounts of data with plentiful compute, and perhaps even training
+models in parallel as we will be doing. Training in the cloud also allows you to
+take advantage of hyperparameter tuning. So how do you actually
+train a model on the cloud? Well, the key is packaging
+up your model logic, and then submitting that job to ML Engine. So that's what we are really
+going to be focusing on in this lab. And then once we're finished with this lab
+we're going to move on to the next step where we will be ready to serve
+predictions from the model that we're about to train the end users. But for right now, let's focus on
+training our model using Cloud ML Engine. So you can go ahead and
+go to the fifth lab, which is going to be 5_train,
+and open up that notebook. In this notebook we're going to specify
+the bucket and project and region, as we normally have been doing. And we want to set this as
+environmental variables. This command will copy over the CSV files from the cloud chain
+demos babyweight example. From the babyweight folder in case you
+are unable to complete the prior lab. Regardless, you should have
+a list of pre-processing CSV files that we
+completed in the prior lab. And what do these contain? Well if I run this we can do gsutil ls,
+and we can look at a couple of examples. So these are going to be eval and train.csv files across
+the entire data set. So this means we're now going to be able
+to train our model on a very large data set, because we're going to
+be using ML Engine. So what did two labs ago was we
+verify that our code will be working on a subset of the data. We verified that the code
+was able to learn and that there are some signal on our data. But now, let's package up this
+TensorFlow code as a Python module which would primarily involve adding a set
+up.py file, and an init.py file. Those are two requirements for
+Python packages. And then we'll also add a test.py
+file which will be responsible for parsing user inputs. Once we package up our Python code,
+we can then submit the code, the training code to Cloud ML Engine. And the code in the model.py will be
+the same as the TensorFlow notebook. So let's take a look at more
+detail at the structure. So if I go back to the root
+directory that we've been looking at there's a folder called babyweight. The babyweight contains a couple examples. It contains a package info and
+a setup.cfg. These are options metadata files, but
+what is required is the setup.py. If we look at this, this contains
+essentially instructions on how to install our Python package, this is
+a requirement for all python packages. Or the meat of this package is
+though is in the trainer directory. There's three files here. There's the empty init.py file which is
+just a requirement for Python packages. There's the model.py code,
+which is what we had already written in the prior labs that contains
+all the model logic. And there's the task.py which
+contains argument parsing logic so we can have command line
+arguments that are input, that are used to execute
+the model that we've created. So, for example by open up the task.py
+file, we can look at what's going on. We're going to input argparse library, and you're going to see a lot of this code
+is going to be argument parsing, right? So we're adding all sorts of arguments,
+training examples, batch size, number of embeddings,
+neuro network size. So the bulk of this code really is
+going to be parsing out user arguments, and then we're going to call our
+model code train and evaluate. Where is that located? Well, that's located in the model.py file. So if we open up model.py, this is going to contain
+the code that we've already worked with and
+we developed locally. So returning to the notebook,
+we can look at a high level, and all of the functions that
+we defined in the model.py. Read dataset, get wide and
+deep, train and evaluate, these all look familiar because
+we created them in a prior lab. So now that we've packaged
+up our Python code, let's test it out locally before
+we turn our model Cloud ML Engine. So first, let's remove babyweight_trained in case
+there is a model that start from scratch. Then we'll set our Python
+path to babyweight. This will allow us to execute all of our
+code from within the babyweight package. Then, we will call the trainer package and
+the task, that's the task.py module and
+we'll specify the bucket, which we've already set above
+a certain environmental variable. The output directory. What is the output directory? The output directory is where we're
+going to store our trained model. This is will be really important when want
+to serve our model because we need to actually push this training model to
+the cloud, but that will be for later. We need to specify job directory, we'll just set it to temp because it's
+not utilized but we need to provide it. And we need to specify how we're
+going to read our input data, how many training examples we have and
+how many steps. So these are all arguments that
+we specified in our task.py file. So you can go ahead and call this, and this will take a couple minutes as you
+run locally, if you run it locally. So after waiting about 30 seconds or so, we trained our model just
+using one training step. Of course, this is not predictive model,
+we don't actually expect to make operations with this, because it's
+trained with such little data. But what we can do is we can verify our
+code logic, our monologic is working. So let's scroll down and we can see
+our model has successfully trained. And now let's write some test data,
+or rather let's write some example features that we can use to make
+a prediction using the Predict API. So we'll use the writefile magic. What this allows us to do is
+write a file called inputs.json, and write out JSON files that are going to
+contain the features that we talked about. So, in this case is male will be true,
+we'll specify mother's age etc. This is just made up data that we're
+going to use to test our model. We want to specify the model location. And remember, this was the output
+dir that we specified above. And then we can use this gcloud
+ml-engine local predict. This is a local function that you
+should just use for testing but what thi will do is allow us to ensure
+that our serving function is working okay, and that our model logic
+is functioning properly. So we can do that,
+point it to the model location, import it to this example
+inputs that we've made. So we did a run input.json. And I'll run gcloud ml-engine
+local predict and for each one of these keys we'll
+get some sort of prediction. Of course we have a negative prediction
+for babyweight but this was expected. We didn't actually train a model,
+we trained it for one step so we shouldn't expect these
+predictions to be accurate. All right, with that, now we've shown
+the code works well in standalone mode. So, now let's run it on Cloud ML Engine. And because this is on the entire
+data set it will take a long time, depending on which scale to use, in this
+case the training took about an hour. Let's go over the job quickly and
+then we'll show how you can monitor the job
+using the Cloud console. So in this case we specified
+the output directory. This is going to be where
+we want to save our model. We want to specify the job name. We're just going to add a date time
+stamp so we can make it a unique name. We're going to remove the output
+directory if it exists. That way we can start from scratch. And, then we're going to run gcloud
+ml-engine jobs submit training. So this is the code to submit
+a training job to ml-engine. We want to say the job name, the region
+where we're going to train the model. What to actually execute
+which is that trainer.task. Remember the task.py file
+we'll call our model logic and the model.py file, but
+we want to call the task file first. We need to specify where
+the package path is. That's babyweight/trainer. The job directory which we'll just use
+in this case the same as our $OUTDIR. A staging bucket,
+which will be our bucket. And then we'll specify the scale tier and
+the TensorFlow runtime version. One important thing I really want
+to call out is this dash dash that you see separates arguments
+that are specific to ML Engine. Versus argument that are specific to
+our file as defined in our task.py. So, these one's are all
+the arguments that we created in our task.py where the arguments
+before are specific to ML Engine. So we're going to use the bucket,
+we're going to use our own bucket. The output directory that we specified,
+and now we're going to train for 200,000 examples. So go ahead and run that. Once we submit our job,
+we can monitor it in several ways. One way is we can use TensorBoard in
+a manner that we did perform earlier. Another approach that we can do is we
+can monitor it using the Cloud console. So what you can do is you can
+go to console.cloud.google.com. And then in this case,
+let's search for ML Engine at the top. We can do ML Engine jobs. In this case, I've already ran the
+babyweight job, and so it's complete but we can click there and we can actually
+see logs for our model in real time. All right, let's go back. So what we specified above was we
+specified command line parameters that we wanted to use for our program. These parameters though, there's an optimal set of parameters that
+will give us the best result, right? Chances are the first parameter
+we chose are not going to necessarily the best model. A better approach is to use hyperparameter
+tuning which allows us to try a range or a set of different parameters to
+figure out what are the optimal hyperparameters that result and
+the best model results. And the way that you do so
+is by creating hyperparam.yaml file. For this file, there's a couple
+things that we need to specify. We need to specify most importantly
+what are the parameters that we want to optimize over? So in this case we want to specify,
+we want to optimize over the batch size, the number of embeddings for
+the wide and deep model for. Specifically the deep part of the model,
+the neural network size that we're going to use,
+the dimensions of our network. So those are the three perimeters
+that we're going to use to optimize. We specify the scaleTier that we want to
+use, what is the metric we're interested in and this case it's going to
+be root means square to. We want to minimize our messy. We specify how many trials
+we're going to run it for, and then also how many trials we're
+going to run in parallel. In this case we have 5. Why might you want to
+set more ParallelTrials. Well, it will go faster, right? When we run more jobs in
+parallel we'll finish earlier. But if you set too many parallel trials
+you won't be able to learn from your prior trials as it won't become
+a sequential learning process. So it's important to not set
+too many max ParallelTrials, otherwise you're just going to perform for
+min naive grid search. And what we can do is we
+can specify a range for the different parameters we're interested
+in a range that we want to search for. So for batch size we want to say,
+a minimum value could be 8 and maximum value would be 512. All right, so we can run this, and
+we'll create a hyperparam.yaml file. And now, we're going to do
+exactly what we performed above, except there's going to
+be a key difference. We specify the config file. The config file is the hyperparam.yaml
+that we've built above, and this will automatically submit
+a hyper parameter training job for us. So if we go back to our jobs in ML Engine,
+you can look at the different types. So you'll notice that I already
+submitted a hyperparameter training job. So let's go ahead and look at it. So the hyperparameter logs contain
+a couple points of interest. Number 1, it contains the information that we just
+specified in our hyperparameter.yaml. We want to optimize batch_size,
+number of embeds, etc. But perhaps the most important thing
+that it contains is the actual output of your results of your
+hyperparametering job. So in this case, out of all the 20 trials
+it sorts it by order of performance. So in this case, the best performing
+model had a neural network size of 511, a batch size of 511 and
+the number of embeds into 7. And the objective value was 1.09. After that, we got a pretty similar result
+using the slightly different setting. So generally you want to look
+at some of these top, if not, usually the top parameter combination and
+use that for your model going forward. So finally, let's repeat our
+training using the tuned parameters. So in this case we're not
+specifying a hyperparam.yaml file. We're just going to use a set
+of batch-sized embeddings and neural network size
+that we learned before. This was tuned with
+a slightly different setup. So the parameters are different
+than what we just talked about. But this is where you should put
+the parameters that you tune during your hyperparameter tuning, and this will be the model that
+we'll want to use going forward. Great, that's it for
+training on ML Engine. We actually trained several different
+models, and in the case of hyperparameter tuning, we trained several
+different models in parallel. We were able to use tensor
+board to visualize our results. And we also got a console.cloud.google.com
+to look at the actual logs of our files. This is really useful for training
+hyperparameter change jobs where you want to see what are the optimal parameters
+that came out of model training. Next, we're going to use Google, we're going to use ML Engine to
+surf predictions for a model. our model is currently stored in
+a Google Cloud Storage bucket, so we're going to point ML Engine to our
+trained model which was specified by that model file and then we're going to
+use that to serve predictions. So let's talk about that going forward. Now that you've used ML Engine
+to train your model, let's talk about the next step of
+actually serving our model to end users.

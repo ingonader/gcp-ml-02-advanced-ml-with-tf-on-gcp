@@ -1,0 +1,227 @@
+1
+00:00:00,000 --> 00:00:02,630
+Now that we have the full dataset,
+
+2
+00:00:02,630 --> 00:00:05,270
+the next step in operationalizing the model,
+
+3
+00:00:05,270 --> 00:00:08,235
+is to train the model on the full dataset.
+
+4
+00:00:08,235 --> 00:00:11,270
+Previously, we trained the model in data lab,
+
+5
+00:00:11,270 --> 00:00:15,635
+and we could do that because it was only about 10,000 examples,
+
+6
+00:00:15,635 --> 00:00:18,140
+now we have several million.
+
+7
+00:00:18,140 --> 00:00:20,665
+It's time to roll out the powerful tools,
+
+8
+00:00:20,665 --> 00:00:24,530
+to do training on the cloud, on multiple machines.
+
+9
+00:00:24,530 --> 00:00:28,535
+We will do training using Cloud ML Engine.
+
+10
+00:00:28,535 --> 00:00:32,275
+In order to submit code to ML Engine,
+
+11
+00:00:32,275 --> 00:00:35,575
+we'll need a TensorFlow model to be packaged up,
+
+12
+00:00:35,575 --> 00:00:37,110
+as a Python package.
+
+13
+00:00:37,110 --> 00:00:42,930
+A best practice is to split our code up across at least two files.
+
+14
+00:00:42,930 --> 00:00:49,960
+By convention, we will call the file with the main function as task.py,
+
+15
+00:00:49,960 --> 00:00:54,995
+that file will contain the code to parse command-line arguments.
+
+16
+00:00:54,995 --> 00:00:57,925
+Any part of our code that's configurable,
+
+17
+00:00:57,925 --> 00:01:01,435
+or whose value is known only at runtime,
+
+18
+00:01:01,435 --> 00:01:04,285
+we will make it a command-line argument.
+
+19
+00:01:04,285 --> 00:01:09,380
+So in this case, trained data paths and trained steps are command-line arguments.
+
+20
+00:01:09,380 --> 00:01:13,770
+The other file, the one with all of our TensorFlow code,
+
+21
+00:01:13,770 --> 00:01:16,290
+including the train and evaluate loop,
+
+22
+00:01:16,290 --> 00:01:19,880
+is by convention, called model.py.
+
+23
+00:01:19,880 --> 00:01:27,190
+Task.py calls the code and model.py and sends in the command-line arguments.
+
+24
+00:01:27,190 --> 00:01:31,520
+The code itself is identical to the code in the third lab.
+
+25
+00:01:31,520 --> 00:01:35,090
+Only that all the hard-coded values are replaced,
+
+26
+00:01:35,090 --> 00:01:39,570
+by pulling out the appropriate value from the command-line arguments.
+
+27
+00:01:39,570 --> 00:01:44,965
+So for example, instead of just hard coding a batch size,
+
+28
+00:01:44,965 --> 00:01:50,080
+we'll be using args['train_batch_size'].
+
+29
+00:01:50,080 --> 00:01:55,995
+Similarly, the number of training steps will come from a command line argument.
+
+30
+00:01:55,995 --> 00:02:01,750
+The model.py contains all the code that was in our Jypiter notebook,
+
+31
+00:02:01,750 --> 00:02:03,480
+when we were developing the model.
+
+32
+00:02:03,480 --> 00:02:07,885
+It will have to have the training and evaluation input functions,
+
+33
+00:02:07,885 --> 00:02:10,404
+the definition of the feature columns,
+
+34
+00:02:10,404 --> 00:02:13,729
+any feature engineering such as feature crosses,
+
+35
+00:02:13,729 --> 00:02:17,435
+embeddings, marketization et cetera, that we do.
+
+36
+00:02:17,435 --> 00:02:21,440
+Remember also to include a serving input function,
+
+37
+00:02:21,440 --> 00:02:26,045
+so that you can easily deploy the model and invoke it as a web service.
+
+38
+00:02:26,045 --> 00:02:30,390
+We'll review the serving input function in the next section.
+
+39
+00:02:30,950 --> 00:02:35,075
+Cloud MLA involves packaging up TensorFlow models,
+
+40
+00:02:35,075 --> 00:02:38,780
+this is not very different from how you need to create a web archive,
+
+41
+00:02:38,780 --> 00:02:41,174
+if you want to deploy a Java web application.
+
+42
+00:02:41,174 --> 00:02:43,370
+Similarly, you put your TensorFlow code in
+
+43
+00:02:43,370 --> 00:02:47,375
+a very specific packaging structure and you deploy it to the cloud.
+
+44
+00:02:47,375 --> 00:02:49,110
+The nice thing is,
+
+45
+00:02:49,110 --> 00:02:53,105
+that this is a standard way to create Python modules.
+
+46
+00:02:53,105 --> 00:02:55,820
+If you're not familiar with Python packaging,
+
+47
+00:02:55,820 --> 00:03:02,650
+please search for minimal python packaging and read the docs for that.
+
+48
+00:03:03,010 --> 00:03:09,600
+Once you've taken your model code and put it into a Python package, I strongly recommend,
+
+49
+00:03:09,600 --> 00:03:12,685
+that you run your code as a Python module,
+
+50
+00:03:12,685 --> 00:03:16,345
+against your tiny 10,000 sample dataset,
+
+51
+00:03:16,345 --> 00:03:20,710
+just to make sure that it all works as intended.
+
+52
+00:03:20,710 --> 00:03:22,850
+So here, that's what I'm doing,
+
+53
+00:03:22,850 --> 00:03:25,710
+I'm calling Python with minus m,
+
+54
+00:03:25,710 --> 00:03:30,700
+passing in the module from a package, that I want to run,
+
+55
+00:03:30,700 --> 00:03:37,205
+and I'm trying out all of these command-line parameters that I have now added to task.py.
+
+56
+00:03:37,205 --> 00:03:39,155
+So in the next lesson,
+
+57
+00:03:39,155 --> 00:03:43,110
+we will look at training and deploying to ML Engine.

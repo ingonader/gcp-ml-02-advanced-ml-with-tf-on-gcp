@@ -1,0 +1,36 @@
+We now have a deployed
+machine learning web service. If you send it a JSON request for
+the input features, you will get back a JSON
+response with the predictions. So technically, we are done. But it's nice to be able to call a web
+service from a graphical user interface. And so this is an optional lab that shows
+you how you could build a web application and invoke the machine learning
+model in response to a user request. This is the architecture. You build an HTML form,
+a web front end with slider bars, a drop down menu,
+a check box and a Submit button. The Submit button sends
+a specified data over to a Python flask application that's
+deployed into App Engine. App Engine is where Google Cloud
+platform started in 2008. It's a serverless web
+application framework. The web application converts the HTML
+form data into the JSON request that's expected by the deployed
+Machine Learning model. And it sends back the JSON
+response back to the front end. The front end then displays a return
+value, 4.48 pounds in this case. You don't need App Engine to invoke
+the machine learning service. All you need is to be able
+to invoke a rest API. In the next course of this specialization,
+we will look at different options when it comes to production
+Machine Learning systems. And there we will look at how to invoke
+the machine learning service from Cloud Dataflow. This is a very common design pattern. You often take historical log data,
+transform it using Apache Beam on Cloud Dataflow as
+we did in the baby weight example. And use that transformed data
+as the training data set for our Machine Learning model. We stored the training data set
+as CSV files on Cloud Storage but it's also possible to save
+the data in BigQuery. And then in production, in real time,
+the logs show up in a Cloud Pub/Sub. They're transformed the same way
+using Apache Beam and Cloud Dataflow. And then send to the deployed model
+on ML Engine for predictions. This is where dataflow is calling
+ML Engine to make the predictions. And every once in awhile we can take
+the fresh data in from BigQuery, retrain the model,
+deployed as a new version, do an A/B test of the models and
+swap the models over. So we look at this in a lot
+more detail in the next course. But for now, go ahead and
+take a look at the last lab.

@@ -1,0 +1,6 @@
+What field should you use the hash on? You want it to be randomly
+spread throughout. You cannot split by year because baby's
+weights actually have a long-term trend. Check it out, it's in the data. I'd suggest a concatenated
+string of year and month. In this lab, you sample the full Big Query
+dataset to create a smaller dataset for model development and for local training. Make sure that this smaller dataset is
+representative of the full dataset.

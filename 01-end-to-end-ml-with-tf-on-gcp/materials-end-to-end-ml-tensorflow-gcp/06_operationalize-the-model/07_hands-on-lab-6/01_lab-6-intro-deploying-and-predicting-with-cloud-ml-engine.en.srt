@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:04,720
+Now that we have talked about the mechanics of deploying a model to Google Cloud,
+
+2
+00:00:04,720 --> 00:00:07,785
+let's do a hands-on lab where we get to deploy
+
+3
+00:00:07,785 --> 00:00:13,480
+our baby weight model to ML Engine and get predictions from it via a rest API.
+
+4
+00:00:13,480 --> 00:00:18,000
+In this lab, you will do the following tasks: Deploy a trained model to
+
+5
+00:00:18,000 --> 00:00:24,130
+Cloud ML Engine and then send a JSON request containing your features to the model,
+
+6
+00:00:24,130 --> 00:00:26,165
+so you can get your predictions.
+
+7
+00:00:26,165 --> 00:00:30,640
+Try modifying your input features and see how the results change.
+
+8
+00:00:30,640 --> 00:00:33,460
+Let's go ahead and get started.

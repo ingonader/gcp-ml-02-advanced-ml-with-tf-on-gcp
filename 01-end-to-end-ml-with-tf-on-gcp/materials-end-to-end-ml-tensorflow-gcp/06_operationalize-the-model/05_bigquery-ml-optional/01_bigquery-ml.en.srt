@@ -1,0 +1,400 @@
+1
+00:00:00,099 --> 00:00:03,949
+In the prior chapters in this course we
+focused on creating an end-to-end machine
+
+2
+00:00:03,949 --> 00:00:05,219
+learning pipeline in GCP.
+
+3
+00:00:05,219 --> 00:00:09,211
+The task of developing a model could
+take the most time in this process.
+
+4
+00:00:09,211 --> 00:00:12,424
+But what if you wanted to quickly
+test some ideas about some of
+
+5
+00:00:12,424 --> 00:00:13,950
+the features in your model?
+
+6
+00:00:13,950 --> 00:00:17,680
+And then what happens if you wanted to
+quickly test that model out at scale?
+
+7
+00:00:17,680 --> 00:00:21,350
+That's where BigQuery machine learning,
+or BQML, can come in.
+
+8
+00:00:21,350 --> 00:00:24,640
+And you know that building ML
+models can be very time intensive.
+
+9
+00:00:24,640 --> 00:00:28,480
+You first must export small amounts
+of data in from BigQuery into Pandas
+
+10
+00:00:28,480 --> 00:00:29,570
+and Data Lab.
+
+11
+00:00:29,570 --> 00:00:32,300
+You then transform that data
+to be used for TensorFlow,
+
+12
+00:00:32,300 --> 00:00:37,160
+and then you build the model in TensorFlow
+and then train it locally or on a VM.
+
+13
+00:00:37,160 --> 00:00:41,120
+Doing that with a small model then
+requires you to get more data and create
+
+14
+00:00:41,120 --> 00:00:44,582
+new features, improve the performance
+rinse and repeat all over again.
+
+15
+00:00:44,582 --> 00:00:49,280
+It is tedious and hard, so you end
+up stopping after a few iterations.
+
+16
+00:00:49,280 --> 00:00:52,480
+With BigQuery ML, you can use SQL for
+machine learning.
+
+17
+00:00:52,480 --> 00:00:53,870
+Let's repeat that point.
+
+18
+00:00:53,870 --> 00:00:58,180
+No Java, no Python code is needed,
+just basic SQL or SQL to
+
+19
+00:00:58,180 --> 00:01:03,060
+invoke powerful ML models right where your
+data already lives, inside of BigQuery.
+
+20
+00:01:03,060 --> 00:01:06,919
+The BigQuery team hass hidden a lot of
+details, like hyperparameter tuning or
+
+21
+00:01:06,919 --> 00:01:10,670
+common tasks like manual coding
+of categorical features from you.
+
+22
+00:01:10,670 --> 00:01:13,860
+Now, those options are there for
+you if you want to use them, but for
+
+23
+00:01:13,860 --> 00:01:17,100
+simplicity the models are run
+just fine with minimal code.
+
+24
+00:01:17,100 --> 00:01:19,620
+This can be helpful for
+quicker model development and for
+
+25
+00:01:19,620 --> 00:01:22,590
+smaller data science teams who
+want to empower their data and
+
+26
+00:01:22,590 --> 00:01:26,400
+business analysts to build and
+run their own ML models.
+
+27
+00:01:26,400 --> 00:01:27,200
+With BigQuery ML,
+
+28
+00:01:27,200 --> 00:01:31,460
+you don't need to worry about extract
+transform loads, or writing TensorFlow.
+
+29
+00:01:31,460 --> 00:01:34,170
+If you have an intuition about a set
+of features, you can quickly and
+
+30
+00:01:34,170 --> 00:01:35,540
+easily test and build and
+
+31
+00:01:35,540 --> 00:01:39,330
+evaluate a machine learning model right
+inside of BigQuery using StandardSQL.
+
+32
+00:01:39,330 --> 00:01:41,110
+This greatly speeds up development,
+
+33
+00:01:41,110 --> 00:01:44,120
+because you don't have to worry about
+data movement and transformation.
+
+34
+00:01:44,120 --> 00:01:47,533
+All the action happens
+right within BigQuery.
+
+35
+00:01:47,533 --> 00:01:50,878
+You can do all of this from within
+the BigQuery UI, however if you like
+
+36
+00:01:50,878 --> 00:01:54,639
+notebooks like I do, you could also do
+it from a Jupyter or Data Lab notebook.
+
+37
+00:01:54,639 --> 00:01:58,061
+And this is what you'll be
+doing inside of your next lab.
+
+38
+00:01:58,061 --> 00:02:00,890
+BigQuery ML was designed
+with simplicity in mind.
+
+39
+00:02:00,890 --> 00:02:03,500
+To that end, you don't need it to
+define things like the learning rate or
+
+40
+00:02:03,500 --> 00:02:05,670
+even the test or training set.
+
+41
+00:02:05,670 --> 00:02:08,560
+If you let it,
+BigQuery ML will do that for you.
+
+42
+00:02:08,560 --> 00:02:13,080
+In addition, with the options keyword,
+you can set things like regularization,
+
+43
+00:02:13,080 --> 00:02:16,200
+the strategy for
+splitting your training and test sets, and
+
+44
+00:02:16,200 --> 00:02:18,100
+the learning rate if you
+wanted to do it yourself.
+
+45
+00:02:19,280 --> 00:02:20,915
+So what do you get out of the box?
+
+46
+00:02:20,915 --> 00:02:23,170
+First, BigQuery ML runs in StandardSQL,
+
+47
+00:02:23,170 --> 00:02:28,050
+and if you use normal SQL syntax like user
+defined functions, subqueries, and joins,
+
+48
+00:02:28,050 --> 00:02:32,550
+anything you can do inside of SQL, you
+can do to create your training datasets.
+
+49
+00:02:32,550 --> 00:02:36,790
+Now for model types, you can choose from
+either linear regression for forecasting,
+
+50
+00:02:36,790 --> 00:02:40,930
+or classification models using logistic
+regression, binary or multiclass.
+
+51
+00:02:40,930 --> 00:02:46,140
+As part of your model evaluation, you'll
+get access to fields like the ROC curve,
+
+52
+00:02:46,140 --> 00:02:48,900
+also accuracy, precision-recall,
+
+53
+00:02:48,900 --> 00:02:53,520
+that you simply select from with your
+SQL after your model is trained.
+
+54
+00:02:53,520 --> 00:02:55,440
+You could also inspect
+the weights of the model and
+
+55
+00:02:55,440 --> 00:02:57,590
+perform a feature distribution analysis.
+
+56
+00:02:58,590 --> 00:03:00,850
+Entire process is going to look like this.
+
+57
+00:03:00,850 --> 00:03:05,350
+First, you'll need bring in your data in
+the BigQuery if it isn't there already.
+
+58
+00:03:05,350 --> 00:03:08,230
+Here again, you can ernich SQL
+data warehouse with other data
+
+59
+00:03:08,230 --> 00:03:10,759
+sources by using something
+like a SQL join, very easy.
+
+60
+00:03:11,920 --> 00:03:14,550
+Next is feature selection and
+preprocessing, which is
+
+61
+00:03:14,550 --> 00:03:18,000
+similar to what you've been exploring so
+far as part of the specialization.
+
+62
+00:03:18,000 --> 00:03:21,162
+And here's where you can put
+all your good SQL skills to
+
+63
+00:03:21,162 --> 00:03:25,510
+the test in creating a great training
+dataset for your model to learn from.
+
+64
+00:03:25,510 --> 00:03:28,874
+After that, here's the big moment,
+this the actual syntax for
+
+65
+00:03:28,874 --> 00:03:31,813
+creating a machine learning
+model inside of BigQuery.
+
+66
+00:03:31,813 --> 00:03:35,580
+[LAUGH] It's short enough that I can
+fit it in just this small box of code.
+
+67
+00:03:35,580 --> 00:03:40,530
+You simply say, create model,
+give it a name, specify mandatory options
+
+68
+00:03:40,530 --> 00:03:44,930
+like the model type, pass in your SQL
+query with your training dataset,
+
+69
+00:03:44,930 --> 00:03:47,910
+press Run Query and then sit back and
+watch your model run.
+
+70
+00:03:49,240 --> 00:03:53,360
+After your model's trained, you'll see
+it as a new dataset object in BigQuery.
+
+71
+00:03:53,360 --> 00:03:55,230
+It's pretty wild if you
+haven't seen it before.
+
+72
+00:03:55,230 --> 00:03:59,340
+And then you can execute an ml.evaluate
+query to evaluate the performance of
+
+73
+00:03:59,340 --> 00:04:01,795
+your trained model against
+your evaluation data set.
+
+74
+00:04:01,795 --> 00:04:06,385
+Here you can analyze loss metrics like
+RMSC or root mean squared error for
+
+75
+00:04:06,385 --> 00:04:11,045
+forecasting models in the area under
+the curve, accuracy, precision, recall for
+
+76
+00:04:11,045 --> 00:04:13,445
+classification models like
+the one that you see here.
+
+77
+00:04:14,535 --> 00:04:17,155
+When you're happy with the performance
+of your model, you can then use it for
+
+78
+00:04:17,155 --> 00:04:20,200
+predictions with this even shorter query.
+
+79
+00:04:20,200 --> 00:04:24,040
+Just invoke the ml.predict command
+on your newly trained model and
+
+80
+00:04:24,040 --> 00:04:28,330
+get back both predictions and the model's
+confidence in those predictions.
+
+81
+00:04:28,330 --> 00:04:30,630
+You'll notice a new field in
+the results when you run this query.
+
+82
+00:04:30,630 --> 00:04:34,400
+And that's where you'll see your
+labeled field with predicted,
+
+83
+00:04:34,400 --> 00:04:38,730
+added to the field's name which is your
+model's prediction for that label.

@@ -1,0 +1,70 @@
+In the prior chapters in this course we
+focused on creating an end-to-end machine learning pipeline in GCP. The task of developing a model could
+take the most time in this process. But what if you wanted to quickly
+test some ideas about some of the features in your model? And then what happens if you wanted to
+quickly test that model out at scale? That's where BigQuery machine learning,
+or BQML, can come in. And you know that building ML
+models can be very time intensive. You first must export small amounts
+of data in from BigQuery into Pandas and Data Lab. You then transform that data
+to be used for TensorFlow, and then you build the model in TensorFlow
+and then train it locally or on a VM. Doing that with a small model then
+requires you to get more data and create new features, improve the performance
+rinse and repeat all over again. It is tedious and hard, so you end
+up stopping after a few iterations. With BigQuery ML, you can use SQL for
+machine learning. Let's repeat that point. No Java, no Python code is needed,
+just basic SQL or SQL to invoke powerful ML models right where your
+data already lives, inside of BigQuery. The BigQuery team hass hidden a lot of
+details, like hyperparameter tuning or common tasks like manual coding
+of categorical features from you. Now, those options are there for
+you if you want to use them, but for simplicity the models are run
+just fine with minimal code. This can be helpful for
+quicker model development and for smaller data science teams who
+want to empower their data and business analysts to build and
+run their own ML models. With BigQuery ML, you don't need to worry about extract
+transform loads, or writing TensorFlow. If you have an intuition about a set
+of features, you can quickly and easily test and build and evaluate a machine learning model right
+inside of BigQuery using StandardSQL. This greatly speeds up development, because you don't have to worry about
+data movement and transformation. All the action happens
+right within BigQuery. You can do all of this from within
+the BigQuery UI, however if you like notebooks like I do, you could also do
+it from a Jupyter or Data Lab notebook. And this is what you'll be
+doing inside of your next lab. BigQuery ML was designed
+with simplicity in mind. To that end, you don't need it to
+define things like the learning rate or even the test or training set. If you let it,
+BigQuery ML will do that for you. In addition, with the options keyword,
+you can set things like regularization, the strategy for
+splitting your training and test sets, and the learning rate if you
+wanted to do it yourself. So what do you get out of the box? First, BigQuery ML runs in StandardSQL, and if you use normal SQL syntax like user
+defined functions, subqueries, and joins, anything you can do inside of SQL, you
+can do to create your training datasets. Now for model types, you can choose from
+either linear regression for forecasting, or classification models using logistic
+regression, binary or multiclass. As part of your model evaluation, you'll
+get access to fields like the ROC curve, also accuracy, precision-recall, that you simply select from with your
+SQL after your model is trained. You could also inspect
+the weights of the model and perform a feature distribution analysis. Entire process is going to look like this. First, you'll need bring in your data in
+the BigQuery if it isn't there already. Here again, you can ernich SQL
+data warehouse with other data sources by using something
+like a SQL join, very easy. Next is feature selection and
+preprocessing, which is similar to what you've been exploring so
+far as part of the specialization. And here's where you can put
+all your good SQL skills to the test in creating a great training
+dataset for your model to learn from. After that, here's the big moment,
+this the actual syntax for creating a machine learning
+model inside of BigQuery. [LAUGH] It's short enough that I can
+fit it in just this small box of code. You simply say, create model,
+give it a name, specify mandatory options like the model type, pass in your SQL
+query with your training dataset, press Run Query and then sit back and
+watch your model run. After your model's trained, you'll see
+it as a new dataset object in BigQuery. It's pretty wild if you
+haven't seen it before. And then you can execute an ml.evaluate
+query to evaluate the performance of your trained model against
+your evaluation data set. Here you can analyze loss metrics like
+RMSC or root mean squared error for forecasting models in the area under
+the curve, accuracy, precision, recall for classification models like
+the one that you see here. When you're happy with the performance
+of your model, you can then use it for predictions with this even shorter query. Just invoke the ml.predict command
+on your newly trained model and get back both predictions and the model's
+confidence in those predictions. You'll notice a new field in
+the results when you run this query. And that's where you'll see your
+labeled field with predicted, added to the field's name which is your
+model's prediction for that label.

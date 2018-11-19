@@ -1,0 +1,194 @@
+1
+00:00:00,550 --> 00:00:03,063
+We now have a deployed
+machine learning web service.
+
+2
+00:00:03,063 --> 00:00:06,495
+If you send it a JSON request for
+the input features,
+
+3
+00:00:06,495 --> 00:00:10,168
+you will get back a JSON
+response with the predictions.
+
+4
+00:00:10,168 --> 00:00:12,815
+So technically, we are done.
+
+5
+00:00:12,815 --> 00:00:17,910
+But it's nice to be able to call a web
+service from a graphical user interface.
+
+6
+00:00:17,910 --> 00:00:23,452
+And so this is an optional lab that shows
+you how you could build a web application
+
+7
+00:00:23,452 --> 00:00:28,267
+and invoke the machine learning
+model in response to a user request.
+
+8
+00:00:28,267 --> 00:00:30,589
+This is the architecture.
+
+9
+00:00:30,589 --> 00:00:35,176
+You build an HTML form,
+a web front end with slider bars,
+
+10
+00:00:35,176 --> 00:00:39,204
+a drop down menu,
+a check box and a Submit button.
+
+11
+00:00:39,204 --> 00:00:43,739
+The Submit button sends
+a specified data over to a Python
+
+12
+00:00:43,739 --> 00:00:48,193
+flask application that's
+deployed into App Engine.
+
+13
+00:00:48,193 --> 00:00:52,694
+App Engine is where Google Cloud
+platform started in 2008.
+
+14
+00:00:52,694 --> 00:00:56,067
+It's a serverless web
+application framework.
+
+15
+00:00:56,067 --> 00:01:01,001
+The web application converts the HTML
+form data into the JSON request
+
+16
+00:01:01,001 --> 00:01:05,269
+that's expected by the deployed
+Machine Learning model.
+
+17
+00:01:05,269 --> 00:01:10,424
+And it sends back the JSON
+response back to the front end.
+
+18
+00:01:10,424 --> 00:01:17,025
+The front end then displays a return
+value, 4.48 pounds in this case.
+
+19
+00:01:19,211 --> 00:01:22,476
+You don't need App Engine to invoke
+the machine learning service.
+
+20
+00:01:22,476 --> 00:01:26,583
+All you need is to be able
+to invoke a rest API.
+
+21
+00:01:26,583 --> 00:01:31,345
+In the next course of this specialization,
+we will look at different options
+
+22
+00:01:31,345 --> 00:01:34,801
+when it comes to production
+Machine Learning systems.
+
+23
+00:01:34,801 --> 00:01:39,343
+And there we will look at how to invoke
+the machine learning service from
+
+24
+00:01:39,343 --> 00:01:40,488
+Cloud Dataflow.
+
+25
+00:01:40,488 --> 00:01:43,618
+This is a very common design pattern.
+
+26
+00:01:43,618 --> 00:01:48,447
+You often take historical log data,
+transform it using
+
+27
+00:01:48,447 --> 00:01:54,209
+Apache Beam on Cloud Dataflow as
+we did in the baby weight example.
+
+28
+00:01:54,209 --> 00:01:59,038
+And use that transformed data
+as the training data set for
+
+29
+00:01:59,038 --> 00:02:01,558
+our Machine Learning model.
+
+30
+00:02:01,558 --> 00:02:05,586
+We stored the training data set
+as CSV files on Cloud Storage but
+
+31
+00:02:05,586 --> 00:02:08,782
+it's also possible to save
+the data in BigQuery.
+
+32
+00:02:08,782 --> 00:02:16,044
+And then in production, in real time,
+the logs show up in a Cloud Pub/Sub.
+
+33
+00:02:16,044 --> 00:02:21,220
+They're transformed the same way
+using Apache Beam and Cloud Dataflow.
+
+34
+00:02:21,220 --> 00:02:26,948
+And then send to the deployed model
+on ML Engine for predictions.
+
+35
+00:02:26,948 --> 00:02:31,043
+This is where dataflow is calling
+ML Engine to make the predictions.
+
+36
+00:02:31,043 --> 00:02:36,613
+And every once in awhile we can take
+the fresh data in from BigQuery,
+
+37
+00:02:36,613 --> 00:02:40,522
+retrain the model,
+deployed as a new version,
+
+38
+00:02:40,522 --> 00:02:44,941
+do an A/B test of the models and
+swap the models over.
+
+39
+00:02:44,941 --> 00:02:50,070
+So we look at this in a lot
+more detail in the next course.
+
+40
+00:02:50,070 --> 00:02:53,780
+But for now, go ahead and
+take a look at the last lab.

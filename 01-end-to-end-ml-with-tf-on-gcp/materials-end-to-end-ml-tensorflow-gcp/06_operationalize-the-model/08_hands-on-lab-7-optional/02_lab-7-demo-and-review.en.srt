@@ -1,0 +1,491 @@
+1
+00:00:00,000 --> 00:00:04,590
+Let's do our last lab where we'll actually build a front end that
+
+2
+00:00:04,590 --> 00:00:09,315
+will call the predict API specified by ML engine.
+
+3
+00:00:09,315 --> 00:00:12,720
+So, let's build a web app using Flask which
+
+4
+00:00:12,720 --> 00:00:17,225
+will provide a user interface for an end user to interact with our model.
+
+5
+00:00:17,225 --> 00:00:20,490
+In this case, we're going to jump straight to the cloud but you can even test this
+
+6
+00:00:20,490 --> 00:00:24,115
+locally similar to the approach that we've been doing before if you'd like.
+
+7
+00:00:24,115 --> 00:00:26,295
+Then once we've completed this lab,
+
+8
+00:00:26,295 --> 00:00:29,280
+we'll have completed the end-to -end process of
+
+9
+00:00:29,280 --> 00:00:33,530
+training and operationalizing a model on Cloud ML.
+
+10
+00:00:33,530 --> 00:00:36,550
+So, to get started with the lab,
+
+11
+00:00:36,550 --> 00:00:44,145
+go to console.cloud.google.com and open up a new Cloud Shell.
+
+12
+00:00:44,145 --> 00:00:47,760
+Cloud Shell can be opened at the top right.
+
+13
+00:00:49,710 --> 00:00:53,500
+Once we do that, you may need
+
+14
+00:00:53,500 --> 00:00:57,750
+to clone the training data analysts repo, if you haven't already.
+
+15
+00:00:57,750 --> 00:01:06,640
+That can be done using git clone github.com/GoogleCloudPlatform/training-data-analyst.
+
+16
+00:01:06,640 --> 00:01:09,560
+I've already cloned it so I don't need to do that.
+
+17
+00:01:09,830 --> 00:01:13,110
+Once you have this folder,
+
+18
+00:01:13,110 --> 00:01:16,000
+we'll go into the
+
+19
+00:01:19,700 --> 00:01:24,880
+training-data-analyst/courses/machine_learning/deepdive and we'll go into six.
+
+20
+00:01:28,190 --> 00:01:32,915
+I'll make it a little bigger. Here, we
+
+21
+00:01:32,915 --> 00:01:38,900
+have the serving folder and this contains the logic for creating our web app.
+
+22
+00:01:40,790 --> 00:01:43,590
+What we can do is we're going to run
+
+23
+00:01:43,590 --> 00:01:49,125
+deploy.sh and this will actually deploy our web application for us.
+
+24
+00:01:49,125 --> 00:01:54,610
+But before we do that, let's look into deploy.sh first to see what it's doing.
+
+25
+00:01:56,200 --> 00:01:59,405
+So, if I look into deploy.sh,
+
+26
+00:01:59,405 --> 00:02:01,920
+it's doing a couple of things.
+
+27
+00:02:01,920 --> 00:02:07,810
+It's going into the application folder that we have in this directory,
+
+28
+00:02:07,810 --> 00:02:14,445
+it's installing the requirements including Flask that we'll need to deploy our web app,
+
+29
+00:02:14,445 --> 00:02:17,010
+it's going to run gcloud app create,
+
+30
+00:02:17,010 --> 00:02:21,345
+which creates an app engine within your current google Cloud project,
+
+31
+00:02:21,345 --> 00:02:24,820
+and then deploy, which deploys and
+
+32
+00:02:24,820 --> 00:02:29,800
+builds a container image that will actually contain that app that we're building.
+
+33
+00:02:29,960 --> 00:02:33,220
+Then once we do that, we'll be able to access
+
+34
+00:02:33,220 --> 00:02:39,590
+our web app at the URL for our projectname.appspot.com.
+
+35
+00:02:45,580 --> 00:02:50,175
+So, let's go into the application folder,
+
+36
+00:02:50,175 --> 00:02:52,915
+and let's look at what's actually happening there.
+
+37
+00:02:52,915 --> 00:02:55,610
+So, I'm going to do ls-l,
+
+38
+00:02:55,610 --> 00:02:57,845
+so inside the application folder,
+
+39
+00:02:57,845 --> 00:03:01,055
+there's a couple files of interest.
+
+40
+00:03:01,055 --> 00:03:06,870
+Notably, there is the app.yaml file and this contains,
+
+41
+00:03:06,870 --> 00:03:09,965
+essentially, instructions for deploying our app.
+
+42
+00:03:09,965 --> 00:03:18,385
+Key things here are we're going to use Python 2.7 and for different handlers or routes,
+
+43
+00:03:18,385 --> 00:03:22,650
+we're going to say our URL and then what do we actually want to execute.
+
+44
+00:03:22,650 --> 00:03:26,030
+In this case, the main.app is
+
+45
+00:03:26,030 --> 00:03:29,995
+going to contain the actual logic for launching our web app.
+
+46
+00:03:29,995 --> 00:03:34,860
+Then we're also going to reveal environmental variables that we'll be able to access.
+
+47
+00:03:34,860 --> 00:03:38,600
+So, in this case, the model name is going to be babyweight.
+
+48
+00:03:38,600 --> 00:03:44,695
+So, really, the meat of the code is contained in the main.py.
+
+49
+00:03:44,695 --> 00:03:46,870
+So, let's go ahead and look at that.
+
+50
+00:03:46,870 --> 00:03:52,420
+So, if we do main.py,
+
+51
+00:03:52,970 --> 00:03:57,280
+take a look at it, so now,
+
+52
+00:03:57,280 --> 00:03:59,935
+we're in the main.py file.
+
+53
+00:03:59,935 --> 00:04:04,750
+The main.py file has two key uses.
+
+54
+00:04:04,750 --> 00:04:07,970
+The first and main usage is it will serve as
+
+55
+00:04:07,970 --> 00:04:12,100
+the back end that will be hosting our web application,
+
+56
+00:04:12,100 --> 00:04:13,930
+that the end user's going to enact with.
+
+57
+00:04:13,930 --> 00:04:17,255
+The second usage is it'll provide a wrapper
+
+58
+00:04:17,255 --> 00:04:21,950
+that will help us call the predict API in ML engine.
+
+59
+00:04:21,950 --> 00:04:27,240
+So, let's talk about those at a high-level and then we'll drill into the details.
+
+60
+00:04:36,820 --> 00:04:42,370
+So, here, we have the two decorators for app.route.
+
+61
+00:04:42,370 --> 00:04:47,590
+In this case, we have the base URL and the /form URL.
+
+62
+00:04:47,590 --> 00:04:52,910
+These get displayed to the user when they go to these respective routes,
+
+63
+00:04:52,910 --> 00:04:56,500
+in this case, just the base URL and the /form,
+
+64
+00:04:56,510 --> 00:05:00,075
+and these are what ultimately gets served to the user.
+
+65
+00:05:00,075 --> 00:05:04,620
+In addition, we also have an API/predict route.
+
+66
+00:05:04,620 --> 00:05:07,630
+The end user is not explicitly visiting this page.
+
+67
+00:05:07,630 --> 00:05:12,565
+What happens is the client side in HTML file,
+
+68
+00:05:12,565 --> 00:05:16,675
+it's going to make a post request which is what we specify here,
+
+69
+00:05:16,675 --> 00:05:20,690
+to this API/predict URL.
+
+70
+00:05:20,690 --> 00:05:24,200
+What that's gonna do is it's actually going to do a little bit
+
+71
+00:05:24,200 --> 00:05:28,495
+of pre-processing which we can see here.
+
+72
+00:05:28,495 --> 00:05:30,450
+We're going to, for example,
+
+73
+00:05:30,450 --> 00:05:34,590
+convert gender to string and plurality to string.
+
+74
+00:05:35,300 --> 00:05:38,270
+It's also going to do some processing and
+
+75
+00:05:38,270 --> 00:05:43,110
+converting mother_age from a string to a float, for example.
+
+76
+00:05:43,310 --> 00:05:47,270
+Really, what it's gonna do is it's going to call this get_prediction.
+
+77
+00:05:47,270 --> 00:05:50,895
+So, what is this get_prediction? Well, let's look at that.
+
+78
+00:05:50,895 --> 00:05:56,480
+I just search for it within the file and we have our get_prediction.
+
+79
+00:05:56,480 --> 00:06:00,750
+This code should look very similar to what we've seen so far.
+
+80
+00:06:01,940 --> 00:06:04,050
+Here, we're going to build
+
+81
+00:06:04,050 --> 00:06:08,390
+a input_data JSON which
+
+82
+00:06:08,390 --> 00:06:12,740
+will have the features that the end user had provided to us via their form.
+
+83
+00:06:12,740 --> 00:06:15,005
+This is now input data,
+
+84
+00:06:15,005 --> 00:06:18,930
+we're going to hit the route,
+
+85
+00:06:18,930 --> 00:06:21,080
+we're going to hit the model that we created earlier,
+
+86
+00:06:21,080 --> 00:06:24,620
+the project or model name and version name,
+
+87
+00:06:24,620 --> 00:06:29,185
+and these are what we specified above and they're located in environmental variables.
+
+88
+00:06:29,185 --> 00:06:31,345
+So, now that we've done that,
+
+89
+00:06:31,345 --> 00:06:35,160
+then we can actually get a prediction and we're going to return that prediction.
+
+90
+00:06:36,660 --> 00:06:42,080
+So, this gets returned and then we're going to return JSON back to the user,
+
+91
+00:06:42,080 --> 00:06:45,150
+back to them client-side.
+
+92
+00:06:48,560 --> 00:06:55,945
+Great. So, we've reviewed the main.py file.
+
+93
+00:06:55,945 --> 00:07:03,220
+So, now, let's actually deploy our app and get predictions in real time.
+
+94
+00:07:05,000 --> 00:07:07,125
+So, as we talked about earlier,
+
+95
+00:07:07,125 --> 00:07:10,150
+we'll run the deploy.sh.
+
+96
+00:08:18,860 --> 00:08:21,600
+After a minute or so,
+
+97
+00:08:21,600 --> 00:08:28,000
+the deploy script finishes and we've deployed our app using the App Engine.
+
+98
+00:08:28,000 --> 00:08:29,970
+So, we've actually returned
+
+99
+00:08:29,970 --> 00:08:33,490
+the URL that we can visit so I'm going to go ahead and click that.
+
+100
+00:08:37,950 --> 00:08:41,775
+I'll click this to make sure I'm authenticated.
+
+101
+00:08:41,775 --> 00:08:44,815
+If we look at the route that we're located,
+
+102
+00:08:44,815 --> 00:08:47,960
+we're actually at the form URL,
+
+103
+00:08:47,960 --> 00:08:50,110
+this is what we saw in the main.py,
+
+104
+00:08:50,110 --> 00:08:53,130
+so it's returning the formula HTML file.
+
+105
+00:08:53,130 --> 00:08:57,130
+What we're gonna do now is we're going to provide
+
+106
+00:08:57,130 --> 00:09:06,550
+some feature values that we're going to use to send to the API/predict route.
+
+107
+00:09:07,490 --> 00:09:11,610
+The API/predict route is going to do some preprocessing and then
+
+108
+00:09:11,610 --> 00:09:15,920
+call ML engine predict to give us our babyweight.
+
+109
+00:09:16,620 --> 00:09:20,760
+So, this will take a minute or two because it's the first time we're going to call
+
+110
+00:09:20,760 --> 00:09:25,150
+the ML engine predict in a little while.
+
+111
+00:09:27,280 --> 00:09:30,880
+So, we've gotten our prediction back.
+
+112
+00:09:30,880 --> 00:09:33,750
+For this given features that we then put it,
+
+113
+00:09:33,750 --> 00:09:36,780
+this is what the model that we've trained returns.
+
+114
+00:09:36,780 --> 00:09:39,970
+Let's try changing the value,
+
+115
+00:09:43,490 --> 00:09:46,060
+and we're getting a different result back.
+
+116
+00:09:46,060 --> 00:09:50,880
+So, you can see that this is giving new features and giving a new prediction back.
+
+117
+00:09:50,880 --> 00:09:56,950
+So, that's it, we've built a web app using Flask in App Engine.
+
+118
+00:09:56,950 --> 00:10:03,290
+This web app provides a URL that our user can access.
+
+119
+00:10:03,290 --> 00:10:07,725
+This allows the user to provide features or data that, in turn,
+
+120
+00:10:07,725 --> 00:10:11,985
+calls our trained model using ML engine predict,
+
+121
+00:10:11,985 --> 00:10:13,830
+returns back a response,
+
+122
+00:10:13,830 --> 00:10:17,725
+and the user gets to view the predictions in real time.
+
+123
+00:10:17,725 --> 00:10:24,520
+That's it for this lab and this is also the final lab in end-to-end machine learning.

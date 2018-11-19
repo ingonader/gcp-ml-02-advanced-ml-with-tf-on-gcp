@@ -1,0 +1,755 @@
+1
+00:00:00,000 --> 00:00:04,810
+So, let's go ahead and do our lab where we predict babyweight using BigQuery ML.
+
+2
+00:00:04,810 --> 00:00:09,585
+We're going to set up our lab environment like we have for within Datalab.
+
+3
+00:00:09,585 --> 00:00:11,885
+You should be setting up Datalab like you have
+
+4
+00:00:11,885 --> 00:00:14,510
+several times using in the click labs interface.
+
+5
+00:00:14,510 --> 00:00:16,020
+We're going to take our project,
+
+6
+00:00:16,020 --> 00:00:19,395
+and we're going to go ahead and paste our project again.
+
+7
+00:00:19,395 --> 00:00:25,380
+We're going to go ahead and clear this lab to make sure that we're starting fresh.
+
+8
+00:00:25,380 --> 00:00:29,430
+Okay, so I'm going to go ahead and run these first three cells to set up our environment.
+
+9
+00:00:29,430 --> 00:00:32,355
+So, we're using the natality dataset.
+
+10
+00:00:32,355 --> 00:00:35,910
+That's the US births from 1969-2008,
+
+11
+00:00:35,910 --> 00:00:37,630
+and it's in BigQuery already.
+
+12
+00:00:37,630 --> 00:00:41,510
+So, we can start seeing everything with what's legitimate values.
+
+13
+00:00:41,510 --> 00:00:42,755
+So, we're going to query,
+
+14
+00:00:42,755 --> 00:00:45,490
+then we have four in year,
+
+15
+00:00:45,490 --> 00:00:47,510
+gestation weeks, mother's age, plurality,
+
+16
+00:00:47,510 --> 00:00:49,880
+and weight in pounds, all above zero.
+
+17
+00:00:49,880 --> 00:00:52,380
+So, that's our valid dataset, okay?
+
+18
+00:00:52,380 --> 00:00:59,265
+We're going to run that, when we get back is a sample of that dataset.
+
+19
+00:00:59,265 --> 00:01:01,190
+Now, looking over this dataset,
+
+20
+00:01:01,190 --> 00:01:05,370
+there's a few things that we could be using for prediction, okay?
+
+21
+00:01:05,370 --> 00:01:10,620
+So, we could do some feature engineering using CAST.
+
+22
+00:01:10,620 --> 00:01:16,370
+Using CAST what we can do is those strings are considered as categorical features.
+
+23
+00:01:16,370 --> 00:01:19,684
+Then, the numerical ones are considered continuous.
+
+24
+00:01:19,684 --> 00:01:21,570
+We're also going to use hashmonth,
+
+25
+00:01:21,570 --> 00:01:24,525
+so we can repeatedly split the data without leakage.
+
+26
+00:01:24,525 --> 00:01:28,220
+That means that we're splitting reliably between training
+
+27
+00:01:28,220 --> 00:01:32,435
+and validation sets without leaking one into the other one, okay?
+
+28
+00:01:32,435 --> 00:01:34,710
+So, when we run this,
+
+29
+00:01:35,110 --> 00:01:39,530
+what we'll get is what those features look like.
+
+30
+00:01:39,530 --> 00:01:41,220
+We'll get weight in pounds,
+
+31
+00:01:41,220 --> 00:01:44,315
+the sex of the child, the mother's age,
+
+32
+00:01:44,315 --> 00:01:47,070
+the plurality, and then the gestational weeks,
+
+33
+00:01:47,070 --> 00:01:48,230
+and then we'll get our hashmonth,
+
+34
+00:01:48,230 --> 00:01:51,415
+the thing that allows us to split between training and tests.
+
+35
+00:01:51,415 --> 00:01:56,005
+Now, we're going to train our BigQuery ML model, okay?
+
+36
+00:01:56,005 --> 00:01:58,585
+So, the way that we're going to do that is that first,
+
+37
+00:01:58,585 --> 00:02:00,665
+we're going to make a dataset,
+
+38
+00:02:00,665 --> 00:02:02,930
+a place to store it, and we'll call it demo.
+
+39
+00:02:02,930 --> 00:02:10,290
+We can do this through Datalab by running this command in this wrapper in bash,
+
+40
+00:02:10,290 --> 00:02:14,485
+so bq locution US mk hyphen d demo.
+
+41
+00:02:14,485 --> 00:02:16,420
+Okay, and now create this dataset demo,
+
+42
+00:02:16,420 --> 00:02:19,750
+that allows us for a place to store our model.
+
+43
+00:02:19,850 --> 00:02:23,390
+Next, we're going to create our model,
+
+44
+00:02:23,390 --> 00:02:25,900
+and like we saw in the video,
+
+45
+00:02:25,900 --> 00:02:30,440
+it just takes two lines to create or replace model.
+
+46
+00:02:30,440 --> 00:02:33,405
+demo.baby weight model as is.
+
+47
+00:02:33,405 --> 00:02:35,630
+Our options, in this case, linear regression.
+
+48
+00:02:35,630 --> 00:02:36,860
+This is a regression problem,
+
+49
+00:02:36,860 --> 00:02:40,540
+and our label we're trying to predict weight in pounds.
+
+50
+00:02:40,540 --> 00:02:44,430
+Then, we have these features that we want to select,
+
+51
+00:02:44,430 --> 00:02:51,105
+and then we're going to select from there and identify that.
+
+52
+00:02:51,105 --> 00:02:52,775
+So, when we run this,
+
+53
+00:02:52,775 --> 00:02:56,060
+this should take about four minutes to run and will
+
+54
+00:02:56,060 --> 00:02:59,510
+show done when we complete. So, now we're done.
+
+55
+00:02:59,510 --> 00:03:02,010
+Several minutes later when we save the model.
+
+56
+00:03:02,010 --> 00:03:04,470
+So, during the model training, and after the training,
+
+57
+00:03:04,470 --> 00:03:07,910
+you can actually see the model is training evaluation stats.
+
+58
+00:03:07,910 --> 00:03:11,925
+So, for each run, you'll get a table with the models name,
+
+59
+00:03:11,925 --> 00:03:13,730
+plus eval, and that's created.
+
+60
+00:03:13,730 --> 00:03:16,665
+If we go on to the BigQuery UI,
+
+61
+00:03:16,665 --> 00:03:18,870
+you can see that while it's training.
+
+62
+00:03:18,870 --> 00:03:22,670
+So, what we're going to look at is none of the models train,
+
+63
+00:03:22,670 --> 00:03:25,945
+we're going to see that information here in Datalab.
+
+64
+00:03:25,945 --> 00:03:28,880
+So, the way I'm going to do that is with a cells.
+
+65
+00:03:28,880 --> 00:03:32,155
+So I have BigQuery query, and then I'm going to run.
+
+66
+00:03:32,155 --> 00:03:35,520
+This select star from ML.Training_Info,
+
+67
+00:03:35,520 --> 00:03:38,990
+and then give it the word model and then the model name.
+
+68
+00:03:38,990 --> 00:03:43,075
+So, when I run that, I'm going to see a few columns, okay?
+
+69
+00:03:43,075 --> 00:03:44,510
+So, some of these are going to be obvious,
+
+70
+00:03:44,510 --> 00:03:47,005
+but some of them are specific to BQML.
+
+71
+00:03:47,005 --> 00:03:50,380
+So, we have training run, that's going to be zero for a newly created model.
+
+72
+00:03:50,380 --> 00:03:52,150
+So, if we updated the model,
+
+73
+00:03:52,150 --> 00:03:54,360
+we increment that of it.
+
+74
+00:03:54,360 --> 00:03:55,735
+There's going to be the iteration,
+
+75
+00:03:55,735 --> 00:03:57,900
+which is the number associated with the training run.
+
+76
+00:03:57,900 --> 00:04:00,795
+I'm going to start from zero from the first iteration.
+
+77
+00:04:00,795 --> 00:04:04,270
+There's loss, which is the loss we have on the training set,
+
+78
+00:04:04,270 --> 00:04:07,180
+and then the evaluation sets loss.
+
+79
+00:04:07,180 --> 00:04:08,460
+How much it took?
+
+80
+00:04:08,460 --> 00:04:10,920
+In milliseconds, and then the learning rate.
+
+81
+00:04:10,920 --> 00:04:12,365
+Like we talked about in the lecture,
+
+82
+00:04:12,365 --> 00:04:15,590
+the learning rate is set dynamically by BigQuery ML,
+
+83
+00:04:15,590 --> 00:04:18,530
+so you don't have to worry about setting that or determining
+
+84
+00:04:18,530 --> 00:04:22,585
+that from various types of experimentation, okay?
+
+85
+00:04:22,585 --> 00:04:25,095
+So, what we can do is we can plot
+
+86
+00:04:25,095 --> 00:04:29,035
+the loss against the eval loss, and what they'll give us,
+
+87
+00:04:29,035 --> 00:04:32,570
+it'll give us a sense of how well we're doing in
+
+88
+00:04:32,570 --> 00:04:36,445
+terms of if we're overfitting, underfitting or not.
+
+89
+00:04:36,445 --> 00:04:39,980
+So, we're going to plot that using matplotlib,
+
+90
+00:04:40,350 --> 00:04:45,375
+and what we'll get is align in orange,
+
+91
+00:04:45,375 --> 00:04:46,820
+which I'll denote the loss,
+
+92
+00:04:46,820 --> 00:04:49,890
+and the line in green which will denote the eval loss.
+
+93
+00:04:49,890 --> 00:04:52,910
+They match pretty well, so it doesn't seem like we're overfitting.
+
+94
+00:04:52,910 --> 00:04:54,830
+Okay, so now we have our model.
+
+95
+00:04:54,830 --> 00:04:57,255
+Our model is trained, we evaluated it.
+
+96
+00:04:57,255 --> 00:05:00,010
+It's not overfitting, we can do some out-of-sample prediction.
+
+97
+00:05:00,010 --> 00:05:02,800
+So, let's make a prediction with BQML.
+
+98
+00:05:02,870 --> 00:05:07,670
+So, the only difference between doing the training and doing the prediction is that
+
+99
+00:05:07,670 --> 00:05:11,995
+we change from ML train to ML predict. Super simple.
+
+100
+00:05:11,995 --> 00:05:16,005
+So, we're going to select star from ml.PREDICT,
+
+101
+00:05:16,005 --> 00:05:19,960
+and then we're going to provide it with those features that we used in training.
+
+102
+00:05:19,960 --> 00:05:21,615
+Then, we're going to live it 100,
+
+103
+00:05:21,615 --> 00:05:26,310
+we're going to take the first 100 results from our prediction.
+
+104
+00:05:30,770 --> 00:05:38,245
+What we get back is those first 100 predictions using our model.
+
+105
+00:05:38,245 --> 00:05:41,370
+We can see the differences between the predicted weight in pounds,
+
+106
+00:05:41,370 --> 00:05:42,695
+and the weight in pounds.
+
+107
+00:05:42,695 --> 00:05:44,770
+So, some of these are closer than others.
+
+108
+00:05:44,770 --> 00:05:49,090
+Around here, we have 6.67, 6.687.
+
+109
+00:05:49,090 --> 00:05:51,890
+Closer here, we have 3.4,
+
+110
+00:05:51,890 --> 00:05:53,905
+the real weight is 2.5.
+
+111
+00:05:53,905 --> 00:05:55,430
+Okay, so not precise,
+
+112
+00:05:55,430 --> 00:05:57,050
+but it does a pretty good job,
+
+113
+00:05:57,050 --> 00:06:00,760
+and we evaluated what that loss was earlier in training.
+
+114
+00:06:00,760 --> 00:06:03,235
+So, the original example,
+
+115
+00:06:03,235 --> 00:06:08,530
+we are taking into account the idea that if no ultrasound had been formed,
+
+116
+00:06:08,530 --> 00:06:11,840
+some of the features like the sex of the child,
+
+117
+00:06:11,840 --> 00:06:14,725
+and the plurality would not be known.
+
+118
+00:06:14,725 --> 00:06:19,460
+Okay. So what we can do is we can augment our dataset such that we mask these features,
+
+119
+00:06:19,460 --> 00:06:22,760
+and we train a single model to deal with both of those scenarios.
+
+120
+00:06:22,760 --> 00:06:28,050
+We also saw that the dataset size for mothers older than 45 was pretty sparse,
+
+121
+00:06:28,050 --> 00:06:31,750
+and less than 18 was also pretty sparse.
+
+122
+00:06:31,750 --> 00:06:33,675
+So, we're going to discretize that mother age,
+
+123
+00:06:33,675 --> 00:06:35,290
+put them in bins.
+
+124
+00:06:35,290 --> 00:06:41,125
+So, low for mothers younger than 18,
+
+125
+00:06:41,125 --> 00:06:43,315
+high for mothers over 45,
+
+126
+00:06:43,315 --> 00:06:49,045
+and then we're going to treat each of the ages between those as bins, okay?
+
+127
+00:06:49,045 --> 00:06:52,580
+So, when we do that, we will see is that we're going to get
+
+128
+00:06:52,580 --> 00:06:58,640
+a dataset that has some of these edges as low or high.
+
+129
+00:06:58,640 --> 00:07:03,575
+These are treated now as categorical variables, okay?
+
+130
+00:07:03,575 --> 00:07:08,950
+At the same time, we're going to also suppose that we don't
+
+131
+00:07:08,950 --> 00:07:14,115
+know whether the child is male or female to simulate that lack of an ultrasound.
+
+132
+00:07:14,115 --> 00:07:17,365
+So, when we run this piece of BigQuery,
+
+133
+00:07:17,365 --> 00:07:23,770
+what we'll see with that added is that we will have unknown.
+
+134
+00:07:23,770 --> 00:07:25,940
+We've also changed the plurality here.
+
+135
+00:07:25,940 --> 00:07:29,050
+We know if there's more than one child or a single child.
+
+136
+00:07:29,050 --> 00:07:31,800
+So, this change from 1, 2, 3,
+
+137
+00:07:31,800 --> 00:07:37,490
+4 to single, multiple and just take those two values.
+
+138
+00:07:37,490 --> 00:07:42,120
+We can bring those two datasets together with this query.
+
+139
+00:07:42,120 --> 00:07:44,900
+So, WITH with ultrasound as this query where we
+
+140
+00:07:44,900 --> 00:07:48,350
+know the sex of the child as well as the plurality,
+
+141
+00:07:48,350 --> 00:07:52,740
+and then without ultrasound where we don't know those factors.
+
+142
+00:07:52,920 --> 00:07:57,550
+Then, we're going to do a union on both of those,
+
+143
+00:07:57,550 --> 00:07:59,250
+and then that's going to be
+
+144
+00:07:59,250 --> 00:08:03,650
+our pre-processed table from what we're going to use in a more advanced model.
+
+145
+00:08:03,650 --> 00:08:04,965
+So, when we run that,
+
+146
+00:08:04,965 --> 00:08:08,755
+what we'll get is a model that displays the first few rows of that.
+
+147
+00:08:08,755 --> 00:08:13,240
+We can't see the range of what this takes on,
+
+148
+00:08:13,240 --> 00:08:17,620
+but we have both the mask and the unmask version.
+
+149
+00:08:17,650 --> 00:08:22,580
+Next, we're going to create a new model that incorporates that
+
+150
+00:08:22,580 --> 00:08:26,820
+feature engineering with the mask and the unmask,
+
+151
+00:08:26,820 --> 00:08:33,195
+and as well as the categorical variable for mother's age.
+
+152
+00:08:33,195 --> 00:08:35,280
+We're going to use the same thing,
+
+153
+00:08:35,280 --> 00:08:40,235
+create or replace model demo.babyweight_model_fc.
+
+154
+00:08:40,235 --> 00:08:43,610
+It's also going to be a linear regression and we're still
+
+155
+00:08:43,610 --> 00:08:47,235
+predicting weight in pounds, okay?
+
+156
+00:08:47,235 --> 00:08:51,565
+We're going to use with ultrasound, without ultrasound,
+
+157
+00:08:51,565 --> 00:08:55,440
+and we're going to put them in a united table preprocessed,
+
+158
+00:08:55,440 --> 00:08:58,160
+and we're going to generate our model from there.
+
+159
+00:08:58,160 --> 00:09:01,950
+This is going to take a little longer since we have doubled our dataset.
+
+160
+00:09:01,950 --> 00:09:04,090
+So, it's going to take about 5-7 minutes to run.
+
+161
+00:09:04,090 --> 00:09:08,310
+When we're done, we will see the word done below the cell.
+
+162
+00:09:09,800 --> 00:09:12,920
+So, our model is done training.
+
+163
+00:09:12,920 --> 00:09:17,570
+So, now we can do the same thing we did with the as is model.
+
+164
+00:09:17,570 --> 00:09:20,420
+We could go to BigQuery UI to see
+
+165
+00:09:20,420 --> 00:09:25,845
+our training stats or we can look at them here with Datalab.
+
+166
+00:09:25,845 --> 00:09:27,260
+So, what we'll do, we'll do the same thing,
+
+167
+00:09:27,260 --> 00:09:33,820
+we'll plot the loss against the eval loss.
+
+168
+00:09:33,820 --> 00:09:36,665
+So, let that run and same thing,
+
+169
+00:09:36,665 --> 00:09:41,010
+we get our loss and our eval loss curves look near identical.
+
+170
+00:09:41,010 --> 00:09:45,070
+So we are not overfitting using the feature engineered model as well.
+
+171
+00:09:45,070 --> 00:09:48,200
+Now, lastly, what we're going to do is we're going to
+
+172
+00:09:48,200 --> 00:09:51,380
+make prediction of baby weight given a number of factors.
+
+173
+00:09:51,380 --> 00:09:57,730
+So, let's say we have a baby who's sex has been turned as male whose mother is 28.
+
+174
+00:09:57,730 --> 00:09:59,880
+Mother is also only having one child,
+
+175
+00:09:59,880 --> 00:10:04,280
+and the baby was born at 38 weeks of pregnancy.
+
+176
+00:10:04,280 --> 00:10:05,875
+So, do the same thing.
+
+177
+00:10:05,875 --> 00:10:09,355
+We'll do a select star from ml.PREDICT.
+
+178
+00:10:09,355 --> 00:10:13,685
+In this case, we're going to have for those values true as is male,
+
+179
+00:10:13,685 --> 00:10:15,115
+28 as mother age,
+
+180
+00:10:15,115 --> 00:10:19,140
+1 is plurality, and 38 as gestation weeks.
+
+181
+00:10:19,140 --> 00:10:25,890
+We'll run that, and what we'll get is we'll get a predicted weight in pounds.
+
+182
+00:10:25,890 --> 00:10:29,415
+So, in this case, 5.856.
+
+183
+00:10:29,415 --> 00:10:33,230
+So, I hope you got a good handle of how to use BigQuery ML,
+
+184
+00:10:33,230 --> 00:10:40,320
+you saw how easy it is to do a regression task with only two lines of extra SQL.
+
+185
+00:10:40,320 --> 00:10:42,295
+You saw how to evaluate those.
+
+186
+00:10:42,295 --> 00:10:48,140
+You saw how to feature engineer using SQL and how to predict with that new model.
+
+187
+00:10:48,140 --> 00:10:49,605
+So, go ahead and take this,
+
+188
+00:10:49,605 --> 00:10:51,340
+play around with it, make it your own.
+
+189
+00:10:51,340 --> 00:10:56,960
+I really hope that BigQuery ML becomes part of your machine learning repertoire.

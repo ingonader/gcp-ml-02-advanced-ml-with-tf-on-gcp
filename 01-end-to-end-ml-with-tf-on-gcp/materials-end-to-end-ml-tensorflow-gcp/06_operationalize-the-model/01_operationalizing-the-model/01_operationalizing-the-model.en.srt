@@ -1,0 +1,539 @@
+1
+00:00:00,000 --> 00:00:02,640
+Now that we have built our machine learning model,
+
+2
+00:00:02,640 --> 00:00:04,920
+let's operationalize the model.
+
+3
+00:00:04,920 --> 00:00:08,730
+We are now at the final stage of operationalizing the model.
+
+4
+00:00:08,730 --> 00:00:11,305
+This will actually consists of a few steps;
+
+5
+00:00:11,305 --> 00:00:14,475
+creating our data processing pipeline,
+
+6
+00:00:14,475 --> 00:00:16,680
+training our model and ML engine,
+
+7
+00:00:16,680 --> 00:00:22,480
+which will subsequently allow us to easily serve our model to end-users via a rest API.
+
+8
+00:00:22,480 --> 00:00:24,800
+Then, finally to deploy an app,
+
+9
+00:00:24,800 --> 00:00:30,220
+an app engine that will allow end-users to neatly consume our predictions.
+
+10
+00:00:30,220 --> 00:00:35,745
+Right now, however, we'll be focusing on creating our two datasets
+
+11
+00:00:35,745 --> 00:00:41,390
+for training and evaluation using the logic that we developed earlier in this course,
+
+12
+00:00:41,390 --> 00:00:45,890
+using repeatable splitting with the hash and modulo operator.
+
+13
+00:00:45,890 --> 00:00:52,220
+Let's talk about productionalise ML pipelines elastically with Cloud Dataflow.
+
+14
+00:00:52,220 --> 00:00:58,660
+As you will see, key benefits of using Cloud Dataflow are: it allows us to process and
+
+15
+00:00:58,660 --> 00:01:01,370
+transform large amounts of data in
+
+16
+00:01:01,370 --> 00:01:06,715
+parallel and it supports both streaming and batch jobs.
+
+17
+00:01:06,715 --> 00:01:12,400
+Thus, you can utilize the same logic for about trading your model and serving it.
+
+18
+00:01:12,400 --> 00:01:17,005
+There are two key terms here Apache Beam and Cloud Dataflow.
+
+19
+00:01:17,005 --> 00:01:21,590
+Firstly, there's Apache Beam which is a unified model for
+
+20
+00:01:21,590 --> 00:01:25,845
+defining both batch and streaming data parallel processing pipelines,
+
+21
+00:01:25,845 --> 00:01:30,020
+as well as a set of language specific SDKs for constructing
+
+22
+00:01:30,020 --> 00:01:34,665
+pipelines and runners for executing them on distributed processing backends.
+
+23
+00:01:34,665 --> 00:01:40,465
+Then, there's Dataflow which executes the code you wrote using the Apache Beam API.
+
+24
+00:01:40,465 --> 00:01:43,355
+Why would you want to use Cloud Dataflow?
+
+25
+00:01:43,355 --> 00:01:46,865
+One way to think about feature preprocessing or
+
+26
+00:01:46,865 --> 00:01:50,570
+even any data transformation is to think in terms of pipelines.
+
+27
+00:01:50,570 --> 00:01:53,600
+Here when I say pipeline I mean a sequence of
+
+28
+00:01:53,600 --> 00:01:56,515
+steps that change data from one format to another.
+
+29
+00:01:56,515 --> 00:02:00,345
+So, suppose you have some data in a data warehouse like BigQuery.
+
+30
+00:02:00,345 --> 00:02:04,850
+Then, you can use BigQuery as an input to your pipeline to a sequence of steps to
+
+31
+00:02:04,850 --> 00:02:09,450
+transform your data maybe introduced some new features as part of the transformation.
+
+32
+00:02:09,450 --> 00:02:13,700
+Finally, you can save the result to an output like Google Cloud Storage.
+
+33
+00:02:13,700 --> 00:02:16,280
+Now, Google Cloud Dataflow is a platform that
+
+34
+00:02:16,280 --> 00:02:19,670
+allows you to run these kinds of data processing pipelines.
+
+35
+00:02:19,670 --> 00:02:25,000
+Dataflow can run pipelines written in Python and Java programming languages.
+
+36
+00:02:25,000 --> 00:02:27,680
+Dataflow sets itself apart as a platform for
+
+37
+00:02:27,680 --> 00:02:30,535
+data transformations because it is a serverless,
+
+38
+00:02:30,535 --> 00:02:33,350
+fully managed offering from Google that allows you to
+
+39
+00:02:33,350 --> 00:02:37,150
+execute Data Processing Pipelines at scale.
+
+40
+00:02:37,150 --> 00:02:40,150
+As a developer, you don't have to worry about
+
+41
+00:02:40,150 --> 00:02:43,410
+managing the size of the cluster that runs your pipeline.
+
+42
+00:02:43,410 --> 00:02:46,599
+Dataflow changes the amount of compute resources,
+
+43
+00:02:46,599 --> 00:02:50,455
+the number of servers that will run your pipeline elastically,
+
+44
+00:02:50,455 --> 00:02:54,310
+all depending on the amount of data that your pipeline needs to process.
+
+45
+00:02:54,310 --> 00:02:58,120
+One thing that makes writing the Apache Beam easier is that
+
+46
+00:02:58,120 --> 00:03:02,875
+the code written for beam is similar to how people think of data processing pipelines.
+
+47
+00:03:02,875 --> 00:03:05,410
+Take a look at the pipeline in the center of
+
+48
+00:03:05,410 --> 00:03:07,630
+the slide this sample Python code
+
+49
+00:03:07,630 --> 00:03:11,455
+analyzes the number of words in lines of text in documents.
+
+50
+00:03:11,455 --> 00:03:14,200
+So, as an input to the pipeline you may want
+
+51
+00:03:14,200 --> 00:03:16,810
+to read text files from Google Cloud Storage.
+
+52
+00:03:16,810 --> 00:03:19,045
+Then you transform the data,
+
+53
+00:03:19,045 --> 00:03:22,130
+figure out the number of words in each line of text.
+
+54
+00:03:22,130 --> 00:03:27,025
+This kind of a transformation can be automatically scaled by Dataflow to run in parallel.
+
+55
+00:03:27,025 --> 00:03:28,390
+Next, in your pipeline,
+
+56
+00:03:28,390 --> 00:03:31,000
+you can group lines by the number of words
+
+57
+00:03:31,000 --> 00:03:34,105
+using grouping and other aggregation operations.
+
+58
+00:03:34,105 --> 00:03:36,520
+You can also filter out values,
+
+59
+00:03:36,520 --> 00:03:39,865
+for example, to ignore lines with fewer than ten words.
+
+60
+00:03:39,865 --> 00:03:42,030
+Once all the transformation, grouping,
+
+61
+00:03:42,030 --> 00:03:44,005
+and filtering operations are done,
+
+62
+00:03:44,005 --> 00:03:47,515
+the pipeline writes the results to Google Cloud Storage.
+
+63
+00:03:47,515 --> 00:03:50,140
+Notice that this implementation separates
+
+64
+00:03:50,140 --> 00:03:53,325
+the pipeline definition from the pipeline execution.
+
+65
+00:03:53,325 --> 00:03:56,450
+All the steps that you see before call to the
+
+66
+00:03:56,450 --> 00:04:00,015
+p.run method or just defining what the pipeline should do.
+
+67
+00:04:00,015 --> 00:04:04,005
+The pipeline actually gets executed only when you call the run method.
+
+68
+00:04:04,005 --> 00:04:07,940
+One of the coolest things about Apache Beam is that it supports both batch
+
+69
+00:04:07,940 --> 00:04:11,775
+and streaming processing using the same pipeline code.
+
+70
+00:04:11,775 --> 00:04:17,350
+In fact, the library's name beam comes from a contraction of batch and stream.
+
+71
+00:04:17,350 --> 00:04:19,420
+So, why should you care?
+
+72
+00:04:19,420 --> 00:04:23,570
+Well, means that regardless of whether your data's coming from batch data source like
+
+73
+00:04:23,570 --> 00:04:27,935
+Google Cloud Storage or even from a streaming data source like Pub/Sub,
+
+74
+00:04:27,935 --> 00:04:30,515
+you can reuse the same pipeline logic.
+
+75
+00:04:30,515 --> 00:04:35,590
+You can also output data to both batch and streaming destinations.
+
+76
+00:04:35,590 --> 00:04:40,150
+You can also easily changed these data sources in the pipeline without having to
+
+77
+00:04:40,150 --> 00:04:44,930
+change the logic of your pipeline implementation. Here's how.
+
+78
+00:04:44,930 --> 00:04:47,740
+Noticed in the code on the screen that the read and write
+
+79
+00:04:47,740 --> 00:04:50,830
+operations are done using beam.io methods.
+
+80
+00:04:50,830 --> 00:04:54,260
+These methods use different connectors, for example,
+
+81
+00:04:54,260 --> 00:04:59,860
+the pub/sub connect can read the content of messages that are streamed into the pipeline.
+
+82
+00:04:59,860 --> 00:05:05,040
+Other connectors can read raw text from Google Cloud Storage or a file system.
+
+83
+00:05:05,040 --> 00:05:08,230
+The Apache Beam API has a variety of
+
+84
+00:05:08,230 --> 00:05:12,265
+connectors to help you use services on Google Cloud like BigQuery.
+
+85
+00:05:12,265 --> 00:05:15,285
+Also since Apache Beam is an open source project,
+
+86
+00:05:15,285 --> 00:05:18,305
+companies can implement their own connectors.
+
+87
+00:05:18,305 --> 00:05:23,185
+Here is boilerplate code that you can use to execute a Beam pipeline,
+
+88
+00:05:23,185 --> 00:05:24,655
+that reads from BigQuery,
+
+89
+00:05:24,655 --> 00:05:29,710
+transforms the data bit and rights to Google Cloud Storage as a CSV.
+
+90
+00:05:29,950 --> 00:05:35,385
+So, you'll see we're reading in or importing the Apache Beam library.
+
+91
+00:05:35,385 --> 00:05:42,985
+Then, we define transform which is a user-defined Python function which takes a row,
+
+92
+00:05:42,985 --> 00:05:48,130
+applies transformation to it in this place multiplying column a times
+
+93
+00:05:48,130 --> 00:05:53,690
+b for c and then returning the result via the yield statement as a CSV.
+
+94
+00:05:53,690 --> 00:05:57,495
+Once we define our user-defined function,
+
+95
+00:05:57,495 --> 00:05:59,970
+then, we'll create our Beam pipeline.
+
+96
+00:05:59,970 --> 00:06:02,240
+You'll notice that there's arguments to that.
+
+97
+00:06:02,240 --> 00:06:05,310
+This specified different parameters of our pipeline,
+
+98
+00:06:05,310 --> 00:06:07,115
+such as what are runner will be.
+
+99
+00:06:07,115 --> 00:06:09,595
+In this case, we're using the Dataflow Runner.
+
+100
+00:06:09,595 --> 00:06:11,955
+Below, we define the SQL query,
+
+101
+00:06:11,955 --> 00:06:14,660
+where we read from our source table.
+
+102
+00:06:14,660 --> 00:06:18,710
+Then, we'll apply three operations as
+
+103
+00:06:18,710 --> 00:06:23,360
+separated by the pipe delimiter including reading our data from BigQuery,
+
+104
+00:06:23,360 --> 00:06:27,265
+applying our Python transformation to it,
+
+105
+00:06:27,265 --> 00:06:32,060
+and then writing the files out to CSV files on Google Cloud Storage.
+
+106
+00:06:32,060 --> 00:06:34,175
+Finally, once we've build our pipeline,
+
+107
+00:06:34,175 --> 00:06:36,515
+we can then execute it with p.run.
+
+108
+00:06:36,515 --> 00:06:38,840
+Once you have created your pipeline,
+
+109
+00:06:38,840 --> 00:06:40,785
+it is easy to execute it.
+
+110
+00:06:40,785 --> 00:06:44,640
+Simply running main() runs the pipeline locally.
+
+111
+00:06:44,640 --> 00:06:46,485
+Similarly, to ML Engine,
+
+112
+00:06:46,485 --> 00:06:49,685
+it's best to prototype locally on a subset of data.
+
+113
+00:06:49,685 --> 00:06:53,400
+Then, run your job on the cloud over the entire dataset.
+
+114
+00:06:53,400 --> 00:06:57,480
+To run on the cloud, you need to specify the cloud parameters.
+
+115
+00:06:57,480 --> 00:07:00,430
+In this case, we need to specify the project,
+
+116
+00:07:00,430 --> 00:07:03,965
+where we're running our job, the job name,
+
+117
+00:07:03,965 --> 00:07:06,260
+the staging location and the temp location which
+
+118
+00:07:06,260 --> 00:07:11,390
+are Cloud storage buckets to save any temporary files.
+
+119
+00:07:11,390 --> 00:07:14,025
+Finally, we need to specify the runner,
+
+120
+00:07:14,025 --> 00:07:17,990
+which is the pipeline runner that will parse your programming, construct your pipeline.
+
+121
+00:07:17,990 --> 00:07:19,670
+Since we're running on the cloud,
+
+122
+00:07:19,670 --> 00:07:21,830
+we must use the dataflow runner.
+
+123
+00:07:21,830 --> 00:07:24,520
+Now, we are ready to process our baby weight data,
+
+124
+00:07:24,520 --> 00:07:27,010
+which is still located in a BigQuery table.
+
+125
+00:07:27,010 --> 00:07:31,755
+For both the training and evaluation datasets let's read our data from BigQuery.
+
+126
+00:07:31,755 --> 00:07:34,550
+For example, the Train Read Operation,
+
+127
+00:07:34,550 --> 00:07:38,985
+performed some preprocessing yielding the CSV format the results,
+
+128
+00:07:38,985 --> 00:07:41,100
+that's the training CSV,
+
+129
+00:07:41,100 --> 00:07:44,040
+and then dump the results out to CSV files,
+
+130
+00:07:44,040 --> 00:07:46,425
+to find operation titled train out.
+
+131
+00:07:46,425 --> 00:07:50,690
+We will also build a moderate our job in real-time using the Dataflow dashboard
+
+132
+00:07:50,690 --> 00:07:54,995
+at console.cloud.google.com and searching for Dataflow.
+
+133
+00:07:54,995 --> 00:07:57,465
+This Dashboard will tell us the number of workers,
+
+134
+00:07:57,465 --> 00:07:58,695
+status of our job,
+
+135
+00:07:58,695 --> 00:08:00,820
+and other useful metrics.

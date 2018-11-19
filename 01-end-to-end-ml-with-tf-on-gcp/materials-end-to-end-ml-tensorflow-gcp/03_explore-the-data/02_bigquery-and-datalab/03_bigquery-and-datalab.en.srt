@@ -1,0 +1,148 @@
+1
+00:00:00,540 --> 00:00:06,380
+In the previous lessons, we quickly
+reviewed BigQuery and python notebooks.
+
+2
+00:00:06,380 --> 00:00:08,970
+Let's now look at them in combination
+
+3
+00:00:08,970 --> 00:00:13,980
+because the two technologies
+complement each other very well.
+
+4
+00:00:13,980 --> 00:00:18,750
+So here, I have the query as a string and
+
+5
+00:00:18,750 --> 00:00:23,640
+I'm using a Python package
+google.datalab.bigquery.
+
+6
+00:00:23,640 --> 00:00:25,160
+That's Python package.
+
+7
+00:00:25,160 --> 00:00:27,660
+To execute the query, that's the execute.
+
+8
+00:00:27,660 --> 00:00:32,380
+So I'm take the query, passing in
+the string and calling the execute method.
+
+9
+00:00:33,550 --> 00:00:36,530
+And then I'm taking the result
+that comes back and
+
+10
+00:00:36,530 --> 00:00:40,440
+converting the result
+into a Pandas data frame.
+
+11
+00:00:40,440 --> 00:00:48,730
+DF is a Pandas data frame, df.head shows
+the first few rows of the result set.
+
+12
+00:00:48,730 --> 00:00:53,800
+Now, this is an extremely powerful
+paradigm because BigQuery
+
+13
+00:00:53,800 --> 00:01:00,100
+allows you to compute aggregate statistics
+on very large data sets interactively.
+
+14
+00:01:00,100 --> 00:01:04,310
+And then, you can use Python plotting
+commands to create impact for
+
+15
+00:01:04,310 --> 00:01:06,080
+visualizations.
+
+16
+00:01:06,080 --> 00:01:09,800
+For example, take this, so
+that's what you're seeing here.
+
+17
+00:01:09,800 --> 00:01:14,260
+So using Pandas and
+BigQuery together in a notebook.
+
+18
+00:01:14,260 --> 00:01:18,711
+The combination of Python and
+BigQuery in a notebook rocks.
+
+19
+00:01:18,711 --> 00:01:22,972
+In this code snippet,
+get_distinct_values is like
+
+20
+00:01:22,972 --> 00:01:27,242
+the code in the previous slide,
+it's like this code.
+
+21
+00:01:27,242 --> 00:01:31,904
+This is essentially carried
+out using a SQL query,
+
+22
+00:01:31,904 --> 00:01:36,675
+and there's probably a count
+distinct in the SQL and
+
+23
+00:01:36,675 --> 00:01:41,570
+the result is coming
+back into a data frame.
+
+24
+00:01:41,570 --> 00:01:43,650
+And once we have that data frame,
+
+25
+00:01:43,650 --> 00:01:49,140
+we can now use the Pandas
+functionality to sort and to plot.
+
+26
+00:01:49,140 --> 00:01:54,550
+So we are using BigQuery to carry out
+aggregation using SQL on millions
+
+27
+00:01:54,550 --> 00:02:01,520
+of rows in the first command, and
+then getting back a Pandas data frame and
+
+28
+00:02:01,520 --> 00:02:06,980
+using the Pandas functionality to sort and
+to plot the data that we got back.
+
+29
+00:02:06,980 --> 00:02:11,570
+And we are basically getting the results
+in a Python notebook, so we get to work
+
+30
+00:02:11,570 --> 00:02:16,410
+interactively in a Python notebook on
+data sets that are tremendously large.
+
+31
+00:02:16,410 --> 00:02:18,980
+So this is what you will
+do in the first lab.

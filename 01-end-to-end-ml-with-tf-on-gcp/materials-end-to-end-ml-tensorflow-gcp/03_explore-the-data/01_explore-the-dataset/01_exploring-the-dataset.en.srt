@@ -1,0 +1,339 @@
+1
+00:00:00,000 --> 00:00:04,350
+The first lab is about exploring the data.
+
+2
+00:00:04,350 --> 00:00:07,025
+Why are we exploring the data?
+
+3
+00:00:07,025 --> 00:00:09,810
+Why don't we just take all the columns in
+
+4
+00:00:09,810 --> 00:00:13,335
+the dataset and feed them into the machine learning model?
+
+5
+00:00:13,335 --> 00:00:15,840
+Shouldn't the machine learning model be able to
+
+6
+00:00:15,840 --> 00:00:18,580
+figure out that some of the columns aren't needed?
+
+7
+00:00:18,580 --> 00:00:20,525
+Maybe give them zero weight?
+
+8
+00:00:20,525 --> 00:00:24,030
+Isn't the point of the machine learning model to learn how to
+
+9
+00:00:24,030 --> 00:00:28,505
+combine the columns so as to get the label that we want?
+
+10
+00:00:28,505 --> 00:00:31,910
+Well, real life doesn't work that way.
+
+11
+00:00:31,910 --> 00:00:34,610
+Many times that data,
+
+12
+00:00:34,610 --> 00:00:38,390
+as recorded, isn't what you expect.
+
+13
+00:00:38,390 --> 00:00:42,850
+Show me a dataset that no one is actively visualizing,
+
+14
+00:00:42,850 --> 00:00:47,065
+whether in the form of dashboards or charts or something,
+
+15
+00:00:47,065 --> 00:00:53,995
+and I'm quite confident that much of the data will be missing or even wrong.
+
+16
+00:00:53,995 --> 00:00:55,965
+In the real world,
+
+17
+00:00:55,965 --> 00:01:01,100
+there are surprisingly many intricacies hidden in the data,
+
+18
+00:01:01,100 --> 00:01:06,050
+and if we use the data without developing an understanding of it,
+
+19
+00:01:06,050 --> 00:01:12,330
+we will end up using the data in a way that will make productionization very hard.
+
+20
+00:01:12,330 --> 00:01:17,095
+The thing to remember about productionization is that during production,
+
+21
+00:01:17,095 --> 00:01:21,405
+you're going to have to deal with the data as it comes in.
+
+22
+00:01:21,405 --> 00:01:26,035
+So, it'll make productionization very hard and we'll see a few examples of this.
+
+23
+00:01:26,035 --> 00:01:30,385
+You are probably doing this specialization because you saw images,
+
+24
+00:01:30,385 --> 00:01:35,210
+sequences, recommendation models, all listed in the set of courses.
+
+25
+00:01:35,210 --> 00:01:42,510
+However, all five courses in the first specialization were all on structured data.
+
+26
+00:01:42,510 --> 00:01:48,000
+Why? Even though image models and text models get all the press,
+
+27
+00:01:48,000 --> 00:01:53,395
+even at Google, most of our machine learning models operate on structured data.
+
+28
+00:01:53,395 --> 00:01:55,475
+That's what this table shows.
+
+29
+00:01:55,475 --> 00:01:58,600
+MLP is multilayer perceptron,
+
+30
+00:01:58,600 --> 00:02:04,490
+your traditional feedforward fully connected neural network with four or five layers,
+
+31
+00:02:04,490 --> 00:02:07,415
+and that's what you tend to use for structured data.
+
+32
+00:02:07,415 --> 00:02:11,665
+Nearly two thirds of our models are MLPs.
+
+33
+00:02:11,665 --> 00:02:15,390
+LSTM, long short-term memory models,
+
+34
+00:02:15,390 --> 00:02:19,130
+are what you tend to use on text and time series models.
+
+35
+00:02:19,130 --> 00:02:22,060
+That's 29% of all of our models.
+
+36
+00:02:22,060 --> 00:02:25,415
+CNNs, convolutional neural networks,
+
+37
+00:02:25,415 --> 00:02:29,125
+these are the models you tend to use primarily for image models.
+
+38
+00:02:29,125 --> 00:02:34,350
+Although you can also successfully use them for tasks like text classification.
+
+39
+00:02:34,350 --> 00:02:37,525
+CNNs are just five percent of models.
+
+40
+00:02:37,525 --> 00:02:42,995
+This explains why we have focused so much on structured data models.
+
+41
+00:02:42,995 --> 00:02:45,695
+These are, quite simply,
+
+42
+00:02:45,695 --> 00:02:50,890
+the most common types of models that you will encounter in practice.
+
+43
+00:02:50,950 --> 00:02:54,480
+Our goal is to predict the weight of
+
+44
+00:02:54,480 --> 00:02:58,945
+newborns so that all newborns can get the care that they need.
+
+45
+00:02:58,945 --> 00:03:00,900
+This scenario is this,
+
+46
+00:03:00,900 --> 00:03:04,995
+a mother calls a clinic and says that she's on her way.
+
+47
+00:03:04,995 --> 00:03:07,990
+At that point, the nurse uses
+
+48
+00:03:07,990 --> 00:03:12,890
+our application to predict what the weight of the newborn baby is going to be,
+
+49
+00:03:12,890 --> 00:03:15,550
+and if the weight is below some number,
+
+50
+00:03:15,550 --> 00:03:19,685
+the nurse arranges for special facilities like incubators,
+
+51
+00:03:19,685 --> 00:03:22,315
+maybe different types of doctors et cetera,
+
+52
+00:03:22,315 --> 00:03:26,720
+and this is so that we can get babies the care that they need.
+
+53
+00:03:26,950 --> 00:03:30,685
+So, this is the application that we will build.
+
+54
+00:03:30,685 --> 00:03:34,090
+Essentially, the nurse puts in the mother's age,
+
+55
+00:03:34,090 --> 00:03:38,545
+the gestation weeks assuming that the baby is born today,
+
+56
+00:03:38,545 --> 00:03:40,670
+how many babies - single,
+
+57
+00:03:40,670 --> 00:03:45,290
+twins et cetera, and the baby's gender if it is known.
+
+58
+00:03:45,290 --> 00:03:47,830
+The nurse hits "Predict",
+
+59
+00:03:47,830 --> 00:03:49,845
+the ML model runs,
+
+60
+00:03:49,845 --> 00:03:58,210
+and the nurse gets back a prediction of 7.19 pounds or 4.36 pounds,
+
+61
+00:03:58,210 --> 00:04:01,195
+depending on the inputs,
+
+62
+00:04:01,195 --> 00:04:06,495
+and then the nurse arranges for special facilities for the babies on the right,
+
+63
+00:04:06,495 --> 00:04:09,015
+and that's the way it works.
+
+64
+00:04:09,015 --> 00:04:12,310
+So, this is what we will build.
+
+65
+00:04:12,310 --> 00:04:15,670
+For machine learning, we need training data.
+
+66
+00:04:15,670 --> 00:04:21,555
+In our case, the US government has been collecting statistics on births for many years.
+
+67
+00:04:21,555 --> 00:04:25,810
+That data is available as a sample dataset in BigQuery.
+
+68
+00:04:25,810 --> 00:04:29,615
+It's reasonably sized, it has about 140 million rows,
+
+69
+00:04:29,615 --> 00:04:31,360
+22 gigs of data.
+
+70
+00:04:31,360 --> 00:04:35,595
+We can use this dataset to build a machine learning model.
+
+71
+00:04:35,595 --> 00:04:37,870
+In reality, of course,
+
+72
+00:04:37,870 --> 00:04:40,460
+you don't want to use data this old,
+
+73
+00:04:40,460 --> 00:04:44,770
+1969 to 2008, but let's ignore
+
+74
+00:04:44,770 --> 00:04:51,500
+the fact that the sample dataset stops in 2008 because this is a learning opportunity.
+
+75
+00:04:53,900 --> 00:05:01,015
+The dataset includes a variety of details about the baby and about the pregnancy.
+
+76
+00:05:01,015 --> 00:05:02,700
+We'll ignore the birthday,
+
+77
+00:05:02,700 --> 00:05:06,260
+of course, but columns like the US State,
+
+78
+00:05:06,260 --> 00:05:09,770
+the mother's age, gestation weeks et cetera,
+
+79
+00:05:09,770 --> 00:05:12,110
+those might be useful features.
+
+80
+00:05:12,110 --> 00:05:14,950
+The baby's birth weight in pounds,
+
+81
+00:05:14,950 --> 00:05:16,170
+that is the label,
+
+82
+00:05:16,170 --> 00:05:20,070
+it is what we're training our model to predict.
+
+83
+00:05:20,070 --> 00:05:25,099
+Our first step will be to explore this dataset,
+
+84
+00:05:25,099 --> 00:05:28,710
+primarily by visualizing various things.
+
+85
+00:05:28,710 --> 00:05:36,060
+But before that, a quick word on how to access the lab environment.

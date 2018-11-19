@@ -1,0 +1,4 @@
+In this lab, we're going to continue
+with the babyweight dataset that you've seen before. We'll do the model training, evaluation,
+and prediction all within BigQuery. Go ahead and start in the lab and then
+we'll walk through the solution together.

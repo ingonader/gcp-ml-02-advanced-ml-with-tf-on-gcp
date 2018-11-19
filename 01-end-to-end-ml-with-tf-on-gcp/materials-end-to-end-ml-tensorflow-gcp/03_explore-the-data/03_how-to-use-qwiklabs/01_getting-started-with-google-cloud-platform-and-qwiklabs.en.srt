@@ -1,0 +1,479 @@
+1
+00:00:00,000 --> 00:00:02,525
+Hello and welcome again to the course.
+
+2
+00:00:02,525 --> 00:00:04,340
+Before we get too deep into the lectures here,
+
+3
+00:00:04,340 --> 00:00:09,070
+I want to preview the interactive hands-on labs platform called Qwiklabs and how
+
+4
+00:00:09,070 --> 00:00:11,160
+you'll actually be practicing a lot of the things that you're going to learn
+
+5
+00:00:11,160 --> 00:00:13,965
+here inside of real Google Cloud Platform accounts.
+
+6
+00:00:13,965 --> 00:00:16,825
+But you don't need your own credentials as they're actually going to be provided for you.
+
+7
+00:00:16,825 --> 00:00:19,200
+So, let's take a look at how the labs platform is setup.
+
+8
+00:00:19,200 --> 00:00:21,855
+Inside of Coursera, you're actually going to see
+
+9
+00:00:21,855 --> 00:00:25,405
+a lab or an item that's marked out for an external tool to open up,
+
+10
+00:00:25,405 --> 00:00:27,150
+and you're going to click on that tool.
+
+11
+00:00:27,150 --> 00:00:30,410
+After that, you're going to see a "Start Lab" button in green and
+
+12
+00:00:30,410 --> 00:00:33,840
+a timer associated with it for you to complete the lab in that duration.
+
+13
+00:00:33,840 --> 00:00:37,440
+After you click that "Start Lab" credentials for your student accounts
+
+14
+00:00:37,440 --> 00:00:41,150
+are automatically going to be provided to you and a new box that's going to pop up.
+
+15
+00:00:41,150 --> 00:00:43,470
+In addition, there's to be another button that says,
+
+16
+00:00:43,470 --> 00:00:45,690
+"Open Google Console", in yellow,
+
+17
+00:00:45,690 --> 00:00:47,020
+and once you open that up,
+
+18
+00:00:47,020 --> 00:00:49,645
+that's going to ask you to log into the Google Cloud platform,
+
+19
+00:00:49,645 --> 00:00:51,690
+with the key caveat that you logging in with
+
+20
+00:00:51,690 --> 00:00:56,015
+a student account and not your own personal account should you already have one setup.
+
+21
+00:00:56,015 --> 00:00:58,290
+Last but not least, we'll do a few demos and
+
+22
+00:00:58,290 --> 00:01:01,620
+walkthroughs of what the UI looks like. So, let's take a look.
+
+23
+00:01:01,620 --> 00:01:04,320
+So, inside an example Coursera course,
+
+24
+00:01:04,320 --> 00:01:07,400
+you're going to come across a lab that looks something like this.
+
+25
+00:01:07,400 --> 00:01:09,120
+This is just an example, this is Lab zero
+
+26
+00:01:09,120 --> 00:01:10,955
+but it could be any of the labs that you might find.
+
+27
+00:01:10,955 --> 00:01:12,550
+Once you've clicked on that,
+
+28
+00:01:12,550 --> 00:01:17,300
+you'll see a checkbox that's going to authorize the lab to run,
+
+29
+00:01:17,300 --> 00:01:19,550
+and you accept the terms and conditions for Coursera,
+
+30
+00:01:19,550 --> 00:01:21,430
+and you click on "Open Tool".
+
+31
+00:01:21,430 --> 00:01:22,940
+Once you click, "Open Tool",
+
+32
+00:01:22,940 --> 00:01:25,070
+it's going to bring you to the Qwiklabs environment,
+
+33
+00:01:25,070 --> 00:01:27,580
+and there're couple of key things to notice here.
+
+34
+00:01:27,580 --> 00:01:31,050
+On the right-hand side is your instructions pane for the actual lab.
+
+35
+00:01:31,050 --> 00:01:33,765
+This lab's a mental lab, it's all about Qwiklabs in general.
+
+36
+00:01:33,765 --> 00:01:35,250
+But whatever your course is,
+
+37
+00:01:35,250 --> 00:01:38,460
+this is where the instructions for completing the lab are going to take place.
+
+38
+00:01:38,460 --> 00:01:41,070
+So, you always want to keep this prompt, open.
+
+39
+00:01:41,070 --> 00:01:43,700
+Now, once you actually click, "Start Lab",
+
+40
+00:01:43,700 --> 00:01:47,730
+a provisioned instance of the Google Cloud Platform complete
+
+41
+00:01:47,730 --> 00:01:51,380
+with any additional instances,
+
+42
+00:01:51,380 --> 00:01:52,890
+or say you're working with VMs,
+
+43
+00:01:52,890 --> 00:01:55,525
+if there's something that the lab provider wanted you to have,
+
+44
+00:01:55,525 --> 00:01:57,985
+it's actually going to be created inside of this lab instance for you.
+
+45
+00:01:57,985 --> 00:02:00,170
+Which is a great, it says "Send Box" instance.
+
+46
+00:02:00,170 --> 00:02:01,795
+Now, once you notice I click "Start Lab",
+
+47
+00:02:01,795 --> 00:02:04,860
+I have 15 minutes to complete this lab and I promise you that the timers are
+
+48
+00:02:04,860 --> 00:02:08,040
+going to be associated with additional padding for the labs that you're going to do.
+
+49
+00:02:08,040 --> 00:02:09,600
+This is not going to mean it takes us 15 minutes,
+
+50
+00:02:09,600 --> 00:02:11,115
+so it'll takes us about five minutes.
+
+51
+00:02:11,115 --> 00:02:12,720
+Now as I mentioned before,
+
+52
+00:02:12,720 --> 00:02:15,815
+you have the username and password and a Project ID.
+
+53
+00:02:15,815 --> 00:02:19,620
+What I'll ask you to do now is click on "Open Google Console",
+
+54
+00:02:19,660 --> 00:02:21,950
+and once you've opened Google Console,
+
+55
+00:02:21,950 --> 00:02:24,480
+you'll be asked to sign in with your email.
+
+56
+00:02:24,480 --> 00:02:27,310
+Now, the key thing here is, if you used Google Resources before,
+
+57
+00:02:27,310 --> 00:02:29,860
+immediately you'll start typing in your personal email, I do it all the time.
+
+58
+00:02:29,860 --> 00:02:31,000
+Make sure you go back to
+
+59
+00:02:31,000 --> 00:02:35,280
+your lab credentials screen and copy and paste the username that's auto-generated fused.
+
+60
+00:02:35,280 --> 00:02:37,070
+It's going to be unique for you and it's
+
+61
+00:02:37,070 --> 00:02:39,140
+actually going to be unique for every lab that you run.
+
+62
+00:02:39,140 --> 00:02:41,910
+So, it'll be creating a new student account for each lab that you run.
+
+63
+00:02:41,910 --> 00:02:44,130
+Copy and paste that password, it's going to be different from mine,
+
+64
+00:02:44,130 --> 00:02:46,860
+so don't worry about copying that down.
+
+65
+00:02:46,860 --> 00:02:49,150
+Click "Next" in your browser,
+
+66
+00:02:49,150 --> 00:02:51,380
+paste in that password,
+
+67
+00:02:51,380 --> 00:02:59,620
+accept the terms, don't worry about setting up a secondary phone number,
+
+68
+00:02:59,620 --> 00:03:02,975
+accept the terms of the Google Cloud Platform.
+
+69
+00:03:02,975 --> 00:03:06,535
+Once you see a screen that looks like this, then you're good to go.
+
+70
+00:03:06,535 --> 00:03:08,870
+Make sure, key tidbit.
+
+71
+00:03:08,870 --> 00:03:10,910
+If this is your project's selector,
+
+72
+00:03:10,910 --> 00:03:14,305
+it should be this auto-generated Qwiklabs alphanumeric.
+
+73
+00:03:14,305 --> 00:03:16,760
+If you should happen to see something that says either,
+
+74
+00:03:16,760 --> 00:03:20,525
+"Select A Project", or if you see something that says, "Qwiklabs Resources",
+
+75
+00:03:20,525 --> 00:03:23,490
+you actually want to click on this and make sure to
+
+76
+00:03:23,490 --> 00:03:27,120
+select your alphanumeric Qwiklabs ID and then go ahead and hit "Open".
+
+77
+00:03:27,120 --> 00:03:29,145
+Once you're within here, you're good to go.
+
+78
+00:03:29,145 --> 00:03:30,860
+So, follow the instructions for the rest of the lab.
+
+79
+00:03:30,860 --> 00:03:32,010
+It's going to guide you through
+
+80
+00:03:32,010 --> 00:03:34,195
+what products and services that you're going to be working with.
+
+81
+00:03:34,195 --> 00:03:37,810
+You can access the menu of products and services in the upper-left-hand corner here,
+
+82
+00:03:37,810 --> 00:03:41,070
+or if it's a lab that's working for CloudShell, all the way up here,
+
+83
+00:03:41,070 --> 00:03:43,350
+is the button activate CloudShell which will bring open
+
+84
+00:03:43,350 --> 00:03:45,975
+that terminal instance for Google Cloud Platform.
+
+85
+00:03:45,975 --> 00:03:48,390
+Last few things. Back here,
+
+86
+00:03:48,390 --> 00:03:50,835
+you'll see that our timer's automatically running still.
+
+87
+00:03:50,835 --> 00:03:52,680
+Once you're completed with the lab,
+
+88
+00:03:52,680 --> 00:03:53,985
+you're done with it,
+
+89
+00:03:53,985 --> 00:03:56,580
+or if you wanted to take another attempt at the lab,
+
+90
+00:03:56,580 --> 00:03:59,325
+you have upwards of three attempts per lab, which is great.
+
+91
+00:03:59,325 --> 00:04:01,700
+So say, you want to run through the lab very quickly the first time,
+
+92
+00:04:01,700 --> 00:04:04,100
+and then experiment and explore with it the second time,
+
+93
+00:04:04,100 --> 00:04:06,280
+you're welcome to do that for a couple of times.
+
+94
+00:04:06,280 --> 00:04:10,000
+Now, make sure in order to get your completion stats properly recorded,
+
+95
+00:04:10,000 --> 00:04:11,385
+click on "End Lab",
+
+96
+00:04:11,385 --> 00:04:14,095
+you'll be faced with a prompt that says, "Are you all done".
+
+97
+00:04:14,095 --> 00:04:15,415
+Once you click "End Lab",
+
+98
+00:04:15,415 --> 00:04:17,275
+your project, any datasets,
+
+99
+00:04:17,275 --> 00:04:18,800
+anything that you've been working with inside of
+
+100
+00:04:18,800 --> 00:04:21,500
+this sandbox project, is going to be deleted.
+
+101
+00:04:21,500 --> 00:04:23,870
+So, make sure if you have any queries that you're running or
+
+102
+00:04:23,870 --> 00:04:25,820
+any interesting notes that you have saved inside
+
+103
+00:04:25,820 --> 00:04:28,035
+you to Google Cloud Platform Qwiklabs account,
+
+104
+00:04:28,035 --> 00:04:31,095
+that you copy and paste those and save them somewhere else,
+
+105
+00:04:31,095 --> 00:04:33,920
+perhaps in your own personal Google Cloud Platform account,
+
+106
+00:04:33,920 --> 00:04:35,710
+or somewhere locally on your machine.
+
+107
+00:04:35,710 --> 00:04:37,595
+Once you've clicked "End Lab",
+
+108
+00:04:37,595 --> 00:04:39,910
+then you can enter feedback for the lab,
+
+109
+00:04:39,910 --> 00:04:42,505
+and you can continue moving on with rest of the courses in Coursera.
+
+110
+00:04:42,505 --> 00:04:44,050
+So again, quick recap.
+
+111
+00:04:44,050 --> 00:04:45,620
+One of the key things to remember is,
+
+112
+00:04:45,620 --> 00:04:46,875
+click on" Open Tool",
+
+113
+00:04:46,875 --> 00:04:48,315
+that'll open up Qwiklab.
+
+114
+00:04:48,315 --> 00:04:51,440
+The second is, in order to get those credentials here on the left-hand side,
+
+115
+00:04:51,440 --> 00:04:54,230
+you have to click "Start Lab" which again kicks off the timer,
+
+116
+00:04:54,230 --> 00:04:56,480
+and there's no way to pause once that lab is started.
+
+117
+00:04:56,480 --> 00:04:58,590
+But again, keep in mind you have multiple attempts.
+
+118
+00:04:58,590 --> 00:05:00,840
+Lastly, click on "End Lab" when you're ready
+
+119
+00:05:00,840 --> 00:05:03,565
+to complete out the lab that you've been working on.
+
+120
+00:05:03,565 --> 00:05:07,250
+That's it, good luck with the labs that come later on, and enjoy the course.

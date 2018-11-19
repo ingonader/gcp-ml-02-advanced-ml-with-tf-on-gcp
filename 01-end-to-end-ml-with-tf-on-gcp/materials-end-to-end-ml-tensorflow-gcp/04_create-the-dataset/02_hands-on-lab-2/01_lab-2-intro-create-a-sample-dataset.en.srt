@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:02,465
+What filter do you use to hash on?
+
+2
+00:00:02,465 --> 00:00:05,645
+You want it to be randomly spread throughout.
+
+3
+00:00:05,645 --> 00:00:11,520
+You cannot split by year because babies' weights actually have a long term trend.
+
+4
+00:00:11,520 --> 00:00:13,500
+Check it out. It's in the data.
+
+5
+00:00:13,500 --> 00:00:17,340
+I'd suggest a concatenated string of year and month.
+
+6
+00:00:17,340 --> 00:00:21,225
+In this lab, you sample the full BigQuery dataset to create
+
+7
+00:00:21,225 --> 00:00:25,680
+a smaller dataset for model development and for local training.
+
+8
+00:00:25,680 --> 00:00:29,750
+Make sure that the smaller dataset is representative of the full dataset.

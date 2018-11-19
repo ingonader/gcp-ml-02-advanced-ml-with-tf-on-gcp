@@ -1,0 +1,403 @@
+1
+00:00:00,000 --> 00:00:06,330
+Let's do a fast review of the steps involved when doing machine learning on GCP.
+
+2
+00:00:06,330 --> 00:00:09,940
+These are the steps involved in any machine learning project,
+
+3
+00:00:09,940 --> 00:00:14,355
+but we'll focus on doing them with Google Cloud Platform Tools.
+
+4
+00:00:14,355 --> 00:00:17,195
+Like most software libraries,
+
+5
+00:00:17,195 --> 00:00:21,055
+TensorFlow contains multiple abstraction levels,
+
+6
+00:00:21,055 --> 00:00:23,975
+tf layers, tf losses et cetera.
+
+7
+00:00:23,975 --> 00:00:29,210
+These are high level representations of useful neural network components.
+
+8
+00:00:29,210 --> 00:00:31,950
+These modules provide components that are useful when
+
+9
+00:00:31,950 --> 00:00:35,385
+building custom neural network models.
+
+10
+00:00:35,385 --> 00:00:38,230
+You often don't need a custom ML model,
+
+11
+00:00:38,230 --> 00:00:41,745
+the estimator API is a high level API.
+
+12
+00:00:41,745 --> 00:00:43,975
+It knows how to do distributed training,
+
+13
+00:00:43,975 --> 00:00:45,815
+it knows how to evaluate,
+
+14
+00:00:45,815 --> 00:00:47,645
+how to create a checkpoint,
+
+15
+00:00:47,645 --> 00:00:49,170
+how to save a model,
+
+16
+00:00:49,170 --> 00:00:52,135
+how to set it up for TensorFlow Serving.
+
+17
+00:00:52,135 --> 00:00:58,250
+It comes with everything done in a sensible way that fits most ML models in production.
+
+18
+00:00:58,250 --> 00:01:05,150
+In this course, we will work with TensorFlow at the tf estimator level of abstraction.
+
+19
+00:01:05,150 --> 00:01:09,155
+Cloud ML Engine is orthogonal to this hierarchy.
+
+20
+00:01:09,155 --> 00:01:13,380
+Regardless of which abstraction level you're writing your code at,
+
+21
+00:01:13,380 --> 00:01:20,770
+CMLE gives you a managed service for training and deploying TensorFlow models.
+
+22
+00:01:20,920 --> 00:01:24,655
+If you have data that fits in memory,
+
+23
+00:01:24,655 --> 00:01:27,790
+pretty much any machine learning framework will work.
+
+24
+00:01:27,790 --> 00:01:30,580
+Once your data sets get larger,
+
+25
+00:01:30,580 --> 00:01:33,950
+your data will not fit into memory and you need
+
+26
+00:01:33,950 --> 00:01:38,195
+a more sophisticated performant ML framework.
+
+27
+00:01:38,195 --> 00:01:41,055
+This is where TensorFlow comes in.
+
+28
+00:01:41,055 --> 00:01:44,030
+You can use TensorFlow estimators not just for
+
+29
+00:01:44,030 --> 00:01:48,450
+deep learning but also for things like Boosted Regression Trees.
+
+30
+00:01:48,450 --> 00:01:51,650
+But as we discussed in the first specialization,
+
+31
+00:01:51,650 --> 00:01:53,225
+there are ways to architect
+
+32
+00:01:53,225 --> 00:01:58,050
+deep neural networks so that they get the benefits of bagging and boosting,
+
+33
+00:01:58,050 --> 00:02:02,870
+and so we will simply focus on one technology, Neural Networks.
+
+34
+00:02:02,870 --> 00:02:05,870
+In real-world problems, there's often
+
+35
+00:02:05,870 --> 00:02:09,000
+very little benefit to a different machine learning algorithm.
+
+36
+00:02:09,000 --> 00:02:14,085
+You should spend any time and resources you have on getting better data.
+
+37
+00:02:14,085 --> 00:02:18,575
+But as we said, many machine learning frameworks can handle toy problems.
+
+38
+00:02:18,575 --> 00:02:21,770
+But what are some of the important things to think
+
+39
+00:02:21,770 --> 00:02:25,670
+about when it comes to building effective machine learning models?
+
+40
+00:02:25,670 --> 00:02:30,200
+The first and most important thing is that you need to figure
+
+41
+00:02:30,200 --> 00:02:34,940
+out a way to train the model on as much data as you can.
+
+42
+00:02:34,940 --> 00:02:36,815
+Don't sample the data,
+
+43
+00:02:36,815 --> 00:02:38,715
+don't aggregate the data,
+
+44
+00:02:38,715 --> 00:02:42,205
+use as much data as you can.
+
+45
+00:02:42,205 --> 00:02:45,745
+As your data size increases,
+
+46
+00:02:45,745 --> 00:02:49,955
+batching and distribution become extremely important.
+
+47
+00:02:49,955 --> 00:02:53,595
+You will need to take your data and split it into batches,
+
+48
+00:02:53,595 --> 00:02:55,190
+and then you need to train,
+
+49
+00:02:55,190 --> 00:03:00,920
+but then you need to also distribute your training over many machines.
+
+50
+00:03:00,920 --> 00:03:03,330
+This is not as simple as MapReduce,
+
+51
+00:03:03,330 --> 00:03:05,560
+where things are embarrassingly parallel.
+
+52
+00:03:05,560 --> 00:03:10,240
+Things like gradient descent optimizations are not embarrassingly parallel.
+
+53
+00:03:10,240 --> 00:03:12,390
+You will need parameter servers that form
+
+54
+00:03:12,390 --> 00:03:15,885
+a shared memory that's updated during each epoch.
+
+55
+00:03:15,885 --> 00:03:20,050
+Sometimes people think they can take a shortcut in order to keep
+
+56
+00:03:20,050 --> 00:03:24,695
+the training simple by getting a bigger and bigger machine with lots of GPUs.
+
+57
+00:03:24,695 --> 00:03:28,445
+They often regret that decision because at some point,
+
+58
+00:03:28,445 --> 00:03:31,425
+you will hit the limit of whatever single machine you're using.
+
+59
+00:03:31,425 --> 00:03:34,950
+Scaling out is the answer, not scaling up.
+
+60
+00:03:34,950 --> 00:03:39,280
+Another common shortcut that people take is to sample their data,
+
+61
+00:03:39,280 --> 00:03:43,650
+so that it's small enough to do machine learning on the hardware they happened to have.
+
+62
+00:03:43,650 --> 00:03:47,920
+They're leaving substantial performance gains on the table if they do that.
+
+63
+00:03:47,920 --> 00:03:52,060
+Using all the available data and devising a plan to collect
+
+64
+00:03:52,060 --> 00:03:55,420
+even more data is often the difference between ML
+
+65
+00:03:55,420 --> 00:03:59,590
+that doesn't work and machine learning that appears magical.
+
+66
+00:03:59,590 --> 00:04:05,365
+It's rare that you can build an effective machine learning model from just the raw data.
+
+67
+00:04:05,365 --> 00:04:12,070
+Instead, you have to do feature engineering to get great machine learning models.
+
+68
+00:04:12,070 --> 00:04:14,480
+So, the second thing you need to build
+
+69
+00:04:14,480 --> 00:04:18,125
+effective machine learning is that you need feature engineering.
+
+70
+00:04:18,125 --> 00:04:21,315
+Many of the major improvements to machine learning
+
+71
+00:04:21,315 --> 00:04:25,140
+happen when human insights come into the problem.
+
+72
+00:04:25,140 --> 00:04:28,090
+In machine learning, you bring human insights,
+
+73
+00:04:28,090 --> 00:04:32,850
+what your experts know about the problem in the form of new features.
+
+74
+00:04:32,850 --> 00:04:35,165
+You will need to pre-process the data,
+
+75
+00:04:35,165 --> 00:04:36,960
+you will need to scale the data,
+
+76
+00:04:36,960 --> 00:04:38,400
+encode it et cetera,
+
+77
+00:04:38,400 --> 00:04:40,775
+and you need to create new features,
+
+78
+00:04:40,775 --> 00:04:43,999
+and you need to do these two things on the large dataset,
+
+79
+00:04:43,999 --> 00:04:45,760
+and it needs to be distributed,
+
+80
+00:04:45,760 --> 00:04:47,905
+and it needs to be done on the cloud.
+
+81
+00:04:47,905 --> 00:04:49,990
+The third thing that you need for
+
+82
+00:04:49,990 --> 00:04:54,655
+effective machine learning is to use an appropriate model architecture.
+
+83
+00:04:54,655 --> 00:04:59,450
+Different types of problems are better addressed with different types of models.
+
+84
+00:04:59,450 --> 00:05:03,275
+For example, if you have a text classification problem,
+
+85
+00:05:03,275 --> 00:05:07,270
+you want to be able to use CNNs and RNNs,
+
+86
+00:05:07,270 --> 00:05:10,230
+things that we will look at in this specialization.
+
+87
+00:05:10,230 --> 00:05:13,400
+This is where TensorFlow comes in.
+
+88
+00:05:13,400 --> 00:05:18,535
+TensorFlow is the number one machine learning software repository.
+
+89
+00:05:18,535 --> 00:05:20,360
+We, Google that is,
+
+90
+00:05:20,360 --> 00:05:23,825
+we open-sourced TensorFlow because it can enable so
+
+91
+00:05:23,825 --> 00:05:27,755
+many other companies to build great machine learning models.
+
+92
+00:05:27,755 --> 00:05:30,515
+TensorFlow is highly performant.
+
+93
+00:05:30,515 --> 00:05:32,630
+You can train models on CPUs,
+
+94
+00:05:32,630 --> 00:05:34,870
+GPUs, TPUs, et cetera.
+
+95
+00:05:34,870 --> 00:05:38,540
+Another advantage, you're also not locked in when you
+
+96
+00:05:38,540 --> 00:05:42,135
+work with Cloud ML on GCP because the code that you write,
+
+97
+00:05:42,135 --> 00:05:45,495
+TensorFlow, is based on open-source.
+
+98
+00:05:45,495 --> 00:05:47,750
+So, why use TensorFlow?
+
+99
+00:05:47,750 --> 00:05:49,800
+Because it can work with big data,
+
+100
+00:05:49,800 --> 00:05:52,879
+it can capture many types of feature transformations,
+
+101
+00:05:52,879 --> 00:05:58,380
+and it has implementations of many kinds of model architectures.

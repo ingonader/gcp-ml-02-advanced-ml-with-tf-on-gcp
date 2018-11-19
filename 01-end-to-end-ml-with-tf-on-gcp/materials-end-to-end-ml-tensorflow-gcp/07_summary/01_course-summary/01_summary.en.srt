@@ -1,0 +1,279 @@
+1
+00:00:00,000 --> 00:00:01,910
+Let's recap our work.
+
+2
+00:00:01,910 --> 00:00:06,810
+We completed the end-to-end process for operationalizing machine learning models,
+
+3
+00:00:06,810 --> 00:00:10,845
+beginning with data exploration and visualization.
+
+4
+00:00:10,845 --> 00:00:16,595
+We then worked with a sub-sample of the data set to develop our TensorFlow model.
+
+5
+00:00:16,595 --> 00:00:19,800
+Once we prototyped our model locally,
+
+6
+00:00:19,800 --> 00:00:23,980
+we used Cloud Dataflow to create our training and evaluation sets.
+
+7
+00:00:23,980 --> 00:00:26,010
+Using the entire dataset,
+
+8
+00:00:26,010 --> 00:00:30,195
+we then trained our model using Cloud ML Engine.
+
+9
+00:00:30,195 --> 00:00:32,335
+Using this trained model,
+
+10
+00:00:32,335 --> 00:00:36,480
+we served up a prediction service that an end-user was able to
+
+11
+00:00:36,480 --> 00:00:41,975
+consume via a Flask application that we deployed using App Engine.
+
+12
+00:00:41,975 --> 00:00:43,870
+So, at a high level,
+
+13
+00:00:43,870 --> 00:00:48,350
+the first step was exploring and visualizing our Natality Dataset.
+
+14
+00:00:48,350 --> 00:00:52,215
+Our tool of choice here was using Cloud Datalab to
+
+15
+00:00:52,215 --> 00:00:56,600
+interactively query and visualize the Natality Dataset.
+
+16
+00:00:56,600 --> 00:01:01,360
+Remember, even though our dataset was tens of millions of rows and size,
+
+17
+00:01:01,360 --> 00:01:05,000
+we utilized aggregate functions and BigQuery which
+
+18
+00:01:05,000 --> 00:01:09,080
+allowed us to visualize the dataset in Datalab.
+
+19
+00:01:09,080 --> 00:01:11,560
+Once we got a handle on our dataset,
+
+20
+00:01:11,560 --> 00:01:14,530
+we then created a sample dataset.
+
+21
+00:01:14,530 --> 00:01:16,540
+Why did we do this?
+
+22
+00:01:16,540 --> 00:01:19,925
+So, that we could have a small manageable dataset
+
+23
+00:01:19,925 --> 00:01:23,160
+that we could use to train a model locally.
+
+24
+00:01:23,160 --> 00:01:27,980
+This allowed us to quickly prototype a model that once ready,
+
+25
+00:01:27,980 --> 00:01:31,640
+we could later scale up to the entire dataset.
+
+26
+00:01:32,210 --> 00:01:36,530
+Because we were working with only a few thousand rows,
+
+27
+00:01:36,530 --> 00:01:41,825
+we did all of our pre-processing using pandas which works quite well for small datasets.
+
+28
+00:01:41,825 --> 00:01:47,510
+Of course, we ran into problems once we started working with larger data sets.
+
+29
+00:01:48,430 --> 00:01:52,115
+Using our newly created sample dataset,
+
+30
+00:01:52,115 --> 00:01:55,345
+we developed a TensorFlow model locally.
+
+31
+00:01:55,345 --> 00:02:00,300
+For our model, we utilized the TensorFlow estimator API.
+
+32
+00:02:00,300 --> 00:02:03,055
+In our case, we use canned estimators,
+
+33
+00:02:03,055 --> 00:02:04,850
+perhaps a linear model,
+
+34
+00:02:04,850 --> 00:02:06,400
+a deep neural network model,
+
+35
+00:02:06,400 --> 00:02:10,530
+or a wide and deep model that combines both techniques.
+
+36
+00:02:10,560 --> 00:02:13,460
+After building our TensorFlow model,
+
+37
+00:02:13,460 --> 00:02:19,185
+we created training and evaluation data sets using the entire dataset.
+
+38
+00:02:19,185 --> 00:02:23,210
+We ran a Cloud Dataflow job to pre-process and create
+
+39
+00:02:23,210 --> 00:02:27,565
+CSV files for both our training and evaluation data sets.
+
+40
+00:02:27,565 --> 00:02:32,570
+As a reminder, Cloud Dataflow utilizes the beam API and provides
+
+41
+00:02:32,570 --> 00:02:34,279
+a runner that executes
+
+42
+00:02:34,279 --> 00:02:39,175
+Data Processing Pipelines at scale using a serverless architecture.
+
+43
+00:02:39,175 --> 00:02:42,940
+Once we created our training and evaluation datasets,
+
+44
+00:02:42,940 --> 00:02:46,175
+we then executed training in the Cloud.
+
+45
+00:02:46,175 --> 00:02:50,940
+So, remember we first built our model locally using Datalab Notebook,
+
+46
+00:02:50,940 --> 00:02:57,145
+but in this section, we actually packaged up our code and submitted an ML Engine job.
+
+47
+00:02:57,145 --> 00:03:01,060
+Analogous to Cloud Dataflow using ML Engine
+
+48
+00:03:01,060 --> 00:03:05,110
+allows us to scale our processing in a serverless environment.
+
+49
+00:03:05,110 --> 00:03:10,235
+Key benefits are this gives us dynamic provisioning and automatic scaling.
+
+50
+00:03:10,235 --> 00:03:12,950
+So, you only pay for what you use,
+
+51
+00:03:12,950 --> 00:03:16,315
+plus you get to train at Cloud scale.
+
+52
+00:03:16,315 --> 00:03:18,565
+Once we trained our model,
+
+53
+00:03:18,565 --> 00:03:22,445
+we were able to use it to deploy a prediction service.
+
+54
+00:03:22,445 --> 00:03:26,590
+Using ML Engine, you specify the name of your model,
+
+55
+00:03:26,590 --> 00:03:28,720
+the version number, and the actual location
+
+56
+00:03:28,720 --> 00:03:31,550
+of the TensorFlow models you created during training.
+
+57
+00:03:31,550 --> 00:03:33,580
+Once you have these,
+
+58
+00:03:33,580 --> 00:03:37,860
+we deployed our model in just a few lines of code.
+
+59
+00:03:37,860 --> 00:03:42,790
+For the final step, we invoked our ML prediction as a client.
+
+60
+00:03:42,790 --> 00:03:48,125
+We deployed a Flask application using Python and App Engine.
+
+61
+00:03:48,125 --> 00:03:52,405
+In this app, the users enter inputs into HTML form
+
+62
+00:03:52,405 --> 00:03:57,250
+which was passed as a JSON request to the deployed ML model.
+
+63
+00:03:57,250 --> 00:04:00,610
+ML Engine made a prediction responding back
+
+64
+00:04:00,610 --> 00:04:03,795
+with the prediction from the back end to the front end,
+
+65
+00:04:03,795 --> 00:04:06,560
+and the front end then displays the return value.
+
+66
+00:04:06,560 --> 00:04:08,210
+We hope you have enjoyed this section on
+
+67
+00:04:08,210 --> 00:04:12,505
+end-to-end Machine Learning and learning how to operationalize a machine learning model.
+
+68
+00:04:12,505 --> 00:04:15,540
+In this next section we'll talk about how to train, deploy,
+
+69
+00:04:15,540 --> 00:04:20,410
+and predict with ML models in a way that they are production ready.
+
+70
+00:04:20,410 --> 00:04:25,710
+We'll consider the factors that we must consider when building a real-world ML system.
