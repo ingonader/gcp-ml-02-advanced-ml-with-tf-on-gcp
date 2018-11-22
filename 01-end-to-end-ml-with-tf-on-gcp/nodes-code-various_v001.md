@@ -7,8 +7,85 @@
 * add email address config to git in docker container (for contributions)
 * install jupyterlab in docker container and run it on port that can be previewed (8082?)
 
+```bash
+jupyter notebook --version ## requires >= 4.3
+pip install jupyterlab
+jupyter lab
+```
+
+* Find out docker mappings (no new ports can be added to running container):
+
+```bash
+docker port <CONTAINER>
+
+## or:
+docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} -> {{(index $conf 0).HostPort}} {{end}}' $INSTANCE_ID
+```
+
+
+
+* x
+
 ## [[?]]
 
+* "feature cross all the wide columns [[?]]"
+
+  ```python
+  # Feature cross all the wide columns and embed into a lower dimension
+  crossed = tf.feature_column.crossed_column(wide, hash_bucket_size=20000)
+  embed = tf.feature_column.embedding_column(crossed, 3)
+  ```
+
+  * What does this mean and do?
+
+## Most commonly use code snippets (copied from below)
+
+http://console.cloud.google.com/
+
+```bash
+## in cloud shell:
+
+## create datalab vm:
+export PROJECT=$(gcloud config get-value project)
+export ZONE=europe-west1-c
+# echo "Y" | datalab create mydatalabvm --zone $ZONE
+# printf "Y\n\n\n" | datalab create mydatalabvm --zone $ZONE
+datalab create mydatalabvm --zone $ZONE
+
+## ssh into datalab vm:
+#export PROJECT=$(gcloud config get-value project)
+#export ZONE=europe-west1-c
+gcloud compute ssh mydatalabvm --project $PROJECT --zone $ZONE
+
+## in datalab vm:
+
+## run interactive bash in docker container:
+sudo docker ps
+export CONTAINER=datalab
+docker exec -it $CONTAINER bash
+
+## clone git repo:
+cd /content/datalab/
+git clone https://github.com/ingonader/gcp-ml-02-advanced-ml-with-tf-on-gcp.git
+cd gcp-ml-02-advanced-ml-with-tf-on-gcp
+git config user.email "ingo.nader@gmail.com"
+```
+
+```python
+## in datalabvm cloud datalab notebook:
+
+import os
+output = os.popen("gcloud config get-value project").readlines()
+project_name = output[0][:-1]  ## remove newline
+
+# change these to try this notebook out
+BUCKET = project_name
+PROJECT = project_name
+REGION = 'eu-west3'
+
+print(BUCKET)
+print(PROJECT)
+```
 
 
 
@@ -79,6 +156,7 @@ rm -rf training-data-analyst/.git
 ```bash
 cd /content/datalab/
 git clone https://github.com/ingonader/gcp-ml-02-advanced-ml-with-tf-on-gcp.git
+gcp-ml-02-advanced-ml-with-tf-on-gcp
 git config user.email "ingo.nader@gmail.com"
 #git config --global user.email "ingo.nader@gmail.com"
 ```
