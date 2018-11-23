@@ -10,7 +10,7 @@ import os
 import numpy as np
 import pandas as pd
 import collections   ## for Counters (used in frequency tables, for example)
-
+import tensorflow as tf
 
 ## ========================================================================= ## 
 ## global variables and options
@@ -57,3 +57,29 @@ print(tmp.keys())
 
 np.arange(15, 45, 1)
 np.arange(15, 45, 1).tolist()
+
+## ========================================================================= ## 
+## tensorflow snippets
+## ========================================================================= ## 
+
+
+## For small problems like this, it's easy to make a tf.data.Dataset by slicing the pandas.DataFrame:
+def easy_input_function(df, label_key, num_epochs, shuffle, batch_size):
+  label = df[label_key]
+  ds = tf.data.Dataset.from_tensor_slices((dict(df),label))
+
+  if shuffle:
+    ds = ds.shuffle(10000)
+
+  ds = ds.batch(batch_size).repeat(num_epochs)
+
+  return ds
+
+df = dat_train
+df.columns = CSV_COLUMNS
+label_key = LABEL_COLUMN
+
+## trying out some small stuff from the function definition above:
+dict(df)
+dict(df)['weight_pounds']
+type(dict(df)['weight_pounds'])  ## pandas.core.series.Series
