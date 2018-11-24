@@ -2,9 +2,6 @@
 
 ## [[todo]]
 
-* add solutions to my github repo
-  * maybe also as pdf's?
-* add email address config to git in docker container (for contributions)
 * install jupyterlab in docker container and run it on port that can be previewed (8082?)
 
 ```bash
@@ -22,9 +19,9 @@ docker port <CONTAINER>
 docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} -> {{(index $conf 0).HostPort}} {{end}}' $INSTANCE_ID
 ```
 
+* Find out why `gsutil mb -l ${REGION} gs://${BUCKET}` in python script produces `BadRequestException: 400 Invalid Value` error.
 
 
-* x
 
 ## [[?]]
 
@@ -38,7 +35,7 @@ docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} ->
 
   * What does this mean and do?
 
-## Most commonly use code snippets (copied from below)
+## Most commonly used code snippets (copied from below)
 
 http://console.cloud.google.com/
 
@@ -49,8 +46,8 @@ http://console.cloud.google.com/
 export PROJECT=$(gcloud config get-value project)
 export ZONE=europe-west1-c
 # echo "Y" | datalab create mydatalabvm --zone $ZONE
-# printf "Y\n\n\n" | datalab create mydatalabvm --zone $ZONE
-datalab create mydatalabvm --zone $ZONE
+printf "Y\n\n\n" | datalab create mydatalabvm --zone $ZONE
+# datalab create mydatalabvm --zone $ZONE
 
 ## ssh into datalab vm:
 #export PROJECT=$(gcloud config get-value project)
@@ -76,15 +73,16 @@ git config user.email "ingo.nader@gmail.com"
 
 import os
 output = os.popen("gcloud config get-value project").readlines()
-project_name = output[0][:-1]  ## remove newline
+project_name = output[0][:-1]
 
 # change these to try this notebook out
-BUCKET = project_name
 PROJECT = project_name
+BUCKET = project_name
+#BUCKET = BUCKET.replace("qwiklabs-gcp-", "inna-bckt-")
 REGION = 'eu-west3'
 
-print(BUCKET)
 print(PROJECT)
+print(BUCKET)
 ```
 
 
@@ -226,3 +224,24 @@ WHERE year > 2000
 WHERE MOD(hashmonth, 10) < 8  -- alias can only be used via subquery
 ```
 
+
+
+## various
+
+### Change indentation in Juypter Notebooks
+
+  ```javascript
+var cell = Jupyter.notebook.get_selected_cell();
+var config = cell.config;
+var patch = {
+      CodeCell:{
+        cm_config:{indentUnit:2}
+      }
+    }
+config.update(patch)
+  ```
+  Enter the previous snippet in your browser’s 
+  **JavaScript console** once. Then **reload** the notebook page 
+  in your browser. Now, the preferred indent unit should 
+  be equal to two spaces. The custom setting persists and 
+  you do not need to reissue the patch on new notebooks.
