@@ -135,13 +135,52 @@ def to_csv(rowdict):
     data = ','.join([str(result[k]) if k in result else 'None' for k in CSV_COLUMNS])
     key = hashlib.sha224(data).hexdigest()  # hash the columns to form a key
     yield str('{},{}'.format(data, key))
-  
+
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
 ## now for some trial stuff in terms of what this function does:
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
 
-rowdict = None ## [[todo]]
-ultrasound = None ## [[todo]]
-data = ','.join([str(result[k]) if k in result else 'None' for k in CSV_COLUMNS])
-    key = hashlib.sha224(data).hexdigest()  # hash the columns to form a key
+import copy
+import hashlib
+
+CSV_COLUMNS = 'weight_pounds,is_male,mother_age,plurality,gestation_weeks'.split(',')
+
+rowdict = {u'hashmonth': 1525201076796226340, u'gestation_weeks': 40, u'is_male': False, u'weight_pounds': 8.75014717878, u'plurality': 1, u'mother_age': 34}
+no_ultrasound = copy.deepcopy(rowdict)
+w_ultrasound = copy.deepcopy(rowdict)
+
+no_ultrasound['is_male'] = 'Unknown'
+if rowdict['plurality'] > 1:
+  no_ultrasound['plurality'] = 'Multiple(2+)'
+else:
+  no_ultrasound['plurality'] = 'Single(1)'
+
+# Change the plurality column to strings
+w_ultrasound['plurality'] = ['Single(1)', 
+                             'Twins(2)', 
+                             'Triplets(3)', 
+                             'Quadruplets(4)', 
+                             'Quintuplets(5)'][rowdict['plurality'] - 1]
+print(w_ultrasound)
+# {'hashmonth': 1525201076796226340,
+#  'gestation_weeks': 40,
+#  'is_male': False,
+#  'weight_pounds': 8.75014717878,
+#  'plurality': 'Single(1)',
+#  'mother_age': 34}
+
+# Write out two rows for each input row, one with ultrasound and one without
+# result = no_ultrasound
+for result in [no_ultrasound, w_ultrasound]:
+  data = ','.join([str(result[k]) if k in result else 'None' for k in CSV_COLUMNS])
+  data = data.encode('utf-8')
+  key = hashlib.sha224(data).hexdigest()  # hash the columns to form a key
+  print(str('{},{}'.format(data, key)))
   
+# data:  '8.75014717878,Unknown,34,Single(1),40'   ## originally, without explicit encoding
+# data: b'8.75014717878,Unknown,34,Single(1),40'   ## with additinal encoding
+# key:   'e96a75f2fe27ffdf5594cbc98f29ef808c32e9e1ad18741b28a6fbad'
+
+## complete output:
+# b'8.75014717878,Unknown,34,Single(1),40',e96a75f2fe27ffdf5594cbc98f29ef808c32e9e1ad18741b28a6fbad
+# b'8.75014717878,False,34,Single(1),40',15a66154127a3150f29026a8ccc8e18adc68b47af1fd0c5d11374247
