@@ -35,11 +35,21 @@ docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} ->
 
   * What does this mean and do?
 
+* Apache Beam:
+
+  * What is a `DirectRunner`?  (runs locally?)
+  * What is the difference to a `DataflowRunner`?
+
+* 
+
 ## Most commonly used code snippets (copied from below)
 
 http://console.cloud.google.com/
 
 ```bash
+## locally:
+jupyter notebook list
+
 ## in cloud shell:
 
 ## create datalab vm:
@@ -83,6 +93,7 @@ REGION = 'eu-west3'
 
 print(PROJECT)
 print(BUCKET)
+print("gsutil mb -l {0} gs://{1}".format(REGION, BUCKET))
 ```
 
 
