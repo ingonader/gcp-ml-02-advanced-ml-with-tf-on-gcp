@@ -83,3 +83,65 @@ label_key = LABEL_COLUMN
 dict(df)
 dict(df)['weight_pounds']
 type(dict(df)['weight_pounds'])  ## pandas.core.series.Series
+
+
+## ========================================================================= ## 
+## Apache Beam Lab
+## ========================================================================= ## 
+
+#import apache_beam as beam
+import datetime, os
+
+"""
+This function seems to be a generator, hence using the yield keyword instead of return. 
+It seems to do the preprocessing of a single input row read from bigquery (probably).
+Function will be called in Apache Beam's `.FlatMap` function.
+
+Explanation of `yield`:
+To master yield, you must understand that when you call the function, the code you have written 
+in the function body does not run. The function only returns the generator object; your code 
+will be run each time the `for` uses the generator.
+"""
+def to_csv(rowdict):
+  import hashlib
+  import copy
+
+  # TODO #1:
+  # Pull columns from BQ and create line(s) of CSV input
+  CSV_COLUMNS = 'weight_pounds,is_male,mother_age,plurality,gestation_weeks'.split(',')
+    
+  # Create synthetic data where we assume that no ultrasound has been performed
+  # and so we don't know sex of the baby. Let's assume that we can tell the difference
+  # between single and multiple, but that the errors rates in determining exact number
+  # is difficult in the absence of an ultrasound.
+  no_ultrasound = copy.deepcopy(rowdict)
+  w_ultrasound = copy.deepcopy(rowdict)
+
+  no_ultrasound['is_male'] = 'Unknown'
+  if rowdict['plurality'] > 1:
+    no_ultrasound['plurality'] = 'Multiple(2+)'
+  else:
+    no_ultrasound['plurality'] = 'Single(1)'
+
+  # Change the plurality column to strings
+  w_ultrasound['plurality'] = ['Single(1)', 
+                               'Twins(2)', 
+                               'Triplets(3)', 
+                               'Quadruplets(4)', 
+                               'Quintuplets(5)'][rowdict['plurality'] - 1]
+
+  # Write out two rows for each input row, one with ultrasound and one without
+  for result in [no_ultrasound, w_ultrasound]:
+    data = ','.join([str(result[k]) if k in result else 'None' for k in CSV_COLUMNS])
+    key = hashlib.sha224(data).hexdigest()  # hash the columns to form a key
+    yield str('{},{}'.format(data, key))
+  
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
+## now for some trial stuff in terms of what this function does:
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
+
+rowdict = None ## [[todo]]
+ultrasound = None ## [[todo]]
+data = ','.join([str(result[k]) if k in result else 'None' for k in CSV_COLUMNS])
+    key = hashlib.sha224(data).hexdigest()  # hash the columns to form a key
+  
