@@ -20,6 +20,7 @@ docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} ->
 ```
 
 * Find out why `gsutil mb -l ${REGION} gs://${BUCKET}` in python script produces `BadRequestException: 400 Invalid Value` error.
+* Make `pdf`s and `html`s of already run notebooks!
 
 
 
@@ -37,8 +38,8 @@ docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} ->
 
 * Apache Beam:
 
-  * What is a `DirectRunner`?  (runs locally?)
-  * What is the difference to a `DataflowRunner`?
+  * What is a `DirectRunner`?  Anwer: runs locally
+  * What is the difference to a `DataflowRunner`? Answer: used to run dataflow job in the cloud.
 
 * 
 
@@ -49,6 +50,7 @@ http://console.cloud.google.com/
 ```bash
 ## locally:
 jupyter notebook list
+gsutil cp gs://my-bucket/my-file .
 
 ## in cloud shell:
 
@@ -80,7 +82,6 @@ git config user.email "ingo.nader@gmail.com"
 
 ```python
 ## in datalabvm cloud datalab notebook:
-
 import os
 output = os.popen("gcloud config get-value project").readlines()
 project_name = output[0][:-1]
@@ -88,12 +89,28 @@ project_name = output[0][:-1]
 # change these to try this notebook out
 PROJECT = project_name
 BUCKET = project_name
-#BUCKET = BUCKET.replace("qwiklabs-gcp-", "inna-bckt-")
-REGION = 'eu-west3'
+BUCKET = BUCKET.replace("qwiklabs-gcp-", "inna-bckt-")
+REGION = 'europe-west1'  ## note: Cloud ML Engine not availabe in europe-west3!
 
 print(PROJECT)
 print(BUCKET)
 print("gsutil mb -l {0} gs://{1}".format(REGION, BUCKET))
+
+## set config for gcp config: [[?]]
+print(os.popen("gcloud config set project $PROJECT").readlines())
+print(os.popen("gcloud config set compute/region $REGION").readlines())
+```
+
+```bash
+## set project in google datalab:
+## (might be necessary to use gsutil command?)
+%bash
+gcloud config set project $PROJECT
+gcloud config set compute/region $REGION
+
+## inspect data in cloud storage bucket:
+%bash
+gsutil cat -r -512 gs://${BUCKET}/babyweight/preproc/eval.csv-00000-of-*
 ```
 
 
