@@ -50,6 +50,7 @@ http://console.cloud.google.com/
 ```bash
 ## locally:
 jupyter notebook list
+gsutil cp gs://my-bucket/my-file .
 
 ## in cloud shell:
 
@@ -58,6 +59,7 @@ export PROJECT=$(gcloud config get-value project)
 export ZONE=europe-west1-c
 # echo "Y" | datalab create mydatalabvm --zone $ZONE
 printf "Y\n\n\n" | datalab create mydatalabvm --zone $ZONE
+#printf "Y\n\n\n" | datalab create bdmlvm --zone $ZONE
 # datalab create mydatalabvm --zone $ZONE
 
 ## ssh into datalab vm:

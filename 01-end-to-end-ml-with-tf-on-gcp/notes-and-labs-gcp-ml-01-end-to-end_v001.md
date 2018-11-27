@@ -778,5 +778,191 @@ Note: when doing copy/paste of python code, please be careful about indentation
 
 ©Google, Inc. or its affiliates. All rights reserved. Do not distribute.
 
+# End to End ML Lab 6 (optional): Predict Baby Weight using BQML (beta)
+
+## Overview
+
+BigQuery is Google's fully managed, NoOps, low cost analytics  database. With BigQuery you can query terabytes and terabytes of data  without having any infrastructure to manage or needing a database  administrator. BigQuery uses SQL and can take advantage of the  pay-as-you-go model. BigQuery allows you to focus on analyzing data to  find meaningful insights.
+
+[BigQuery Machine Learning](https://cloud.google.com/bigquery/docs/bigqueryml-analyst-start)  (BQML, product in beta) is a new feature in BigQuery where data  analysts can create, train, evaluate, and predict with machine learning  models with minimal coding.
+
+### Objectives
+
+In this lab, you learn to perform the following tasks:
+
+* Use BigQuery to explore the natality dataset
+* Create a training and evaluation dataset for prediction
+* Create a regression (linear regression) model in BQML
+* Evaluate the performance of your machine learning model
+* Use feature engineering to improve model accuracy
+* Predict baby weight from a set of features
+
+## Introduction
+
+In this lab, you will be using the CDC's natality data to build a  model to predict baby weights based on a handful of features known at  pregnancy. Because we're predicting a continuous value, this is a  regression problem, and for that, we'll use the linear regression model  built into BQML.
+
+## Setup
+
+#### What you'll need
+
+To complete this lab, you’ll need:
+
+* Access to a standard internet browser (Chrome browser recommended).
+* Time. Note the lab’s **Completion** time in Qwiklabs.  This is an estimate of the time it should take to complete all steps.   Plan your schedule so you have time to complete the lab. Once you start  the lab, you will not be able to pause and return later (you begin at  step 1 every time you start a lab).
+* The lab's **Access** time is how long your lab resources  will be available. If you finish your lab with access time still  available, you will be able to explore the Google Cloud Platform or work  on any section of the lab that was marked "if you have time". Once the  Access time runs out, your lab will end and all resources will  terminate.
+* You **DO NOT** need a Google Cloud Platform account or  project. An account, project and associated resources are provided to  you as part of this lab.
+* If you already have your own GCP account, make sure you do not use it for this lab.
+* If your lab prompts you to log into the console, **use only the student account provided to you by the lab**. This prevents you from incurring charges for lab activities in your personal GCP account.
+
+#### Start your lab
+
+When you are ready, click **Start Lab**. You can track your lab’s progress with the status bar at the top of your screen.
+
+ **Important** What is happening during this time?   Your lab is spinning up GCP resources for you behind the scenes,  including an account, a project, resources within the project, and  permission for you to control the resources needed to run the lab. This  means that instead of spending time manually setting up a project and  building resources from scratch as part of your lab, you can begin  learning more quickly.  
+
+#### Find Your Lab’s GCP Username and Password
+
+To access the resources and console for this lab, locate the  Connection Details panel in Qwiklabs.  Here you will find the account ID  and password for the account you will use to log in to the Google Cloud  Platform:
+
+![Open Google Console](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/5eaee037e6cedbf49f6a702ab8a9ef820bb8e717332946ff76a0831a6396aafc.png)
+
+If your lab provides other resource identifiers or connection-related information, it will appear on this panel as well.
+
+### Activate Google Cloud Shell
+
+Google Cloud Shell provides command-line access to your GCP resources.
+
+From the GCP Console click the **Cloud Shell** icon on the top right toolbar:
+
+![Cloud Shell Icon](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/718029dee0e562c61c14536c5a636a5bae0ef5136e9863b98160d1e06123908a.png)
+
+Then click **START CLOUD SHELL**:
+
+![Start Cloud Shell](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/feb5ea74b4a4f6dfac7800f39c3550364ed7a33a7ab17b6eb47cab3e65c33b13.png)
+
+ You can click **START CLOUD SHELL** immediately when the dialog comes up instead of waiting in the dialog until the Cloud Shell provisions.  
+
+It  takes a few moments to provision and connects to the environment:
+
+![Cloud Shell Terminal](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/11def2e8f4cfd6f1590f3fd825d4566658501ca87e1d5d1552aa17339050c194.png)
+
+The Cloud Shell is a virtual machine loaded with all the development  tools you’ll need. It offers a persistent 5GB home directory, and runs  on the Google Cloud, greatly enhancing network performance and  authentication.
+
+Once connected to the cloud shell, you'll see that you are already authenticated and  the project is set to your *PROJECT_ID*:
+
+```
+gcloud auth list
+```
+
+Output:
+
+```output
+Credentialed accounts:
+ - <myaccount>@<mydomain>.com (active)
+```
+
+ **Note:** `gcloud` is the powerful and unified command-line tool for Google Cloud Platform. Full documentation is available on [Google Cloud gcloud Overview](https://cloud.google.com/sdk/gcloud). It comes pre-installed on Cloud Shell and supports tab-completion.  
+
+```
+gcloud config list project
+```
+
+Output:
+
+```output
+[core]
+project = <PROJECT_ID>
+```
+
+## Task 1: Launch Cloud Datalab
+
+To launch Cloud Datalab:
+
+1. In **Cloud Shell**, type:
+
+```
+gcloud compute zones list
+```
+
+1. Pick a zone in a geographically closeby region.
+2. In **Cloud Shell**, type:
+
+```
+datalab create bdmlvm --zone <ZONE>
+```
+
+Datalab will take about 5 minutes to start.
+
+```
+Note: follow the prompts during this process.
+```
+
+## Task 2: Checkout notebook into Cloud Datalab
+
+If necessary, wait for Datalab to finish launching. Datalab is ready when you see a message prompting you to do a "Web Preview".
+
+1. Click on the **Web Preview** icon on the top-right corner of the Cloud Shell ribbon. Click on the **Change port**. Switch to port **8081** using the **Change Preview Port** dialog box, and then click on **Change and Preview**.
+
+   ![ChangePort.png](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/0fe2e17d4078e43c572498391788db31ddc98129a614c51db9fb90116ba4a142.png)
+
+   ![ChangePreviewPort.png](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/ff07554423a417f49f859aaa5fe3a7ac6bcfc3d3db9add1ab99018c681d74938.png)
+
+   Note: The connection to your Datalab instance remains open for as  long as the datalab command is active. If the cloud shell used for  running the datalab command is closed or interrupted, the connection to  your Cloud Datalab VM will terminate. If that happens, you may be able  to reconnect using the command `datalab connect bdmlvm` in your new Cloud Shell.
+
+To clone the course repo in your datalab instance:
+
+**Step 1**
+
+In Cloud Datalab home page (browser), navigate into **“notebooks”** and add a new notebook using the icon ![notebook.png](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/fef0cc8c36a1856aa4ca73423f2ba59dde635267437c1253c268f366dfe19899.png)  on the top left.
+
+**Step 2**
+
+Rename this notebook as **‘repocheckout’**.
+
+**Step 3**
+
+In the new notebook, enter the following commands in the cell, and click on **Run** (on the top navigation bar) to run the commands:
+
+```
+%bash
+git clone https://github.com/GoogleCloudPlatform/training-data-analyst
+rm -rf training-data-analyst/.git
+```
+
+![clone.png](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/8b8e37999b4b2bda8c5862e6686f5dbca32dc52faa953f195ff94b13bc42357b.png)
+
+**Step 4**
+
+Confirm that you have cloned the repo by going back to Datalab browser, and ensure you see the **training-data-analyst** directory. All the files for all labs throughout this course are available in this directory.
+
+![training-data-analyst.png](https://gcpstaging-qwiklab-website-prod.s3.amazonaws.com/bundles/assets/559d6a731826258adb62b57ead0a57d6e63f47ba667779736c4a779162afaa95.png)
+
+## Task 3: Open a Datalab notebook
+
+1. In the Datalab browser, navigate to **training-data-analyst > courses > machine_learning > deepdive > 06_structured > 5_train_bqml.ipynb**
+2. Read the commentary, **Click Clear | Clear all Cells**, then run the Python snippets (Use **Shift+Enter** to run each piece of code) in the cell, step by step.
+
+## End your lab
+
+When you have completed your lab, click **End Lab**. Qwiklabs removes the resources you’ve used and cleans the account for you.
+
+You will be given an opportunity to rate the lab experience. Select  the applicable number of stars, type a comment, and then click **Submit**.
+
+The number of stars indicates the following:
+
+* 1 star = Very dissatisfied
+* 2 stars = Dissatisfied
+* 3 stars = Neutral
+* 4 stars = Satisfied
+* 5 stars = Very satisfied
+
+You can close the dialog box if you don't want to provide feedback.
+
+For feedback, suggestions, or corrections, please use the **Support** tab.
+
+©Google, Inc. or its affiliates. All rights reserved. Do not distribute.
+
+
+
 # [[eof]]
 
