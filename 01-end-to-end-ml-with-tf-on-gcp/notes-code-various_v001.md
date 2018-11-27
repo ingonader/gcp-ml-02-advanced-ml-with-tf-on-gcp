@@ -50,7 +50,6 @@ http://console.cloud.google.com/
 ```bash
 ## locally:
 jupyter notebook list
-gsutil cp gs://my-bucket/my-file .
 
 ## in cloud shell:
 
