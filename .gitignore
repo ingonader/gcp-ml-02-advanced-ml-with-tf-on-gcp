@@ -12,6 +12,10 @@
 ## (copied into locations that actually make sense):
 training-data-analyst-cloned/*
 
+## ignore certifications:
+
+certificate-of-specializations/*
+
 
 # Created by https://www.gitignore.io/api/video,macos,python,jupyternotebook
 # Edit at https://www.gitignore.io/?templates=video,macos,python,jupyternotebook
