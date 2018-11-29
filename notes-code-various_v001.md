@@ -274,3 +274,75 @@ config.update(patch)
   in your browser. Now, the preferred indent unit should 
   be equal to two spaces. The custom setting persists and 
   you do not need to reissue the patch on new notebooks.
+
+### Install Anaconda in a GCP VM
+
+https://haroldsoh.com/2016/04/28/set-up-anaconda-ipython-tensorflow-julia-on-a-google-compute-engine-vm/
+
+Does not work in datalab vm (not enough permissions):
+(generally, this was not fully tested)
+
+```bash
+## download and install anaconda:
+
+mkdir downloads
+cd downloads
+wget http://repo.continuum.io/archive/Anaconda3-5.3.0-Linux-x86_64.sh
+bash Anaconda3-5.3.0-Linux-x86_64.sh
+
+## use anaconda right away:
+source ~/.bashrc
+
+## check jupyiter config (and potentially create one):
+## ls ~/.jupyter/jupyter_notebook_config.py
+## jupyter notebook --generate-config
+
+## modify configuration file
+## [[todo]], if necessary
+
+## RUN JUPYTER LAB:
+nohup jupyter lab --ip=127.0.0.1 --allow-root
+
+# ## RUN JUPYTER NOTEBOOK (not really necessary, cloud datalab will do):
+# 
+# ## option A: run via nohup:
+# mkdir notebooks
+# cd notebooks
+# nohup jupyter notebook > ~/notebook.log &
+# 
+# ## option B: run via screen
+# sudo apt-get install screen
+# screen -S jupyter  ## start screen session with specific name
+# cd ~/
+# mkdir notebooks
+# cd notebooks
+# jupyter notebook
+# ## Press CTRL-A, D to detach from the screen and take you back to the main command line. 
+# ## If you want to re-attach to this screen session in the future, type:
+# ## screen -r jupyter
+
+## SET UP CLIENT (LAPTOP / WORKSTATION):
+## (not tested yet)
+
+## authenticate yourself:
+gcloud init
+
+## initiate a SSH tunnel from your machine to the server:
+echo $PROJECT
+echo $ZONE
+gcloud compute ssh --zone=$ZONE --ssh-flag="-D" --ssh-flag="1080" --ssh-flag="-N" --ssh-flag="-n" mydatalabvm
+
+## Finally, start up your favorite browser with the right configuration:
+<browser executable path> \
+  --proxy-server="socks5://localhost:1080" \
+  --host-resolver-rules="MAP * 0.0.0.0 , EXCLUDE localhost" \
+  --user-data-dir=/tmp/
+  
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --proxy-server="socks5://localhost:1080" \
+ --host-resolver-rules="MAP * 0.0.0.0 , EXCLUDE localhost" \
+ --user-data-dir=/tmp/
+
+## then go to
+http://mydatalabvm:8123
+```
+
