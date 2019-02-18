@@ -29,8 +29,8 @@ from oauth2client.client import GoogleCredentials
 from google.appengine.api import app_identity
 
 # authenticate
-credentials = # TODO
-api = # TODO
+credentials = GoogleCredentials.get_application_default()  # TODO (done)
+api = discovery.build('ml', 'v1', credentials=credentials) # TODO (done)
 project = app_identity.get_application_id()
 model_name = os.getenv('MODEL_NAME', 'babyweight')
 version_name = os.getenv('VERSION_NAME', 'ml_on_gcp')
@@ -41,8 +41,8 @@ app = Flask(__name__)
 
 def get_prediction(features):
   input_data = {'instances': [features]}
-  parent = # TODO
-  prediction = # TODO
+  parent = 'projects/%s/models/%s' % (project, model_name)  # TODO (done)
+  prediction = api.projects().predict(body=input_data, name=parent).execute()  # TODO (done)
   return prediction['predictions'][0]['predictions'][0]
 
 
@@ -80,7 +80,6 @@ def predict():
   features['is_male'] = gender2str(data['baby_gender'])
   features['mother_age'] = float(data['mother_age'])
   features['plurality'] = plurality2str(data['plurality'])
-  features['gestation_weeks'] = # TODO: get gestation_weeks and cast to float
-
+  features['gestation_weeks'] = float(data['gestation_weeks']) # TODO (done)
   prediction = get_prediction(features)
   return jsonify({'result': '{:.2f} lbs.'.format(prediction)})
