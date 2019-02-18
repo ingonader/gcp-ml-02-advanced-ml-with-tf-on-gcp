@@ -25,9 +25,9 @@ import com.google.gson.GsonBuilder;
 
 public class BabyweightMLService {
   private static final Logger LOG = LoggerFactory.getLogger(BabyweightMLService.class);
-  private static final String PROJECT = "cloud-training-demos"; // TODO: put in your project name here
+  private static final String PROJECT = "qwiklabs-gcp-e7fe4ea31cae4881"; // TODO (done): put in your project name here
   private static String       MODEL   = "babyweight";
-  private static String       VERSION = "ml_on_gcp"; // TODO: put in your version name here
+  private static String       VERSION = "ml_on_gcp"; // TODO (done?): put in your version name here
 
   static class Instance {
     String key, is_male, plurality;
