@@ -1,0 +1,189 @@
+1
+00:00:00,270 --> 00:00:04,919
+Now that you're familiar with the
+challenges of moving large amounts of data
+
+2
+00:00:04,919 --> 00:00:09,637
+to the cloud and a few of the options
+available with the Google Cloud platform,
+
+3
+00:00:09,637 --> 00:00:13,070
+let's work through common
+data migration scenarios and
+
+4
+00:00:13,070 --> 00:00:15,593
+which migration method is recommended.
+
+5
+00:00:15,593 --> 00:00:20,632
+First, let's cover data that is
+on-premise within your organization.
+
+6
+00:00:20,632 --> 00:00:25,245
+Often, the easiest way to transfer
+data is to simply drag and
+
+7
+00:00:25,245 --> 00:00:29,225
+drop it into a Google Cloud Storage
+bucket in your web
+
+8
+00:00:29,225 --> 00:00:33,762
+browser from your local machine
+using your local network.
+
+9
+00:00:33,762 --> 00:00:37,468
+You can also use
+the JSON API to manage and
+
+10
+00:00:37,468 --> 00:00:41,398
+manipulate new and existing GCS buckets.
+
+11
+00:00:41,398 --> 00:00:45,812
+Most commonly used is gsutil
+inside your terminal.
+
+12
+00:00:45,812 --> 00:00:49,544
+gsutil is a Python application
+that lets you access
+
+13
+00:00:49,544 --> 00:00:52,857
+Google Cloud Storage
+from the command line.
+
+14
+00:00:52,857 --> 00:00:56,467
+You can use gsutil to do
+a wide range of bucket and
+
+15
+00:00:56,467 --> 00:01:01,883
+object management tasks,
+including creating and deleting buckets,
+
+16
+00:01:01,883 --> 00:01:05,867
+uploading, downloading,
+and deleting objects.
+
+17
+00:01:05,867 --> 00:01:10,513
+Listing buckets and objects,
+moving, copying, and
+
+18
+00:01:10,513 --> 00:01:15,063
+renaming objects,
+editing object and bucket ACLs.
+
+19
+00:01:17,012 --> 00:01:21,472
+Here you would write a gsutil
+command like this one.
+
+20
+00:01:21,472 --> 00:01:26,786
+Specify cp for copy, asterisk for
+all local text files,
+
+21
+00:01:26,786 --> 00:01:33,110
+and then specify the Google Cloud Storage
+bucket as your data sync.
+
+22
+00:01:33,110 --> 00:01:40,354
+By default, the gsutil tools transfers
+multiple files using a single thread.
+
+23
+00:01:40,354 --> 00:01:45,336
+To enable a multithreaded copy use the -m
+
+24
+00:01:45,336 --> 00:01:49,758
+flag when executing the cp command.
+
+25
+00:01:49,758 --> 00:01:55,021
+Then gsutil will open multiple
+simultaneous requests to copy the files
+
+26
+00:01:55,021 --> 00:01:59,938
+in parallel, therefore speeding
+up the transfer considerably.
+
+27
+00:01:59,938 --> 00:02:05,681
+Here you can see the time savings
+of parallelizing your requests for
+
+28
+00:02:05,681 --> 00:02:07,705
+uploading four files.
+
+29
+00:02:07,705 --> 00:02:12,292
+Now, after you get your data
+transferred to Google Cloud,
+
+30
+00:02:12,292 --> 00:02:16,709
+it will primarily reside first
+in Google Cloud Storage.
+
+31
+00:02:16,709 --> 00:02:20,134
+And there are four types
+of Google Cloud Storage.
+
+32
+00:02:20,134 --> 00:02:27,609
+Multi-regional, region,
+nearline and coldline.
+
+33
+00:02:27,609 --> 00:02:32,109
+For ML data, it's recommended
+you create a storage bucket
+
+34
+00:02:32,109 --> 00:02:36,525
+in a single region that is
+geographically closest to you.
+
+35
+00:02:36,525 --> 00:02:41,516
+The reason we recommend this is because
+having your data in the same region
+
+36
+00:02:41,516 --> 00:02:44,980
+as your computer resource
+is like cloud data CROC or
+
+37
+00:02:44,980 --> 00:02:49,909
+Google Compute engine instances that
+use it will speed up performance.
+
+38
+00:02:49,909 --> 00:02:55,490
+Additionally, at the time of this
+videos' recording Cloud ML engine is
+
+39
+00:02:55,490 --> 00:03:01,445
+only available in a subset of regions
+which we will link to in a later reading.

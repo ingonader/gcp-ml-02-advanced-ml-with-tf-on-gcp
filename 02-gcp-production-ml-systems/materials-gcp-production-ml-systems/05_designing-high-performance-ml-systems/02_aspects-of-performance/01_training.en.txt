@@ -1,0 +1,76 @@
+We will start by talking about what high
+performance means in this context and providing a high level overview
+of distributed architectures. So what does high performance
+machine learning mean to you? Does it mean powerful,
+the ability to handle large data sets? Or maybe does it mean doing
+it as fast as possible? The ability to train for long periods of time, achieving the best
+possible accuracy, there's so many things. But one key aspect is the time
+taken to train a model. If it takes six hours to train
+a model on some hardware or software architecture, but only three
+hours to train the same same model to the same accuracy on a different
+hardware or software architecture. I think we'll all agree
+the second architecture is twice as performant as the first one. Now, notice that I said train
+the model to the same accuracy. Throughout this module, we will assume
+that we're talking of models that have same accuracy, or RMSE, or
+whatever your evaluation measure is. Obviously, when we talk about high
+performance machine learning models, accuracy is important. We aren't just going to
+consider that in this module. The rest of the courses in this
+specialization will look at how to build more accurate ML models and there,
+we'll be looking at model architectures that will help us get
+to a desired accuracy. Here in this course, we'll look
+solely at infrastructure performance. Besides the time to train,
+there is one other aspect, budget. You often have a training budget. You might be able to train
+faster on better hardware, but that hardware might cost more, so
+you may have to make the explicit choice to train on slightly
+slower infrastructure. So when it comes to your training budget, you have three considerations,
+three levers that you can adjust. These are time, cost, and scale. Now, how long are you willing
+to spend on the model training? This might be driven by
+the business use case. If you're training a model everyday, so
+as to recommend products the next day, then your training has to
+finish within 24 hours. Realistically, you'll also need time
+to deploy, to AB test and all that. So your actual budget
+might be only 18 hours, so then how much are you willing to spend on
+model training in terms of computing cost? These too is a business decision. You don't want to train for 18 hours everyday if the incremental
+benefit of this is not sufficient. Scale is another aspect of your budget. Models differ in terms of how
+computationally expensive they are. Even keeping to the same model, you have a choice of how much
+data you're going to train on. Generally, the more data,
+the more accurate the model. But there are diminishing returns
+to larger and larger data sizes, so your time and cost budget may
+also dictate the data set size. Similarly, you often have a choice
+between training on a single, more expensive machine or
+multiple cheaper machines. But to take advantage of this,
+you may have to write your code somewhat differently, and
+that's another aspect of scale. Also, you have the choice of starting
+from an earlier model checkpoint and training for just a few steps. Typically, this will converge faster
+than training from scratch each time. This compromise might allow you to reach
+the desired accuracy faster and cheaper. In addition, there are ways to tune
+performance to reduce the time, reduce the cost or increase the scale. In order to understand what these are,
+it helps to understand that model training performance will be bound
+by one of three things. Input/output, which is how fast you
+can get data into the model for each training step. The CPU, which is how fast you can compute
+the gradient in each training step. And memory,
+how many weights can you hold in memory so that you can do the matrix multiplications
+in memory or do you use the GP or TPU. Your ML training will be I/O bound
+if the number of inputs is large. Heterogeneous, requiring parsing or
+if the model is so small that the computer
+requirements are trivial. This also tends to be the case if
+the input data is on a storage system with very low throughput. Your ML training CPU bound
+if the I/O is simple but the model involves lots of
+expensive computations. You will also encounter this situation if you're running a model
+on underpowered hardware. Your ML training might be memory bound if
+the number of inputs is really large or if the model is complex and
+has lots of free parameters. You'll also face memory limitations
+if your accelerator doesn't have enough memory. So knowing what you're bound by, you
+can look at how to improve performance. If you're IO bound,
+look at storing the data more efficiently on a storage system with higher
+throughput or parallelizing the reads. Although it's not ideal, you might also
+consider reducing the batch size so that you're reading
+less data in each step. If you are a CPU bound, see if you can
+run the training on a faster accelerator. GPUs keep getting faster, so
+move to a newer generation processor. And if you're using Google Cloud, you
+also have the option of running on TPUs. Even if it's not ideal,
+you might consider using a simpler model, a less computationally expensive
+activation function or simply just train for fewer steps. If you are memory bound, see if you can
+add more memory to the individual workers. Again, this may not be ideal, but you could also consider using
+fewer layers in your model. Reducing the batch size can also
+help with memory bound ML systems.

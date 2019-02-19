@@ -1,0 +1,195 @@
+1
+00:00:00,000 --> 00:00:05,535
+The next scenario we will cover is what to do when you have large datasets.
+
+2
+00:00:05,535 --> 00:00:10,355
+At threshold for large here is about 60 terabytes of data.
+
+3
+00:00:10,355 --> 00:00:13,920
+One of the newly available options is receiving
+
+4
+00:00:13,920 --> 00:00:17,360
+a physical Google device called a Transfer Appliance,
+
+5
+00:00:17,360 --> 00:00:21,805
+which is Google's rackable high-capacity storage server.
+
+6
+00:00:21,805 --> 00:00:27,060
+Once received you can load data at your own data center
+
+7
+00:00:27,060 --> 00:00:32,655
+on the transfer appliance and ship the data over to Google Cloud Platform.
+
+8
+00:00:32,655 --> 00:00:36,265
+Each appliance can hold up to one petabyte.
+
+9
+00:00:36,265 --> 00:00:42,120
+Consider using transfer appliance if you have over 60 terabytes of data regardless.
+
+10
+00:00:42,120 --> 00:00:44,335
+This is common for IoT data,
+
+11
+00:00:44,335 --> 00:00:49,480
+archival data, media libraries or backup images.
+
+12
+00:00:49,480 --> 00:00:56,000
+Also consider it if it takes you more than one week to upload your data or if you
+
+13
+00:00:56,000 --> 00:01:02,630
+have one terabyte or more of data and a ten megabits per second or slower connection.
+
+14
+00:01:02,630 --> 00:01:07,600
+To better understand how network capacity can bottleneck uploads,
+
+15
+00:01:07,600 --> 00:01:11,140
+let's visualize how long it takes to transfer data.
+
+16
+00:01:11,140 --> 00:01:17,370
+At large volumes of data like one petabyte over a typical 100 megabit connection,
+
+17
+00:01:17,370 --> 00:01:20,690
+it would take three years to migrate that data.
+
+18
+00:01:20,690 --> 00:01:24,230
+Also keep in mind that large uploads also
+
+19
+00:01:24,230 --> 00:01:27,455
+degrade network performance for other users of your network.
+
+20
+00:01:27,455 --> 00:01:33,550
+Here's a visualization of how fast it takes to transfer a petabyte of data to the Cloud,
+
+21
+00:01:33,550 --> 00:01:37,540
+using a typical network versus the transfer appliance.
+
+22
+00:01:37,540 --> 00:01:43,805
+A petabyte of data in the cloud is 96 percent faster than over a typical network.
+
+23
+00:01:43,805 --> 00:01:53,325
+As you saw, it took 43 days for a petabyte and 16 days for 100 terabytes.
+
+24
+00:01:53,325 --> 00:01:58,210
+The larger your dataset or the slower your network,
+
+25
+00:01:58,210 --> 00:02:02,830
+the more you stand to benefit from using transfer appliance.
+
+26
+00:02:02,830 --> 00:02:05,840
+Let's look at some real customer use cases who've
+
+27
+00:02:05,840 --> 00:02:09,550
+used the Google Cloud Transfer Appliance.
+
+28
+00:02:09,550 --> 00:02:13,645
+Evernote, a mobile app designed for note-taking,
+
+29
+00:02:13,645 --> 00:02:16,605
+organizing task lists and archiving,
+
+30
+00:02:16,605 --> 00:02:22,740
+use the Google Cloud Transfer Appliance to transfer their datasets over.
+
+31
+00:02:22,740 --> 00:02:27,900
+What was their constraint that made the transfer appliance the best option?
+
+32
+00:02:27,900 --> 00:02:29,990
+Was it network bandwidth?
+
+33
+00:02:29,990 --> 00:02:33,755
+Real-time data or data size?
+
+34
+00:02:33,755 --> 00:02:37,805
+Well, it turns out the limiting factor was data size
+
+35
+00:02:37,805 --> 00:02:42,640
+because Evernote had over three petabytes of data.
+
+36
+00:02:42,840 --> 00:02:46,175
+Makani is a Google X company,
+
+37
+00:02:46,175 --> 00:02:50,240
+that's working to make clean energy accessible for everyone.
+
+38
+00:02:50,240 --> 00:02:52,990
+They develop energy kites,
+
+39
+00:02:52,990 --> 00:02:56,660
+a kind of wind power technology that can access
+
+40
+00:02:56,660 --> 00:02:59,785
+stronger and steadier winds at high altitudes
+
+41
+00:02:59,785 --> 00:03:03,725
+to generate more energy with less materials.
+
+42
+00:03:03,725 --> 00:03:09,600
+This requires picking optimal locations for weather and typography,
+
+43
+00:03:09,600 --> 00:03:14,350
+which requires lots of environmental and geographic data.
+
+44
+00:03:14,350 --> 00:03:22,160
+Makani brings petabytes of this data into their systems via Google Transfer Appliance.
+
+45
+00:03:22,160 --> 00:03:26,415
+So, what was the data migration limiting factor here?
+
+46
+00:03:26,415 --> 00:03:28,210
+Was it bandwidth?
+
+47
+00:03:28,210 --> 00:03:31,775
+Real-time data or data size?
+
+48
+00:03:31,775 --> 00:03:34,305
+It turns out from Makani,
+
+49
+00:03:34,305 --> 00:03:41,590
+the limiting factor is real-time distributed data collection plus petabyte data size.

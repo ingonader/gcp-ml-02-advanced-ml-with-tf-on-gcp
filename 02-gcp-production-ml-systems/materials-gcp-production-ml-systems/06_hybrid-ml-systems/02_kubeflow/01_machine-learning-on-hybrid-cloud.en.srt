@@ -1,0 +1,319 @@
+1
+00:00:00,000 --> 00:00:04,080
+In order to build hybrid machine learning systems that
+
+2
+00:00:04,080 --> 00:00:08,085
+work well both on-premises and in the cloud,
+
+3
+00:00:08,085 --> 00:00:12,390
+your machine learning framework has to support three things,
+
+4
+00:00:12,390 --> 00:00:17,075
+composability, portability, and scalability.
+
+5
+00:00:17,075 --> 00:00:19,840
+So, let's take composability first.
+
+6
+00:00:19,840 --> 00:00:22,475
+When people think about machine learning,
+
+7
+00:00:22,475 --> 00:00:24,780
+they think about building a model,
+
+8
+00:00:24,780 --> 00:00:27,020
+training a model, TensorFlow,
+
+9
+00:00:27,020 --> 00:00:29,410
+PyTorch, NumPy, et cetera.
+
+10
+00:00:29,410 --> 00:00:31,260
+But the reality is,
+
+11
+00:00:31,260 --> 00:00:36,020
+95 percent of the time is spent not building a model,
+
+12
+00:00:36,020 --> 00:00:38,225
+it's all the other stuff.
+
+13
+00:00:38,225 --> 00:00:42,530
+Each machine learning stage, data analysis, training,
+
+14
+00:00:42,530 --> 00:00:47,764
+model validation, monitoring, these are all independent systems.
+
+15
+00:00:47,764 --> 00:00:53,215
+Everyone has a different way to handle all these boxes.
+
+16
+00:00:53,215 --> 00:00:55,665
+So when we say composability,
+
+17
+00:00:55,665 --> 00:01:00,330
+it's about the ability to compose a bunch of microservices
+
+18
+00:01:00,330 --> 00:01:07,020
+together and the option to use what makes sense for your problem.
+
+19
+00:01:07,020 --> 00:01:10,255
+But now that you've built your specific framework,
+
+20
+00:01:10,255 --> 00:01:15,920
+you want to move it around and that's where we get into portability.
+
+21
+00:01:15,920 --> 00:01:24,950
+The stack that you use is likely made up of all these components and probably lots more.
+
+22
+00:01:25,460 --> 00:01:32,515
+All those microservices I detailed earlier only touch a small number of them.
+
+23
+00:01:32,515 --> 00:01:38,405
+But you do it, you can figure every stage in the stack and it's finally running.
+
+24
+00:01:38,405 --> 00:01:41,335
+What's this good for? What happens next?
+
+25
+00:01:41,335 --> 00:01:44,060
+Think about the machine learning workflow.
+
+26
+00:01:44,060 --> 00:01:50,575
+Remember that you did all of this just so that you could develop the model,
+
+27
+00:01:50,575 --> 00:01:52,930
+we'll call that experimentation.
+
+28
+00:01:52,930 --> 00:01:56,800
+But once you have the code running, what do you need to do?
+
+29
+00:01:56,800 --> 00:02:01,855
+That's right, you need to train the model on the full dataset.
+
+30
+00:02:01,855 --> 00:02:03,680
+You probably can't do it on
+
+31
+00:02:03,680 --> 00:02:08,480
+the small setup on which you did all your initial development.
+
+32
+00:02:08,480 --> 00:02:14,610
+So, you start up a training cluster and you have to do it all over again.
+
+33
+00:02:14,610 --> 00:02:17,380
+All the configuration, all the libraries,
+
+34
+00:02:17,380 --> 00:02:22,860
+all the testing, you've got to repeat it for the new environment.
+
+35
+00:02:22,860 --> 00:02:30,635
+Then chances are you've got to do it once again to move it from on-premises to the cloud.
+
+36
+00:02:30,635 --> 00:02:32,540
+Because remember, we said we want
+
+37
+00:02:32,540 --> 00:02:36,620
+a hybrid environment and machine learning model that maybe
+
+38
+00:02:36,620 --> 00:02:38,960
+it helps you train on the cloud and predicted
+
+39
+00:02:38,960 --> 00:02:42,485
+the edge are trained on the cloud that predict on-premises.
+
+40
+00:02:42,485 --> 00:02:46,730
+The point is that you have to configure the stack over
+
+41
+00:02:46,730 --> 00:02:51,700
+and over again for each environment that you need to support.
+
+42
+00:02:51,700 --> 00:02:54,245
+Maybe at this point you're thinking,
+
+43
+00:02:54,245 --> 00:02:55,955
+"That doesn't matter to me.
+
+44
+00:02:55,955 --> 00:02:58,640
+I never have to change environments.
+
+45
+00:02:58,640 --> 00:03:00,770
+I'll only use one environment."
+
+46
+00:03:00,770 --> 00:03:03,870
+Wrong.
+
+47
+00:03:03,870 --> 00:03:06,605
+Joe Beda is the CTO of Heptio,
+
+48
+00:03:06,605 --> 00:03:10,310
+a startup that's focused on bringing Kubernetes to everyone.
+
+49
+00:03:10,310 --> 00:03:11,940
+Before that, he was at Google,
+
+50
+00:03:11,940 --> 00:03:15,965
+he co-founded Kubernetes, started Google Compute Engine.
+
+51
+00:03:15,965 --> 00:03:20,420
+So, vast experience building production systems and that
+
+52
+00:03:20,420 --> 00:03:23,105
+vast experience building production systems
+
+53
+00:03:23,105 --> 00:03:27,160
+shows in this code which is not even about machine learning.
+
+54
+00:03:27,160 --> 00:03:30,055
+So, Joe says, "The way I think about it,
+
+55
+00:03:30,055 --> 00:03:33,260
+every difference between development staging and
+
+56
+00:03:33,260 --> 00:03:37,610
+production will eventually result in outage."
+
+57
+00:03:37,610 --> 00:03:41,305
+But notice a first environment that he mentions,
+
+58
+00:03:41,305 --> 00:03:43,415
+it's dev, it's development.
+
+59
+00:03:43,415 --> 00:03:47,630
+Your developing environment is an environment.
+
+60
+00:03:47,630 --> 00:03:49,325
+So portability,
+
+61
+00:03:49,325 --> 00:03:55,970
+it's essential and then of course you've got to do it again when your inputs change,
+
+62
+00:03:55,970 --> 00:04:01,690
+or your boss calls you and tells you to train faster by training on more machines.
+
+63
+00:04:01,690 --> 00:04:07,780
+You inevitably find that you have to change environments over and over again.
+
+64
+00:04:07,780 --> 00:04:12,290
+Also, your laptop, it counts as environment
+
+65
+00:04:12,290 --> 00:04:16,370
+number one and you don't do production services in your laptop,
+
+66
+00:04:16,370 --> 00:04:18,349
+so you need portability.
+
+67
+00:04:18,349 --> 00:04:23,645
+So composability, portability, finally, scalability.
+
+68
+00:04:23,645 --> 00:04:28,640
+You always hear about Kubernetes being able to scale and that's true
+
+69
+00:04:28,640 --> 00:04:34,550
+but scalability in machine learning means so many more things,
+
+70
+00:04:34,550 --> 00:04:38,320
+accelerators, GPUs, TPUs, et cetera.
+
+71
+00:04:38,320 --> 00:04:42,620
+Disks, skillsets, software engineers, researchers,
+
+72
+00:04:42,620 --> 00:04:44,910
+data engineers, data analysts,
+
+73
+00:04:44,910 --> 00:04:47,640
+data scientists, different skillsets.
+
+74
+00:04:47,640 --> 00:04:50,725
+Teams across the org
+
+75
+00:04:50,725 --> 00:04:53,650
+because there are teams that are going to be building the experiments,
+
+76
+00:04:53,650 --> 00:04:55,690
+teams that are going to be using the experiments,
+
+77
+00:04:55,690 --> 00:04:58,420
+teams that are going to be monitoring the machine learning models.
+
+78
+00:04:58,420 --> 00:05:03,104
+So, accelerators, disks, skillsets, teams, experiments.
+
+79
+00:05:03,104 --> 00:05:07,910
+So, that's what we think of when we think of machine learning in
+
+80
+00:05:07,910 --> 00:05:15,090
+a hybrid cloud environment, composability, portability, scalability.

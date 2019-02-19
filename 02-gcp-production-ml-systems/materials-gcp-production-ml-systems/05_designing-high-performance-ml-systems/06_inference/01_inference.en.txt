@@ -1,0 +1,52 @@
+So far,
+we have looked at training performance. Now we'll take a look at performance
+when it comes to predictions. So how do you obtain high
+performance inference? Well, you need to consider several aspect. There's the throughput requirements, how many queries per second
+do you need to process? There's latency requirements, that
+means how long a query actually takes. And then there's costs, and
+that's in terms of infrastructure and in terms of maintenance. There are essentially three
+approaches to implementing this. Using a deployed model, which is REST or
+HTTP API for streaming pipelines, using Cloud ML Engine batch
+prediction jobs for batch pipelines. Or using Cloud Dataflow direct model
+prediction, which can be used for both batch and streaming pipelines. So let's take a look at the third option,
+and we'll delve into it a bit, and this will help clarify
+our terminology as well. We're using the word batch differently
+from the word batch in ML training. Here we're using batch to
+refer to a bounded dataset. A typical batch data pipeline reads
+data from some persistent storage, either a data lake like Google Cloud
+Storage or a data warehouse like BigQuery. It then does some processing and writes
+it out to the same or a different format. The processing carried
+on by Cloud Dataflow typically enriches the data with
+the predictions of an ML model. Now, there are two options to do this,
+either by using a TensorFlow SavedModel and loading it directly into the dataflow
+pipeline from cloud storage. Or by using TensorFlow Serving and accessing it via an HTTP endpoint as a
+microservice, either from Cloud ML Engine, as shown, or using Kubeflow,
+running on a Kubernetes engine. So far,
+we've used the HTTP endpoint approach. But for performance reasons, you might want to consider
+the SavedModel approach as well. So what option gives the best
+performance for batch pipelines? Well, as usual, this depends on
+the aspect that's most important to you. In terms of raw processing speed, you want
+to use Cloud ML Engine batch predictions. The next fastest is to directly load
+the SavedModel into your dataflow job and then invoke it. The third option, in terms of speed, is to
+use TensorFlow Serving on Cloud ML Engine. But if you want maintainability,
+the second and third options reverse. The batch prediction is still the best. What's not to love about
+a fully managed service? But using online predictions
+as a microservice allows for easier upgradeability and dependency management than loading up
+the current version into the dataflow job. This graph is from an upcoming solution,
+see https://cloud.google.com/solutions/. By the time this video is
+available on Coursera, this solution might already
+have been published. A streaming pipeline is similar, except
+that the input dataset is not bounded. So we read it from an unbounded source,
+like a pub/sub, and we process it with dataflow. You have two options of SavedModel or
+TensorFlow Serving here as well, with TensorFlow Serving
+hosted on Cloud ML engine. For streaming pipelines,
+the SavedModel approach is the fastest. Using mini-batching,
+as we recommended earlier in the module on implementing serving, helps reduce
+the gap between the TensorFlow Serving, HTTP endpoint approach,
+supported by Cloud ML Engine, and directly loading the model
+into the client. However, the Cloud ML Engine
+approach is much more maintainable, especially when the model will be used for
+multiple clients. Another thing to keep in mind is that as
+the number of queries per second keeps increasing, at some points the saved
+model approach will become infeasible. But the Cloud ML Engine approach
+should scale indefinitely.

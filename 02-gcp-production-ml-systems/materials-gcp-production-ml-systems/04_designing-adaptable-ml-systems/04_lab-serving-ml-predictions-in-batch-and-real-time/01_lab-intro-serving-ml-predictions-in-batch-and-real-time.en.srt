@@ -1,0 +1,131 @@
+1
+00:00:00,000 --> 00:00:03,840
+One of the best ways of mitigating training serving skew
+
+2
+00:00:03,840 --> 00:00:07,510
+is to write code that can be used for both development and production.
+
+3
+00:00:07,510 --> 00:00:09,749
+If development production were the same,
+
+4
+00:00:09,749 --> 00:00:11,340
+this would be relatively trivial,
+
+5
+00:00:11,340 --> 00:00:13,215
+but oftentimes, they're different.
+
+6
+00:00:13,215 --> 00:00:17,790
+In this lab, we'll show you how to use polymorphism to abstract the environment
+
+7
+00:00:17,790 --> 00:00:20,100
+dependent aspects of the code while also
+
+8
+00:00:20,100 --> 00:00:24,095
+reusing the parts of the code that need to remain functionally equivalent.
+
+9
+00:00:24,095 --> 00:00:26,850
+Let's pretend that our development environment runs on
+
+10
+00:00:26,850 --> 00:00:30,145
+batches and then our production environment runs on streaming data.
+
+11
+00:00:30,145 --> 00:00:32,940
+This is actually a realistic scenario that speaks to
+
+12
+00:00:32,940 --> 00:00:36,150
+many used cases where the training data are already collected.
+
+13
+00:00:36,150 --> 00:00:39,770
+In development, we might ingest data from CSV files and use
+
+14
+00:00:39,770 --> 00:00:43,400
+our model to write our predictions to other CSV files.
+
+15
+00:00:43,400 --> 00:00:46,940
+In production though, our users are making requests in real-time,
+
+16
+00:00:46,940 --> 00:00:48,910
+and so our input will be streaming.
+
+17
+00:00:48,910 --> 00:00:51,545
+Here, we've captured that with Pub/Sub.
+
+18
+00:00:51,545 --> 00:00:54,110
+For the sake of argument, let's assume that in production,
+
+19
+00:00:54,110 --> 00:00:57,050
+we'd also like to output our predictions to a different location,
+
+20
+00:00:57,050 --> 00:00:58,870
+say, a data warehouse.
+
+21
+00:00:58,870 --> 00:01:03,859
+Critically, though, the input and output steps are different in these two pipelines,
+
+22
+00:01:03,859 --> 00:01:08,130
+the intermediate step where we use the model to make predictions is the same.
+
+23
+00:01:08,130 --> 00:01:10,550
+In order to use polymorphism here,
+
+24
+00:01:10,550 --> 00:01:12,725
+we'll define an abstract class within which
+
+25
+00:01:12,725 --> 00:01:16,035
+our two functions read instances and write predictions,
+
+26
+00:01:16,035 --> 00:01:18,350
+and these functions will be left abstract.
+
+27
+00:01:18,350 --> 00:01:22,555
+We'll then implement those functions into child classes, TextInputOutput,
+
+28
+00:01:22,555 --> 00:01:24,225
+which will be our development pipeline,
+
+29
+00:01:24,225 --> 00:01:27,850
+and PubSubBigQuery, which will be our production pipeline.
+
+30
+00:01:27,850 --> 00:01:30,885
+Because prediction is a step shared by both pipelines,
+
+31
+00:01:30,885 --> 00:01:33,605
+we can implement that within input output,
+
+32
+00:01:33,605 --> 00:01:37,249
+and because we've implemented the step in only one place,
+
+33
+00:01:37,249 --> 00:01:40,890
+we've ensured that our development and production pipelines are the same.

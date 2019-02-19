@@ -1,0 +1,151 @@
+1
+00:00:00,000 --> 00:00:02,275
+When leading a team of engineers,
+
+2
+00:00:02,275 --> 00:00:07,205
+many decisions are informed by technical debt and other sorts of cost-benefit analysis.
+
+3
+00:00:07,205 --> 00:00:11,065
+The best teams get very high rates of return on their investments.
+
+4
+00:00:11,065 --> 00:00:14,090
+With that in mind, let's consider a few scenarios.
+
+5
+00:00:14,090 --> 00:00:16,380
+Let's pretend that you're the leader of a team of
+
+6
+00:00:16,380 --> 00:00:19,050
+engineers and you're nearing the end of a code sprint.
+
+7
+00:00:19,050 --> 00:00:20,690
+One of the teams goals for the sprint,
+
+8
+00:00:20,690 --> 00:00:23,935
+is to increase performance on the model by five percent.
+
+9
+00:00:23,935 --> 00:00:26,220
+Currently however, the best-performing model is
+
+10
+00:00:26,220 --> 00:00:28,985
+only marginally better than what was around before.
+
+11
+00:00:28,985 --> 00:00:31,250
+One of the engineers acknowledges this,
+
+12
+00:00:31,250 --> 00:00:35,870
+but still insist that it's worth spending time doing an extensive ablation analysis,
+
+13
+00:00:35,870 --> 00:00:37,730
+where the value of an individual features
+
+14
+00:00:37,730 --> 00:00:40,875
+computed by comparing it to a model train without it.
+
+15
+00:00:40,875 --> 00:00:43,900
+What might this engineer be concerned about?
+
+16
+00:00:43,900 --> 00:00:48,595
+The engineer might be concerned about legacy and bundled features.
+
+17
+00:00:48,595 --> 00:00:51,650
+Legacy features are older features that were added,
+
+18
+00:00:51,650 --> 00:00:53,255
+because they were valuable at the time.
+
+19
+00:00:53,255 --> 00:00:55,640
+But since then, better features have been added,
+
+20
+00:00:55,640 --> 00:00:58,405
+which have made them redundant without our knowledge.
+
+21
+00:00:58,405 --> 00:01:00,280
+Bundled features on the other hand,
+
+22
+00:01:00,280 --> 00:01:02,449
+are features that were added as part of a bundle,
+
+23
+00:01:02,449 --> 00:01:05,975
+which collectively are valuable but individually may not be.
+
+24
+00:01:05,975 --> 00:01:11,430
+Both of these features represent additional unnecessary data dependencies.
+
+25
+00:01:11,430 --> 00:01:14,825
+In another scenario, another engineer has found
+
+26
+00:01:14,825 --> 00:01:17,980
+a new data source that is very much related to the label.
+
+27
+00:01:17,980 --> 00:01:22,190
+The problem is that, it's in a unique format and there's no parser written in Python,
+
+28
+00:01:22,190 --> 00:01:24,380
+which is what your code base is written in.
+
+29
+00:01:24,380 --> 00:01:26,810
+Thankfully, there is a parser on the web,
+
+30
+00:01:26,810 --> 00:01:29,960
+but it's closed source and written in a different language.
+
+31
+00:01:29,960 --> 00:01:32,360
+The engineers thinking about the model performance,
+
+32
+00:01:32,360 --> 00:01:34,690
+but something in the back of your mind seems wrong.
+
+33
+00:01:34,690 --> 00:01:37,775
+What is it? It's the smell.
+
+34
+00:01:37,775 --> 00:01:41,470
+Now, really there's an idea for this and it's called code smell.
+
+35
+00:01:41,470 --> 00:01:43,345
+It applies in ML as well.
+
+36
+00:01:43,345 --> 00:01:44,970
+In this case, you might be thinking,
+
+37
+00:01:44,970 --> 00:01:48,110
+"I wonder what introducing code that we can't inspect and
+
+38
+00:01:48,110 --> 00:01:52,640
+unable to easily modify into our testing in production frameworks will do."

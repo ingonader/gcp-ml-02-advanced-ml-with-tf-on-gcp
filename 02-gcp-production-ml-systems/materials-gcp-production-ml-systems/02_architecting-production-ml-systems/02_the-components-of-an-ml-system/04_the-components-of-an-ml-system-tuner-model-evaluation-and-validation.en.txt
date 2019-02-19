@@ -1,0 +1,30 @@
+As we saw on the last specialization,
+there are no globally optimal values for hyperparameters, only
+problem-specific optima. Because we expect to do hyperparameter
+tuning, our system needs to support it. By which I mean, operate multiple
+experiments in parallel and ideally, using early experiments to
+guide later ones automatically. Cloud ML Engines supports hyperparameter
+tuning using a variety of algorithms, and you can read more about the specific
+algorithms in this paper. The Model Evaluation and Validation
+components have one responsibility. To ensure that the models are good, before moving them into
+the production environment. The goal is to ensure that users'
+experiences aren't degraded. There are two main things that we care
+about with respect to model quality. How safe the model is to serve, and
+the model's prediction quality. A safe to serve model won't crash or cause
+errors in the serving system when being loaded or when sent on expected inputs. It also shouldn't use more than the
+expected amount of resources, like memory. Model evaluation is part of the iterative
+process where teams try and improve their models. However, because it's expensive
+to test on live data, experiments are generally
+run offline first. And it's in this setting where
+model evaluation takes place. Model evaluation consists of a person or
+a group of people assessing the model with respect to some business-relevant metric,
+like AUC or cost-weighted error. If the model meets their criteria,
+then it can be pushed into production for a live experiment. In contrast to the model evaluation
+component, which is human facing, the model validation component is not. Instead, it evaluates the model
+against fixed thresholds and alerts engineers when things go awry. One common test is to look at
+performance by slice of the input. For example, business stakeholders may care strongly
+about a particular geographic market. This is also another junction
+where ML fairness comes up. Both of these modules are a part of TFX,
+Google's internal production ML system. We've already open sourced
+some of these TFX libraries, including TF Transform,
+TF Model Analysis, and TF Serving.

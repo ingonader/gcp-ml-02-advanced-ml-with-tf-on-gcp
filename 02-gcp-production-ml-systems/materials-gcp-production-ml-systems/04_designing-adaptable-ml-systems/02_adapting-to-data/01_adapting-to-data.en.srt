@@ -1,0 +1,250 @@
+1
+00:00:01,310 --> 00:00:02,170
+In this module,
+
+2
+00:00:02,170 --> 00:00:06,320
+our high level goal is to help you learn
+how to better manage data dependencies.
+
+3
+00:00:06,320 --> 00:00:10,380
+To do that, we'll first review all of the
+many and surprising ways that data affect
+
+4
+00:00:10,380 --> 00:00:13,280
+the model and how you can protect
+your model's performance and
+
+5
+00:00:13,280 --> 00:00:16,900
+your system's stability all while
+keeping your team productive.
+
+6
+00:00:16,900 --> 00:00:20,010
+Then we'll build a pipeline that
+demonstrates how one sort of dependency
+
+7
+00:00:20,010 --> 00:00:22,290
+can be manged within the code itself.
+
+8
+00:00:22,290 --> 00:00:25,020
+And then finally,
+we'll put on our detective hats and
+
+9
+00:00:25,020 --> 00:00:27,260
+practice debugging
+models in production and
+
+10
+00:00:27,260 --> 00:00:31,690
+try to explain our observations in
+terms of mismanaged dependencies.
+
+11
+00:00:31,690 --> 00:00:35,500
+To motivate this section on how to adapt
+to change, consider these four things and
+
+12
+00:00:35,500 --> 00:00:38,230
+ask yourself which is
+least likely to change?
+
+13
+00:00:38,230 --> 00:00:41,370
+An upstream model,
+a data source maintained by another team,
+
+14
+00:00:42,410 --> 00:00:46,131
+the relationship between features and
+labels, or the distributions of inputs.
+
+15
+00:00:47,220 --> 00:00:50,760
+The answer is that all of them can and
+often do change.
+
+16
+00:00:50,760 --> 00:00:53,050
+Let's talk about how and
+what to do when that happens.
+
+17
+00:00:54,490 --> 00:00:57,670
+In one scenario, you've created a model
+to predict demand for umbrellas,
+
+18
+00:00:57,670 --> 00:01:01,335
+that excerpts as input and output from a
+more specialized weather prediction model.
+
+19
+00:01:01,335 --> 00:01:03,650
+Unbeknownst to you and
+
+20
+00:01:03,650 --> 00:01:08,160
+the owners of the model, this model has
+been trained on the wrong years of data.
+
+21
+00:01:08,160 --> 00:01:12,100
+Your model however is fit to the upstream
+model's outputs, what could go wrong?
+
+22
+00:01:13,560 --> 00:01:17,920
+One day the model owners silently push
+a fix and the performance of your model
+
+23
+00:01:17,920 --> 00:01:21,640
+which expected the old model
+distribution of data drops.
+
+24
+00:01:21,640 --> 00:01:24,253
+The old data had below average rainfall,
+and
+
+25
+00:01:24,253 --> 00:01:28,056
+now you're underpredicting the days
+when you need an umbrella.
+
+26
+00:01:28,056 --> 00:01:29,870
+Here's another scenario.
+
+27
+00:01:29,870 --> 00:01:33,759
+Your small data science team has convinced
+the web development team to let you ingest
+
+28
+00:01:33,759 --> 00:01:34,756
+their traffic logs.
+
+29
+00:01:34,756 --> 00:01:37,923
+Later, the web development
+team refactors their code and
+
+30
+00:01:37,923 --> 00:01:41,941
+changes their logging format but
+continue publishing in the old format.
+
+31
+00:01:41,941 --> 00:01:44,676
+At some point though they stop
+publishing on the old format and
+
+32
+00:01:44,676 --> 00:01:46,970
+they forget to tell your team.
+
+33
+00:01:46,970 --> 00:01:50,420
+Your model's performance degrades after
+getting an unexpectedly high number of
+
+34
+00:01:50,420 --> 00:01:51,120
+null features.
+
+35
+00:01:52,310 --> 00:01:54,140
+There are two ways of fixing this.
+
+36
+00:01:54,140 --> 00:01:57,800
+Firstly, you should think carefully before
+consuming data from sources when there's
+
+37
+00:01:57,800 --> 00:02:00,490
+a chance you won't know
+about changes to them.
+
+38
+00:02:00,490 --> 00:02:03,282
+Secondly, you can make a local
+version of upstream models and
+
+39
+00:02:03,282 --> 00:02:04,610
+update it on your schedule.
+
+40
+00:02:06,150 --> 00:02:09,582
+Sometimes the set of features that
+the model's been trained on including many
+
+41
+00:02:09,582 --> 00:02:13,870
+that were added indiscriminately, and
+these sometimes worsen model performance.
+
+42
+00:02:13,870 --> 00:02:14,800
+For example,
+
+43
+00:02:14,800 --> 00:02:18,120
+under pressured during a cold spring,
+your team decided to include in number of
+
+44
+00:02:18,120 --> 00:02:21,460
+features without thinking rigorously
+about their relationship at the label.
+
+45
+00:02:22,510 --> 00:02:26,060
+One of the miscausal, the others
+are merely correlated with the causal one.
+
+46
+00:02:27,160 --> 00:02:30,940
+The model however can't distinguish
+between causality and correlation and
+
+47
+00:02:30,940 --> 00:02:32,720
+takes all features into account equally.
+
+48
+00:02:33,720 --> 00:02:37,840
+Months later, the correlated features
+become decorrelated with the label and
+
+49
+00:02:37,840 --> 00:02:39,750
+are thus no longer predictive.
+
+50
+00:02:39,750 --> 00:02:41,149
+The model's performance suffers.
+
+51
+00:02:42,410 --> 00:02:46,090
+To address this, features should always
+be scrutinized before being added.
+
+52
+00:02:46,090 --> 00:02:49,790
+And all features should be subjected
+to leave one out evaluations
+
+53
+00:02:49,790 --> 00:02:50,900
+to assess their importance.

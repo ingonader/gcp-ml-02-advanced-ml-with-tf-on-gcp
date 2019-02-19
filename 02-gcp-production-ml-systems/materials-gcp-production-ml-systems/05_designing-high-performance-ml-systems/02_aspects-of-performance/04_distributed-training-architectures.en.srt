@@ -1,0 +1,467 @@
+1
+00:00:00,000 --> 00:00:04,539
+Before going into the details on how you can achieve this scaling in TensorFlow,
+
+2
+00:00:04,539 --> 00:00:09,530
+let's first talk about high-level concepts and architectures in distributed training.
+
+3
+00:00:09,530 --> 00:00:13,695
+This will give us a strong foundation to understand the various solutions.
+
+4
+00:00:13,695 --> 00:00:18,295
+So let's say you start with training on a machine with a multi-core CPU,
+
+5
+00:00:18,295 --> 00:00:20,400
+TensorFlow will actually automatically
+
+6
+00:00:20,400 --> 00:00:23,795
+handled all of the scaling across these multiple cores.
+
+7
+00:00:23,795 --> 00:00:26,040
+You may speed up your training by using
+
+8
+00:00:26,040 --> 00:00:29,755
+an accelerator to your machines such as a GPU or a TPU,
+
+9
+00:00:29,755 --> 00:00:31,020
+and with distributed training,
+
+10
+00:00:31,020 --> 00:00:32,355
+you can go even further.
+
+11
+00:00:32,355 --> 00:00:35,315
+You can go from using one machine with a single device,
+
+12
+00:00:35,315 --> 00:00:38,295
+to a machine with multiple devices attached to it.
+
+13
+00:00:38,295 --> 00:00:41,210
+Finally, to multiple machines possibly with
+
+14
+00:00:41,210 --> 00:00:44,225
+multiple devices each connected over a network.
+
+15
+00:00:44,225 --> 00:00:49,510
+Eventually the various approaches will allow you to scale up to hundreds of devices,
+
+16
+00:00:49,510 --> 00:00:52,495
+and that's indeed what we do in several Google systems.
+
+17
+00:00:52,495 --> 00:00:54,040
+The rest of this module,
+
+18
+00:00:54,040 --> 00:00:56,160
+will use the term device, or worker,
+
+19
+00:00:56,160 --> 00:01:02,185
+or accelerator interchangeably to refer to processing units such as GPUs or TPUs.
+
+20
+00:01:02,185 --> 00:01:05,250
+How does this distributed training actually work?
+
+21
+00:01:05,250 --> 00:01:07,370
+Like everything else in software engineering,
+
+22
+00:01:07,370 --> 00:01:09,460
+there's a few different ways to scale training.
+
+23
+00:01:09,460 --> 00:01:12,250
+Which one you choose depends on the size of your model,
+
+24
+00:01:12,250 --> 00:01:13,650
+the amount of your training data,
+
+25
+00:01:13,650 --> 00:01:15,735
+and the devices that are available to you.
+
+26
+00:01:15,735 --> 00:01:21,360
+The most common architecture for distributed training is known as data parallelism.
+
+27
+00:01:21,360 --> 00:01:26,420
+Data parallelism you're on the same model and computation on every device,
+
+28
+00:01:26,420 --> 00:01:29,475
+but you train each of them using different training samples.
+
+29
+00:01:29,475 --> 00:01:34,470
+Each device computes loss and gradients based on the training samples it sees.
+
+30
+00:01:34,470 --> 00:01:38,565
+Then we'll update the model's parameters using all of these gradients.
+
+31
+00:01:38,565 --> 00:01:42,810
+The updated model is then used in the next round of computation.
+
+32
+00:01:42,810 --> 00:01:45,830
+There are currently two approaches used to update
+
+33
+00:01:45,830 --> 00:01:48,750
+the model using gradients from various devices.
+
+34
+00:01:48,750 --> 00:01:54,075
+The first one is commonly known as the asynchronous parameter server architecture.
+
+35
+00:01:54,075 --> 00:01:57,025
+In asynchronous parameter server architecture,
+
+36
+00:01:57,025 --> 00:02:00,440
+some devices are designated to be parameter servers,
+
+37
+00:02:00,440 --> 00:02:02,134
+and others as workers.
+
+38
+00:02:02,134 --> 00:02:07,820
+Each worker independently fetches the latest parameters from the parameter server,
+
+39
+00:02:07,820 --> 00:02:11,870
+and computes gradients based on a subset of training samples.
+
+40
+00:02:11,870 --> 00:02:15,455
+It then sends the gradients back to the parameter server
+
+41
+00:02:15,455 --> 00:02:19,325
+which updates its copy of the parameters with those gradients.
+
+42
+00:02:19,325 --> 00:02:21,800
+Each worker can do this independently.
+
+43
+00:02:21,800 --> 00:02:26,180
+Now this allows it to scale really well to a large number of workers,
+
+44
+00:02:26,180 --> 00:02:28,910
+and this methodology has worked very well for many models,
+
+45
+00:02:28,910 --> 00:02:34,030
+and Google were training workers might be preempted by higher priority production jobs,
+
+46
+00:02:34,030 --> 00:02:36,195
+or machine might go down for maintenance,
+
+47
+00:02:36,195 --> 00:02:39,945
+or maybe sometimes there's an asymmetry between the workers.
+
+48
+00:02:39,945 --> 00:02:42,325
+Now, these don't hurt the scaling,
+
+49
+00:02:42,325 --> 00:02:44,780
+because the workers are not waiting for each other.
+
+50
+00:02:44,780 --> 00:02:47,350
+The downside of this approach,
+
+51
+00:02:47,350 --> 00:02:50,255
+however, is that workers can get out of sync.
+
+52
+00:02:50,255 --> 00:02:53,405
+They compute parameter updates based on stale values,
+
+53
+00:02:53,405 --> 00:02:55,610
+and then this can delay convergence.
+
+54
+00:02:55,610 --> 00:02:58,525
+This architecture has been around for some time,
+
+55
+00:02:58,525 --> 00:03:01,160
+and it's what we did in the first specialization,
+
+56
+00:03:01,160 --> 00:03:04,375
+when we call the train and evaluate method of the estimator.
+
+57
+00:03:04,375 --> 00:03:06,850
+We'll look at this in more detail shortly.
+
+58
+00:03:06,850 --> 00:03:10,740
+The second approach is called synchronous allreduce.
+
+59
+00:03:10,740 --> 00:03:16,110
+With the rise of powerful accelerators such as TPUs and GPUs over the last few years,
+
+60
+00:03:16,110 --> 00:03:18,170
+this approach has become more common.
+
+61
+00:03:18,170 --> 00:03:22,380
+In this approach, each worker holds a copy of the model's parameters.
+
+62
+00:03:22,380 --> 00:03:25,130
+There are no special service holding these parameters.
+
+63
+00:03:25,130 --> 00:03:30,080
+Each worker then compute gradients based on the training samples that they see,
+
+64
+00:03:30,080 --> 00:03:32,900
+and they can communicate this between themselves to
+
+65
+00:03:32,900 --> 00:03:36,135
+propagate the gradients and update their parameters.
+
+66
+00:03:36,135 --> 00:03:38,450
+All of the workers are synchronized,
+
+67
+00:03:38,450 --> 00:03:41,180
+conceptually the next forward pass does not
+
+68
+00:03:41,180 --> 00:03:44,305
+begin until each worker has received the gradients,
+
+69
+00:03:44,305 --> 00:03:46,290
+and updated their parameters.
+
+70
+00:03:46,290 --> 00:03:49,550
+With fast devices in a controlled environment,
+
+71
+00:03:49,550 --> 00:03:53,480
+the variance between the step time on each worker is quite small.
+
+72
+00:03:53,480 --> 00:03:57,410
+When combined with strong communication links between the workers,
+
+73
+00:03:57,410 --> 00:04:00,355
+the overhead of synchronization is also small.
+
+74
+00:04:00,355 --> 00:04:04,520
+So overall this approach can lead to faster convergence.
+
+75
+00:04:04,520 --> 00:04:10,160
+Given these two broad strategies that's the asynchronous parameter server approach,
+
+76
+00:04:10,160 --> 00:04:12,625
+or the synchronous allreduce approach,
+
+77
+00:04:12,625 --> 00:04:15,105
+when should you pick one over the other?
+
+78
+00:04:15,105 --> 00:04:17,835
+Well, there isn't really one right answer,
+
+79
+00:04:17,835 --> 00:04:19,740
+but here are some considerations.
+
+80
+00:04:19,740 --> 00:04:21,980
+The parameter server approach should be
+
+81
+00:04:21,980 --> 00:04:25,700
+preferred when there are large number of not so powerful,
+
+82
+00:04:25,700 --> 00:04:30,335
+or unreliable workers such as a cluster of machines which are CPAs.
+
+83
+00:04:30,335 --> 00:04:33,995
+If you have fast devices with strong communication links
+
+84
+00:04:33,995 --> 00:04:37,780
+such as multiple GPUs on one host or if you're using TPUs,
+
+85
+00:04:37,780 --> 00:04:40,030
+then all reduces probably a better choice.
+
+86
+00:04:40,030 --> 00:04:46,925
+So, parameter server for multiple machines allreduce for multiple devices on one machine.
+
+87
+00:04:46,925 --> 00:04:51,615
+Another consideration is the relative maturity of the two approaches.
+
+88
+00:04:51,615 --> 00:04:54,440
+Parameter server approaches supported very well by
+
+89
+00:04:54,440 --> 00:04:58,915
+TensorFlow in the estimator APIs train and evaluate method.
+
+90
+00:04:58,915 --> 00:05:02,080
+This is definitely the more mature approach.
+
+91
+00:05:02,080 --> 00:05:04,910
+The allreduce method is getting a lot more traction
+
+92
+00:05:04,910 --> 00:05:07,890
+recently because of the improvements in hardware.
+
+93
+00:05:07,890 --> 00:05:12,700
+So, for example, TPUs will use the allreduce approach right out of the box.
+
+94
+00:05:12,700 --> 00:05:15,405
+With recent improvements to TensorFlow,
+
+95
+00:05:15,405 --> 00:05:19,580
+you can scale your training with allreduce on multiple GPUs.
+
+96
+00:05:19,580 --> 00:05:21,740
+We'll take a look at this later in this module,
+
+97
+00:05:21,740 --> 00:05:24,310
+but the code is still in tf.contrib,
+
+98
+00:05:24,310 --> 00:05:26,375
+which is not core TensorFlow.
+
+99
+00:05:26,375 --> 00:05:31,140
+So the allreduce may be better if you have a machine with multiple GPUs,
+
+100
+00:05:31,140 --> 00:05:32,830
+or if you have a TPU,
+
+101
+00:05:32,830 --> 00:05:34,484
+but that's still experimental,
+
+102
+00:05:34,484 --> 00:05:36,925
+and the APIs are subject to change.
+
+103
+00:05:36,925 --> 00:05:41,180
+A third consideration is what performance constraint you
+
+104
+00:05:41,180 --> 00:05:44,900
+will run into if your model is primarily I/o bound,
+
+105
+00:05:44,900 --> 00:05:48,380
+and then using multiple machines can be a better approach,
+
+106
+00:05:48,380 --> 00:05:51,445
+and you should use the parameter server approach.
+
+107
+00:05:51,445 --> 00:05:55,160
+If your model is primarily compute bound,
+
+108
+00:05:55,160 --> 00:05:57,745
+then you want to use more powerful processors,
+
+109
+00:05:57,745 --> 00:06:00,385
+and then they allreduce approach could be better.
+
+110
+00:06:00,385 --> 00:06:03,350
+Besides data parallelism, there's
+
+111
+00:06:03,350 --> 00:06:07,160
+another type of distributed training called model parallelism.
+
+112
+00:06:07,160 --> 00:06:10,670
+A simple way to describe model parallelism is that when
+
+113
+00:06:10,670 --> 00:06:14,405
+your model is so big that it doesn't fit into a single devices memory.
+
+114
+00:06:14,405 --> 00:06:17,540
+So you then have to divide it into smaller parts that can
+
+115
+00:06:17,540 --> 00:06:21,075
+compute over the same training samples on multiple devices.
+
+116
+00:06:21,075 --> 00:06:24,610
+For example, you could put different layers on different devices,
+
+117
+00:06:24,610 --> 00:06:27,550
+and we'll take a look at this in a later lesson.

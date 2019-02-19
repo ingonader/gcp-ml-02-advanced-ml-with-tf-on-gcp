@@ -1,0 +1,235 @@
+1
+00:00:00,000 --> 00:00:03,630
+Now that we've looked at distributed training at a high level,
+
+2
+00:00:03,630 --> 00:00:07,140
+let's turn our focus to building faster input pipelines.
+
+3
+00:00:07,140 --> 00:00:11,115
+Regardless of which distributed TensorFlow architecture you use,
+
+4
+00:00:11,115 --> 00:00:14,385
+whether you do data parallelism or model parallelism,
+
+5
+00:00:14,385 --> 00:00:16,080
+and regardless of whether you implement
+
+6
+00:00:16,080 --> 00:00:19,800
+the data parallelism with a parameter server or with all reduce,
+
+7
+00:00:19,800 --> 00:00:23,895
+you should try your best to improve the performance of your input output pipeline.
+
+8
+00:00:23,895 --> 00:00:28,400
+Now, this becomes very essential if your model is IO bound,
+
+9
+00:00:28,400 --> 00:00:32,975
+and this will be the case if you're using multiple GPUs or if you're using TPUs.
+
+10
+00:00:32,975 --> 00:00:35,780
+When running a model on a single GPU,
+
+11
+00:00:35,780 --> 00:00:40,920
+the input pipeline is able to pre-process and provide input to the model as required.
+
+12
+00:00:40,920 --> 00:00:45,685
+But GPUs and TPUs can process data much faster than CPUs,
+
+13
+00:00:45,685 --> 00:00:49,140
+and they reduce the execution time of training one step.
+
+14
+00:00:49,140 --> 00:00:52,010
+Hence, as you increase the number of GPUs,
+
+15
+00:00:52,010 --> 00:00:54,380
+the input pipeline can no longer keep up with
+
+16
+00:00:54,380 --> 00:00:56,975
+the training and often becomes a bottleneck.
+
+17
+00:00:56,975 --> 00:01:00,010
+Specifically, before an iteration finishes,
+
+18
+00:01:00,010 --> 00:01:04,335
+the data for the next iteration is not yet available for processing.
+
+19
+00:01:04,335 --> 00:01:10,990
+Achieving peak performance in this scenario relies on having an efficient input pipeline.
+
+20
+00:01:10,990 --> 00:01:14,305
+There are three approaches to reading data into TensorFlow.
+
+21
+00:01:14,305 --> 00:01:17,365
+Remember that you get training data into your model graph,
+
+22
+00:01:17,365 --> 00:01:19,190
+you'll need to use an input function.
+
+23
+00:01:19,190 --> 00:01:20,930
+So essentially, we're looking at
+
+24
+00:01:20,930 --> 00:01:24,415
+three different ways to implement a training input function.
+
+25
+00:01:24,415 --> 00:01:27,065
+I've arranged them from slowest to fastest.
+
+26
+00:01:27,065 --> 00:01:31,265
+The first and simplest approach is to directly feed from Python.
+
+27
+00:01:31,265 --> 00:01:33,830
+This is what you will see in a lot of toy examples
+
+28
+00:01:33,830 --> 00:01:36,829
+because this is the easiest and the most flexible way,
+
+29
+00:01:36,829 --> 00:01:39,245
+but unfortunately it's also the slowest.
+
+30
+00:01:39,245 --> 00:01:43,310
+The second approach is to use native TensorFlow Ops.
+
+31
+00:01:43,310 --> 00:01:46,140
+We've looked at this already for CSV and JSON,
+
+32
+00:01:46,140 --> 00:01:47,780
+but we'll have to do a quick recap.
+
+33
+00:01:47,780 --> 00:01:51,465
+I will also show you how to do this if you're reading image data.
+
+34
+00:01:51,465 --> 00:01:57,390
+The third and fastest approach is to read transformed TensorFlow records.
+
+35
+00:01:57,390 --> 00:01:59,990
+There is some engineering complexity involved,
+
+36
+00:01:59,990 --> 00:02:02,750
+because you have to plan for this in your architecture and
+
+37
+00:02:02,750 --> 00:02:06,184
+convert data from its native format to tf records.
+
+38
+00:02:06,184 --> 00:02:09,720
+Often you will do this by incorporating apache beam
+
+39
+00:02:09,720 --> 00:02:14,205
+using tf transform or apache spark in your data pipeline.
+
+40
+00:02:14,205 --> 00:02:16,880
+Now, let's say you've read in your data,
+
+41
+00:02:16,880 --> 00:02:19,905
+and it's in a Pandas dataframe called dataset.
+
+42
+00:02:19,905 --> 00:02:22,970
+Here is an input function that's able to pull
+
+43
+00:02:22,970 --> 00:02:26,115
+the relevant columns out of the pandas dataframe,
+
+44
+00:02:26,115 --> 00:02:27,975
+shuffle it, batch it,
+
+45
+00:02:27,975 --> 00:02:29,585
+and then supply it to the trainer.
+
+46
+00:02:29,585 --> 00:02:31,160
+This is really fast,
+
+47
+00:02:31,160 --> 00:02:34,430
+but only because the entire dataset is held in memory.
+
+48
+00:02:34,430 --> 00:02:36,005
+So, it's not very scalable.
+
+49
+00:02:36,005 --> 00:02:38,120
+For most realistic problems,
+
+50
+00:02:38,120 --> 00:02:41,330
+keeping all of your data and memory is a sure far a way of
+
+51
+00:02:41,330 --> 00:02:44,745
+taking a problem that is IO bound or CPU bound,
+
+52
+00:02:44,745 --> 00:02:46,885
+and then making it memory bound.
+
+53
+00:02:46,885 --> 00:02:50,690
+Pandas input function is part of TensorFlow core.
+
+54
+00:02:50,690 --> 00:02:54,235
+There is a similar function called Numpy input function,
+
+55
+00:02:54,235 --> 00:02:57,695
+which will work with any data held in Numpy arrays.
+
+56
+00:02:57,695 --> 00:03:02,710
+Numpy of course is the typical representation for numeric data in Python.
+
+57
+00:03:02,710 --> 00:03:07,160
+So, if your company has some proprietary data format that all of your data is in,
+
+58
+00:03:07,160 --> 00:03:09,635
+and you don't want to convert them into TensorFlow records,
+
+59
+00:03:09,635 --> 00:03:12,220
+then this might be your best option.

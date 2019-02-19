@@ -1,0 +1,129 @@
+1
+00:00:00,600 --> 00:00:05,320
+In the first module of this course on
+production machine learning systems,
+
+2
+00:00:05,320 --> 00:00:09,950
+we discussed many of the things that
+the system should be able to do.
+
+3
+00:00:09,950 --> 00:00:14,490
+And the components that take
+responsibility for doing these things.
+
+4
+00:00:14,490 --> 00:00:19,970
+We also discussed important decisions
+that system architects will have to make.
+
+5
+00:00:19,970 --> 00:00:23,600
+For training, whether we do dynamic
+training or static training,
+
+6
+00:00:23,600 --> 00:00:25,760
+and the same for inference.
+
+7
+00:00:25,760 --> 00:00:29,670
+The answers to these questions
+drives the architecture.
+
+8
+00:00:29,670 --> 00:00:34,984
+And finally, you got to practice
+designing and architecture from scratch.
+
+9
+00:00:34,984 --> 00:00:39,590
+In the second module, we talked about
+how to bring your data to the cloud.
+
+10
+00:00:39,590 --> 00:00:42,460
+We covered transfer methods like gsutil to
+
+11
+00:00:42,460 --> 00:00:45,420
+directly ingest data into
+Google Cloud Storage.
+
+12
+00:00:45,420 --> 00:00:49,820
+The transfer appliance that we shipped to
+you to fill up and you should be back.
+
+13
+00:00:49,820 --> 00:00:52,350
+We talked about cloud
+storage transfer service,
+
+14
+00:00:52,350 --> 00:00:56,740
+which is a great way to transfer
+data between regions at Google.
+
+15
+00:00:56,740 --> 00:01:01,540
+And the BigQuery transfer service that
+automates loading data into BigQuery
+
+16
+00:01:01,540 --> 00:01:03,748
+from a variety of sources.
+
+17
+00:01:03,748 --> 00:01:09,330
+In module three, we talked about change,
+how it affects machine learning systems,
+
+18
+00:01:09,330 --> 00:01:14,300
+and what we can do to mitigate,
+to reduce those effects.
+
+19
+00:01:14,300 --> 00:01:19,260
+And in module four, we talked about how
+to squeeze the most performance out
+
+20
+00:01:19,260 --> 00:01:24,710
+of the machine learning system by choosing
+the right hardware removing bottles.
+
+21
+00:01:24,710 --> 00:01:30,040
+And in module five, we talked the high
+level about the technology behind hybrid
+
+22
+00:01:30,040 --> 00:01:36,240
+systems, which might run on the Cloud,
+on the Edge or on-premises.
+
+23
+00:01:36,240 --> 00:01:39,610
+And that's a wrap for
+Production Machine Learning Systems.
+
+24
+00:01:39,610 --> 00:01:43,490
+We'll see you in the next course
+on Image Classifications Models.
+
+25
+00:01:43,490 --> 00:01:47,940
+Where we will delve into convolutional
+networks, transfer learning and
+
+26
+00:01:47,940 --> 00:01:49,770
+tensor processing units.
+
+27
+00:01:49,770 --> 00:01:50,270
+Thank you.

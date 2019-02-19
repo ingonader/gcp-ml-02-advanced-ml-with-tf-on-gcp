@@ -1,0 +1,247 @@
+1
+00:00:00,000 --> 00:00:02,180
+Let's go over the solution to the lab.
+
+2
+00:00:02,180 --> 00:00:06,600
+The first thing that we're going to do is look inside main.py and then we'll take
+
+3
+00:00:06,600 --> 00:00:11,140
+a look inside of the template file which will show the user interface.
+
+4
+00:00:11,140 --> 00:00:13,055
+If you look inside main.py,
+
+5
+00:00:13,055 --> 00:00:17,400
+you'll notice that the Python file describes which files are to be
+
+6
+00:00:17,400 --> 00:00:21,855
+shown by the server given the URL that you put into the URL bar.
+
+7
+00:00:21,855 --> 00:00:25,735
+So for example, when you just simply go to the main part of the website,
+
+8
+00:00:25,735 --> 00:00:28,015
+you'll have index.html rendered,
+
+9
+00:00:28,015 --> 00:00:29,620
+and when you go to slash forum,
+
+10
+00:00:29,620 --> 00:00:31,925
+you'll see form.HTML rendered,
+
+11
+00:00:31,925 --> 00:00:35,710
+and these both correspond to templates in the templates folder.
+
+12
+00:00:35,710 --> 00:00:42,250
+This is simply how Flask is set up to make a web app.
+
+13
+00:00:43,580 --> 00:00:47,780
+You'll also notice that there's an API slash predict section,
+
+14
+00:00:47,780 --> 00:00:51,865
+and what this does is it connects the web app to the Cloud ML Engine service.
+
+15
+00:00:51,865 --> 00:00:53,750
+The first thing that it does here is it creates
+
+16
+00:00:53,750 --> 00:00:56,600
+a dictionary called features into which we put all of
+
+17
+00:00:56,600 --> 00:00:59,165
+our features and this is how
+
+18
+00:00:59,165 --> 00:01:03,300
+the application sort of connects with our form that we've made.
+
+19
+00:01:03,300 --> 00:01:05,650
+Then, it calls the get_prediction function.
+
+20
+00:01:05,650 --> 00:01:07,640
+The get_prediction function should look very
+
+21
+00:01:07,640 --> 00:01:09,905
+similar to the other Python code that we've used
+
+22
+00:01:09,905 --> 00:01:14,805
+or it creates an API which accepts our project, our model,
+
+23
+00:01:14,805 --> 00:01:17,345
+and our model version and it passes it
+
+24
+00:01:17,345 --> 00:01:20,390
+a representation of the input data which in this case is the stuff that it
+
+25
+00:01:20,390 --> 00:01:27,150
+harvests from our model and it returns the prediction to be rendered within our webpage.
+
+26
+00:01:28,420 --> 00:01:31,520
+The other thing that you had to do was to look inside the
+
+27
+00:01:31,520 --> 00:01:36,230
+form.html template and within form.html,
+
+28
+00:01:36,230 --> 00:01:40,430
+you'll notice that each of these divs here corresponds to a different part of
+
+29
+00:01:40,430 --> 00:01:42,710
+the layout or the user
+
+30
+00:01:42,710 --> 00:01:45,530
+can then put in a different piece of information into the interface.
+
+31
+00:01:45,530 --> 00:01:49,865
+So for example, here's a slider in order to put in the gestation weeks,
+
+32
+00:01:49,865 --> 00:01:52,535
+and here it is, plurality.
+
+33
+00:01:52,535 --> 00:01:57,350
+Plurality indicates how many babies were born from the mother at that time and yet.
+
+34
+00:01:57,350 --> 00:02:03,940
+You had to turn that into an option box and put in the values for one, two, or three.
+
+35
+00:02:03,940 --> 00:02:07,070
+Once you fixed all the to-dos and you've run the deploy script
+
+36
+00:02:07,070 --> 00:02:10,155
+and selected which region to deploy the app into,
+
+37
+00:02:10,155 --> 00:02:11,680
+you should get something like this.
+
+38
+00:02:11,680 --> 00:02:15,030
+Notice that for every one of the divs in our form.html,
+
+39
+00:02:15,030 --> 00:02:17,240
+we now have some UI elements that allow us to
+
+40
+00:02:17,240 --> 00:02:20,500
+choose the value for all the features that our model expects.
+
+41
+00:02:20,500 --> 00:02:24,235
+So, I'm going to test this out in front of you, you can see what happens.
+
+42
+00:02:24,235 --> 00:02:26,720
+Here is of course the drop-down for plurality,
+
+43
+00:02:26,720 --> 00:02:30,680
+which is one of the to-dos that you had to fix.
+
+44
+00:02:30,680 --> 00:02:34,160
+After choosing values for all of our features and clicking the Predict button,
+
+45
+00:02:34,160 --> 00:02:36,670
+we may have to wait a moment but then
+
+46
+00:02:36,670 --> 00:02:39,630
+the model will return with a prediction for the baby weight.
+
+47
+00:02:39,920 --> 00:02:43,790
+There you have it. In the lab we just completed,
+
+48
+00:02:43,790 --> 00:02:46,730
+we used App Engine to gain access to our model endpoint.
+
+49
+00:02:46,730 --> 00:02:49,270
+But when you actually develop your models,
+
+50
+00:02:49,270 --> 00:02:53,505
+you'll want to have a full fledged API with security and access control policies,
+
+51
+00:02:53,505 --> 00:02:58,045
+third-party access, monetization, and rate-limiting, and quota enforcement.
+
+52
+00:02:58,045 --> 00:03:01,025
+One easy way to do this is with Apigee Edge.
+
+53
+00:03:01,025 --> 00:03:03,790
+Apigee Edge creates a layer of abstraction in between
+
+54
+00:03:03,790 --> 00:03:06,775
+Cloud ML Engine and the applications that want predictions.
+
+55
+00:03:06,775 --> 00:03:11,170
+In this diagram, the FooApp passes an API key to an API proxy.
+
+56
+00:03:11,170 --> 00:03:15,420
+The API proxy forwards request from a proxy endpoint to the target endpoint,
+
+57
+00:03:15,420 --> 00:03:17,430
+which in this case is Cloud ML Engine.
+
+58
+00:03:17,430 --> 00:03:20,255
+Cloud ML Engine is responsible for making predictions.
+
+59
+00:03:20,255 --> 00:03:22,780
+In this case, because the predictions are returned directly,
+
+60
+00:03:22,780 --> 00:03:25,165
+these seem to be online predictions.
+
+61
+00:03:25,165 --> 00:03:27,545
+Cloud ML Engine sits on top of the model
+
+62
+00:03:27,545 --> 00:03:30,780
+which of course is hosted within a Cloud Storage bucket.

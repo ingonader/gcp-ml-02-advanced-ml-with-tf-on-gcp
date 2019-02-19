@@ -1,0 +1,40 @@
+In this module, our high level goal is to help you learn
+how to better manage data dependencies. To do that, we'll first review all of the
+many and surprising ways that data affect the model and how you can protect
+your model's performance and your system's stability all while
+keeping your team productive. Then we'll build a pipeline that
+demonstrates how one sort of dependency can be manged within the code itself. And then finally,
+we'll put on our detective hats and practice debugging
+models in production and try to explain our observations in
+terms of mismanaged dependencies. To motivate this section on how to adapt
+to change, consider these four things and ask yourself which is
+least likely to change? An upstream model,
+a data source maintained by another team, the relationship between features and
+labels, or the distributions of inputs. The answer is that all of them can and
+often do change. Let's talk about how and
+what to do when that happens. In one scenario, you've created a model
+to predict demand for umbrellas, that excerpts as input and output from a
+more specialized weather prediction model. Unbeknownst to you and the owners of the model, this model has
+been trained on the wrong years of data. Your model however is fit to the upstream
+model's outputs, what could go wrong? One day the model owners silently push
+a fix and the performance of your model which expected the old model
+distribution of data drops. The old data had below average rainfall,
+and now you're underpredicting the days
+when you need an umbrella. Here's another scenario. Your small data science team has convinced
+the web development team to let you ingest their traffic logs. Later, the web development
+team refactors their code and changes their logging format but
+continue publishing in the old format. At some point though they stop
+publishing on the old format and they forget to tell your team. Your model's performance degrades after
+getting an unexpectedly high number of null features. There are two ways of fixing this. Firstly, you should think carefully before
+consuming data from sources when there's a chance you won't know
+about changes to them. Secondly, you can make a local
+version of upstream models and update it on your schedule. Sometimes the set of features that
+the model's been trained on including many that were added indiscriminately, and
+these sometimes worsen model performance. For example, under pressured during a cold spring,
+your team decided to include in number of features without thinking rigorously
+about their relationship at the label. One of the miscausal, the others
+are merely correlated with the causal one. The model however can't distinguish
+between causality and correlation and takes all features into account equally. Months later, the correlated features
+become decorrelated with the label and are thus no longer predictive. The model's performance suffers. To address this, features should always
+be scrutinized before being added. And all features should be subjected
+to leave one out evaluations to assess their importance.

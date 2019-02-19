@@ -1,0 +1,283 @@
+1
+00:00:00,000 --> 00:00:02,250
+Hi, I'm Val.
+
+2
+00:00:02,250 --> 00:00:05,265
+I'm Machine Learning and AI Specialist at Google.
+
+3
+00:00:05,265 --> 00:00:11,105
+I want to warmly welcome you to the second course in our advanced specialization.
+
+4
+00:00:11,105 --> 00:00:16,515
+In this module, we'll talk about how to bring your data to the cloud.
+
+5
+00:00:16,515 --> 00:00:19,805
+There are many ways to bring your data to the cloud,
+
+6
+00:00:19,805 --> 00:00:22,475
+to power your machine learning models.
+
+7
+00:00:22,475 --> 00:00:27,435
+First, we'll review why your data needs to be on the cloud,
+
+8
+00:00:27,435 --> 00:00:32,230
+to get the advantages of scale and using fully managed services,
+
+9
+00:00:32,230 --> 00:00:36,010
+and what options you have to bring your data over.
+
+10
+00:00:36,010 --> 00:00:42,320
+Next, we will discuss several common scenarios for where your data currently is,
+
+11
+00:00:42,320 --> 00:00:46,550
+and the best ways you can bring it to the Google Cloud Platform.
+
+12
+00:00:46,550 --> 00:00:50,720
+These scenarios are, having data on
+
+13
+00:00:50,720 --> 00:00:55,505
+premise and using common tools like gsutil to transfer.
+
+14
+00:00:55,505 --> 00:00:59,450
+Next, is working with large datasets and
+
+15
+00:00:59,450 --> 00:01:03,990
+how typical networks can bottleneck at large scale.
+
+16
+00:01:03,990 --> 00:01:07,775
+Then, we'll cover if your data is already on
+
+17
+00:01:07,775 --> 00:01:12,575
+other clouds and how you can set up scheduled transfers.
+
+18
+00:01:12,575 --> 00:01:19,275
+Lastly, if you have existing databases with structured or unstructured data,
+
+19
+00:01:19,275 --> 00:01:25,360
+what ways you have to ingest into what Cloud-based database products.
+
+20
+00:01:25,360 --> 00:01:29,030
+One of the key fully managed services
+
+21
+00:01:29,030 --> 00:01:32,375
+we've discussed in previous lectures on architecture,
+
+22
+00:01:32,375 --> 00:01:36,810
+was Cloud ML Engine or CMLE.
+
+23
+00:01:36,810 --> 00:01:44,235
+As you recall, CMLE supports ML data in both batch and streaming form,
+
+24
+00:01:44,235 --> 00:01:48,170
+but the key is your data must be in the cloud
+
+25
+00:01:48,170 --> 00:01:53,545
+before you can get any of the benefits of these fully managed services.
+
+26
+00:01:53,545 --> 00:02:00,705
+While data migration may be an easy effort if you only have a few small datasets,
+
+27
+00:02:00,705 --> 00:02:04,145
+it's often much harder problem to tackle.
+
+28
+00:02:04,145 --> 00:02:08,215
+Now let's cover a few of the key migration challenges.
+
+29
+00:02:08,215 --> 00:02:13,515
+Here are some of the common data migration challenges our customers often run into.
+
+30
+00:02:13,515 --> 00:02:18,135
+First is the sheer volume of data captured and stored,
+
+31
+00:02:18,135 --> 00:02:21,300
+because data is growing exponentially.
+
+32
+00:02:21,300 --> 00:02:25,310
+At digital market forecast research report by ESG,
+
+33
+00:02:25,310 --> 00:02:29,845
+has unstructured data growth at about 56 percent year on year.
+
+34
+00:02:29,845 --> 00:02:35,745
+In fact, we see plenty of data growth rates of up to two times a year.
+
+35
+00:02:35,745 --> 00:02:38,105
+With more and more data,
+
+36
+00:02:38,105 --> 00:02:41,899
+resources are simply overwhelmed and networks are constrained.
+
+37
+00:02:41,899 --> 00:02:45,980
+Next, having dedicated bandwidth for data transfers is
+
+38
+00:02:45,980 --> 00:02:50,660
+often too expensive and it will disrupt normal operations of the business,
+
+39
+00:02:50,660 --> 00:02:52,970
+and building new network infrastructure is not
+
+40
+00:02:52,970 --> 00:02:57,415
+typical expertise or time that IT departments have readily available.
+
+41
+00:02:57,415 --> 00:03:02,240
+Which is why Google Cloud Platform offers a suite of solutions that enable you
+
+42
+00:03:02,240 --> 00:03:07,355
+to move data to GCP fast regardless of the data's location or type,
+
+43
+00:03:07,355 --> 00:03:11,420
+your network size, and utilization or its planned use.
+
+44
+00:03:11,420 --> 00:03:14,260
+Let's cover some of these options now.
+
+45
+00:03:14,260 --> 00:03:16,870
+First is online transfers.
+
+46
+00:03:16,870 --> 00:03:19,970
+Gsutil is a command line interface that many
+
+47
+00:03:19,970 --> 00:03:23,675
+of our customers use to get their data into GCS.
+
+48
+00:03:23,675 --> 00:03:27,640
+We also offer easy drag-and-drop folders in Chrome.
+
+49
+00:03:27,640 --> 00:03:30,890
+Next is a transfer appliance.
+
+50
+00:03:30,890 --> 00:03:33,830
+A rackable high-capacity storage server that we
+
+51
+00:03:33,830 --> 00:03:37,525
+shipped to you to fill it up and ship it back to us.
+
+52
+00:03:37,525 --> 00:03:41,570
+One hundred terabytes and half petabyte versions that,
+
+53
+00:03:41,570 --> 00:03:47,045
+with compression, could transfer 200 terabytes or up to a petabyte.
+
+54
+00:03:47,045 --> 00:03:54,230
+It's best used for lots of data where your network situation won't meet transfer demands.
+
+55
+00:03:54,230 --> 00:03:59,555
+After that, is a cloud storage transfer service that we call Cloud-2-Cloud.
+
+56
+00:03:59,555 --> 00:04:01,855
+Common use cases are migrating off of
+
+57
+00:04:01,855 --> 00:04:06,760
+other cloud buckets or often backing up other cloud bucket data.
+
+58
+00:04:06,760 --> 00:04:12,300
+It's also a great way to transfer large amounts of data between regions at Google.
+
+59
+00:04:12,300 --> 00:04:15,320
+Lastly, is a BigQuery transfer service,
+
+60
+00:04:15,320 --> 00:04:19,160
+which automates loading data into BigQuery from YouTube,
+
+61
+00:04:19,160 --> 00:04:21,270
+Google AdWords, and Double-click.
+
+62
+00:04:21,270 --> 00:04:24,400
+We also have many partners that provide options
+
+63
+00:04:24,400 --> 00:04:27,625
+for each of these use cases and often compliment
+
+64
+00:04:27,625 --> 00:04:29,410
+these use cases.
+
+65
+00:04:29,410 --> 00:04:33,370
+These transfer solutions were designed to help you take
+
+66
+00:04:33,370 --> 00:04:36,950
+advantage of GCP as quickly as possible.
+
+67
+00:04:36,950 --> 00:04:41,195
+For example, media archive migration can be
+
+68
+00:04:41,195 --> 00:04:46,960
+accelerated with the transfer appliance and cost-effectively stored in cold line,
+
+69
+00:04:46,960 --> 00:04:50,870
+but still served with low latency whenever needed.
+
+70
+00:04:50,870 --> 00:04:56,405
+AdWords data can flow directly into BigQuery for analysis,
+
+71
+00:04:56,405 --> 00:05:02,320
+or in fact, Cloud storage transfer service could be used to backup your s3 data.

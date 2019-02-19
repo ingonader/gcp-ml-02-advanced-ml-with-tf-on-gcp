@@ -1,0 +1,151 @@
+1
+00:00:00,000 --> 00:00:02,935
+Here's another slightly different scenario.
+
+2
+00:00:02,935 --> 00:00:05,470
+You've trained the product recommendation model based upon
+
+3
+00:00:05,470 --> 00:00:08,710
+users click and purchasing behavior on your e-commerce site.
+
+4
+00:00:08,710 --> 00:00:12,040
+On Black Friday, your server responsible for transactions and
+
+5
+00:00:12,040 --> 00:00:15,220
+payments goes down even while the web server stays up,
+
+6
+00:00:15,220 --> 00:00:18,735
+so the model thinks that no one who clicks is buying anything.
+
+7
+00:00:18,735 --> 00:00:23,620
+It's impossible to have models unlearn things that they've learned already,
+
+8
+00:00:23,620 --> 00:00:25,750
+but one thing you can do is to roll back
+
+9
+00:00:25,750 --> 00:00:28,940
+your model state to a time prior to the data pollution.
+
+10
+00:00:28,940 --> 00:00:30,450
+Of course, in order to do this,
+
+11
+00:00:30,450 --> 00:00:32,710
+you'll need infrastructure that automatically creates
+
+12
+00:00:32,710 --> 00:00:35,610
+and saves models as well as their meta information.
+
+13
+00:00:35,610 --> 00:00:37,665
+Here's another scenario.
+
+14
+00:00:37,665 --> 00:00:40,120
+You've trained the static product recommendation model,
+
+15
+00:00:40,120 --> 00:00:42,825
+which alone will determine which products users see
+
+16
+00:00:42,825 --> 00:00:46,050
+when they're on the homepage and when they're viewing individual products.
+
+17
+00:00:46,050 --> 00:00:49,640
+The model works by using purchasing behavior of other users.
+
+18
+00:00:49,640 --> 00:00:53,330
+After deploying it, user session time and conversion rate initially
+
+19
+00:00:53,330 --> 00:00:56,570
+increase but in the months that follow the release of the model,
+
+20
+00:00:56,570 --> 00:00:58,940
+both of these metrics steadily decline to
+
+21
+00:00:58,940 --> 00:01:02,155
+slightly below the levels that they were before the launch of the model.
+
+22
+00:01:02,155 --> 00:01:05,450
+What went wrong? What went wrong is
+
+23
+00:01:05,450 --> 00:01:08,400
+that your model's not updating to new users and new products,
+
+24
+00:01:08,400 --> 00:01:10,620
+and new patterns and user preference.
+
+25
+00:01:10,620 --> 00:01:15,590
+Because the model knows only about your older models because it was statically trained,
+
+26
+00:01:15,590 --> 00:01:19,055
+it continues to recommend them long after they've fallen out of favor.
+
+27
+00:01:19,055 --> 00:01:21,680
+Ultimately, users simply ignore the recommendations
+
+28
+00:01:21,680 --> 00:01:25,185
+altogether and may do with the site search functionality.
+
+29
+00:01:25,185 --> 00:01:29,160
+This cold start problem is common for this recommendation model.
+
+30
+00:01:29,160 --> 00:01:32,470
+We'll talk more about recommendation systems in course ten.
+
+31
+00:01:32,470 --> 00:01:37,275
+The solution here is to dynamically retrain your model on newer data, and secondly,
+
+32
+00:01:37,275 --> 00:01:39,775
+to understand the limits of your model.
+
+33
+00:01:39,775 --> 00:01:41,625
+Here's another scenario.
+
+34
+00:01:41,625 --> 00:01:44,300
+You've deployed a statically trained fraud detection model
+
+35
+00:01:44,300 --> 00:01:47,390
+and its performance starts off good but quickly degrades.
+
+36
+00:01:47,390 --> 00:01:51,469
+In adversarial environments where one party is trying to beat another,
+
+37
+00:01:51,469 --> 00:01:53,750
+it's particularly important to dynamically retrain
+
+38
+00:01:53,750 --> 00:01:56,840
+the model to keep up with the most recent strategies.

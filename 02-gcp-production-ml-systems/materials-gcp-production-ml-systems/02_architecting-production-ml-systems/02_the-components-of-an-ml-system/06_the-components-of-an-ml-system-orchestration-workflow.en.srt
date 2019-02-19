@@ -1,0 +1,283 @@
+1
+00:00:00,000 --> 00:00:03,840
+The next components will talk about help the system function as a whole,
+
+2
+00:00:03,840 --> 00:00:06,885
+rather than as a bunch of cobbled together parts.
+
+3
+00:00:06,885 --> 00:00:08,945
+If I make change to the trainer,
+
+4
+00:00:08,945 --> 00:00:12,675
+what component or components might also need to change?
+
+5
+00:00:12,675 --> 00:00:15,530
+The answer is potentially all of them.
+
+6
+00:00:15,530 --> 00:00:18,760
+The trainer uses meta information like vocabularies,
+
+7
+00:00:18,760 --> 00:00:20,955
+collected by the data transformation component
+
+8
+00:00:20,955 --> 00:00:23,925
+on data that had been validated and adjusted.
+
+9
+00:00:23,925 --> 00:00:26,045
+The tuner conducts experiments,
+
+10
+00:00:26,045 --> 00:00:28,560
+each of which involves the trainer yielding models
+
+11
+00:00:28,560 --> 00:00:31,265
+that must then be evaluated and validated.
+
+12
+00:00:31,265 --> 00:00:34,385
+The survey component, host models that have been evaluated,
+
+13
+00:00:34,385 --> 00:00:37,815
+validated, and trained, and then runs them in parallel.
+
+14
+00:00:37,815 --> 00:00:40,865
+Of course, everything logs everything.
+
+15
+00:00:40,865 --> 00:00:43,910
+Because everything needs to talk to everything else,
+
+16
+00:00:43,910 --> 00:00:46,315
+it's imperative that these components share resources,
+
+17
+00:00:46,315 --> 00:00:48,445
+and a configuration framework.
+
+18
+00:00:48,445 --> 00:00:53,905
+Failure to do so, can result in large amounts of glue code to tie the system together.
+
+19
+00:00:53,905 --> 00:00:56,765
+Glue code, is an example of an anti-pattern.
+
+20
+00:00:56,765 --> 00:00:59,140
+Something that slows development down.
+
+21
+00:00:59,140 --> 00:01:04,385
+It accumulates because often research and engineering are very distinct organizationally.
+
+22
+00:01:04,385 --> 00:01:08,850
+Within research, ML models can be developed as self-contained black boxes.
+
+23
+00:01:08,850 --> 00:01:10,650
+Engineering on the other hand,
+
+24
+00:01:10,650 --> 00:01:14,435
+needs to tie whatever is produced into a single production environment.
+
+25
+00:01:14,435 --> 00:01:17,390
+Glue code arises from their attempts to run code that was
+
+26
+00:01:17,390 --> 00:01:20,420
+never intended to be run in production in production.
+
+27
+00:01:20,420 --> 00:01:24,960
+The best remedies for this problem are establish a common architecture for both R and D,
+
+28
+00:01:24,960 --> 00:01:28,075
+and production deployment, and embed the teams together,
+
+29
+00:01:28,075 --> 00:01:32,675
+so that engineering can influence the design of code from its inception.
+
+30
+00:01:32,675 --> 00:01:34,940
+Orchestration is the name for the component
+
+31
+00:01:34,940 --> 00:01:37,900
+responsible for gluing the other components together.
+
+32
+00:01:37,900 --> 00:01:40,669
+In a system where pieces are designed thoughtfully,
+
+33
+00:01:40,669 --> 00:01:43,520
+the orchestration component will be simple and elegant.
+
+34
+00:01:43,520 --> 00:01:46,760
+In GCP, orchestration can be done with Cloud composer,
+
+35
+00:01:46,760 --> 00:01:48,830
+which is managed Apache airflow.
+
+36
+00:01:48,830 --> 00:01:53,630
+There are airflow operators for all the GCP components that we've considered so far,
+
+37
+00:01:53,630 --> 00:01:55,910
+including Cloud Storage, BitQuery,
+
+38
+00:01:55,910 --> 00:01:57,860
+Dataflow, and ML Engine.
+
+39
+00:01:57,860 --> 00:02:00,770
+So, you can orchestrate all these tasks from composer.
+
+40
+00:02:00,770 --> 00:02:05,265
+Another option for orchestration is to use Argo on Google Kubernetes engine.
+
+41
+00:02:05,265 --> 00:02:07,575
+Argo is a container management tool.
+
+42
+00:02:07,575 --> 00:02:08,825
+If each of your tasks,
+
+43
+00:02:08,825 --> 00:02:10,740
+data ingest, data transformation,
+
+44
+00:02:10,740 --> 00:02:13,005
+or model training or running containers,
+
+45
+00:02:13,005 --> 00:02:17,440
+then Argo is a good way to orchestrate the ML pipeline consisting of such containers.
+
+46
+00:02:17,440 --> 00:02:20,210
+Because GCP products are designed to work together,
+
+47
+00:02:20,210 --> 00:02:22,970
+the code to integrate them as simple and elegant.
+
+48
+00:02:22,970 --> 00:02:26,160
+Here are the steps to compose a workflow and Cloud composer.
+
+49
+00:02:26,160 --> 00:02:28,455
+First, define the Ops.
+
+50
+00:02:28,455 --> 00:02:32,980
+Second, arrange them into a directed a cyclic graph, or Dag.
+
+51
+00:02:32,980 --> 00:02:36,895
+The workflow engine uses a Dag to run the apps in the appropriate order,
+
+52
+00:02:36,895 --> 00:02:39,405
+and to explore opportunities for parallelism.
+
+53
+00:02:39,405 --> 00:02:42,260
+But it can't figure out the dependencies on its own,
+
+54
+00:02:42,260 --> 00:02:44,380
+you need to specify them.
+
+55
+00:02:44,380 --> 00:02:46,820
+Then you upload the Dag to the environment.
+
+56
+00:02:46,820 --> 00:02:49,975
+Finally, explore the Dag run in the web UI.
+
+57
+00:02:49,975 --> 00:02:53,255
+We won't go into detail on Cloud composer in this specialization.
+
+58
+00:02:53,255 --> 00:02:54,785
+However, here are some sample code,
+
+59
+00:02:54,785 --> 00:02:56,975
+but only some minor bits abstracted.
+
+60
+00:02:56,975 --> 00:03:00,435
+Each line of code is an independent node in our Dag.
+
+61
+00:03:00,435 --> 00:03:04,730
+The first node runs the SQL query and dumps that data into a table,
+
+62
+00:03:04,730 --> 00:03:10,130
+the second node exports the data from the table into a CSV file in Cloud storage,
+
+63
+00:03:10,130 --> 00:03:15,180
+the third node trains the model using the CSV file of event data as input.
+
+64
+00:03:15,180 --> 00:03:17,840
+The training task writes new model files to
+
+65
+00:03:17,840 --> 00:03:22,465
+the Cloud storage model directory that is then read by the App Engine endpoint.
+
+66
+00:03:22,465 --> 00:03:26,450
+The final node deploys a new version of the app engine endpoint,
+
+67
+00:03:26,450 --> 00:03:31,850
+so that the new model files are loaded and it migrates traffic to the new app version.
+
+68
+00:03:31,850 --> 00:03:33,740
+After defining these nodes,
+
+69
+00:03:33,740 --> 00:03:36,875
+we arrange them in the graph in the order that they should execute.
+
+70
+00:03:36,875 --> 00:03:40,690
+Stay tuned for the next module where we'll demo another architecture,
+
+71
+00:03:40,690 --> 00:03:44,100
+and where we use Cloud composer for data ingestion.

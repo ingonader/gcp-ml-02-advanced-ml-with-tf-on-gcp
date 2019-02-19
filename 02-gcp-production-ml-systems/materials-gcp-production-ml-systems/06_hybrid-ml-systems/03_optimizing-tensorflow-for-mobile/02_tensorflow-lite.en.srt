@@ -1,0 +1,123 @@
+1
+00:00:00,020 --> 00:00:05,910
+TensorFlow supports multiple mobile platforms including Android,
+
+2
+00:00:05,910 --> 00:00:07,840
+iOS and Raspberry Pi.
+
+3
+00:00:07,840 --> 00:00:11,415
+So, here we're going to focus on mobile devices.
+
+4
+00:00:11,415 --> 00:00:14,340
+Mobile TensorFlow makes sense when there's
+
+5
+00:00:14,340 --> 00:00:17,370
+a poor or missing network connection or we're
+
+6
+00:00:17,370 --> 00:00:21,510
+sending continuous data to a server would be too expensive.
+
+7
+00:00:21,510 --> 00:00:27,065
+The purpose is to help developers make the lean mobile apps using TensorFlow,
+
+8
+00:00:27,065 --> 00:00:31,730
+both by continuing to reduce a code footprint and by supporting
+
+9
+00:00:31,730 --> 00:00:37,355
+quantization and lower precision arithmetic that make the models smaller.
+
+10
+00:00:37,355 --> 00:00:42,590
+You can build a TensorFlow shared object on Android using Android Studio.
+
+11
+00:00:42,590 --> 00:00:46,505
+Using a continuous integration tool called basil.
+
+12
+00:00:46,505 --> 00:00:53,300
+For iOS, there is Cocoapod integration as well and it's all relatively simple.
+
+13
+00:00:53,300 --> 00:00:57,210
+So, let's take a look at how you can use the TensorFlow API.
+
+14
+00:00:57,210 --> 00:01:02,725
+The Android Inference Library integrates with TensorFlow for job applications.
+
+15
+00:01:02,725 --> 00:01:07,730
+So, these libraries are very thin wrapper from Java to the native implementation So,
+
+16
+00:01:07,730 --> 00:01:10,260
+that the performance impact is not very high.
+
+17
+00:01:10,260 --> 00:01:12,440
+So, at first, you create
+
+18
+00:01:12,440 --> 00:01:17,630
+TensorFlow inference interface opening the model file from the asset in the APK,
+
+19
+00:01:17,630 --> 00:01:22,580
+and then you set up an input feed using the Feed API and on mobile,
+
+20
+00:01:22,580 --> 00:01:26,810
+the input data tends to be retrieved from various sensors like the camera
+
+21
+00:01:26,810 --> 00:01:32,000
+etcetera.Then you run the inference and you fetch the result using the fetch method.
+
+22
+00:01:32,000 --> 00:01:36,170
+So, all of these are blocking calls so you typically run them in
+
+23
+00:01:36,170 --> 00:01:41,275
+a worker thread instead of the main thread because an API call takes time.
+
+24
+00:01:41,275 --> 00:01:44,300
+Even though we've talked primarily about prediction on
+
+25
+00:01:44,300 --> 00:01:48,920
+the mobile a new frontier is called federated learning,
+
+26
+00:01:48,920 --> 00:01:54,440
+the idea is you continuously trained the model on the device and then you combine
+
+27
+00:01:54,440 --> 00:02:01,200
+the model updates from a federation of user devices to update the overall model,
+
+28
+00:02:01,200 --> 00:02:03,980
+the goal is for each user to get
+
+29
+00:02:03,980 --> 00:02:07,490
+their customized experience because there's bottle training happening on
+
+30
+00:02:07,490 --> 00:02:10,700
+the device but still retain privacy because it's
+
+31
+00:02:10,700 --> 00:02:14,240
+the overall model update that goes back to the cloud.

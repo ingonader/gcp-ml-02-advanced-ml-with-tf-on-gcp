@@ -1,0 +1,99 @@
+1
+00:00:00,000 --> 00:00:04,605
+The third approach is to convert the images into TensorFlow records.
+
+2
+00:00:04,605 --> 00:00:07,470
+You do this in a preprocessing operation.
+
+3
+00:00:07,470 --> 00:00:09,870
+Then in the TensorFlow training program,
+
+4
+00:00:09,870 --> 00:00:11,940
+you can read the data quite rapidly.
+
+5
+00:00:11,940 --> 00:00:15,660
+TFRecords are set for fast efficient batch
+
+6
+00:00:15,660 --> 00:00:19,500
+reads without the overhead of having to parse the data in Python.
+
+7
+00:00:19,500 --> 00:00:23,240
+Here you can see I'm doing the preprocessing using Apache Beam,
+
+8
+00:00:23,240 --> 00:00:26,290
+but you could do it in any Python program.
+
+9
+00:00:26,290 --> 00:00:29,655
+If you are just converting images to TFRecords,
+
+10
+00:00:29,655 --> 00:00:31,610
+there is no state to remember,
+
+11
+00:00:31,610 --> 00:00:34,120
+and so plain Apache Beam will just work.
+
+12
+00:00:34,120 --> 00:00:37,875
+However, if you want to remember things from the transformation,
+
+13
+00:00:37,875 --> 00:00:41,345
+such as the vocabulary files used for scaling constants,
+
+14
+00:00:41,345 --> 00:00:45,085
+then you could do the conversion using tf.Transform.
+
+15
+00:00:45,085 --> 00:00:50,235
+For Spark, you can do a transformation on the DataFrame and just write it out.
+
+16
+00:00:50,235 --> 00:00:53,750
+Repeating the preprocessing during prediction is anew,
+
+17
+00:00:53,750 --> 00:00:59,050
+Spark and Spark Streaming don't use the same paradigm, unlike Apache Beam.
+
+18
+00:00:59,050 --> 00:01:01,410
+Once you have the TensorFlow records,
+
+19
+00:01:01,410 --> 00:01:03,280
+regardless of how you created it,
+
+20
+00:01:03,280 --> 00:01:08,150
+the input function in the TensorFlow graph comes from TensorFlow transform.
+
+21
+00:01:08,150 --> 00:01:11,720
+The metadata is things like the vocabulary and scaling,
+
+22
+00:01:11,720 --> 00:01:18,590
+so that the input function can transform the word hello to 03897334.
+
+23
+00:01:18,590 --> 00:01:21,560
+Of the three approaches, native Python,
+
+24
+00:01:21,560 --> 00:01:23,710
+native TensorFlow and TFRecords,
+
+25
+00:01:23,710 --> 00:01:26,960
+the TFRecords approach is the most efficient.

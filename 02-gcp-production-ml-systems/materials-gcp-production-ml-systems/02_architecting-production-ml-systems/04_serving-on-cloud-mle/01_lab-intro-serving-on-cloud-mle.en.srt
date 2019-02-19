@@ -1,0 +1,143 @@
+1
+00:00:00,270 --> 00:00:04,010
+In this section, we'll review some
+practical considerations for serving.
+
+2
+00:00:04,010 --> 00:00:07,130
+First, we'll build an app on AppEngine
+that will make calls to a model serving in
+
+3
+00:00:07,130 --> 00:00:08,590
+Cloud ML Engine.
+
+4
+00:00:08,590 --> 00:00:11,590
+And then we'll talk about how your
+system architecture can use Apache
+
+5
+00:00:11,590 --> 00:00:12,820
+to become a full-fledged API.
+
+6
+00:00:14,450 --> 00:00:15,560
+So let's start with the lab.
+
+7
+00:00:16,580 --> 00:00:19,530
+In the lab, we're going to create an
+AppEngine app that will make rest calls to
+
+8
+00:00:19,530 --> 00:00:21,540
+our model living in Cloud ML Engine.
+
+9
+00:00:21,540 --> 00:00:24,200
+And this is similar to the architecture
+that you're likely to use for
+
+10
+00:00:24,200 --> 00:00:25,110
+your applications.
+
+11
+00:00:26,260 --> 00:00:28,110
+So what's App Engine?
+
+12
+00:00:28,110 --> 00:00:30,500
+App Engine is a service for
+building scalable web and
+
+13
+00:00:30,500 --> 00:00:33,400
+mobile backends in any language
+on Google's infrastructure.
+
+14
+00:00:34,420 --> 00:00:38,180
+Google App Engine is a fully managed
+platform that completely abstracts away
+
+15
+00:00:38,180 --> 00:00:41,180
+any infrastructure, so
+you can focus on your code.
+
+16
+00:00:41,180 --> 00:00:46,040
+Out of the box, it supports Node.js,
+Java, Ruby, C#, Go, Python and
+
+17
+00:00:46,040 --> 00:00:48,050
+PHP, and it's also open.
+
+18
+00:00:48,050 --> 00:00:51,790
+You can supply your own Docker image or
+bring your own custom software stack
+
+19
+00:00:51,790 --> 00:00:54,910
+from language run times, to frameworks,
+to third party libraries.
+
+20
+00:00:56,370 --> 00:00:59,310
+Although it's a fully managed developer
+experience, you can also drop down into
+
+21
+00:00:59,310 --> 00:01:01,009
+the infrastructure for
+high control when you need it.
+
+22
+00:01:03,090 --> 00:01:07,537
+Our web application uses Flask, which is
+a lightweight framework for developing and
+
+23
+00:01:07,537 --> 00:01:09,217
+deploying web apps and Python.
+
+24
+00:01:09,217 --> 00:01:12,800
+In this case, our Flask app is a web form
+that takes the features of our model, and
+
+25
+00:01:12,800 --> 00:01:15,160
+will show the predicted weight.
+
+26
+00:01:15,160 --> 00:01:16,730
+And this is the interface
+that you'll build.
+
+27
+00:01:18,490 --> 00:01:21,319
+To start the lab, use the provided
+script to see what's missing in
+
+28
+00:01:21,319 --> 00:01:24,068
+the skeleton code, and look for to do's.
+
+29
+00:01:24,068 --> 00:01:27,020
+After you fixed all the to do's
+in the application directory,
+
+30
+00:01:27,020 --> 00:01:30,850
+you can run the deployapp.sh script
+to deploy your app to App Engine.
+
+31
+00:01:30,850 --> 00:01:33,610
+And then finally, visit your live web app.

@@ -1,0 +1,171 @@
+1
+00:00:00,440 --> 00:00:03,390
+The parameter server approach is not
+
+2
+00:00:03,390 --> 00:00:06,395
+always as simple and clean as the allreduce approach.
+
+3
+00:00:06,395 --> 00:00:09,150
+However, it is more mature and it is applicable to
+
+4
+00:00:09,150 --> 00:00:12,150
+both data parallelism and model parallelism.
+
+5
+00:00:12,150 --> 00:00:13,980
+Now, remember when I talked about
+
+6
+00:00:13,980 --> 00:00:17,745
+data parallelism as a great way to increase training throughput.
+
+7
+00:00:17,745 --> 00:00:20,280
+I showed you this graph and how the training of
+
+8
+00:00:20,280 --> 00:00:23,870
+the inception image model scales to more and more workers.
+
+9
+00:00:23,870 --> 00:00:28,755
+Well, the inception model is nice because it fits neatly into a single GPU.
+
+10
+00:00:28,755 --> 00:00:32,610
+But we also have things like the neural machine translation model,
+
+11
+00:00:32,610 --> 00:00:35,700
+and this model benefits from packing eight GPUs into
+
+12
+00:00:35,700 --> 00:00:40,415
+a single server and then using multiple servers in parallel to train the model.
+
+13
+00:00:40,415 --> 00:00:45,735
+The diagram shows a deep LSTM model that has eight GPUs per worker.
+
+14
+00:00:45,735 --> 00:00:49,300
+Another reason you might want to use multiple computers
+
+15
+00:00:49,300 --> 00:00:52,915
+is if your model is too large to fit into a single machine.
+
+16
+00:00:52,915 --> 00:00:58,340
+This is true for many of the wide and deep models that use large embedding matrices to
+
+17
+00:00:58,340 --> 00:01:00,200
+map feature crosses down to
+
+18
+00:01:00,200 --> 00:01:04,550
+a dense representation that we can handle in a deep neural network.
+
+19
+00:01:04,550 --> 00:01:06,620
+To do distributed training,
+
+20
+00:01:06,620 --> 00:01:11,405
+all you need to do is use an estimator and call the train and evaluate method.
+
+21
+00:01:11,405 --> 00:01:14,000
+Estimator contains the implementation of
+
+22
+00:01:14,000 --> 00:01:17,640
+three functions: training, evaluation, and serving.
+
+23
+00:01:17,640 --> 00:01:22,445
+You provide the model as a function which returns the ops required when given inputs.
+
+24
+00:01:22,445 --> 00:01:25,880
+It's mostly the TensorFlow code that you've written already.
+
+25
+00:01:25,880 --> 00:01:29,750
+Estimator then provides a standard interface that you can
+
+26
+00:01:29,750 --> 00:01:33,270
+use to perform the tasks that you need with that model.
+
+27
+00:01:33,270 --> 00:01:36,050
+It encapsulates all the details about sessions and
+
+28
+00:01:36,050 --> 00:01:40,670
+graphs and handles the details of actually training or running the model.
+
+29
+00:01:40,670 --> 00:01:43,870
+Because we now have a standard interface for your model,
+
+30
+00:01:43,870 --> 00:01:46,985
+it is easy to build infrastructure around models
+
+31
+00:01:46,985 --> 00:01:50,815
+without having to worry about the implementation of each model.
+
+32
+00:01:50,815 --> 00:01:56,160
+Estimator also supports exporting the model for use with TensorFlow Serving.
+
+33
+00:01:56,160 --> 00:02:01,570
+This ensures that you can easily productionize the model once you've trained it.
+
+34
+00:02:01,570 --> 00:02:05,150
+A train and evaluate function bundles together
+
+35
+00:02:05,150 --> 00:02:09,320
+an estimator with input functions for reading a particular dataset,
+
+36
+00:02:09,320 --> 00:02:11,305
+as well as other configuration options.
+
+37
+00:02:11,305 --> 00:02:16,475
+So, you simply specify an estimator which might be a pre-canned model
+
+38
+00:02:16,475 --> 00:02:17,900
+that fits on a slide like
+
+39
+00:02:17,900 --> 00:02:22,085
+this DNN classifier here and then wrap it in an experiment function.
+
+40
+00:02:22,085 --> 00:02:26,530
+You then pass that function to train and evaluate, which, for example,
+
+41
+00:02:26,530 --> 00:02:28,220
+if you're running on Cloud ML,
+
+42
+00:02:28,220 --> 00:02:30,140
+will pick up the configuration from
+
+43
+00:02:30,140 --> 00:02:34,530
+the environment and run the appropriate low-level code for you.

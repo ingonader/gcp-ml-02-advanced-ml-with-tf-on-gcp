@@ -1,0 +1,127 @@
+1
+00:00:00,000 --> 00:00:03,780
+The data transformation component allows for feature wrangling.
+
+2
+00:00:03,780 --> 00:00:07,080
+It can do things like generate feature to integer mappings.
+
+3
+00:00:07,080 --> 00:00:09,510
+Critically, whatever mappings that are generated
+
+4
+00:00:09,510 --> 00:00:11,880
+must be saved and reused at serving time.
+
+5
+00:00:11,880 --> 00:00:14,070
+Failure to do this consistently results in
+
+6
+00:00:14,070 --> 00:00:16,685
+a problem we'll be talking more about in a later module,
+
+7
+00:00:16,685 --> 00:00:18,880
+called Training Serving Skill.
+
+8
+00:00:18,880 --> 00:00:22,130
+We've seen examples in the previous specialization of how to do
+
+9
+00:00:22,130 --> 00:00:25,150
+data transformation using dataflow and dataprep.
+
+10
+00:00:25,150 --> 00:00:27,920
+We also saw how to create dataflow pipelines that are
+
+11
+00:00:27,920 --> 00:00:30,410
+part of the model graph using TF transform,
+
+12
+00:00:30,410 --> 00:00:34,005
+and how you can export a transform function for use at serving time.
+
+13
+00:00:34,005 --> 00:00:35,630
+In a later module,
+
+14
+00:00:35,630 --> 00:00:39,730
+we'll talk about how to get the most performance out of your input pipelines.
+
+15
+00:00:39,900 --> 00:00:43,425
+The trainer is responsible for training your model.
+
+16
+00:00:43,425 --> 00:00:47,150
+It should be able to support data parallelism and model parallelism,
+
+17
+00:00:47,150 --> 00:00:49,310
+and scale to large numbers of workers.
+
+18
+00:00:49,310 --> 00:00:53,060
+We'll talk about data and model parallelism in a later module.
+
+19
+00:00:53,060 --> 00:00:56,535
+It should also automatically monitor and log everything,
+
+20
+00:00:56,535 --> 00:00:58,935
+and support the use of experimentation.
+
+21
+00:00:58,935 --> 00:01:02,735
+Finally, the trainer should also support hyperparameter tuning.
+
+22
+00:01:02,735 --> 00:01:06,015
+There are two products that aligned with this component in GCP,
+
+23
+00:01:06,015 --> 00:01:09,830
+ML Engine which provides the managed service for TensorFlow and
+
+24
+00:01:09,830 --> 00:01:14,330
+GKE which provides a managed environment for hybrid ML models in Kubeflow.
+
+25
+00:01:14,330 --> 00:01:17,680
+We'll discuss hybrid ML models in a later module.
+
+26
+00:01:17,680 --> 00:01:21,500
+ML Engine is a managed execution environment for TensorFlow,
+
+27
+00:01:21,500 --> 00:01:24,409
+that allows you to instantly scale up to hundreds of workers,
+
+28
+00:01:24,409 --> 00:01:26,060
+and it's automatically integrated with
+
+29
+00:01:26,060 --> 00:01:30,140
+the three other core components: The tuner, logging and serving.
+
+30
+00:01:30,140 --> 00:01:33,260
+It also has a built-in concept of models inversions,
+
+31
+00:01:33,260 --> 00:01:36,710
+allowing for easy AB testing and there's no lock-in,
+
+32
+00:01:36,710 --> 00:01:39,480
+you can take your train model and run it anywhere.

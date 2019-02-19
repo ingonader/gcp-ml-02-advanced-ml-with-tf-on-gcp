@@ -1,0 +1,103 @@
+1
+00:00:00,000 --> 00:00:03,210
+We've talked about training-serving skew a number of
+
+2
+00:00:03,210 --> 00:00:05,750
+times in this specialization and the one that preceded it,
+
+3
+00:00:05,750 --> 00:00:07,455
+but always in a high level.
+
+4
+00:00:07,455 --> 00:00:09,900
+In this module, we'll provide richer examples
+
+5
+00:00:09,900 --> 00:00:12,600
+of what it is and then demonstrate a solution.
+
+6
+00:00:12,600 --> 00:00:16,710
+Training-serving skew is a related idea to what we've discussed so far today.
+
+7
+00:00:16,710 --> 00:00:18,630
+It refers to differences in performance that
+
+8
+00:00:18,630 --> 00:00:21,310
+occur as a function of differences in environment.
+
+9
+00:00:21,310 --> 00:00:25,980
+Specifically, training-serving skew refers to differences caused by one of three things,
+
+10
+00:00:25,980 --> 00:00:29,970
+a discrepancy between how you handle data in the training and serving pipelines,
+
+11
+00:00:29,970 --> 00:00:32,845
+a change in the data between when you training and when you serve,
+
+12
+00:00:32,845 --> 00:00:36,300
+or a feedback loop between your model and your algorithm.
+
+13
+00:00:36,300 --> 00:00:39,955
+Up until now, we focused on the data aspect of training-serving skew,
+
+14
+00:00:39,955 --> 00:00:42,380
+but it's also possible to have inconsistencies
+
+15
+00:00:42,380 --> 00:00:45,080
+that arise after the data have been introduced.
+
+16
+00:00:45,080 --> 00:00:49,520
+Say for example, that in your development environment you have version two of a library,
+
+17
+00:00:49,520 --> 00:00:51,770
+but in production you have version one.
+
+18
+00:00:51,770 --> 00:00:54,410
+The libraries may be functionally equivalent,
+
+19
+00:00:54,410 --> 00:00:57,630
+but version two is highly optimized and version one isn't.
+
+20
+00:00:57,630 --> 00:01:00,710
+Consequently, predictions might be significantly slower or
+
+21
+00:01:00,710 --> 00:01:04,055
+consume more memory in production than they did in development.
+
+22
+00:01:04,055 --> 00:01:06,950
+Ultimately, it's possible that version one and version two
+
+23
+00:01:06,950 --> 00:01:10,135
+are functionally different perhaps because of a bug.
+
+24
+00:01:10,135 --> 00:01:14,660
+Finally, it's also possible that different code is used in production versus development,
+
+25
+00:01:14,660 --> 00:01:17,660
+perhaps because of recognition of one of the other issues,
+
+26
+00:01:17,660 --> 00:01:22,010
+but though the intent was to create equivalent code, results were imperfect.

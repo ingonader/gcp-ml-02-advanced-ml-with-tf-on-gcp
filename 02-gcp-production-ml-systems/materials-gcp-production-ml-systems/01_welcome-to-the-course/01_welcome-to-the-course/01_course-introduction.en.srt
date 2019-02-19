@@ -1,0 +1,143 @@
+1
+00:00:00,000 --> 00:00:03,280
+Hi, I'm Valentine Fontama.
+
+2
+00:00:03,280 --> 00:00:08,400
+I'm a machine learning and AI practice lead at Google Professional Services.
+
+3
+00:00:08,400 --> 00:00:14,360
+I want to warmly welcome you to this second course in our advanced specialization.
+
+4
+00:00:14,360 --> 00:00:19,425
+The second course is on building production ML models.
+
+5
+00:00:19,425 --> 00:00:21,855
+The considerations behind them,
+
+6
+00:00:21,855 --> 00:00:24,820
+static training, dynamic training,
+
+7
+00:00:24,820 --> 00:00:27,865
+static inference, dynamic inference,
+
+8
+00:00:27,865 --> 00:00:31,795
+distributed TensorFlow, and TPUs.
+
+9
+00:00:31,795 --> 00:00:36,000
+So far, we've focused our attention on how to build
+
+10
+00:00:36,000 --> 00:00:41,420
+models that can do a good job predicting on previously unseen data.
+
+11
+00:00:41,420 --> 00:00:45,980
+That of course, is the heart of any machine learning system.
+
+12
+00:00:45,980 --> 00:00:49,790
+But real-world production ML systems are
+
+13
+00:00:49,790 --> 00:00:55,415
+large ecosystem of which the model code itself is just a small part.
+
+14
+00:00:55,415 --> 00:00:59,165
+The rest, consists of code that perform
+
+15
+00:00:59,165 --> 00:01:04,010
+critical functions some of which we've seen already like data pipelining,
+
+16
+00:01:04,010 --> 00:01:06,435
+and some that we've not.
+
+17
+00:01:06,435 --> 00:01:11,600
+This course is devoted to exploring the characteristics that make for
+
+18
+00:01:11,600 --> 00:01:16,925
+a good ML system beyond its ability to make good predictions.
+
+19
+00:01:16,925 --> 00:01:20,690
+We'll start at a high level in module one,
+
+20
+00:01:20,690 --> 00:01:25,830
+where we will discuss many of the things that the system should be able to do,
+
+21
+00:01:25,830 --> 00:01:30,570
+and the components that take responsibility for doing these things.
+
+22
+00:01:30,570 --> 00:01:37,770
+We'll also review two important decisions that system architects will have to make.
+
+23
+00:01:37,770 --> 00:01:44,270
+In module two, we'll talk about how to bring your data to the Cloud because that's
+
+24
+00:01:44,270 --> 00:01:47,720
+a prerequisite for much of the system's architecture we
+
+25
+00:01:47,720 --> 00:01:52,475
+discuss in this course and indeed in this specialization.
+
+26
+00:01:52,475 --> 00:01:56,925
+In module three, we'll talk about change.
+
+27
+00:01:56,925 --> 00:01:59,535
+How it can affect an ML system,
+
+28
+00:01:59,535 --> 00:02:03,865
+and what we can do to mitigate those effects?
+
+29
+00:02:03,865 --> 00:02:09,860
+In module four, we'll talk about how to squeeze the most performance out of
+
+30
+00:02:09,860 --> 00:02:16,180
+your ML system by choosing the right hardware and removing bottlenecks.
+
+31
+00:02:16,180 --> 00:02:19,385
+Finally, in module five,
+
+32
+00:02:19,385 --> 00:02:24,600
+we'll talk at a high level about the technology behind hybrid systems,
+
+33
+00:02:24,600 --> 00:02:26,885
+which may run on the Cloud,
+
+34
+00:02:26,885 --> 00:02:30,880
+or the Edge, or in fact, on-premises.
+
+35
+00:02:30,880 --> 00:02:34,490
+I'll now hand it over to my colleague Max,
+
+36
+00:02:34,490 --> 00:02:39,150
+who will start us off with architecting production ML systems.

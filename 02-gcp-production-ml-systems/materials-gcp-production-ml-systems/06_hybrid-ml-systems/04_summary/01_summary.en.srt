@@ -1,0 +1,115 @@
+1
+00:00:00,170 --> 00:00:06,510
+In this module we showed you two technologies Kubeflow and TensorFlow Lite,
+
+2
+00:00:06,510 --> 00:00:10,450
+that are important in hybrid Machine Learning Systems.
+
+3
+00:00:10,450 --> 00:00:12,995
+Kubeflow gives you composability,
+
+4
+00:00:12,995 --> 00:00:18,165
+portability and scalability while preserving the ability to run everywhere.
+
+5
+00:00:18,165 --> 00:00:23,130
+Specifically, Kubeflow offers portability and composability,
+
+6
+00:00:23,130 --> 00:00:26,880
+between your on-premises environment and Cloud ML Engine.
+
+7
+00:00:26,880 --> 00:00:32,895
+That trade-off is at Kubeflow is not serverless you will have to do cluster management.
+
+8
+00:00:32,895 --> 00:00:38,100
+Still retaining the ability to move to cloud and serverless at
+
+9
+00:00:38,100 --> 00:00:43,680
+some point in the future offer some fraction of your workloads provides flexibility.
+
+10
+00:00:43,680 --> 00:00:47,315
+The presence of Kubeflow also limits locking.
+
+11
+00:00:47,315 --> 00:00:50,090
+You can always take your models of Google Cloud,
+
+12
+00:00:50,090 --> 00:00:54,820
+and you have a way to continue training and serving those models.
+
+13
+00:00:54,850 --> 00:01:00,140
+TensorFlow Lite make specific compromises to enable
+
+14
+00:01:00,140 --> 00:01:05,105
+machine-learning inference on low power or under-resourced devices.
+
+15
+00:01:05,105 --> 00:01:09,365
+For example, you can convert variable nodes into constant nodes
+
+16
+00:01:09,365 --> 00:01:14,445
+which streamlines your model because constant nodes are embedded in the graph itself.
+
+17
+00:01:14,445 --> 00:01:18,745
+However, you sacrifice maintainability and portability,
+
+18
+00:01:18,745 --> 00:01:22,395
+since you cannot resume training from that model graph.
+
+19
+00:01:22,395 --> 00:01:28,220
+Another compromise you might make is to use a less accurate model on the device.
+
+20
+00:01:28,220 --> 00:01:32,055
+Perhaps you quantize the nodes or you use a smaller model.
+
+21
+00:01:32,055 --> 00:01:35,090
+Of course, we hope that you choose to train and
+
+22
+00:01:35,090 --> 00:01:38,060
+serve machine-learning models on Google Cloud, so,
+
+23
+00:01:38,060 --> 00:01:40,640
+you don't have to make these compromises or manage
+
+24
+00:01:40,640 --> 00:01:44,810
+all this infrastructure or train on low power devices.
+
+25
+00:01:44,810 --> 00:01:50,930
+But if business and real-world considerations require you to be able to train or
+
+26
+00:01:50,930 --> 00:01:53,810
+serve Machine Learning models outside
+
+27
+00:01:53,810 --> 00:01:57,775
+a cloud environment it's good to know that you have these options.
+
+28
+00:01:57,775 --> 00:02:03,515
+So, Kubeflow and TensorFlow Lite are good to know about to have in your back pocket,
+
+29
+00:02:03,515 --> 00:02:06,480
+when such situations arise.

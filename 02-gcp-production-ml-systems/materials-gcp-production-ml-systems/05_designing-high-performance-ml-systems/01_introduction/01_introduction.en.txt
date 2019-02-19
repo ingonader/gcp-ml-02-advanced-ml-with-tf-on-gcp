@@ -1,0 +1,16 @@
+Hi, I'm Laurence and I'm a developer advocate on Google
+brain focused on intensive flow. In this course, you're going to
+be learning the considerations behind architecting and implementing
+production machine learning systems. Now one key consideration of
+this of course is performance. In this module, you'll learn how to
+identify performance considerations from machine learning modules. Now machine learning models
+are not all identical. For some models you'll be focused
+on improving IO performance and on others, you'll be focused on
+squeezing out more computational speed. Depending on what you're focus is,
+you will need different ML infrastructure. Whether you decide to scale
+out with multiple machines or scale up on a single machine with a GPO or
+TPM. Sometimes you might even to do both
+by using a machine with multiple accelerators attached to it. Now it's not just the hardware choice, the hardware is select also inform your
+choice of the distribution strategy. This is a fast evolving area and some of the things that we show you
+are still are very alpha stage and evolve contributions from
+the tends of low community.

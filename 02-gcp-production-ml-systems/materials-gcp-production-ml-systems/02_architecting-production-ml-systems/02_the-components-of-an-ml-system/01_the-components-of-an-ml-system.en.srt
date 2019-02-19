@@ -1,0 +1,139 @@
+1
+00:00:00,000 --> 00:00:03,014
+The first component we'll talk about is data ingestion.
+
+2
+00:00:03,014 --> 00:00:05,190
+Before we can begin working with the data,
+
+3
+00:00:05,190 --> 00:00:07,710
+it needs to be ingested into the system,
+
+4
+00:00:07,710 --> 00:00:11,135
+and what's important to think of at the outset is where you'll be ingesting it from.
+
+5
+00:00:11,135 --> 00:00:14,505
+There are many use cases that require streaming data ingestion.
+
+6
+00:00:14,505 --> 00:00:18,420
+For example, perhaps you'd like to deliver a personalized gaining experience,
+
+7
+00:00:18,420 --> 00:00:21,210
+or do preventative maintenance for manufacturing equipment,
+
+8
+00:00:21,210 --> 00:00:24,400
+or react to changes in patients medical device data.
+
+9
+00:00:24,400 --> 00:00:28,040
+Sometimes, the data you want to train your model on or get predictions
+
+10
+00:00:28,040 --> 00:00:31,390
+for is structured in which case it might live in a data warehouse.
+
+11
+00:00:31,390 --> 00:00:33,590
+BigQuery is a structured data warehouse in
+
+12
+00:00:33,590 --> 00:00:36,695
+GCP that we've used extensively in the first specialization.
+
+13
+00:00:36,695 --> 00:00:40,295
+It uses sharding to achieve incredible IO parallelism.
+
+14
+00:00:40,295 --> 00:00:42,670
+There are many ways of reading data from BigQuery.
+
+15
+00:00:42,670 --> 00:00:46,375
+You can do it from within the model graph using the BigQuery reader up,
+
+16
+00:00:46,375 --> 00:00:49,275
+or you can make use of Apache Beams IO module.
+
+17
+00:00:49,275 --> 00:00:52,310
+In this example, we're loading data from BigQuery calling
+
+18
+00:00:52,310 --> 00:00:55,865
+predict on every record and then writing the results back into BigQuery.
+
+19
+00:00:55,865 --> 00:00:58,360
+In the last course, we created a pipeline that ref from
+
+20
+00:00:58,360 --> 00:01:02,125
+a structured data source and created CSV files in Cloud Storage.
+
+21
+00:01:02,125 --> 00:01:04,640
+You can think of that architecture of read,
+
+22
+00:01:04,640 --> 00:01:06,940
+process, and write as general purpose.
+
+23
+00:01:06,940 --> 00:01:09,975
+It works just as well for unstructured data too.
+
+24
+00:01:09,975 --> 00:01:12,144
+When you're ready to reach for performance,
+
+25
+00:01:12,144 --> 00:01:13,330
+instead of CSV files,
+
+26
+00:01:13,330 --> 00:01:14,970
+you can use TFRrecord files,
+
+27
+00:01:14,970 --> 00:01:17,090
+and we'll talk more about this in a later module
+
+28
+00:01:17,090 --> 00:01:19,555
+designing for high-performance ML Systems.
+
+29
+00:01:19,555 --> 00:01:24,075
+On GCP, those three types of data ingestion mapped to three different products.
+
+30
+00:01:24,075 --> 00:01:26,035
+If you're ingesting streaming data,
+
+31
+00:01:26,035 --> 00:01:27,449
+you do use Pub/Sub,
+
+32
+00:01:27,449 --> 00:01:30,600
+if you're ingesting structured data directly into your null model,
+
+33
+00:01:30,600 --> 00:01:32,015
+you might use BigQuery,
+
+34
+00:01:32,015 --> 00:01:35,605
+and if you're transforming data from trainings that you can train on it later,
+
+35
+00:01:35,605 --> 00:01:38,070
+you'd read it from Cloud Storage.

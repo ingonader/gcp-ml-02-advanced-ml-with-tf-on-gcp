@@ -1,0 +1,187 @@
+1
+00:00:00,100 --> 00:00:03,335
+Let's look at a second scenario,
+
+2
+00:00:03,335 --> 00:00:06,195
+where hybrid models are necessary.
+
+3
+00:00:06,195 --> 00:00:10,720
+Remember this example from earlier in our first course?
+
+4
+00:00:10,720 --> 00:00:13,530
+We saw that applications are
+
+5
+00:00:13,530 --> 00:00:17,915
+increasingly combining machine learning with mobile applications.
+
+6
+00:00:17,915 --> 00:00:20,260
+Google Translate, for example,
+
+7
+00:00:20,260 --> 00:00:24,310
+is a combination of several models: one model to find the sign,
+
+8
+00:00:24,310 --> 00:00:27,100
+another model to read the sign and do OCR on it,
+
+9
+00:00:27,100 --> 00:00:29,390
+a third model to translate the sign,
+
+10
+00:00:29,390 --> 00:00:32,010
+a fourth model to superimpose translated text.
+
+11
+00:00:32,010 --> 00:00:35,340
+The idea is that ML allows you to add intelligence to
+
+12
+00:00:35,340 --> 00:00:39,330
+your mobile applications such as image and voice recognition,
+
+13
+00:00:39,330 --> 00:00:41,679
+translation and natural language processing.
+
+14
+00:00:41,679 --> 00:00:47,235
+Also, you can apply the technology for smarter analytics on mobile specific data.
+
+15
+00:00:47,235 --> 00:00:50,300
+For example, you can use machine learning for detecting
+
+16
+00:00:50,300 --> 00:00:56,205
+certain patterns from motion or GPS tracking data. Why is that?
+
+17
+00:00:56,205 --> 00:01:00,860
+This is because machine learning can extract the meaning from the raw data.
+
+18
+00:01:00,860 --> 00:01:04,700
+For example, if you want to do image recognition with your mobile app,
+
+19
+00:01:04,700 --> 00:01:07,735
+the easiest way to send the raw image to the Cloud
+
+20
+00:01:07,735 --> 00:01:11,430
+and let the Cloud service recognize the objects in the image.
+
+21
+00:01:11,430 --> 00:01:15,680
+But, if you have a neural network algorithm running on your mobile app,
+
+22
+00:01:15,680 --> 00:01:19,150
+you can get the labels of the objects and then send them to the Cloud.
+
+23
+00:01:19,150 --> 00:01:21,230
+It's tens or hundreds of times more
+
+24
+00:01:21,230 --> 00:01:25,185
+efficient to collect the object labels on the Cloud service.
+
+25
+00:01:25,185 --> 00:01:26,510
+So, as an example,
+
+26
+00:01:26,510 --> 00:01:30,050
+if you do motion detection with your mobile app and you run
+
+27
+00:01:30,050 --> 00:01:33,890
+a neural network to extract a feature vector from that sensor data,
+
+28
+00:01:33,890 --> 00:01:38,740
+the bunch of numbers in the feature vector represents a signature of each motion.
+
+29
+00:01:38,740 --> 00:01:39,890
+So, you don't have to send
+
+30
+00:01:39,890 --> 00:01:44,035
+the raw video sequence or raw motion data to the Cloud service.
+
+31
+00:01:44,035 --> 00:01:50,305
+You can do the inference on the mobile and send just the results to the Cloud service,
+
+32
+00:01:50,305 --> 00:01:53,860
+and that involves less network transfer,
+
+33
+00:01:53,860 --> 00:01:55,685
+it's a lot more efficient.
+
+34
+00:01:55,685 --> 00:02:00,560
+Also, by applying machine learning technology to mobile apps,
+
+35
+00:02:00,560 --> 00:02:03,200
+you can reduce network bandwidth and you can get
+
+36
+00:02:03,200 --> 00:02:07,455
+faster response when you're communicating with the Cloud services.
+
+37
+00:02:07,455 --> 00:02:10,715
+We can delegate to a Microservice,
+
+38
+00:02:10,715 --> 00:02:13,635
+like we were running everything in the Cloud.
+
+39
+00:02:13,635 --> 00:02:16,245
+So now, we want a library,
+
+40
+00:02:16,245 --> 00:02:20,780
+a library that we can invoke directly on the mobile device and
+
+41
+00:02:20,780 --> 00:02:25,600
+not a Web service that we have to call out over the network.
+
+42
+00:02:25,600 --> 00:02:27,775
+So, in situations like this,
+
+43
+00:02:27,775 --> 00:02:30,295
+we would like to train on the Cloud,
+
+44
+00:02:30,295 --> 00:02:33,409
+but do the predictions on the device.
+
+45
+00:02:33,409 --> 00:02:36,385
+So, we don't want to call out to a Microservice,
+
+46
+00:02:36,385 --> 00:02:41,385
+instead we want to embed the model within the device itself.
+
+47
+00:02:41,385 --> 00:02:43,820
+So, how do we do that?

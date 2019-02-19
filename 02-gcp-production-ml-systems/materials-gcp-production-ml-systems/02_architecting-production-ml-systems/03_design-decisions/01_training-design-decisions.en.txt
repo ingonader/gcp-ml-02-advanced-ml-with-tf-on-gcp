@@ -1,0 +1,64 @@
+One of the key decisions you'll need
+to make about your production ML system concerns training. Here's a riddle. How is physics unlike fashion? If we assume that science is about
+discovering relationships that already exist in the world, then the answer is that physics is
+constant whereas fashion isn't. To see some proof, just look at
+some old pictures of yourself. Now, you might be asking,
+why is this relevant? The reason it's relevant is that when
+making decisions about training, you have to decide whether the phenomenon
+you're modelling is more like physics or like fashion. When training your model, there
+are two paradigms, static training and dynamic training. In static training, we do what we
+did in the last specialization. We gather our data, we partition it,
+we train our model, and then we deploy it. In dynamic training,
+we do this repeatedly as more data arrive. This leads to the fundamental
+trade-off between static and dynamic. Static is simpler to build and
+test, but likely to become stale. Whereas dynamic is harder to build and
+test, but will adapt to changes. And the tendency to become or not become
+stale is what I was alluding to earlier when I contrasted physics and fashion. If the relationship you're trying to model
+is one that is constant, like physics, then a statically trained
+model may be sufficient. If on the other hand the relationship
+your trying to model is like fashion, then the dynamically trained
+model might be more appropriate. Part of the reason the dynamic
+is harder to build and test is our that new data may
+have all sorts of bugs in it. And that's something we'll talk about more
+deeply in a later course on designing adoptable ML systems. Can you think of other reasons why
+the engineering might be harder? The reason is that we need more
+monitoring, model rollback, and data quarantine capabilities. Let's test our understanding
+with some new use cases. Take a moment to read
+the problem column and think about which sort of training
+style would be appropriate. First use case concerns spam detection. And the question you
+should ask yourself is, how fresh does spam detection need to be? You could do this as static, but spammers
+are a crafty and determined bunch. They will likely figure out ways of
+passing whatever filter you impose within short order. So dynamic is likely to be
+more effective over time. What about Android Voice-to-Text? Note that this question has some subtlety. For a global model,
+training offline is probably fine. But if you want to personalize
+the voice recognition, you may need to do something online,
+or at least different, on the phone. So this could be static or dynamic
+depending on whether you want global or personalized transcription. What about ad conversion rate? The interesting subtlety here is that
+conversion may come in very late. For example, if I'm shopping for
+a car online, I'm unlikely to buy for a very long time. What does dynamic training
+look like in this setting? One system I know uses dynamic training,
+but then regularly goes back at different intervals to catch up on new conversion
+data that has arrived for the past. In practice, most of the time,
+you'll need to do dynamic, but you might start with static
+because it's simpler. This is a reference architecture for
+static training. And it's the same thing we've done so far,
+where the models are trained once and then pushed to ML engine. Now, for dynamic training, there are three
+potential architectures to explore, Cloud functions, App Engine,
+or Cloud Dataflow. Here's the general architecture for
+dynamic training using Cloud functions. A new data file appears in Cloud storage
+and then the Cloud function is launched. The Cloud function starts
+Cloud MLE training job, and then the Cloud ML engine
+writes out a new model. Now, let's look at a specific
+architecture that uses Cloud Composer. Here is a more sophisticated
+dynamic training architecture that you'll see a demo of in the next
+module on Data Ingestion. Here we have an orchestration layer with
+Cloud Composer which has cloud functions that trigger cloud data flow
+processing jobs on new data based on new data files being
+dropped into Google Cloud Storage. That data is then processed and
+stored and then fed into Cloud ML Engine. This diagram illustrates
+a user making a web request, perhaps from a dashboard to AppEngine. Then a Cloud ML Engine
+training job is launched, and the Cloud ML Engine job writes
+a new model to Cloud storage. And then finally, the statistics of
+the training job are displayed to the user when the job is complete. It's also possible that the dataflow
+pipeline is invoking the model for predictions. And we'll build a pipeline in module 3, Designing Adaptable ML Systems,
+that does just that.

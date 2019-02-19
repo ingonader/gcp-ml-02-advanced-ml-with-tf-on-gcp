@@ -1,0 +1,294 @@
+1
+00:00:00,701 --> 00:00:03,884
+So far,
+we have looked at training performance.
+
+2
+00:00:03,884 --> 00:00:07,530
+Now we'll take a look at performance
+when it comes to predictions.
+
+3
+00:00:07,530 --> 00:00:11,190
+So how do you obtain high
+performance inference?
+
+4
+00:00:11,190 --> 00:00:13,576
+Well, you need to consider several aspect.
+
+5
+00:00:13,576 --> 00:00:15,527
+There's the throughput requirements,
+
+6
+00:00:15,527 --> 00:00:18,430
+how many queries per second
+do you need to process?
+
+7
+00:00:18,430 --> 00:00:22,630
+There's latency requirements, that
+means how long a query actually takes.
+
+8
+00:00:22,630 --> 00:00:26,180
+And then there's costs, and
+that's in terms of infrastructure and
+
+9
+00:00:26,180 --> 00:00:28,280
+in terms of maintenance.
+
+10
+00:00:28,280 --> 00:00:31,810
+There are essentially three
+approaches to implementing this.
+
+11
+00:00:31,810 --> 00:00:37,070
+Using a deployed model, which is REST or
+HTTP API for streaming pipelines,
+
+12
+00:00:37,070 --> 00:00:41,660
+using Cloud ML Engine batch
+prediction jobs for batch pipelines.
+
+13
+00:00:41,660 --> 00:00:45,860
+Or using Cloud Dataflow direct model
+prediction, which can be used for
+
+14
+00:00:45,860 --> 00:00:48,107
+both batch and streaming pipelines.
+
+15
+00:00:48,107 --> 00:00:51,644
+So let's take a look at the third option,
+and we'll delve into it a bit, and
+
+16
+00:00:51,644 --> 00:00:53,930
+this will help clarify
+our terminology as well.
+
+17
+00:00:55,870 --> 00:01:00,420
+We're using the word batch differently
+from the word batch in ML training.
+
+18
+00:01:00,420 --> 00:01:03,680
+Here we're using batch to
+refer to a bounded dataset.
+
+19
+00:01:04,740 --> 00:01:09,566
+A typical batch data pipeline reads
+data from some persistent storage,
+
+20
+00:01:09,566 --> 00:01:14,880
+either a data lake like Google Cloud
+Storage or a data warehouse like BigQuery.
+
+21
+00:01:14,880 --> 00:01:19,720
+It then does some processing and writes
+it out to the same or a different format.
+
+22
+00:01:20,760 --> 00:01:24,100
+The processing carried
+on by Cloud Dataflow
+
+23
+00:01:24,100 --> 00:01:28,630
+typically enriches the data with
+the predictions of an ML model.
+
+24
+00:01:28,630 --> 00:01:33,080
+Now, there are two options to do this,
+either by using a TensorFlow SavedModel
+
+25
+00:01:33,080 --> 00:01:37,350
+and loading it directly into the dataflow
+pipeline from cloud storage.
+
+26
+00:01:37,350 --> 00:01:39,810
+Or by using TensorFlow Serving and
+
+27
+00:01:39,810 --> 00:01:46,160
+accessing it via an HTTP endpoint as a
+microservice, either from Cloud ML Engine,
+
+28
+00:01:46,160 --> 00:01:50,800
+as shown, or using Kubeflow,
+running on a Kubernetes engine.
+
+29
+00:01:50,800 --> 00:01:54,450
+So far,
+we've used the HTTP endpoint approach.
+
+30
+00:01:54,450 --> 00:01:56,130
+But for performance reasons,
+
+31
+00:01:56,130 --> 00:01:59,070
+you might want to consider
+the SavedModel approach as well.
+
+32
+00:02:00,320 --> 00:02:04,110
+So what option gives the best
+performance for batch pipelines?
+
+33
+00:02:04,110 --> 00:02:07,470
+Well, as usual, this depends on
+the aspect that's most important to you.
+
+34
+00:02:08,530 --> 00:02:14,750
+In terms of raw processing speed, you want
+to use Cloud ML Engine batch predictions.
+
+35
+00:02:14,750 --> 00:02:19,560
+The next fastest is to directly load
+the SavedModel into your dataflow job and
+
+36
+00:02:19,560 --> 00:02:21,120
+then invoke it.
+
+37
+00:02:21,120 --> 00:02:26,190
+The third option, in terms of speed, is to
+use TensorFlow Serving on Cloud ML Engine.
+
+38
+00:02:27,470 --> 00:02:31,560
+But if you want maintainability,
+the second and third options reverse.
+
+39
+00:02:31,560 --> 00:02:33,470
+The batch prediction is still the best.
+
+40
+00:02:33,470 --> 00:02:36,180
+What's not to love about
+a fully managed service?
+
+41
+00:02:36,180 --> 00:02:39,330
+But using online predictions
+as a microservice allows for
+
+42
+00:02:39,330 --> 00:02:41,060
+easier upgradeability and
+
+43
+00:02:41,060 --> 00:02:45,668
+dependency management than loading up
+the current version into the dataflow job.
+
+44
+00:02:46,820 --> 00:02:53,280
+This graph is from an upcoming solution,
+see https://cloud.google.com/solutions/.
+
+45
+00:02:53,280 --> 00:02:55,607
+By the time this video is
+available on Coursera,
+
+46
+00:02:55,607 --> 00:02:58,065
+this solution might already
+have been published.
+
+47
+00:02:58,065 --> 00:03:03,450
+A streaming pipeline is similar, except
+that the input dataset is not bounded.
+
+48
+00:03:03,450 --> 00:03:07,000
+So we read it from an unbounded source,
+like a pub/sub, and
+
+49
+00:03:07,000 --> 00:03:08,475
+we process it with dataflow.
+
+50
+00:03:09,530 --> 00:03:13,860
+You have two options of SavedModel or
+TensorFlow Serving here as well,
+
+51
+00:03:13,860 --> 00:03:16,580
+with TensorFlow Serving
+hosted on Cloud ML engine.
+
+52
+00:03:18,100 --> 00:03:22,470
+For streaming pipelines,
+the SavedModel approach is the fastest.
+
+53
+00:03:22,470 --> 00:03:25,750
+Using mini-batching,
+as we recommended earlier in the module on
+
+54
+00:03:25,750 --> 00:03:30,290
+implementing serving, helps reduce
+the gap between the TensorFlow Serving,
+
+55
+00:03:30,290 --> 00:03:34,610
+HTTP endpoint approach,
+supported by Cloud ML Engine, and
+
+56
+00:03:34,610 --> 00:03:37,470
+directly loading the model
+into the client.
+
+57
+00:03:37,470 --> 00:03:41,340
+However, the Cloud ML Engine
+approach is much more maintainable,
+
+58
+00:03:41,340 --> 00:03:45,230
+especially when the model will be used for
+multiple clients.
+
+59
+00:03:45,230 --> 00:03:49,410
+Another thing to keep in mind is that as
+the number of queries per second keeps
+
+60
+00:03:49,410 --> 00:03:55,020
+increasing, at some points the saved
+model approach will become infeasible.
+
+61
+00:03:55,020 --> 00:03:58,230
+But the Cloud ML Engine approach
+should scale indefinitely.

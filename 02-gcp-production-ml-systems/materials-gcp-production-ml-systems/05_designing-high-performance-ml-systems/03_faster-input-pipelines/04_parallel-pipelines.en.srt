@@ -1,0 +1,415 @@
+1
+00:00:00,540 --> 00:00:03,730
+Let's look at the second, third approaches,
+
+2
+00:00:03,730 --> 00:00:07,020
+and other ways to improve performance even further.
+
+3
+00:00:07,020 --> 00:00:11,970
+Here is a simplified input pipeline for an image classification model,
+
+4
+00:00:11,970 --> 00:00:14,640
+where I'm assuming that we're doing option number three and
+
+5
+00:00:14,640 --> 00:00:17,915
+that's reading TF records into our TensorFlow Program.
+
+6
+00:00:17,915 --> 00:00:23,495
+TF.data API is the recommended way of building input pipelines in TensorFlow.
+
+7
+00:00:23,495 --> 00:00:28,705
+It enables you to build complex input pipelines from simple, reusable pieces.
+
+8
+00:00:28,705 --> 00:00:31,535
+It makes it easy to deal with large amounts of data,
+
+9
+00:00:31,535 --> 00:00:34,945
+different data formats, and complicated transformations.
+
+10
+00:00:34,945 --> 00:00:37,020
+In this particular pipeline,
+
+11
+00:00:37,020 --> 00:00:40,220
+we must first use a method called list files to
+
+12
+00:00:40,220 --> 00:00:43,660
+grab a bunch of input files containing the images and labels.
+
+13
+00:00:43,660 --> 00:00:47,480
+We will then parse them using a TF record dataset reader.
+
+14
+00:00:47,480 --> 00:00:50,030
+We will shuffle the records and repeat
+
+15
+00:00:50,030 --> 00:00:53,025
+them a few times if we want to run multiple epochs.
+
+16
+00:00:53,025 --> 00:00:57,295
+Finally, we preprocess each record using the dataset map.
+
+17
+00:00:57,295 --> 00:01:00,725
+The preprocessing may involve cropping, flipping, extra.
+
+18
+00:01:00,725 --> 00:01:04,630
+Finally, you batch input based on the desired batch size.
+
+19
+00:01:04,630 --> 00:01:08,330
+This input pipeline is what we've looked at so far.
+
+20
+00:01:08,330 --> 00:01:13,270
+A typical input pipeline can be thought of as an ETL process,
+
+21
+00:01:13,270 --> 00:01:16,120
+i.e that's a process involving extract,
+
+22
+00:01:16,120 --> 00:01:18,560
+transform, and load phases.
+
+23
+00:01:18,560 --> 00:01:20,125
+In the extract phase,
+
+24
+00:01:20,125 --> 00:01:22,360
+we read data from persistent storage,
+
+25
+00:01:22,360 --> 00:01:23,965
+either local or remote.
+
+26
+00:01:23,965 --> 00:01:25,570
+In the transform phase,
+
+27
+00:01:25,570 --> 00:01:28,615
+we use CPU cores to parse and perform
+
+28
+00:01:28,615 --> 00:01:32,780
+preprocessing operations on the data such as image decompression,
+
+29
+00:01:32,780 --> 00:01:35,405
+cropping, flipping, shuffling, and batching.
+
+30
+00:01:35,405 --> 00:01:37,185
+At the load stage,
+
+31
+00:01:37,185 --> 00:01:43,000
+we load the transform data onto the accelerator devices that will then execute the model.
+
+32
+00:01:43,000 --> 00:01:45,080
+This pattern effectively uses
+
+33
+00:01:45,080 --> 00:01:49,240
+the CPU while reserving the accelerator for training your model.
+
+34
+00:01:49,240 --> 00:01:52,750
+So, how does this apply to the code that we just saw?
+
+35
+00:01:52,750 --> 00:01:55,175
+In the extraction phase,
+
+36
+00:01:55,175 --> 00:01:59,490
+we start by getting a list of files from the local or remote data source.
+
+37
+00:01:59,490 --> 00:02:02,945
+We will then extract the TF records from those files.
+
+38
+00:02:02,945 --> 00:02:06,290
+In the transform, we apply a number of transformations to
+
+39
+00:02:06,290 --> 00:02:09,950
+the input records such as shuffling, mapping, and batching.
+
+40
+00:02:09,950 --> 00:02:15,690
+The load phase then tells TensorFlow how to get the data from the dataset.
+
+41
+00:02:15,980 --> 00:02:20,045
+This is what our example input pipeline would look like.
+
+42
+00:02:20,045 --> 00:02:23,000
+Each stage of the input ETL extract
+
+43
+00:02:23,000 --> 00:02:27,515
+transform load as well as the training on the accelerator will happen sequentially.
+
+44
+00:02:27,515 --> 00:02:30,319
+While the CPU is preparing the data,
+
+45
+00:02:30,319 --> 00:02:32,165
+the accelerator is sitting idle.
+
+46
+00:02:32,165 --> 00:02:35,215
+Conversely, while the accelerator is training the model,
+
+47
+00:02:35,215 --> 00:02:36,950
+the CPU is sitting idle.
+
+48
+00:02:36,950 --> 00:02:39,860
+The training step time is thus the sum of
+
+49
+00:02:39,860 --> 00:02:44,645
+both the CPU preprocessing time and the accelerator training time.
+
+50
+00:02:44,645 --> 00:02:49,640
+The different stages of the ETL process use different hardware resources.
+
+51
+00:02:49,640 --> 00:02:52,525
+The extract phase uses local storage,
+
+52
+00:02:52,525 --> 00:02:56,825
+the transform phase uses the CPU cores to perform transformations,
+
+53
+00:02:56,825 --> 00:02:59,300
+and the model is trained on the GPU.
+
+54
+00:02:59,300 --> 00:03:03,460
+When we parallelize those stages without resource contention,
+
+55
+00:03:03,460 --> 00:03:05,870
+we're able to overlap preprocessing of
+
+56
+00:03:05,870 --> 00:03:09,630
+the input data on the CPU with model training on the GPU,
+
+57
+00:03:09,630 --> 00:03:11,565
+and this is called pipelining.
+
+58
+00:03:11,565 --> 00:03:14,750
+Parallelizing and pipelining in various stages of
+
+59
+00:03:14,750 --> 00:03:19,000
+the pipeline can really help reduce training time.
+
+60
+00:03:19,000 --> 00:03:24,490
+Since you're dealing with a large data set sharded across Google Cloud Storage,
+
+61
+00:03:24,490 --> 00:03:27,575
+you can then speed up by reading multiple files
+
+62
+00:03:27,575 --> 00:03:30,935
+in parallel to increase the effective throughput.
+
+63
+00:03:30,935 --> 00:03:34,340
+You can then use this feature with a single option to
+
+64
+00:03:34,340 --> 00:03:39,410
+the TF record dataset constructor called num parallel reads.
+
+65
+00:03:39,410 --> 00:03:41,585
+You can then paralyze
+
+66
+00:03:41,585 --> 00:03:44,780
+data-parallel transformation operations across
+
+67
+00:03:44,780 --> 00:03:48,485
+many cores using the num parallel calls argument.
+
+68
+00:03:48,485 --> 00:03:52,700
+You would typically use the number of CPU cores to determine
+
+69
+00:03:52,700 --> 00:03:57,545
+the number of parallel calls that you would want to execute in the map function.
+
+70
+00:03:57,545 --> 00:04:03,335
+Finally, you should use prefetch call at the end of your input transformation.
+
+71
+00:04:03,335 --> 00:04:05,899
+The prefetch transformation decouples
+
+72
+00:04:05,899 --> 00:04:09,420
+the time data is produced from the time it is consumed.
+
+73
+00:04:09,420 --> 00:04:14,100
+It prefetching the data into a buffer and parallel with the training step.
+
+74
+00:04:14,100 --> 00:04:16,340
+This means that we have input data for
+
+75
+00:04:16,340 --> 00:04:20,440
+the next training step before the current one is completed.
+
+76
+00:04:20,440 --> 00:04:25,445
+This is what we had before and this is what our input pipeline looks like now.
+
+77
+00:04:25,445 --> 00:04:28,340
+As you can see, we're able to increase accelerate
+
+78
+00:04:28,340 --> 00:04:31,325
+a utilization which leads to faster training.
+
+79
+00:04:31,325 --> 00:04:36,155
+The CPU and accelerator are not idle for long periods as we saw previously.
+
+80
+00:04:36,155 --> 00:04:39,860
+While the accelerator is performing training step n,
+
+81
+00:04:39,860 --> 00:04:43,250
+the CPU is preparing the data for training step n plus one.
+
+82
+00:04:43,250 --> 00:04:47,495
+Neither the CPU nor the accelerator is idle in this case.
+
+83
+00:04:47,495 --> 00:04:51,620
+Doing so reduces the step times to the maximum as opposed to
+
+84
+00:04:51,620 --> 00:04:56,640
+the sum of the training and the time it takes to extract and transform the data.
+
+85
+00:04:56,640 --> 00:05:01,955
+However, even with the mentioned pipelining and parallelization optimizations,
+
+86
+00:05:01,955 --> 00:05:05,960
+you may still find your accelerator could be slightly underused.
+
+87
+00:05:05,960 --> 00:05:10,800
+At this stage, there's a few advanced optimizations that you can try out.
+
+88
+00:05:10,800 --> 00:05:13,580
+One common optimization is to switch to
+
+89
+00:05:13,580 --> 00:05:17,775
+the fused versions of some of the transformations we've seen so far.
+
+90
+00:05:17,775 --> 00:05:23,745
+Fusing is to combine operations so that specific optimizations are made possible.
+
+91
+00:05:23,745 --> 00:05:25,780
+Let's fuse together, shuffle,
+
+92
+00:05:25,780 --> 00:05:29,495
+and repeat and then we'll also fuse, map, and batch.
+
+93
+00:05:29,495 --> 00:05:32,305
+Here I fuse, shuffle, and repeat,
+
+94
+00:05:32,305 --> 00:05:36,740
+which avoids a performance stall by overlapping the buffering for Epoch n
+
+95
+00:05:36,740 --> 00:05:41,360
+plus one while producing elements for Epoch n. I've
+
+96
+00:05:41,360 --> 00:05:45,500
+also fuse the map and batch which parallelizes both the execution of
+
+97
+00:05:45,500 --> 00:05:50,564
+the map function and the data transfer of each element into the batch tensors.
+
+98
+00:05:50,564 --> 00:05:53,210
+Together, these can provide improvements for
+
+99
+00:05:53,210 --> 00:05:57,645
+models that consume a large volume of data per step.
+
+100
+00:05:57,645 --> 00:06:01,505
+By using some of the advanced optimization techniques,
+
+101
+00:06:01,505 --> 00:06:05,945
+we were able to improve pipeline input efficiency further,
+
+102
+00:06:05,945 --> 00:06:09,485
+thereby providing data to the accelerator faster.
+
+103
+00:06:09,485 --> 00:06:11,325
+As you can see in this diagram,
+
+104
+00:06:11,325 --> 00:06:15,600
+the accelerator is now nearly 100% utilized.

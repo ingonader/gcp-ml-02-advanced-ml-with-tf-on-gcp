@@ -1,0 +1,275 @@
+1
+00:00:00,000 --> 00:00:03,150
+Welcome to Designing adaptable MLl systems,
+
+2
+00:00:03,150 --> 00:00:05,100
+the third module in the second course in
+
+3
+00:00:05,100 --> 00:00:07,970
+the advanced machine learning on GCP specialization.
+
+4
+00:00:07,970 --> 00:00:10,140
+In this module, we'll learn how to recognize
+
+5
+00:00:10,140 --> 00:00:12,540
+the ways that our model is dependent on our data,
+
+6
+00:00:12,540 --> 00:00:14,710
+make cost-conscious engineering decisions,
+
+7
+00:00:14,710 --> 00:00:17,550
+know when to roll back our model to earlier versions,
+
+8
+00:00:17,550 --> 00:00:20,099
+debug the causes of observed model behavior,
+
+9
+00:00:20,099 --> 00:00:23,285
+and implementing pipeline that is immune to one type of dependency.
+
+10
+00:00:23,285 --> 00:00:25,335
+In the 16th century,
+
+11
+00:00:25,335 --> 00:00:29,040
+John Don famously wrote in one of his poems that no man is an island,
+
+12
+00:00:29,040 --> 00:00:32,755
+by which he meant that human beings need to be part of a community to thrive.
+
+13
+00:00:32,755 --> 00:00:37,955
+For similar reasons, it's also long been the case that few software programs are islands.
+
+14
+00:00:37,955 --> 00:00:39,700
+In software engineering terms,
+
+15
+00:00:39,700 --> 00:00:44,035
+we would say that few software programs adopt a monolithic island like design.
+
+16
+00:00:44,035 --> 00:00:46,890
+Instead, most software today is modular,
+
+17
+00:00:46,890 --> 00:00:50,675
+which is to say that most software today depends on other software.
+
+18
+00:00:50,675 --> 00:00:53,765
+One of the reasons that so many programs are modular
+
+19
+00:00:53,765 --> 00:00:56,875
+is because modular programs are more maintainable.
+
+20
+00:00:56,875 --> 00:00:59,890
+Modular programs are easier to reuse, test,
+
+21
+00:00:59,890 --> 00:01:02,000
+and fix because engineers can focus on
+
+22
+00:01:02,000 --> 00:01:05,135
+small pieces of code rather than the entire program.
+
+23
+00:01:05,135 --> 00:01:07,855
+Though there are many benefits to modular design,
+
+24
+00:01:07,855 --> 00:01:09,690
+there are still complications.
+
+25
+00:01:09,690 --> 00:01:13,320
+Modular programs are by design dependent on other software.
+
+26
+00:01:13,320 --> 00:01:15,710
+As more and more software was developed,
+
+27
+00:01:15,710 --> 00:01:19,760
+the dependency trees within modular programs became large and for a time,
+
+28
+00:01:19,760 --> 00:01:23,225
+this proved to be a cost that offset the benefits of modularity.
+
+29
+00:01:23,225 --> 00:01:26,390
+Imagine having to find and install hundreds of libraries on
+
+30
+00:01:26,390 --> 00:01:29,810
+your computer every time you wanted to use a new library,
+
+31
+00:01:29,810 --> 00:01:33,420
+or being unable to reproduce results and not knowing why.
+
+32
+00:01:33,420 --> 00:01:35,580
+There was even a name for this problem,
+
+33
+00:01:35,580 --> 00:01:38,010
+developers called dependency hell.
+
+34
+00:01:38,010 --> 00:01:40,880
+Thankfully, the tooling caught up to developer needs,
+
+35
+00:01:40,880 --> 00:01:43,370
+and these days managing dependencies is much
+
+36
+00:01:43,370 --> 00:01:46,970
+easier because of tools like Maven, Gradle and Pip.
+
+37
+00:01:46,970 --> 00:01:50,570
+The reason that these tools have been helpful in addressing this problem,
+
+38
+00:01:50,570 --> 00:01:54,390
+is that we specify which versions of libraries our programs depend on.
+
+39
+00:01:54,390 --> 00:01:57,560
+Dependency management became mostly a matter of setting up
+
+40
+00:01:57,560 --> 00:02:01,190
+the same environment and then parsing the dependencies of your software,
+
+41
+00:02:01,190 --> 00:02:03,380
+and the result is that we now know precisely
+
+42
+00:02:03,380 --> 00:02:06,555
+which code paths will be executed at run-time.
+
+43
+00:02:06,555 --> 00:02:11,135
+Containers are a piece of technology that also make it easier to manage dependencies.
+
+44
+00:02:11,135 --> 00:02:15,290
+A container is an abstraction that package's apps and libraries together so
+
+45
+00:02:15,290 --> 00:02:19,350
+that applications can run on a greater variety of hardware and operating systems,
+
+46
+00:02:19,350 --> 00:02:22,570
+which ultimately makes hosting large applications better.
+
+47
+00:02:22,570 --> 00:02:24,605
+To learn more about Kubernetes,
+
+48
+00:02:24,605 --> 00:02:27,320
+Googles open source container orchestration software,
+
+49
+00:02:27,320 --> 00:02:31,070
+check out the getting started with Google Kubernetes engine course.
+
+50
+00:02:31,070 --> 00:02:34,670
+But what if we had no way of characterizing a specific version of
+
+51
+00:02:34,670 --> 00:02:38,985
+a library and had to rely on finding similar libraries at run-time?
+
+52
+00:02:38,985 --> 00:02:41,990
+Your dependency management software might think, well,
+
+53
+00:02:41,990 --> 00:02:45,495
+I don't have superpowers but I do have ultra powers.
+
+54
+00:02:45,495 --> 00:02:48,920
+What if furthermore someone else got to choose which version got
+
+55
+00:02:48,920 --> 00:02:52,375
+run and they didn't know or really care about our program?
+
+56
+00:02:52,375 --> 00:02:56,255
+Then we'd have no way of knowing what the run-time behavior would look like.
+
+57
+00:02:56,255 --> 00:02:59,595
+Unfortunately, this is precisely the case for ML,
+
+58
+00:02:59,595 --> 00:03:02,645
+because the instructions that will be run at run-time, for example,
+
+59
+00:03:02,645 --> 00:03:06,080
+the model weights, depend on the data that the model was trained on.
+
+60
+00:03:06,080 --> 00:03:09,529
+Additionally, similar data will yield similar instructions,
+
+61
+00:03:09,529 --> 00:03:14,900
+and finally other people including other teams and our users create our data.
+
+62
+00:03:14,900 --> 00:03:17,450
+Just like in traditional software engineering,
+
+63
+00:03:17,450 --> 00:03:21,080
+mismanaged dependencies say code that assumes one set of instructions
+
+64
+00:03:21,080 --> 00:03:25,190
+will be called when another end up being called instead, can be expensive.
+
+65
+00:03:25,190 --> 00:03:29,915
+Your model's accuracy might go down or the system as a whole might become unstable.
+
+66
+00:03:29,915 --> 00:03:32,750
+Sometimes the errors are subtle and your team may end up
+
+67
+00:03:32,750 --> 00:03:35,625
+spending an increasing proportion of its time debugging.
+
+68
+00:03:35,625 --> 00:03:39,925
+The good news is that with a better understanding of how to manage data dependencies,
+
+69
+00:03:39,925 --> 00:03:44,400
+many problems can either be detected quickly or circumvented entirely.

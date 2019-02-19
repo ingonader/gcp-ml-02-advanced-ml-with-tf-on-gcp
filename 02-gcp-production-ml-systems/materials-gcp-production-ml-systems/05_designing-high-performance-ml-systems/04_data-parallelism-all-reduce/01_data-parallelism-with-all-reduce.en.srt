@@ -1,0 +1,353 @@
+1
+00:00:00,890 --> 00:00:03,380
+Let's look first at data parallelism.
+
+2
+00:00:03,380 --> 00:00:05,345
+We will look at
+the All Reduce approach and
+
+3
+00:00:05,345 --> 00:00:08,710
+defer the Parameter Server approach
+to the next section of this module.
+
+4
+00:00:09,810 --> 00:00:11,820
+So why would you do data parallelism?
+
+5
+00:00:11,820 --> 00:00:13,450
+Well, there's a few reasons.
+
+6
+00:00:13,450 --> 00:00:17,100
+The most common reason is that you might
+want to increase the throughput of
+
+7
+00:00:17,100 --> 00:00:22,520
+training by harnessing a load of GPUs
+to train the same model in parallel.
+
+8
+00:00:22,520 --> 00:00:27,110
+This graph, taken from a Google research
+paper, shows how the training throughput
+
+9
+00:00:27,110 --> 00:00:32,205
+of the inception image recognition model
+increases when using up to 200 GPUs.
+
+10
+00:00:33,390 --> 00:00:37,230
+In the next section, we will look
+at low level device placement.
+
+11
+00:00:37,230 --> 00:00:41,375
+But here, I'll show you the new
+distribution strategy API.
+
+12
+00:00:41,375 --> 00:00:44,390
+It allows you to distribute your
+training intensive flow with
+
+13
+00:00:44,390 --> 00:00:46,980
+very little modification to your code.
+
+14
+00:00:46,980 --> 00:00:51,370
+With the distribution strategy API,
+you no longer need to place apps or
+
+15
+00:00:51,370 --> 00:00:54,170
+parameters on specific devices.
+
+16
+00:00:54,170 --> 00:00:57,750
+You don't need to worry about structuring
+your model in a way that gradients or
+
+17
+00:00:57,750 --> 00:01:01,570
+losses are aggregated correctly
+across devices either.
+
+18
+00:01:01,570 --> 00:01:05,200
+Distribution strategy takes
+care of all of that for you.
+
+19
+00:01:05,200 --> 00:01:08,390
+The API is easy to use and fast to train.
+
+20
+00:01:08,390 --> 00:01:12,700
+So now, let's take a look at some code
+to see how you can use this new API.
+
+21
+00:01:12,700 --> 00:01:16,490
+We'll be using TensorFlow's
+high level estimator API.
+
+22
+00:01:16,490 --> 00:01:19,980
+If you've used it before, you might be
+familiar with the following snippet of
+
+23
+00:01:19,980 --> 00:01:22,590
+code to create a custom estimator.
+
+24
+00:01:22,590 --> 00:01:24,760
+It requires three arguments.
+
+25
+00:01:24,760 --> 00:01:27,720
+First, you need to function
+the that defines the model,
+
+26
+00:01:27,720 --> 00:01:29,830
+which is often called a model function.
+
+27
+00:01:29,830 --> 00:01:31,880
+It defines the parameters of the model,
+
+28
+00:01:31,880 --> 00:01:36,670
+the loss and gradient computation, and
+of course how the parameters are updated.
+
+29
+00:01:36,670 --> 00:01:41,670
+Next, you need to specify a directory
+where the model state will be persisted.
+
+30
+00:01:41,670 --> 00:01:47,140
+And third, a configuration called
+RunConfig that specifies things like
+
+31
+00:01:47,140 --> 00:01:52,010
+how the model state is checkpointed, how
+often summaries are read in, and so on.
+
+32
+00:01:52,010 --> 00:01:55,290
+Here, we'll simply use
+the default RunConfig.
+
+33
+00:01:55,290 --> 00:01:57,220
+Once we create the estimator,
+
+34
+00:01:57,220 --> 00:02:01,380
+we can initiate training by calling
+the train method on the estimator
+
+35
+00:02:01,380 --> 00:02:04,509
+with an input function that
+provides the data for training.
+
+36
+00:02:05,880 --> 00:02:09,400
+In order to distribute this
+training on multiple GPUs,
+
+37
+00:02:09,400 --> 00:02:11,820
+you simply need to add one line.
+
+38
+00:02:11,820 --> 00:02:15,630
+You create an instance of something
+called a mirrored strategy and
+
+39
+00:02:15,630 --> 00:02:18,290
+pass it to the runconfig call.
+
+40
+00:02:18,290 --> 00:02:22,313
+Mirrored strategy is part of
+the distribution strategy API.
+
+41
+00:02:22,313 --> 00:02:26,972
+With this API, you don't need to make
+any changes to your model function, or
+
+42
+00:02:26,972 --> 00:02:29,940
+input function, or your training loop.
+
+43
+00:02:29,940 --> 00:02:32,870
+You don't even need to specify the GPUs.
+
+44
+00:02:32,870 --> 00:02:38,710
+The API will detect that for you, and
+will run training on all available GPUs.
+
+45
+00:02:38,710 --> 00:02:41,490
+So that's all the code changes
+that you're going to need.
+
+46
+00:02:41,490 --> 00:02:45,180
+This API is currently in contrib,
+but you can still try it out today.
+
+47
+00:02:46,760 --> 00:02:50,010
+So let me explain
+Mirrored Strategy a little bit.
+
+48
+00:02:50,010 --> 00:02:53,910
+Mirrored Strategy implements
+synchronous all-reduce architecture
+
+49
+00:02:53,910 --> 00:02:55,610
+right out of the box.
+
+50
+00:02:55,610 --> 00:02:59,290
+The model's parameters
+are mirrored across all devices,
+
+51
+00:02:59,290 --> 00:03:01,870
+hence the name Mirrored Strategy.
+
+52
+00:03:01,870 --> 00:03:06,620
+Each device computes loss and gradients
+based on a slice of the input data.
+
+53
+00:03:06,620 --> 00:03:11,480
+Gradients are then aggravated across all
+devices using an all reduce algorithm
+
+54
+00:03:11,480 --> 00:03:13,165
+that's best for the device topology.
+
+55
+00:03:14,310 --> 00:03:17,335
+In the next section of the course,
+as I mentioned earlier,
+
+56
+00:03:17,335 --> 00:03:20,675
+you won't need to make any changes
+to the model or training loop.
+
+57
+00:03:20,675 --> 00:03:25,220
+That's because we've changed the
+underlying component of TensorFlow, such
+
+58
+00:03:25,220 --> 00:03:30,830
+as optimizer, batch norm summaries and
+all that, to become distribution aware.
+
+59
+00:03:30,830 --> 00:03:33,560
+Input functions do not have to change
+
+60
+00:03:33,560 --> 00:03:36,860
+as long as it uses the recommended
+TensorFlow dataset API.
+
+61
+00:03:37,930 --> 00:03:42,180
+Saving and checkpointing work
+seamlessly so you can save with one or
+
+62
+00:03:42,180 --> 00:03:45,670
+no distribution strategy,
+and resume with another.
+
+63
+00:03:45,670 --> 00:03:49,050
+Mirrored strategy is just one type
+of distribution strategy API.
+
+64
+00:03:49,050 --> 00:03:52,269
+We're working on other strategies for
+other common use cases.
+
+65
+00:03:53,786 --> 00:03:59,270
+Mirrored strategy really helps on TPUs
+to get you a world beating performance.
+
+66
+00:03:59,270 --> 00:04:03,150
+This is from a benchmarking study
+carried out by Stanford University.
+
+67
+00:04:03,150 --> 00:04:07,706
+I pulled this in July, 2018, but
+the latest data was from April, 2018.
+
+68
+00:04:07,706 --> 00:04:10,530
+Please do visit the page to
+see the latest comparisons.
+
+69
+00:04:12,100 --> 00:04:13,970
+When it comes to training speed,
+
+70
+00:04:13,970 --> 00:04:19,330
+the fastest three options are all
+TensorFlow and all on the Cloud TPU.
+
+71
+00:04:19,330 --> 00:04:23,210
+Note that the essential difference
+between the 30-minute training run and
+
+72
+00:04:23,210 --> 00:04:29,150
+the one-hour training run is the 30-minute
+one used half of a TPU version two pod,
+
+73
+00:04:29,150 --> 00:04:33,060
+while the one-hour one used
+only a quarter of the TPU pod.
+
+74
+00:04:33,060 --> 00:04:36,870
+Performance does scale quite
+linearly on the TPU pods
+
+75
+00:04:36,870 --> 00:04:38,200
+thanks to the mirrored strategy.

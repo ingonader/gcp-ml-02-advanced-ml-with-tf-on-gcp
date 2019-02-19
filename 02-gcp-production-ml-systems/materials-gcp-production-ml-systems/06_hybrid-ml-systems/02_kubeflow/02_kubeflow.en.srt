@@ -1,0 +1,163 @@
+1
+00:00:00,000 --> 00:00:07,345
+So, you know what is really good at composability, portability, and scalability?
+
+2
+00:00:07,345 --> 00:00:13,205
+Containers and Kubernetes, except,
+
+3
+00:00:13,205 --> 00:00:17,550
+turns out even then it's not so easy.
+
+4
+00:00:17,550 --> 00:00:21,035
+If you want to do this all on Kubernetes,
+
+5
+00:00:21,035 --> 00:00:25,780
+you've got to become an expert in a lot of stuff.
+
+6
+00:00:25,780 --> 00:00:31,645
+Containers, packaging, scaling, immutable deployments,
+
+7
+00:00:31,645 --> 00:00:35,875
+GPUs, drivers, Cloud APIs,
+
+8
+00:00:35,875 --> 00:00:38,790
+the list goes on and on and on.
+
+9
+00:00:38,790 --> 00:00:43,215
+Surely, we can introduce something to make this easier.
+
+10
+00:00:43,215 --> 00:00:45,735
+That's where Kubeflow comes in.
+
+11
+00:00:45,735 --> 00:00:51,955
+The Kubeflow mission is to make it easy for everyone to develop, deploy,
+
+12
+00:00:51,955 --> 00:00:58,310
+and manage portable, distributed machine learning on Kubernetes,
+
+13
+00:00:58,310 --> 00:01:02,730
+and the team is serious when they say everyone.
+
+14
+00:01:02,730 --> 00:01:08,450
+We wanted to work everywhere that Kubernetes does, and so then,
+
+15
+00:01:08,450 --> 00:01:11,415
+because we are using Kubernetes abstractions,
+
+16
+00:01:11,415 --> 00:01:15,095
+this extremely complicated deployment.
+
+17
+00:01:15,095 --> 00:01:21,290
+It becomes just an installation of Kubernetes and
+
+18
+00:01:21,290 --> 00:01:28,369
+your entire stack becomes described by a Kubeflow stack that works everywhere.
+
+19
+00:01:28,369 --> 00:01:31,270
+Your laptop via minikube,
+
+20
+00:01:31,270 --> 00:01:34,230
+your on-premises training cluster,
+
+21
+00:01:34,230 --> 00:01:37,415
+and your cloud deployment.
+
+22
+00:01:37,415 --> 00:01:40,195
+So, Kubeflow is very new,
+
+23
+00:01:40,195 --> 00:01:43,910
+but it already has core components that help
+
+24
+00:01:43,910 --> 00:01:47,615
+you get started with machine learning in the box.
+
+25
+00:01:47,615 --> 00:01:49,460
+So, what's in the box?
+
+26
+00:01:49,460 --> 00:01:55,370
+Jupyter, distributed training, model serving, plus examples.
+
+27
+00:01:55,370 --> 00:01:58,360
+Quite importantly, it uses
+
+28
+00:01:58,360 --> 00:02:03,850
+a customizable Ksonnet packaging that allows you to add your own.
+
+29
+00:02:03,850 --> 00:02:08,085
+Training, building a model, model validation,
+
+30
+00:02:08,085 --> 00:02:11,245
+training at scale, and serving,
+
+31
+00:02:11,245 --> 00:02:14,265
+they're already all currently in the box.
+
+32
+00:02:14,265 --> 00:02:16,550
+Not surprisingly, this is
+
+33
+00:02:16,550 --> 00:02:21,635
+exactly the pieces that Cloud ML Engine handles in a serverless way.
+
+34
+00:02:21,635 --> 00:02:25,580
+So, what Kubeflow does is that Kubeflow offers
+
+35
+00:02:25,580 --> 00:02:30,095
+portability and composability between your on-premises environment,
+
+36
+00:02:30,095 --> 00:02:31,695
+where you use Kubeflow,
+
+37
+00:02:31,695 --> 00:02:34,250
+and Cloud ML Engine which provides
+
+38
+00:02:34,250 --> 00:02:39,200
+a serverless way to run these same components on Google Cloud.
+
+39
+00:02:39,200 --> 00:02:42,825
+Or you can run Kubeflow on GKE the same way.
+
+40
+00:02:42,825 --> 00:02:44,465
+So, in the next video,
+
+41
+00:02:44,465 --> 00:02:47,580
+we will show you a demo of how this works

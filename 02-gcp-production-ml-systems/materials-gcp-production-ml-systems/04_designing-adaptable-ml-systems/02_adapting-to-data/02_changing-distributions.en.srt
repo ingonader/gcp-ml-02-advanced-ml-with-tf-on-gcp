@@ -1,0 +1,297 @@
+1
+00:00:00,910 --> 00:00:01,910
+Earlier in this module,
+
+2
+00:00:01,910 --> 00:00:05,560
+we talked about how in the context
+of ingesting an upstream model
+
+3
+00:00:05,560 --> 00:00:10,120
+our models performance would degrade if
+it expected one input and got another.
+
+4
+00:00:10,120 --> 00:00:13,480
+The statistical term for changes in
+the likelihood of observed values
+
+5
+00:00:13,480 --> 00:00:16,440
+like model inputs is changes
+in the distribution.
+
+6
+00:00:16,440 --> 00:00:19,080
+And it turns out that the distribution
+of the data can change for
+
+7
+00:00:19,080 --> 00:00:20,660
+all sorts of reason.
+
+8
+00:00:20,660 --> 00:00:22,730
+Let's review some examples.
+
+9
+00:00:22,730 --> 00:00:26,660
+For example, sometimes
+the distribution of the label changes.
+
+10
+00:00:26,660 --> 00:00:31,040
+We've looked at the natality dataset in
+BigQuery and tried to predict baby weight.
+
+11
+00:00:31,040 --> 00:00:35,046
+Some of you may have noticed that baby
+weight has actually changed over time.
+
+12
+00:00:35,046 --> 00:00:37,739
+It peaked in the 1980s and
+has since been declining.
+
+13
+00:00:39,060 --> 00:00:43,807
+In this graph, I've depicted the
+distributions of baby weights for 1969 and
+
+14
+00:00:43,807 --> 00:00:44,643
+in 1984.
+
+15
+00:00:44,643 --> 00:00:50,194
+And note that in 1969 babies weighed
+significantly less than they did in 1984.
+
+16
+00:00:50,194 --> 00:00:52,933
+When the distribution of the label
+changes, it could mean that
+
+17
+00:00:52,933 --> 00:00:56,750
+the relationship between features and
+labels is changing as well.
+
+18
+00:00:56,750 --> 00:00:59,710
+At the very least, it's likely
+that our model's predictions which
+
+19
+00:00:59,710 --> 00:01:03,170
+will typically match the distribution
+of the labels in the training set
+
+20
+00:01:03,170 --> 00:01:04,750
+will be significantly less accurate.
+
+21
+00:01:05,960 --> 00:01:09,947
+Sometimes it's not the labels but the
+features that change their distribution.
+
+22
+00:01:09,947 --> 00:01:13,606
+For example, say you've trained your model
+to predict population movement patterns
+
+23
+00:01:13,606 --> 00:01:15,390
+using ZIP code as a feature.
+
+24
+00:01:15,390 --> 00:01:17,630
+Surprisingly, ZIP codes aren't fixed.
+
+25
+00:01:17,630 --> 00:01:21,403
+The government releases new ones and
+deprecates old ones every year.
+
+26
+00:01:21,403 --> 00:01:25,460
+Now as a ML practitioner, you know
+that ZIP codes aren't really numbers.
+
+27
+00:01:25,460 --> 00:01:28,940
+So you've chosen to represent them
+as categorical feature columns, but
+
+28
+00:01:28,940 --> 00:01:31,240
+this might lead to problems.
+
+29
+00:01:31,240 --> 00:01:35,688
+If you chose to specify a vocabulary,
+but set the number of out of vocabulary
+
+30
+00:01:35,688 --> 00:01:38,480
+buckets to zero and
+didn't specify a default.
+
+31
+00:01:38,480 --> 00:01:42,091
+Then the distribution may become
+skewed toward the default value,
+
+32
+00:01:42,091 --> 00:01:43,330
+which is negative 1.
+
+33
+00:01:43,330 --> 00:01:47,010
+And this might be problematic because
+the model maybe forced to make predictions
+
+34
+00:01:47,010 --> 00:01:50,910
+in regions of the future space, which were
+not well represented in the training data.
+
+35
+00:01:52,080 --> 00:01:55,560
+There's another name for when models
+are asked to make predictions on points in
+
+36
+00:01:55,560 --> 00:02:00,550
+future space that are far away from the
+training data, and that's extrapolation.
+
+37
+00:02:00,550 --> 00:02:06,108
+Extrapolation means to generalize outside
+the bounds of what we've previously seen.
+
+38
+00:02:06,108 --> 00:02:07,497
+Interpolation is the opposite,
+
+39
+00:02:07,497 --> 00:02:11,260
+it means to generalize within the bounds
+of what we've previously seen.
+
+40
+00:02:11,260 --> 00:02:13,580
+Interpolation is always much easier.
+
+41
+00:02:13,580 --> 00:02:18,120
+For example, let's say the model got to
+see the green data, but not the blue data.
+
+42
+00:02:18,120 --> 00:02:20,990
+The red line reflects a linear
+regression on the green data.
+
+43
+00:02:22,200 --> 00:02:25,760
+Predictions in the green region
+are interpolated and reasonably accurate.
+
+44
+00:02:25,760 --> 00:02:29,130
+In contrast, predictions in the blue
+ribbon are extrapolated and
+
+45
+00:02:29,130 --> 00:02:32,109
+are increasingly inaccurate the farther
+we get from the green region.
+
+46
+00:02:33,140 --> 00:02:35,750
+You can protect yourself from
+changing distributions using a few
+
+47
+00:02:35,750 --> 00:02:37,010
+different methods.
+
+48
+00:02:37,010 --> 00:02:40,054
+The first thing you can do is to
+be vigilant through monitoring.
+
+49
+00:02:40,054 --> 00:02:42,426
+You can look at the descriptive
+summaries of your inputs and
+
+50
+00:02:42,426 --> 00:02:44,842
+compare them to what the model is seen.
+
+51
+00:02:44,842 --> 00:02:46,530
+If for example, the mean or
+
+52
+00:02:46,530 --> 00:02:50,370
+the variance has changed substantially,
+then you can analyze this new segment of
+
+53
+00:02:50,370 --> 00:02:53,220
+the input space to see if
+the relationships learned still hold.
+
+54
+00:02:54,500 --> 00:02:58,578
+You can also look to see whether the
+models residuals, that is the difference
+
+55
+00:02:58,578 --> 00:03:02,862
+between it's predictions and the labels
+has changed as a function of the input.
+
+56
+00:03:02,862 --> 00:03:06,805
+If for example, you used to have small
+errors at one side of the input and
+
+57
+00:03:06,805 --> 00:03:09,480
+large in another, and now it's switched.
+
+58
+00:03:09,480 --> 00:03:12,510
+This could be evidence of
+a change in the relationship.
+
+59
+00:03:12,510 --> 00:03:15,629
+Finally, if you have reason to
+believe that the relationship is
+
+60
+00:03:15,629 --> 00:03:16,677
+changing over time.
+
+61
+00:03:16,677 --> 00:03:20,724
+You can force the model to treat more
+recent observations as more important by
+
+62
+00:03:20,724 --> 00:03:22,467
+writing a custom loss function or
+
+63
+00:03:22,467 --> 00:03:25,030
+by retraining the model
+on the most recent data.

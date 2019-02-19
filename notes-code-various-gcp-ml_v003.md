@@ -75,11 +75,12 @@ export CONTAINER=datalab
 docker exec -it $CONTAINER bash
 
 ## clone git repo:
-export GITREPO=gcp-ml-01-ml-with-tf-on-gcp
+export GITREPO=gcp-ml-02-advanced-ml-with-tf-on-gcp
 cd /content/datalab/
 git clone https://github.com/ingonader/${GITREPO}.git
 cd $GITREPO
 git config user.email "ingo.nader@gmail.com"
+git config user.name "Ingo Nader"
 
 ```
 

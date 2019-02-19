@@ -1,0 +1,287 @@
+1
+00:00:00,000 --> 00:00:02,790
+In this section, we'll take everything we've learned so
+
+2
+00:00:02,790 --> 00:00:05,580
+far and practice diagnosing a production model,
+
+3
+00:00:05,580 --> 00:00:08,205
+given the signals that we might actually get to observe.
+
+4
+00:00:08,205 --> 00:00:12,450
+Let's pretend you've architected an ML system to predict the demand for widgets,
+
+5
+00:00:12,450 --> 00:00:14,310
+and it looks like this diagram.
+
+6
+00:00:14,310 --> 00:00:17,895
+I realized the diagram is a bit complicated but that's also realistic.
+
+7
+00:00:17,895 --> 00:00:22,410
+You're streaming purchase orders arrive in pub-sub and are fulfilled asynchronously,
+
+8
+00:00:22,410 --> 00:00:25,760
+but let's ignore fulfillment and focus on demand prediction.
+
+9
+00:00:25,760 --> 00:00:28,095
+Dataflow processes the stream,
+
+10
+00:00:28,095 --> 00:00:29,600
+and using windowing functions,
+
+11
+00:00:29,600 --> 00:00:31,900
+aggregates purchase orders over time.
+
+12
+00:00:31,900 --> 00:00:35,180
+It then uses the output of these windowing functions and
+
+13
+00:00:35,180 --> 00:00:38,280
+passes that to an ML model that lives in Cloud ML Engine,
+
+14
+00:00:38,280 --> 00:00:39,740
+where the data are joined against
+
+15
+00:00:39,740 --> 00:00:43,580
+historical purchase data that lives in a data warehouse like BigQuery.
+
+16
+00:00:43,580 --> 00:00:47,565
+The model returns back a predicted demand for a particular time.
+
+17
+00:00:47,565 --> 00:00:49,910
+The predictions returned by the model are both
+
+18
+00:00:49,910 --> 00:00:52,815
+written to storage and send to the purchasing system.
+
+19
+00:00:52,815 --> 00:00:55,760
+The purchasing system determines what's in the inventory.
+
+20
+00:00:55,760 --> 00:00:59,210
+The inventory is also logged in the data warehouse.
+
+21
+00:00:59,210 --> 00:01:04,645
+The models retrained daily based upon actual inventories and sales and other signals.
+
+22
+00:01:04,645 --> 00:01:08,625
+One day, one of your product managers has a great idea,
+
+23
+00:01:08,625 --> 00:01:11,425
+let's add credit rating to each purchase order,
+
+24
+00:01:11,425 --> 00:01:13,490
+and you're the head of machine learning engineering,
+
+25
+00:01:13,490 --> 00:01:15,240
+what do you think? Should it be added?
+
+26
+00:01:15,240 --> 00:01:17,370
+Why or why not.
+
+27
+00:01:17,470 --> 00:01:21,230
+One day, you get an email from the head of the business unit
+
+28
+00:01:21,230 --> 00:01:24,575
+saying that he's just noticed that sales are down significantly.
+
+29
+00:01:24,575 --> 00:01:26,580
+The warehouse manager who sees it,
+
+30
+00:01:26,580 --> 00:01:30,015
+says that inventory storage costs are also down significantly.
+
+31
+00:01:30,015 --> 00:01:32,720
+The room is suddenly getting quite warm.
+
+32
+00:01:32,720 --> 00:01:34,795
+What might have happened?
+
+33
+00:01:34,795 --> 00:01:37,310
+This is a great example of a feedback loop.
+
+34
+00:01:37,310 --> 00:01:40,970
+What might have happened was that the model started under a predicting demand,
+
+35
+00:01:40,970 --> 00:01:45,210
+perhaps because of some corrupted historical data or an error in the pipeline.
+
+36
+00:01:45,210 --> 00:01:47,475
+Once demand started to go down,
+
+37
+00:01:47,475 --> 00:01:49,930
+product turnover started to creep up.
+
+38
+00:01:49,930 --> 00:01:52,760
+If this problem had escaped notice indefinitely the model
+
+39
+00:01:52,760 --> 00:01:56,185
+might have learned to keep zero inventory all the time.
+
+40
+00:01:56,185 --> 00:02:00,110
+In addition to being a great reminder that humans need to stay in the loop,
+
+41
+00:02:00,110 --> 00:02:02,060
+it's also a reminder that we're often
+
+42
+00:02:02,060 --> 00:02:05,525
+optimizing for something other than what we ultimately care about.
+
+43
+00:02:05,525 --> 00:02:09,025
+In this case, we're optimizing from matching predicted demand,
+
+44
+00:02:09,025 --> 00:02:13,905
+when what we cared about was minimizing carrying costs in order to maximize profits.
+
+45
+00:02:13,905 --> 00:02:15,960
+Here's another scenario.
+
+46
+00:02:15,960 --> 00:02:18,835
+One of your salespeople just shared some amazing news.
+
+47
+00:02:18,835 --> 00:02:22,720
+By leveraging their contacts at one of MegaCorps many regional divisions,
+
+48
+00:02:22,720 --> 00:02:24,980
+they signed MegaCorp to a five-year deal,
+
+49
+00:02:24,980 --> 00:02:26,855
+and it's the biggest contract yet.
+
+50
+00:02:26,855 --> 00:02:29,030
+Great you think, not realizing that this could
+
+51
+00:02:29,030 --> 00:02:31,625
+actually have implications for your model's performance.
+
+52
+00:02:31,625 --> 00:02:33,460
+How can these be related?
+
+53
+00:02:33,460 --> 00:02:36,050
+It all depends on how the sales orders come in,
+
+54
+00:02:36,050 --> 00:02:38,465
+and how independent the divisions actually are.
+
+55
+00:02:38,465 --> 00:02:41,030
+If the divisions are entirely dependent,
+
+56
+00:02:41,030 --> 00:02:43,460
+because there's actually just one purchasing decision
+
+57
+00:02:43,460 --> 00:02:46,470
+split up by division and these orders come in separately,
+
+58
+00:02:46,470 --> 00:02:49,365
+your model may still treat these orders as independent.
+
+59
+00:02:49,365 --> 00:02:53,620
+In which case, it would look much more compelling as evidence of an uptick in demand.
+
+60
+00:02:53,620 --> 00:02:56,690
+The solution here would be to add some aggregation by
+
+61
+00:02:56,690 --> 00:03:00,590
+company ID to your pipeline before computing other statistics.
+
+62
+00:03:00,590 --> 00:03:02,185
+Here's another scenario.
+
+63
+00:03:02,185 --> 00:03:05,629
+Your warehouse manager emails you and tells you that the warehouse flooded,
+
+64
+00:03:05,629 --> 00:03:08,660
+and then they've had to scrap a large portion of the inventory.
+
+65
+00:03:08,660 --> 00:03:10,760
+They've ordered replacements from purchasing but it
+
+66
+00:03:10,760 --> 00:03:12,500
+will be four days before those arrive,
+
+67
+00:03:12,500 --> 00:03:15,105
+and unfulfilled orders in the meantime wi'll have to wait.
+
+68
+00:03:15,105 --> 00:03:18,330
+You realize that you have a particular set of skills to address this problem.
+
+69
+00:03:18,330 --> 00:03:23,210
+So, what do you do? You stop your automatic model deployment process.
+
+70
+00:03:23,210 --> 00:03:26,780
+The reason you do so is because data collected during this period will be
+
+71
+00:03:26,780 --> 00:03:30,110
+contaminated because the number of customer orders will be so low.
+
+72
+00:03:30,110 --> 00:03:34,190
+Because the products will show up as out of stock on the webpage.

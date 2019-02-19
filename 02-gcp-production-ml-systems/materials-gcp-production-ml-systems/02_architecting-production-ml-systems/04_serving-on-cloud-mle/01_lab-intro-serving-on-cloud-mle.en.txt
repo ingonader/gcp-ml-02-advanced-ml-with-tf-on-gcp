@@ -1,0 +1,21 @@
+In this section, we'll review some
+practical considerations for serving. First, we'll build an app on AppEngine
+that will make calls to a model serving in Cloud ML Engine. And then we'll talk about how your
+system architecture can use Apache to become a full-fledged API. So let's start with the lab. In the lab, we're going to create an
+AppEngine app that will make rest calls to our model living in Cloud ML Engine. And this is similar to the architecture
+that you're likely to use for your applications. So what's App Engine? App Engine is a service for
+building scalable web and mobile backends in any language
+on Google's infrastructure. Google App Engine is a fully managed
+platform that completely abstracts away any infrastructure, so
+you can focus on your code. Out of the box, it supports Node.js,
+Java, Ruby, C#, Go, Python and PHP, and it's also open. You can supply your own Docker image or
+bring your own custom software stack from language run times, to frameworks,
+to third party libraries. Although it's a fully managed developer
+experience, you can also drop down into the infrastructure for
+high control when you need it. Our web application uses Flask, which is
+a lightweight framework for developing and deploying web apps and Python. In this case, our Flask app is a web form
+that takes the features of our model, and will show the predicted weight. And this is the interface
+that you'll build. To start the lab, use the provided
+script to see what's missing in the skeleton code, and look for to do's. After you fixed all the to do's
+in the application directory, you can run the deployapp.sh script
+to deploy your app to App Engine. And then finally, visit your live web app.

@@ -1,0 +1,199 @@
+1
+00:00:00,000 --> 00:00:05,810
+We've seen this before. This is how you use the tf.data API to read CSV files.
+
+2
+00:00:05,810 --> 00:00:10,740
+I'm creating a text line datasets and calling decode_csv on each line
+
+3
+00:00:10,740 --> 00:00:15,450
+of the file or files because I'm using a glob here to do a pattern match.
+
+4
+00:00:15,450 --> 00:00:20,020
+So, in each line of the input files decode_csv is called.
+
+5
+00:00:20,020 --> 00:00:24,535
+The decode_csv jfunction called tf.decode_csv
+
+6
+00:00:24,535 --> 00:00:29,750
+attaches the column name to it and sends back the features and labels to the graph.
+
+7
+00:00:29,750 --> 00:00:34,440
+All of these TensorFlow classes and functions tf.data, tf.datamap,
+
+8
+00:00:34,440 --> 00:00:38,290
+tf.decode_csv are all implemented in C++,
+
+9
+00:00:38,290 --> 00:00:40,310
+so you can get very good performance.
+
+10
+00:00:40,310 --> 00:00:44,135
+The key to this is not to bring the data back into Python,
+
+11
+00:00:44,135 --> 00:00:46,795
+that context switch can be expensive.
+
+12
+00:00:46,795 --> 00:00:50,060
+So, implement your input function in terms of
+
+13
+00:00:50,060 --> 00:00:53,940
+TensorFlow native ops and you'll get really good performance.
+
+14
+00:00:53,940 --> 00:00:58,690
+There is some Python code here in terms of the dict and zip calls.
+
+15
+00:00:58,690 --> 00:01:03,320
+Unfortunately, that's necessary because the CSV file is not self-describing.
+
+16
+00:01:03,320 --> 00:01:05,600
+Still, this does come at the very end,
+
+17
+00:01:05,600 --> 00:01:08,305
+so it's not a back and forth context switch.
+
+18
+00:01:08,305 --> 00:01:11,975
+A quick digression, did you notice the shuffle here?
+
+19
+00:01:11,975 --> 00:01:14,260
+Why do you think we might need that?
+
+20
+00:01:14,260 --> 00:01:16,800
+Remember data parallelism?
+
+21
+00:01:16,800 --> 00:01:18,780
+Well, in data parallelism,
+
+22
+00:01:18,780 --> 00:01:22,910
+if all of the workers are computing the gradient on the same set of data,
+
+23
+00:01:22,910 --> 00:01:25,040
+there is no need to have all of those workers.
+
+24
+00:01:25,040 --> 00:01:29,290
+Therefore, each of the workers needs to see a different slice of data.
+
+25
+00:01:29,290 --> 00:01:32,540
+Given that we're reading from the same CSV file,
+
+26
+00:01:32,540 --> 00:01:36,115
+how do we try to get each of the workers at different slice the data?
+
+27
+00:01:36,115 --> 00:01:39,440
+Well, we do that by reading in 10 times the batch size,
+
+28
+00:01:39,440 --> 00:01:42,880
+shuffling it and then serving it out one batch at a time.
+
+29
+00:01:42,880 --> 00:01:47,000
+The chances are that each worker is holding the data in a different order.
+
+30
+00:01:47,000 --> 00:01:51,820
+So, the batch size of examples that each worker processes will be different,
+
+31
+00:01:51,820 --> 00:01:53,095
+and that's why we shuffle.
+
+32
+00:01:53,095 --> 00:01:58,450
+Shuffling is essential when you do distributed data using data parallelism.
+
+33
+00:01:58,450 --> 00:02:02,295
+We looked at using native TensorFlow ops for CSV files,
+
+34
+00:02:02,295 --> 00:02:03,880
+but how about for images?
+
+35
+00:02:03,880 --> 00:02:06,095
+If your model is an image model,
+
+36
+00:02:06,095 --> 00:02:08,985
+this is how you use native TensorFlow ops.
+
+37
+00:02:08,985 --> 00:02:11,629
+Assuming here I have two lists,
+
+38
+00:02:11,629 --> 00:02:14,655
+a list of file names and their corresponding labels.
+
+39
+00:02:14,655 --> 00:02:17,825
+But you could get the labels also by parsing the filename.
+
+40
+00:02:17,825 --> 00:02:22,035
+Perhaps all the files in a specific folder could correspond to the same label.
+
+41
+00:02:22,035 --> 00:02:26,730
+Then, for each file and labeled pair you call the _parse_function.
+
+42
+00:02:26,730 --> 00:02:31,200
+Unlike decode_csv, which is parsed on a single line of a CSV,
+
+43
+00:02:31,200 --> 00:02:34,340
+the _parse_function here reads the entire image,
+
+44
+00:02:34,340 --> 00:02:37,830
+but it does use native TensorFlow ops to do so.
+
+45
+00:02:37,830 --> 00:02:39,340
+So, here, as you can see,
+
+46
+00:02:39,340 --> 00:02:43,575
+it uses tf.read_file to read in the entire file content.
+
+47
+00:02:43,575 --> 00:02:47,600
+Then, tf.decode_image to parse the image formats and
+
+48
+00:02:47,600 --> 00:02:52,575
+resize it to be 299 by 299 before it returns it.
+
+49
+00:02:52,575 --> 00:02:56,345
+The point as before is to use native TensorFlow ops
+
+50
+00:02:56,345 --> 00:03:00,120
+to keep all of the operations in C++ and therefore very-

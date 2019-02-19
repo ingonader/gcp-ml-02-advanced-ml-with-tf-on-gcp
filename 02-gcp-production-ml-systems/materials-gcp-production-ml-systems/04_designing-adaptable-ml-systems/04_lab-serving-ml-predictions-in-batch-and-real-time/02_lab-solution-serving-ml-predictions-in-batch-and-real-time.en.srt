@@ -1,0 +1,555 @@
+1
+00:00:00,000 --> 00:00:04,110
+Let's go through the solution to the lab line-by-line.
+
+2
+00:00:04,110 --> 00:00:08,070
+We'll start our code tour in AddPrediction.java,
+
+3
+00:00:08,070 --> 00:00:12,115
+and what I hope you'll take note of is how elegant and simple
+
+4
+00:00:12,115 --> 00:00:14,390
+the code ends up being despite the fact that we're
+
+5
+00:00:14,390 --> 00:00:16,685
+going to have completely different instructions,
+
+6
+00:00:16,685 --> 00:00:21,100
+depending on whether we're running a batch pipeline or a real-time pipeline.
+
+7
+00:00:21,100 --> 00:00:25,365
+Here, we're conditioning the code based upon some command line arguments.
+
+8
+00:00:25,365 --> 00:00:28,070
+You'll notice on line 72 depending on whether
+
+9
+00:00:28,070 --> 00:00:30,470
+we've passed the isRealtime flag either we're
+
+10
+00:00:30,470 --> 00:00:35,770
+going to create a new PubSubBigQuery pipeline or a new text InputOutput pipeline.
+
+11
+00:00:35,770 --> 00:00:40,180
+But then the subsequent steps are the same regardless of which pipeline we actually do.
+
+12
+00:00:40,180 --> 00:00:43,920
+The first thing that we do, is we do readInstances to ingest data,
+
+13
+00:00:43,920 --> 00:00:49,070
+then we do an application of our ML model and then finally,
+
+14
+00:00:49,070 --> 00:00:54,050
+we write the predictions to either to disc or to BigQuery.
+
+15
+00:00:54,050 --> 00:00:57,435
+The next file we'll look at is InputOutput.java.
+
+16
+00:00:57,435 --> 00:01:01,055
+InputOutput.java is an abstract class in which we'll
+
+17
+00:01:01,055 --> 00:01:04,790
+define some of the functions that we intend to share across the child classes and
+
+18
+00:01:04,790 --> 00:01:08,540
+we'll also specify some abstract functions for functions that we
+
+19
+00:01:08,540 --> 00:01:13,230
+intend to implement within our child classes and which we'll vary between them.
+
+20
+00:01:13,230 --> 00:01:18,810
+The functions that are implemented abstractly are for input and for output.
+
+21
+00:01:18,810 --> 00:01:21,440
+The first of these is called readInstances and
+
+22
+00:01:21,440 --> 00:01:24,750
+readInstances generates a PCollection of babies.
+
+23
+00:01:24,750 --> 00:01:29,430
+PCollections as you may recall are collections of infinite size.
+
+24
+00:01:29,430 --> 00:01:35,020
+The other abstract function is the writePredictions function and
+
+25
+00:01:35,020 --> 00:01:41,030
+writePredictions accepts a PCollection of babies and then writes the predictions to disc.
+
+26
+00:01:41,590 --> 00:01:44,420
+For our batch pipeline,
+
+27
+00:01:44,420 --> 00:01:50,050
+our input will be from CSV files and so our output will also be to CSV files.
+
+28
+00:01:50,050 --> 00:01:51,450
+For our streaming pipeline,
+
+29
+00:01:51,450 --> 00:01:55,130
+our input will be from Pub/Sub and our output will be to BigQuery.
+
+30
+00:01:55,130 --> 00:01:57,840
+We'll review how those are implemented after.
+
+31
+00:01:57,840 --> 00:02:00,050
+The functions that are shared between
+
+32
+00:02:00,050 --> 00:02:04,850
+our two child classes concern the calling of our prediction service.
+
+33
+00:02:04,850 --> 00:02:07,490
+We have two different inference styles.
+
+34
+00:02:07,490 --> 00:02:09,740
+The first is addPredictionInBatches,
+
+35
+00:02:09,740 --> 00:02:13,880
+which simulates calling the prediction service in batch
+
+36
+00:02:13,880 --> 00:02:16,100
+and the other one is online Inference
+
+37
+00:02:16,100 --> 00:02:19,395
+which we've represented here with addPredictionOneByOne.
+
+38
+00:02:19,395 --> 00:02:23,540
+In addPredictionInBatches, the first thing we do is we have
+
+39
+00:02:23,540 --> 00:02:26,925
+to divide our input into a finite number of batches,
+
+40
+00:02:26,925 --> 00:02:29,720
+which we do with the CreateBatch function and all that
+
+41
+00:02:29,720 --> 00:02:33,290
+CreateBatch does is it takes the System HashCode,
+
+42
+00:02:33,290 --> 00:02:35,670
+mods it with the number of batches which yields
+
+43
+00:02:35,670 --> 00:02:39,235
+an integer between zero and NUM-BATCHES minus one.
+
+44
+00:02:39,235 --> 00:02:42,680
+We can then use this batch key to divide
+
+45
+00:02:42,680 --> 00:02:46,935
+the input into different buckets and perform Inference on those buckets.
+
+46
+00:02:46,935 --> 00:02:50,310
+So that's what we do in the BatchByKey operation.
+
+47
+00:02:50,310 --> 00:02:55,310
+We group based upon our batch key and then finally we have to call Inference.
+
+48
+00:02:55,310 --> 00:02:59,740
+An inference is a ParDo or we're going to call a function and parallel on a PCollection.
+
+49
+00:02:59,740 --> 00:03:03,175
+In this case, each function that we call is
+
+50
+00:03:03,175 --> 00:03:06,170
+the Babyweight mock_ batchPredict service where
+
+51
+00:03:06,170 --> 00:03:10,315
+we pass in the instances and we get an array of results,
+
+52
+00:03:10,315 --> 00:03:16,060
+and then finally, we yield each BabyPredictions separately.
+
+53
+00:03:16,060 --> 00:03:18,990
+When we're doing predictions online,
+
+54
+00:03:18,990 --> 00:03:22,530
+the process is a little simpler because we don't actually have to batch our Input.
+
+55
+00:03:22,530 --> 00:03:26,150
+Instead, we simply call our ParDo,
+
+56
+00:03:26,150 --> 00:03:30,910
+which accepts a single baby and returns a BabyPred object and for
+
+57
+00:03:30,910 --> 00:03:35,985
+each baby we call the BabyweightMLService to get the prediction.
+
+58
+00:03:35,985 --> 00:03:41,090
+The next thing that we'll do is peak inside the BabyweightMLService file.
+
+59
+00:03:48,630 --> 00:03:51,880
+The BabyweightMLService file is responsible
+
+60
+00:03:51,880 --> 00:03:54,580
+for communicating with our model that's deployed in production,
+
+61
+00:03:54,580 --> 00:03:58,120
+and to do this, it needs to have some notion of certain classes.
+
+62
+00:03:58,120 --> 00:04:00,520
+We need for instance to find an instance which
+
+63
+00:04:00,520 --> 00:04:04,025
+represents a baby that we're going to make an inference on.
+
+64
+00:04:04,025 --> 00:04:06,460
+It needs to define a request which is what we're going to
+
+65
+00:04:06,460 --> 00:04:09,565
+communicate to the server which consists of a list of instances.
+
+66
+00:04:09,565 --> 00:04:11,400
+It needs to define a prediction,
+
+67
+00:04:11,400 --> 00:04:13,790
+which consists of a list of predictions,
+
+68
+00:04:13,790 --> 00:04:15,380
+and it needs to have a response,
+
+69
+00:04:15,380 --> 00:04:18,410
+which consists of a list of predictions.
+
+70
+00:04:20,830 --> 00:04:24,910
+To send the request, we're going have to make an HTTP request
+
+71
+00:04:24,910 --> 00:04:29,205
+and this should look very similar to the Python code we've already worked with in class.
+
+72
+00:04:29,205 --> 00:04:33,550
+You'll notice we specify an endpoint and this endpoint is a function of our product,
+
+73
+00:04:33,550 --> 00:04:35,820
+our project, our model and our version.
+
+74
+00:04:35,820 --> 00:04:42,135
+We have to establish credentials with the service and then we make an HTTP request.
+
+75
+00:04:42,135 --> 00:04:45,560
+Note too that we have used exponential back-off
+
+76
+00:04:45,560 --> 00:04:49,425
+here to ensure that even if the service is unresponsive initially,
+
+77
+00:04:49,425 --> 00:04:52,430
+we will have more opportunities to try.
+
+78
+00:04:52,430 --> 00:04:55,970
+After we make the request, we parse it,
+
+79
+00:04:55,970 --> 00:05:01,210
+then turn into a string and then finally because at this point it's still JSON,
+
+80
+00:05:01,210 --> 00:05:04,130
+we convert that to the response object,
+
+81
+00:05:04,130 --> 00:05:07,735
+as response class using the JSON parser.
+
+82
+00:05:07,735 --> 00:05:11,515
+The next file we'll look at is PubSubBigQuery.Java.
+
+83
+00:05:11,515 --> 00:05:14,630
+PubSubBigQuery.java is one of the two children of
+
+84
+00:05:14,630 --> 00:05:17,030
+the InputOutput class and because it's one of
+
+85
+00:05:17,030 --> 00:05:19,430
+the two children that extends InputOutput.Java,
+
+86
+00:05:19,430 --> 00:05:23,015
+we need to implement readInstances and writePedictions.
+
+87
+00:05:23,015 --> 00:05:26,960
+But remember that this code is responsible for just the IO.
+
+88
+00:05:26,960 --> 00:05:30,860
+We're going to read in this case from Pub/Sub and we're going to write to BigQuery.
+
+89
+00:05:30,860 --> 00:05:33,290
+But the actual calling of the prediction service is something that
+
+90
+00:05:33,290 --> 00:05:36,240
+will still be done with an InputOutput.java.
+
+91
+00:05:36,240 --> 00:05:39,460
+The readInstance function as for the contract specified
+
+92
+00:05:39,460 --> 00:05:44,040
+InputOutput.Java always much yield a PCollection of babies.
+
+93
+00:05:44,040 --> 00:05:46,820
+In this case, because we're reading from pub/Sub,
+
+94
+00:05:46,820 --> 00:05:48,530
+all we need to do is make use of
+
+95
+00:05:48,530 --> 00:05:55,950
+the PubsubIO library and specify a particular topic that we're reading from.
+
+96
+00:05:55,950 --> 00:05:58,715
+In this case, each message consists of
+
+97
+00:05:58,715 --> 00:06:02,355
+a comma delimited string representing a single baby,
+
+98
+00:06:02,355 --> 00:06:04,045
+and so to parse that,
+
+99
+00:06:04,045 --> 00:06:08,660
+we need to split the message by new line which we do here and then iterate over
+
+100
+00:06:08,660 --> 00:06:10,910
+those lines and on each one using the
+
+101
+00:06:10,910 --> 00:06:15,110
+baby.fromCsv function to parse it and turn it into a baby.
+
+102
+00:06:16,340 --> 00:06:21,535
+The writePredictions function is where we will start.
+
+103
+00:06:21,535 --> 00:06:26,865
+We will invoke the functionality in InputOutput.java to talk to our prediction service,
+
+104
+00:06:26,865 --> 00:06:31,415
+and we'll do that on line 50 where we call addPredictionInBatches.
+
+105
+00:06:31,415 --> 00:06:36,540
+AddPredictionInBatches is a function that we already looked at within InputOutput.java.
+
+106
+00:06:37,420 --> 00:06:41,915
+Once we have gotten the PCollection of baby predictions,
+
+107
+00:06:41,915 --> 00:06:44,180
+the next thing that we need to do is write those to
+
+108
+00:06:44,180 --> 00:06:49,190
+BigQuery and so in order to do that just like we use the PubsubIO,
+
+109
+00:06:49,190 --> 00:06:54,020
+we're now going to use BigQueryIO and BigQueryIO expects a few more parameters.
+
+110
+00:06:54,020 --> 00:06:58,760
+We need to supply the output table as well as whether we intend to
+
+111
+00:06:58,760 --> 00:07:04,105
+append our data or overwrite it and instructions for whether we need to create the table.
+
+112
+00:07:04,105 --> 00:07:12,905
+The next file that we'll look at is the second child class of InputOutput.java,
+
+113
+00:07:12,905 --> 00:07:15,300
+and in this file,
+
+114
+00:07:15,300 --> 00:07:17,750
+we also extend InputOutput which means that we
+
+115
+00:07:17,750 --> 00:07:20,845
+also need to implement readInstances and writePredictions,
+
+116
+00:07:20,845 --> 00:07:24,680
+just as before readInstances returns a PCollection of babies.
+
+117
+00:07:24,680 --> 00:07:26,980
+Although in this case, instead of reading from Pub/Sub,
+
+118
+00:07:26,980 --> 00:07:29,475
+we'll read from Google Cloud Storage.
+
+119
+00:07:29,475 --> 00:07:33,710
+We read from Google Cloud Storage on line twenty 21 where we use the
+
+120
+00:07:33,710 --> 00:07:37,835
+TextIO.read function and we pass that in an input file.
+
+121
+00:07:37,835 --> 00:07:43,160
+Each input file consists of new line delimited lines within
+
+122
+00:07:43,160 --> 00:07:48,560
+which each line represents a baby and the fields are delimited by commas.
+
+123
+00:07:48,560 --> 00:07:50,390
+So once again we can make good use of our
+
+124
+00:07:50,390 --> 00:07:54,420
+baby.fromCsv function to parse individual lines.
+
+125
+00:07:55,190 --> 00:07:57,230
+After ingesting the data,
+
+126
+00:07:57,230 --> 00:07:59,905
+we can then call the writePredictions, and as before,
+
+127
+00:07:59,905 --> 00:08:03,200
+writePredictions makes a call to functionality that's defined with an
+
+128
+00:08:03,200 --> 00:08:07,050
+InputOutput.java via the addPredictionInBatches function.
+
+129
+00:08:07,050 --> 00:08:11,225
+Once we've collected a PCollection of baby predictions,
+
+130
+00:08:11,225 --> 00:08:12,930
+we can then write those to disk.
+
+131
+00:08:12,930 --> 00:08:18,860
+In this case, we're going to convert those to CSVs first and then call textIO.write,
+
+132
+00:08:18,860 --> 00:08:22,680
+passing in the name of the file we want and the suffix that we want.
+
+133
+00:08:22,680 --> 00:08:27,835
+So there you have it. Our solution for mitigating training serving skew through code.
+
+134
+00:08:27,835 --> 00:08:31,970
+We mitigated this problem by using polymorphism.
+
+135
+00:08:31,970 --> 00:08:34,880
+Implementing the parts of the pipeline that don't
+
+136
+00:08:34,880 --> 00:08:38,150
+change within a single parent class called
+
+137
+00:08:38,150 --> 00:08:41,240
+InputOutput.java and then implementing the parts of the code
+
+138
+00:08:41,240 --> 00:08:45,400
+that do need to change in separate child classes,
+
+139
+00:08:45,610 --> 00:08:51,390
+which were enforced via a contract in the parent class.

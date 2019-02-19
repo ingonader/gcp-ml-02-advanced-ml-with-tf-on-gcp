@@ -1,0 +1,147 @@
+1
+00:00:00,000 --> 00:00:03,880
+The last data migration scenario we will cover,
+
+2
+00:00:03,880 --> 00:00:08,890
+is data that already exists in your database application.
+
+3
+00:00:08,890 --> 00:00:11,849
+There are several options for migrating
+
+4
+00:00:11,849 --> 00:00:16,799
+existing databases to Google Cloud's fully managed options.
+
+5
+00:00:16,799 --> 00:00:20,864
+These include the BigQuery data transfer service,
+
+6
+00:00:20,864 --> 00:00:23,070
+migrations to Cloud SQL,
+
+7
+00:00:23,070 --> 00:00:26,155
+and Spanner for your relational data bases.
+
+8
+00:00:26,155 --> 00:00:29,900
+And Cloud Dataproc for your Hadoop jobs and more.
+
+9
+00:00:29,900 --> 00:00:34,790
+It can be overwhelming when choosing from different database options.
+
+10
+00:00:34,790 --> 00:00:37,955
+We've broken down the decision path here.
+
+11
+00:00:37,955 --> 00:00:43,715
+Do you have structured log data from monitoring IoT applications?
+
+12
+00:00:43,715 --> 00:00:48,070
+If so, consider BigTable or Spanner.
+
+13
+00:00:48,070 --> 00:00:54,010
+What about relational data from an on-premise MySQL database?
+
+14
+00:00:54,010 --> 00:00:58,660
+For that, consider Cloud SQL or Spanner.
+
+15
+00:00:58,750 --> 00:01:04,085
+What about migrating your data analytics and reporting warehouse?
+
+16
+00:01:04,085 --> 00:01:08,295
+For that, consider BigQuery.
+
+17
+00:01:08,295 --> 00:01:12,845
+What about your existing legacy Hadoop jobs?
+
+18
+00:01:12,845 --> 00:01:16,180
+For those, I'll use Dataproc,
+
+19
+00:01:16,180 --> 00:01:20,839
+and run those same jobs inside of a fully managed service.
+
+20
+00:01:20,839 --> 00:01:24,320
+You've already worked with BigQuery before as part of this course.
+
+21
+00:01:24,320 --> 00:01:25,910
+But did you know there's
+
+22
+00:01:25,910 --> 00:01:31,530
+a fully managed data import service for bringing in data sets from AdWords,
+
+23
+00:01:31,530 --> 00:01:35,120
+DoubleClick, and YouTube into BigQuery?
+
+24
+00:01:35,120 --> 00:01:38,420
+Meet the BigQuery data transfer service.
+
+25
+00:01:38,420 --> 00:01:40,870
+Now you can use BigQuery to
+
+26
+00:01:40,870 --> 00:01:44,590
+analyze the results of your online marketing campaigns for example.
+
+27
+00:01:44,590 --> 00:01:48,600
+When looking to migrate your on-premise database application,
+
+28
+00:01:48,600 --> 00:01:52,345
+like Oracle, SQL Server, or MySQL,
+
+29
+00:01:52,345 --> 00:01:56,270
+consider working with a partner to set up a migration plan,
+
+30
+00:01:56,270 --> 00:02:01,370
+and switch over your on-premise infrastructure to a no NoOps fully managed solution,
+
+31
+00:02:01,370 --> 00:02:04,425
+like Cloud SQL, or SQL Spanner.
+
+32
+00:02:04,425 --> 00:02:09,650
+Lastly, if you have existing MapReduce Hadoop jobs,
+
+33
+00:02:09,650 --> 00:02:14,935
+you can bring these over too and run them, within Cloud Dataproc.
+
+34
+00:02:14,935 --> 00:02:19,160
+You practiced running a few of these jobs in a VM,
+
+35
+00:02:19,160 --> 00:02:22,930
+in the very first part of the ML on GCP course.
+
+36
+00:02:22,930 --> 00:02:27,075
+You can also leverage and work with our partner ecosystem,
+
+37
+00:02:27,075 --> 00:02:29,330
+to assist you in the migration.

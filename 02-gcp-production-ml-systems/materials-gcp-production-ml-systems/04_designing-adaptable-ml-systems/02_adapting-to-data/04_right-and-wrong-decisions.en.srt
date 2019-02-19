@@ -1,0 +1,235 @@
+1
+00:00:00,000 --> 00:00:04,135
+Some decisions about data are a matter of weighing cost versus benefit,
+
+2
+00:00:04,135 --> 00:00:07,965
+like short-term performance goals against long-term maintainability.
+
+3
+00:00:07,965 --> 00:00:10,470
+Others though are about right and wrong.
+
+4
+00:00:10,470 --> 00:00:12,450
+For example, let's say that you've trained
+
+5
+00:00:12,450 --> 00:00:14,490
+a model to predict the probability that a patient
+
+6
+00:00:14,490 --> 00:00:18,410
+has cancer from medical records and that you've selected patient age,
+
+7
+00:00:18,410 --> 00:00:20,415
+gender, prior medical conditions,
+
+8
+00:00:20,415 --> 00:00:22,400
+hospital name, vital signs,
+
+9
+00:00:22,400 --> 00:00:24,460
+and test results as features.
+
+10
+00:00:24,460 --> 00:00:26,610
+Your model had excellent performance on
+
+11
+00:00:26,610 --> 00:00:29,955
+held-out test data but performed terribly on new patients.
+
+12
+00:00:29,955 --> 00:00:31,710
+Any guesses as to why?
+
+13
+00:00:31,710 --> 00:00:34,800
+It turns out that the model was trained using a feature that
+
+14
+00:00:34,800 --> 00:00:37,400
+wasn't legitimately available at decision time,
+
+15
+00:00:37,400 --> 00:00:40,100
+and so when the model was deployed into production,
+
+16
+00:00:40,100 --> 00:00:44,505
+the distribution of this feature changed and it was no longer a reliable predictor.
+
+17
+00:00:44,505 --> 00:00:47,420
+In this case, that feature was hospital name.
+
+18
+00:00:47,420 --> 00:00:49,065
+You might think hospital name,
+
+19
+00:00:49,065 --> 00:00:50,320
+how could that be predictive?
+
+20
+00:00:50,320 --> 00:00:54,650
+Well, remember that there are some hospitals that focus on diseases like cancer.
+
+21
+00:00:54,650 --> 00:00:58,145
+So, the model learned that hospital name is very important.
+
+22
+00:00:58,145 --> 00:01:01,190
+However, at decision time this feature wasn't available to
+
+23
+00:01:01,190 --> 00:01:04,710
+the model because patients hadn't yet been assigned to a hospital.
+
+24
+00:01:04,710 --> 00:01:06,245
+But rather than throwing an error,
+
+25
+00:01:06,245 --> 00:01:09,710
+the model simply interpreted the hospital name as an empty string,
+
+26
+00:01:09,710 --> 00:01:11,960
+which it was capable of doing thanks to
+
+27
+00:01:11,960 --> 00:01:15,640
+out-of-vocabulary buckets and its representation of words.
+
+28
+00:01:15,640 --> 00:01:19,040
+We refer to this idea where the label is somehow
+
+29
+00:01:19,040 --> 00:01:22,115
+leaking into the training data as data leakage.
+
+30
+00:01:22,115 --> 00:01:26,210
+Data leakage is related to a broader class of problems that we've seen before in
+
+31
+00:01:26,210 --> 00:01:31,005
+the last specialization where we talked about models learning unacceptable strategies.
+
+32
+00:01:31,005 --> 00:01:34,160
+Previously, we learned that when there's a class imbalance,
+
+33
+00:01:34,160 --> 00:01:36,915
+a model might learn to predict the majority class.
+
+34
+00:01:36,915 --> 00:01:40,760
+In this case, the model has learned to use a feature that wouldn't actually be
+
+35
+00:01:40,760 --> 00:01:45,110
+known and which cannot be plausibly related to the label.
+
+36
+00:01:45,110 --> 00:01:47,055
+Here's a similar case,
+
+37
+00:01:47,055 --> 00:01:49,520
+and let's see if you can recognize the similarity.
+
+38
+00:01:49,520 --> 00:01:53,660
+A professor of 18th century literature believed that there was a relationship between
+
+39
+00:01:53,660 --> 00:01:58,059
+how an author thought about the mind and their political orientation.
+
+40
+00:01:58,059 --> 00:02:02,590
+So for example, perhaps authors who use language like the mind is a garden,
+
+41
+00:02:02,590 --> 00:02:05,330
+had one political orientation and authors who use
+
+42
+00:02:05,330 --> 00:02:08,510
+language like the mind is a steel trap had another.
+
+43
+00:02:08,510 --> 00:02:13,025
+What if we were to naively test this hypothesis with machine learning?
+
+44
+00:02:13,025 --> 00:02:17,595
+Some people tried that and they got some unexpected results. Here's what they did.
+
+45
+00:02:17,595 --> 00:02:22,460
+They took all the sentences in all of the works by number of 18th century authors,
+
+46
+00:02:22,460 --> 00:02:26,480
+extracted the mind metaphors and set those as their features
+
+47
+00:02:26,480 --> 00:02:31,110
+and then use the political orientations of the authors who wrote them as labels.
+
+48
+00:02:31,110 --> 00:02:34,225
+Then they randomly assign sentences to each of the training,
+
+49
+00:02:34,225 --> 00:02:36,360
+validation, and test sets and,
+
+50
+00:02:36,360 --> 00:02:38,470
+because they divided the data in this way,
+
+51
+00:02:38,470 --> 00:02:43,245
+some sentences from each author were distributed to each of those three sets.
+
+52
+00:02:43,245 --> 00:02:47,820
+The resulting model was amazing, but suspiciously amazing.
+
+53
+00:02:47,820 --> 00:02:49,545
+What might have gone wrong?
+
+54
+00:02:49,545 --> 00:02:54,410
+One way to think about it is that political orientation is linked to that person,
+
+55
+00:02:54,410 --> 00:02:57,115
+and if we wouldn't include person name in the feature set,
+
+56
+00:02:57,115 --> 00:02:59,585
+we should not include it implicitly either.
+
+57
+00:02:59,585 --> 00:03:03,140
+When the researchers changed the way they partition the data and
+
+58
+00:03:03,140 --> 00:03:06,410
+instead partitioned it by author instead of by sentence,
+
+59
+00:03:06,410 --> 00:03:09,800
+the model's accuracy dropped to something more reasonable.

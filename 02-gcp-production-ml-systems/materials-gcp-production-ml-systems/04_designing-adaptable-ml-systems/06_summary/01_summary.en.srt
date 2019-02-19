@@ -1,0 +1,75 @@
+1
+00:00:00,000 --> 00:00:04,360
+So now you've gotten a taste of all the ways that ML systems depend on data,
+
+2
+00:00:04,360 --> 00:00:08,015
+and the sorts of real-world events that can cause data to change.
+
+3
+00:00:08,015 --> 00:00:11,050
+Sometimes it's data that are owned by other teams,
+
+4
+00:00:11,050 --> 00:00:14,010
+sometimes it's the failure of other parts of the system,
+
+5
+00:00:14,010 --> 00:00:18,015
+and sometimes it's feedback loops that influenced the data that we're trying to collect.
+
+6
+00:00:18,015 --> 00:00:21,930
+There isn't a single practice that will insulate your system from these sorts of changes.
+
+7
+00:00:21,930 --> 00:00:24,820
+Instead, there are a number of things you should do.
+
+8
+00:00:24,820 --> 00:00:27,025
+Firstly, you should keep humans in the loop.
+
+9
+00:00:27,025 --> 00:00:28,625
+You need to monitor everything,
+
+10
+00:00:28,625 --> 00:00:31,550
+from the distribution of your inputs to the distribution of your outputs,
+
+11
+00:00:31,550 --> 00:00:34,810
+but also critically to your business performance metrics.
+
+12
+00:00:34,810 --> 00:00:37,610
+Secondly, you should prioritize maintainability.
+
+13
+00:00:37,610 --> 00:00:40,795
+You need to constantly assess the value of all data sources,
+
+14
+00:00:40,795 --> 00:00:44,695
+and weigh their performance benefit against the cost to maintain them.
+
+15
+00:00:44,695 --> 00:00:47,070
+Finally, you need to get ready to roll back.
+
+16
+00:00:47,070 --> 00:00:50,815
+There is no way to unteach a model something that it has learned already.
+
+17
+00:00:50,815 --> 00:00:53,345
+The only thing you can do is to roll back
+
+18
+00:00:53,345 --> 00:00:56,045
+to a model version that didn't learn from polluted data.
+
+19
+00:00:56,045 --> 00:00:59,100
+Design your infrastructure with this in mind.

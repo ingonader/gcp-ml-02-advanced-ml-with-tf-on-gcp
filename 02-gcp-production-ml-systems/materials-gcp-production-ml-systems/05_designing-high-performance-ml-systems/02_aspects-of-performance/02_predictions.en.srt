@@ -1,0 +1,211 @@
+1
+00:00:00,000 --> 00:00:02,220
+We've talked about the time to train.
+
+2
+00:00:02,220 --> 00:00:05,460
+But there is another aspect to performance, predictions.
+
+3
+00:00:05,460 --> 00:00:09,575
+During inference, you'll have performance considerations as well.
+
+4
+00:00:09,575 --> 00:00:11,679
+If you doing batch prediction,
+
+5
+00:00:11,679 --> 00:00:14,625
+the considerations are very similar to that of training.
+
+6
+00:00:14,625 --> 00:00:17,295
+You're concerned with things such as time.
+
+7
+00:00:17,295 --> 00:00:20,070
+How long does it take for you to do all of your predictions?
+
+8
+00:00:20,070 --> 00:00:22,795
+This might be driven by a business need as well.
+
+9
+00:00:22,795 --> 00:00:26,669
+So, for example, if you're doing product recommendations for the next day,
+
+10
+00:00:26,669 --> 00:00:29,460
+you might want recommendations for the top 20 percent of
+
+11
+00:00:29,460 --> 00:00:33,140
+users precomputed and available in five hours,
+
+12
+00:00:33,140 --> 00:00:35,635
+if it takes 18 hours to do the full training.
+
+13
+00:00:35,635 --> 00:00:37,820
+You'll also want to consider cost.
+
+14
+00:00:37,820 --> 00:00:40,620
+What predictions are you doing and how much do you
+
+15
+00:00:40,620 --> 00:00:44,675
+precompute is going to be driven by cost considerations?
+
+16
+00:00:44,675 --> 00:00:46,425
+Then, there's scale.
+
+17
+00:00:46,425 --> 00:00:49,040
+Do you have to do all of this on a single machine or can
+
+18
+00:00:49,040 --> 00:00:51,700
+you distribute it safe to multiple workers?
+
+19
+00:00:51,700 --> 00:00:54,395
+What kind of hardware is available on these workers?
+
+20
+00:00:54,395 --> 00:00:57,080
+Do they for example have GPUs?
+
+21
+00:00:57,080 --> 00:00:59,454
+If you're doing online prediction,
+
+22
+00:00:59,454 --> 00:01:01,830
+the performance considerations are quite different.
+
+23
+00:01:01,830 --> 00:01:05,475
+This is because the end user is actually waiting for the prediction.
+
+24
+00:01:05,475 --> 00:01:07,715
+So, let's take a look at how it's different.
+
+25
+00:01:07,715 --> 00:01:10,840
+You typically cannot distribute the prediction graph,
+
+26
+00:01:10,840 --> 00:01:15,315
+instead you carry out the computation for one end user on one machine.
+
+27
+00:01:15,315 --> 00:01:20,415
+However, you almost always scale out the predictions onto multiple workers.
+
+28
+00:01:20,415 --> 00:01:24,950
+Essentially, each prediction is handled by a microservice and you can replicate,
+
+29
+00:01:24,950 --> 00:01:28,880
+and scale out the predictions using Kubernetes or App Engine.
+
+30
+00:01:28,880 --> 00:01:32,420
+Cloud ML Engine predictions or higher level abstraction,
+
+31
+00:01:32,420 --> 00:01:34,515
+but they are equivalent to doing this.
+
+32
+00:01:34,515 --> 00:01:36,950
+The performance consideration is not
+
+33
+00:01:36,950 --> 00:01:39,670
+how many training steps you can carry out per minute,
+
+34
+00:01:39,670 --> 00:01:42,205
+but how many queries you can handle per second.
+
+35
+00:01:42,205 --> 00:01:46,110
+The unit of this queries per second is often called QPS,
+
+36
+00:01:46,110 --> 00:01:49,320
+that's the performance target that you need to hit.
+
+37
+00:01:49,320 --> 00:01:51,590
+When you design for higher performance,
+
+38
+00:01:51,590 --> 00:01:54,560
+you want to consider training and prediction separately,
+
+39
+00:01:54,560 --> 00:01:58,475
+especially if you will be doing online predictions.
+
+40
+00:01:58,475 --> 00:02:03,560
+As I suggested in my line about precomputed batch predictions for
+
+41
+00:02:03,560 --> 00:02:08,480
+the top 20 percent of users and handling the rest of your users via online prediction,
+
+42
+00:02:08,480 --> 00:02:13,140
+performance considerations will also involve striking the right balance.
+
+43
+00:02:13,140 --> 00:02:16,230
+Ultimately, you will know the exact trade-off,
+
+44
+00:02:16,230 --> 00:02:19,735
+is it a 20 percent or 10 percent or 25 percent,
+
+45
+00:02:19,735 --> 00:02:23,745
+only after you build your system and start to measure things.
+
+46
+00:02:23,745 --> 00:02:29,780
+However, unless you plan to be able to do both batch predictions and online predictions,
+
+47
+00:02:29,780 --> 00:02:33,290
+you will be stuck with a solution that doesn't meet all of your needs.
+
+48
+00:02:33,290 --> 00:02:37,000
+The idea behind this module and this course in general,
+
+49
+00:02:37,000 --> 00:02:39,940
+is so that you're aware of all of the possibilities.
+
+50
+00:02:39,940 --> 00:02:42,170
+Once you are aware that it can be done,
+
+51
+00:02:42,170 --> 00:02:44,245
+it's actually not that difficult to accomplish.
+
+52
+00:02:44,245 --> 00:02:46,990
+The technical part is usually quite straightforward,
+
+53
+00:02:46,990 --> 00:02:51,600
+especially if you're using TensorFlow on a capable cloud platform.

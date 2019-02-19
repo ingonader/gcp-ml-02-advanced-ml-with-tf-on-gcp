@@ -1,0 +1,431 @@
+1
+00:00:00,000 --> 00:00:03,840
+Just as the use case determines the appropriate training architecture,
+
+2
+00:00:03,840 --> 00:00:06,915
+it also determines the appropriate serving architecture.
+
+3
+00:00:06,915 --> 00:00:09,090
+In designing our serving architecture,
+
+4
+00:00:09,090 --> 00:00:11,840
+one of our goals is to minimize average latency.
+
+5
+00:00:11,840 --> 00:00:16,440
+Just like an operating systems where we don't want to be bottlenecked by slow disk IO,
+
+6
+00:00:16,440 --> 00:00:20,635
+when serving models, we don't want to be bottleneck by slow to decide models.
+
+7
+00:00:20,635 --> 00:00:23,340
+Remarkably, the solution for serving models is very
+
+8
+00:00:23,340 --> 00:00:25,950
+similar to what we do to optimize IO performance,
+
+9
+00:00:25,950 --> 00:00:27,670
+we use a cache.
+
+10
+00:00:27,670 --> 00:00:29,980
+In this case, rather than faster memory,
+
+11
+00:00:29,980 --> 00:00:31,795
+we simply use a table.
+
+12
+00:00:31,795 --> 00:00:34,410
+Static serving then computes the label ahead of
+
+13
+00:00:34,410 --> 00:00:37,075
+time and serves by looking it up in the table.
+
+14
+00:00:37,075 --> 00:00:38,910
+Dynamic serving in contrast,
+
+15
+00:00:38,910 --> 00:00:40,720
+computes the label on-demand.
+
+16
+00:00:40,720 --> 00:00:43,300
+In short, there's a space-time trade-off.
+
+17
+00:00:43,300 --> 00:00:47,360
+Static serving is space-intensive because we store our pre-computed predictions,
+
+18
+00:00:47,360 --> 00:00:50,765
+with a low fixed latency and lower maintenance costs.
+
+19
+00:00:50,765 --> 00:00:54,190
+While dynamic is compute-intensive with lower storage costs,
+
+20
+00:00:54,190 --> 00:00:57,000
+higher maintenance, and variable latency.
+
+21
+00:00:57,000 --> 00:00:59,050
+The choice of which to use,
+
+22
+00:00:59,050 --> 00:01:00,565
+static or dynamic serving,
+
+23
+00:01:00,565 --> 00:01:03,285
+is determined by considering how important latency,
+
+24
+00:01:03,285 --> 00:01:05,550
+storage, and CPU costs are.
+
+25
+00:01:05,550 --> 00:01:09,610
+Sometimes it can be hard to express the relative importance of these three areas.
+
+26
+00:01:09,610 --> 00:01:11,540
+Which is why I find it helpful to consider
+
+27
+00:01:11,540 --> 00:01:16,140
+static and dynamic serving through another lens, peakedness and cardinality.
+
+28
+00:01:16,140 --> 00:01:18,380
+Peakedness refers to the extent to which
+
+29
+00:01:18,380 --> 00:01:21,725
+the distribution of the prediction workload is concentrated.
+
+30
+00:01:21,725 --> 00:01:24,795
+You can also think of it as inverse entropy.
+
+31
+00:01:24,795 --> 00:01:28,670
+For example, a model that predicts the next word given the current word,
+
+32
+00:01:28,670 --> 00:01:31,190
+which you might find in your mobile phone keyboard app,
+
+33
+00:01:31,190 --> 00:01:32,300
+would be highly peaked.
+
+34
+00:01:32,300 --> 00:01:36,550
+Because a small number of words account for the majority of words used.
+
+35
+00:01:36,550 --> 00:01:41,005
+In contrast, a model that predicted quarterly revenue for all our sales verticals,
+
+36
+00:01:41,005 --> 00:01:42,770
+in order to populate a report,
+
+37
+00:01:42,770 --> 00:01:46,850
+will be run on the same verticals every time and with the same frequency for each.
+
+38
+00:01:46,850 --> 00:01:49,755
+So, it would have very low peakedness.
+
+39
+00:01:49,755 --> 00:01:53,350
+Cardinality refers to the number of values in a set.
+
+40
+00:01:53,350 --> 00:01:55,370
+In this case, the set is the set of
+
+41
+00:01:55,370 --> 00:01:58,570
+all possible things we might have to make predictions for.
+
+42
+00:01:58,570 --> 00:02:02,510
+A model predicting sales revenue given organization division number,
+
+43
+00:02:02,510 --> 00:02:04,640
+would be fairly low cardinality.
+
+44
+00:02:04,640 --> 00:02:07,430
+A model predicting lifetime value given a user for
+
+45
+00:02:07,430 --> 00:02:10,550
+an e-commerce platform would be very high cardinality,
+
+46
+00:02:10,550 --> 00:02:14,030
+because the number of users and the number of characteristics of each user,
+
+47
+00:02:14,030 --> 00:02:16,075
+are likely to be quite large.
+
+48
+00:02:16,075 --> 00:02:19,590
+Taken together, these two criteria create a space.
+
+49
+00:02:19,590 --> 00:02:22,190
+When the cardinality is sufficiently low,
+
+50
+00:02:22,190 --> 00:02:24,695
+we can store the entire expected prediction workload.
+
+51
+00:02:24,695 --> 00:02:26,810
+For example, the predicted sales revenue for
+
+52
+00:02:26,810 --> 00:02:30,110
+all divisions in a table and use static serving.
+
+53
+00:02:30,110 --> 00:02:34,160
+When the cardinality is high because the size of the input space is large,
+
+54
+00:02:34,160 --> 00:02:36,065
+and the workload is not very peaked,
+
+55
+00:02:36,065 --> 00:02:38,920
+you probably want to use dynamic training.
+
+56
+00:02:38,920 --> 00:02:43,250
+In practice though, you often choose a hybrid of static and dynamic,
+
+57
+00:02:43,250 --> 00:02:45,409
+where you statically cache some of the predictions,
+
+58
+00:02:45,409 --> 00:02:48,130
+or responding on demand for the long tail.
+
+59
+00:02:48,130 --> 00:02:51,870
+This works best when the distribution is sufficiently peaked.
+
+60
+00:02:51,870 --> 00:02:55,495
+The area above the curve and not inside the green rectangle,
+
+61
+00:02:55,495 --> 00:02:57,410
+is ripe for a hybrid solution,
+
+62
+00:02:57,410 --> 00:03:01,655
+with the most frequently requested predictions cached and the tail computed on-demand.
+
+63
+00:03:01,655 --> 00:03:03,740
+Let's take a moment to fill out this table.
+
+64
+00:03:03,740 --> 00:03:06,850
+The first use case will consider a spam detection.
+
+65
+00:03:06,850 --> 00:03:09,675
+You should ask yourself what latency is needed.
+
+66
+00:03:09,675 --> 00:03:11,945
+It depends on the system architecture,
+
+67
+00:03:11,945 --> 00:03:15,560
+but you would probably run your model after every email is received and thus,
+
+68
+00:03:15,560 --> 00:03:18,335
+insulate your users from the latency of the model.
+
+69
+00:03:18,335 --> 00:03:21,560
+Then, you could ask yourself, how peaked is the distribution?
+
+70
+00:03:21,560 --> 00:03:23,680
+In this case, not at all.
+
+71
+00:03:23,680 --> 00:03:26,430
+Most emails are likely to be different, although,
+
+72
+00:03:26,430 --> 00:03:29,675
+they may be very similar if generated programmatically.
+
+73
+00:03:29,675 --> 00:03:32,495
+Then you can ask about cardinality.
+
+74
+00:03:32,495 --> 00:03:34,790
+Depending on the choice of representation,
+
+75
+00:03:34,790 --> 00:03:36,920
+the cardinality might be enormous.
+
+76
+00:03:36,920 --> 00:03:40,275
+In this case, dynamic serving is best.
+
+77
+00:03:40,275 --> 00:03:43,400
+What about Android voice to text?
+
+78
+00:03:43,400 --> 00:03:45,525
+This is again subtle.
+
+79
+00:03:45,525 --> 00:03:48,135
+Inference is almost certainly online,
+
+80
+00:03:48,135 --> 00:03:50,990
+since there's such a long tail of possible voice clips.
+
+81
+00:03:50,990 --> 00:03:53,115
+But maybe with sufficient signal processing,
+
+82
+00:03:53,115 --> 00:03:54,680
+some key phrases like, "Okay,
+
+83
+00:03:54,680 --> 00:03:56,800
+Google may have pre-computered answers."
+
+84
+00:03:56,800 --> 00:04:00,620
+So in this case, the best use case is dynamic or hybrid.
+
+85
+00:04:00,620 --> 00:04:03,335
+What about add conversion rate?
+
+86
+00:04:03,335 --> 00:04:06,395
+The set of all ads, doesn't change much from day to day.
+
+87
+00:04:06,395 --> 00:04:09,260
+Assuming all users are comfortable waiting a little bit of time
+
+88
+00:04:09,260 --> 00:04:12,140
+after uploading their ads to get their predicted conversion rate,
+
+89
+00:04:12,140 --> 00:04:13,790
+you could do this statically and run
+
+90
+00:04:13,790 --> 00:04:16,240
+a batch script at regular intervals throughout the day.
+
+91
+00:04:16,240 --> 00:04:19,270
+In practice though, you'll often use a hybrid.
+
+92
+00:04:19,270 --> 00:04:21,080
+You might not have realized it,
+
+93
+00:04:21,080 --> 00:04:23,615
+but dynamic serving is what we've learned so far.
+
+94
+00:04:23,615 --> 00:04:27,340
+Think back to the architecture of the systems we've used to make predictions.
+
+95
+00:04:27,340 --> 00:04:29,635
+A model that lived in Cloud ML Engine,
+
+96
+00:04:29,635 --> 00:04:33,790
+was sent one or more instances and returned predictions for each.
+
+97
+00:04:33,790 --> 00:04:36,820
+If you wanted to build a static serving system,
+
+98
+00:04:36,820 --> 00:04:39,485
+you'd need to make three design changes.
+
+99
+00:04:39,485 --> 00:04:42,770
+Firstly, you need to change your called Cloud ML Engine from
+
+100
+00:04:42,770 --> 00:04:46,230
+an online prediction job to a batch prediction job.
+
+101
+00:04:46,230 --> 00:04:48,860
+Secondly, you need to make sure that your model
+
+102
+00:04:48,860 --> 00:04:51,785
+accepted and passed through keys as input.
+
+103
+00:04:51,785 --> 00:04:57,050
+These keys are what will allow you to join your requests to predictions at serving time.
+
+104
+00:04:57,050 --> 00:05:00,780
+Thirdly, you'd need to write the predictions to a data warehouse,
+
+105
+00:05:00,780 --> 00:05:04,105
+like BigQuery, and create an API to read from it.
+
+106
+00:05:04,105 --> 00:05:06,270
+The details for each of these,
+
+107
+00:05:06,270 --> 00:05:07,985
+is beyond the scope of this module.
+
+108
+00:05:07,985 --> 00:05:11,670
+However, I'll provide links to these in the course resources.

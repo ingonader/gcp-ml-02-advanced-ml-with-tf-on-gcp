@@ -1,0 +1,446 @@
+1
+00:00:00,910 --> 00:00:05,290
+We will start by talking about what high
+performance means in this context and
+
+2
+00:00:05,290 --> 00:00:09,590
+providing a high level overview
+of distributed architectures.
+
+3
+00:00:09,590 --> 00:00:12,850
+So what does high performance
+machine learning mean to you?
+
+4
+00:00:12,850 --> 00:00:16,750
+Does it mean powerful,
+the ability to handle large data sets?
+
+5
+00:00:16,750 --> 00:00:19,760
+Or maybe does it mean doing
+it as fast as possible?
+
+6
+00:00:19,760 --> 00:00:21,000
+The ability to train for
+
+7
+00:00:21,000 --> 00:00:26,370
+long periods of time, achieving the best
+possible accuracy, there's so many things.
+
+8
+00:00:26,370 --> 00:00:30,360
+But one key aspect is the time
+taken to train a model.
+
+9
+00:00:30,360 --> 00:00:33,680
+If it takes six hours to train
+a model on some hardware or
+
+10
+00:00:33,680 --> 00:00:38,000
+software architecture, but only three
+hours to train the same same model
+
+11
+00:00:38,000 --> 00:00:41,830
+to the same accuracy on a different
+hardware or software architecture.
+
+12
+00:00:41,830 --> 00:00:44,460
+I think we'll all agree
+the second architecture
+
+13
+00:00:44,460 --> 00:00:47,060
+is twice as performant as the first one.
+
+14
+00:00:47,060 --> 00:00:51,270
+Now, notice that I said train
+the model to the same accuracy.
+
+15
+00:00:51,270 --> 00:00:55,126
+Throughout this module, we will assume
+that we're talking of models that
+
+16
+00:00:55,126 --> 00:01:00,580
+have same accuracy, or RMSE, or
+whatever your evaluation measure is.
+
+17
+00:01:00,580 --> 00:01:04,230
+Obviously, when we talk about high
+performance machine learning models,
+
+18
+00:01:04,230 --> 00:01:05,886
+accuracy is important.
+
+19
+00:01:05,886 --> 00:01:09,600
+We aren't just going to
+consider that in this module.
+
+20
+00:01:09,600 --> 00:01:13,410
+The rest of the courses in this
+specialization will look at how to build
+
+21
+00:01:13,410 --> 00:01:17,980
+more accurate ML models and there,
+we'll be looking at model architectures
+
+22
+00:01:17,980 --> 00:01:20,580
+that will help us get
+to a desired accuracy.
+
+23
+00:01:20,580 --> 00:01:24,650
+Here in this course, we'll look
+solely at infrastructure performance.
+
+24
+00:01:25,680 --> 00:01:30,330
+Besides the time to train,
+there is one other aspect, budget.
+
+25
+00:01:30,330 --> 00:01:32,460
+You often have a training budget.
+
+26
+00:01:32,460 --> 00:01:35,720
+You might be able to train
+faster on better hardware, but
+
+27
+00:01:35,720 --> 00:01:40,060
+that hardware might cost more, so
+you may have to make the explicit choice
+
+28
+00:01:40,060 --> 00:01:42,250
+to train on slightly
+slower infrastructure.
+
+29
+00:01:43,460 --> 00:01:45,240
+So when it comes to your training budget,
+
+30
+00:01:45,240 --> 00:01:48,920
+you have three considerations,
+three levers that you can adjust.
+
+31
+00:01:48,920 --> 00:01:51,930
+These are time, cost, and scale.
+
+32
+00:01:51,930 --> 00:01:55,440
+Now, how long are you willing
+to spend on the model training?
+
+33
+00:01:55,440 --> 00:01:58,410
+This might be driven by
+the business use case.
+
+34
+00:01:58,410 --> 00:02:02,860
+If you're training a model everyday, so
+as to recommend products the next day,
+
+35
+00:02:02,860 --> 00:02:06,370
+then your training has to
+finish within 24 hours.
+
+36
+00:02:06,370 --> 00:02:11,130
+Realistically, you'll also need time
+to deploy, to AB test and all that.
+
+37
+00:02:11,130 --> 00:02:14,520
+So your actual budget
+might be only 18 hours, so
+
+38
+00:02:14,520 --> 00:02:19,490
+then how much are you willing to spend on
+model training in terms of computing cost?
+
+39
+00:02:19,490 --> 00:02:21,580
+These too is a business decision.
+
+40
+00:02:21,580 --> 00:02:22,470
+You don't want to train for
+
+41
+00:02:22,470 --> 00:02:27,030
+18 hours everyday if the incremental
+benefit of this is not sufficient.
+
+42
+00:02:28,040 --> 00:02:31,200
+Scale is another aspect of your budget.
+
+43
+00:02:31,200 --> 00:02:35,560
+Models differ in terms of how
+computationally expensive they are.
+
+44
+00:02:35,560 --> 00:02:37,580
+Even keeping to the same model,
+
+45
+00:02:37,580 --> 00:02:40,800
+you have a choice of how much
+data you're going to train on.
+
+46
+00:02:40,800 --> 00:02:43,720
+Generally, the more data,
+the more accurate the model.
+
+47
+00:02:43,720 --> 00:02:47,880
+But there are diminishing returns
+to larger and larger data sizes, so
+
+48
+00:02:47,880 --> 00:02:52,980
+your time and cost budget may
+also dictate the data set size.
+
+49
+00:02:52,980 --> 00:02:57,090
+Similarly, you often have a choice
+between training on a single,
+
+50
+00:02:57,090 --> 00:03:01,020
+more expensive machine or
+multiple cheaper machines.
+
+51
+00:03:01,020 --> 00:03:03,970
+But to take advantage of this,
+you may have to write your code
+
+52
+00:03:03,970 --> 00:03:07,040
+somewhat differently, and
+that's another aspect of scale.
+
+53
+00:03:08,120 --> 00:03:12,680
+Also, you have the choice of starting
+from an earlier model checkpoint and
+
+54
+00:03:12,680 --> 00:03:14,660
+training for just a few steps.
+
+55
+00:03:14,660 --> 00:03:19,120
+Typically, this will converge faster
+than training from scratch each time.
+
+56
+00:03:19,120 --> 00:03:22,980
+This compromise might allow you to reach
+the desired accuracy faster and cheaper.
+
+57
+00:03:24,840 --> 00:03:28,720
+In addition, there are ways to tune
+performance to reduce the time,
+
+58
+00:03:28,720 --> 00:03:31,560
+reduce the cost or increase the scale.
+
+59
+00:03:31,560 --> 00:03:35,450
+In order to understand what these are,
+it helps to understand that model training
+
+60
+00:03:35,450 --> 00:03:38,695
+performance will be bound
+by one of three things.
+
+61
+00:03:38,695 --> 00:03:43,130
+Input/output, which is how fast you
+can get data into the model for
+
+62
+00:03:43,130 --> 00:03:44,600
+each training step.
+
+63
+00:03:44,600 --> 00:03:49,730
+The CPU, which is how fast you can compute
+the gradient in each training step.
+
+64
+00:03:49,730 --> 00:03:52,730
+And memory,
+how many weights can you hold in memory so
+
+65
+00:03:52,730 --> 00:03:56,980
+that you can do the matrix multiplications
+in memory or do you use the GP or TPU.
+
+66
+00:03:59,300 --> 00:04:03,602
+Your ML training will be I/O bound
+if the number of inputs is large.
+
+67
+00:04:03,602 --> 00:04:06,943
+Heterogeneous, requiring parsing or
+if the model is so
+
+68
+00:04:06,943 --> 00:04:10,680
+small that the computer
+requirements are trivial.
+
+69
+00:04:10,680 --> 00:04:15,564
+This also tends to be the case if
+the input data is on a storage system
+
+70
+00:04:15,564 --> 00:04:17,583
+with very low throughput.
+
+71
+00:04:17,583 --> 00:04:20,703
+Your ML training CPU bound
+if the I/O is simple but
+
+72
+00:04:20,703 --> 00:04:24,480
+the model involves lots of
+expensive computations.
+
+73
+00:04:24,480 --> 00:04:26,970
+You will also encounter this situation
+
+74
+00:04:26,970 --> 00:04:29,550
+if you're running a model
+on underpowered hardware.
+
+75
+00:04:31,300 --> 00:04:36,590
+Your ML training might be memory bound if
+the number of inputs is really large or
+
+76
+00:04:36,590 --> 00:04:40,310
+if the model is complex and
+has lots of free parameters.
+
+77
+00:04:40,310 --> 00:04:43,980
+You'll also face memory limitations
+if your accelerator doesn't
+
+78
+00:04:43,980 --> 00:04:44,860
+have enough memory.
+
+79
+00:04:46,880 --> 00:04:51,580
+So knowing what you're bound by, you
+can look at how to improve performance.
+
+80
+00:04:51,580 --> 00:04:55,200
+If you're IO bound,
+look at storing the data more efficiently
+
+81
+00:04:55,200 --> 00:04:59,770
+on a storage system with higher
+throughput or parallelizing the reads.
+
+82
+00:04:59,770 --> 00:05:03,840
+Although it's not ideal, you might also
+consider reducing the batch size so
+
+83
+00:05:03,840 --> 00:05:05,760
+that you're reading
+less data in each step.
+
+84
+00:05:07,490 --> 00:05:12,150
+If you are a CPU bound, see if you can
+run the training on a faster accelerator.
+
+85
+00:05:12,150 --> 00:05:16,340
+GPUs keep getting faster, so
+move to a newer generation processor.
+
+86
+00:05:16,340 --> 00:05:21,080
+And if you're using Google Cloud, you
+also have the option of running on TPUs.
+
+87
+00:05:21,080 --> 00:05:24,890
+Even if it's not ideal,
+you might consider using a simpler model,
+
+88
+00:05:24,890 --> 00:05:28,080
+a less computationally expensive
+activation function or
+
+89
+00:05:28,080 --> 00:05:29,710
+simply just train for fewer steps.
+
+90
+00:05:32,400 --> 00:05:37,300
+If you are memory bound, see if you can
+add more memory to the individual workers.
+
+91
+00:05:37,300 --> 00:05:39,110
+Again, this may not be ideal, but
+
+92
+00:05:39,110 --> 00:05:42,670
+you could also consider using
+fewer layers in your model.
+
+93
+00:05:42,670 --> 00:05:46,940
+Reducing the batch size can also
+help with memory bound ML systems.

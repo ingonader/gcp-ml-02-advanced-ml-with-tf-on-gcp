@@ -1,0 +1,47 @@
+Earlier in this module, we talked about how in the context
+of ingesting an upstream model our models performance would degrade if
+it expected one input and got another. The statistical term for changes in
+the likelihood of observed values like model inputs is changes
+in the distribution. And it turns out that the distribution
+of the data can change for all sorts of reason. Let's review some examples. For example, sometimes
+the distribution of the label changes. We've looked at the natality dataset in
+BigQuery and tried to predict baby weight. Some of you may have noticed that baby
+weight has actually changed over time. It peaked in the 1980s and
+has since been declining. In this graph, I've depicted the
+distributions of baby weights for 1969 and in 1984. And note that in 1969 babies weighed
+significantly less than they did in 1984. When the distribution of the label
+changes, it could mean that the relationship between features and
+labels is changing as well. At the very least, it's likely
+that our model's predictions which will typically match the distribution
+of the labels in the training set will be significantly less accurate. Sometimes it's not the labels but the
+features that change their distribution. For example, say you've trained your model
+to predict population movement patterns using ZIP code as a feature. Surprisingly, ZIP codes aren't fixed. The government releases new ones and
+deprecates old ones every year. Now as a ML practitioner, you know
+that ZIP codes aren't really numbers. So you've chosen to represent them
+as categorical feature columns, but this might lead to problems. If you chose to specify a vocabulary,
+but set the number of out of vocabulary buckets to zero and
+didn't specify a default. Then the distribution may become
+skewed toward the default value, which is negative 1. And this might be problematic because
+the model maybe forced to make predictions in regions of the future space, which were
+not well represented in the training data. There's another name for when models
+are asked to make predictions on points in future space that are far away from the
+training data, and that's extrapolation. Extrapolation means to generalize outside
+the bounds of what we've previously seen. Interpolation is the opposite, it means to generalize within the bounds
+of what we've previously seen. Interpolation is always much easier. For example, let's say the model got to
+see the green data, but not the blue data. The red line reflects a linear
+regression on the green data. Predictions in the green region
+are interpolated and reasonably accurate. In contrast, predictions in the blue
+ribbon are extrapolated and are increasingly inaccurate the farther
+we get from the green region. You can protect yourself from
+changing distributions using a few different methods. The first thing you can do is to
+be vigilant through monitoring. You can look at the descriptive
+summaries of your inputs and compare them to what the model is seen. If for example, the mean or the variance has changed substantially,
+then you can analyze this new segment of the input space to see if
+the relationships learned still hold. You can also look to see whether the
+models residuals, that is the difference between it's predictions and the labels
+has changed as a function of the input. If for example, you used to have small
+errors at one side of the input and large in another, and now it's switched. This could be evidence of
+a change in the relationship. Finally, if you have reason to
+believe that the relationship is changing over time. You can force the model to treat more
+recent observations as more important by writing a custom loss function or by retraining the model
+on the most recent data.

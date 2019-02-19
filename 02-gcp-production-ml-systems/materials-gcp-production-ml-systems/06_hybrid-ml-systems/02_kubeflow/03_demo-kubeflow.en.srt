@@ -1,0 +1,1151 @@
+1
+00:00:00,000 --> 00:00:04,530
+Hi, I'm Amy, and I'm part of Google Cloud Platform developer relations.
+
+2
+00:00:04,530 --> 00:00:08,190
+I have a background in AI and I focus on machine learning.
+
+3
+00:00:08,190 --> 00:00:10,575
+I'm excited to demo KubeFlow.
+
+4
+00:00:10,575 --> 00:00:15,810
+What you see here is the machine learning workflow that we're going to run shortly.
+
+5
+00:00:15,810 --> 00:00:18,075
+We're going to train, analyze,
+
+6
+00:00:18,075 --> 00:00:24,150
+and serve a TensorFlow model that predicts whether a taxi ride will result in a tip.
+
+7
+00:00:24,150 --> 00:00:30,615
+Our input data comes from a BigQuery public dataset of Chicago taxi rides.
+
+8
+00:00:30,615 --> 00:00:33,710
+We're first doing some pre-processing of
+
+9
+00:00:33,710 --> 00:00:39,220
+the raw data and we're using this workflow to do a feature engineering experiment.
+
+10
+00:00:39,220 --> 00:00:43,730
+We'll asynchronously pre-process and then train against
+
+11
+00:00:43,730 --> 00:00:48,665
+two different feature sets and we'll see which model produces the best results.
+
+12
+00:00:48,665 --> 00:00:54,145
+We'll be using the TensorFlow Transform library to do feature processing.
+
+13
+00:00:54,145 --> 00:00:57,680
+The output of TensorFlow Transform is
+
+14
+00:00:57,680 --> 00:01:01,600
+exported as a TensorFlow graph to use for training and serving.
+
+15
+00:01:01,600 --> 00:01:04,960
+So, in addition to supporting feature generation,
+
+16
+00:01:04,960 --> 00:01:07,460
+this ensures that the data that we use for
+
+17
+00:01:07,460 --> 00:01:12,085
+prediction is processed in the same way as the training data was.
+
+18
+00:01:12,085 --> 00:01:16,010
+So, this prevents training serving skew.
+
+19
+00:01:16,010 --> 00:01:18,375
+So, to train our models,
+
+20
+00:01:18,375 --> 00:01:23,330
+we'll use KubeFlow support for running distributed TensorFlow training jobs.
+
+21
+00:01:23,330 --> 00:01:26,450
+For demo purposes, we'll actually use
+
+22
+00:01:26,450 --> 00:01:29,540
+distributed training for just one of the training jobs and
+
+23
+00:01:29,540 --> 00:01:32,840
+single-note training for the second to show how easy
+
+24
+00:01:32,840 --> 00:01:37,160
+it is to configure a KubeFlow to scale out training when you need to.
+
+25
+00:01:37,160 --> 00:01:40,610
+We'll then deploy the trained models, so,
+
+26
+00:01:40,610 --> 00:01:43,670
+that they're available for serving, that is prediction.
+
+27
+00:01:43,670 --> 00:01:47,689
+We'll deploy the models to TensorFlow serving using KubeFlow
+
+28
+00:01:47,689 --> 00:01:52,795
+and also to Google Cloud ML engines online prediction service.
+
+29
+00:01:52,795 --> 00:01:56,750
+In this demo, we're focusing on TensorFlow but KubeFlow
+
+30
+00:01:56,750 --> 00:02:01,410
+also supports other machine learning frameworks and deployment platforms.
+
+31
+00:02:01,750 --> 00:02:07,600
+We'll also analyze the train TensorFlow models and compare them to each other.
+
+32
+00:02:07,600 --> 00:02:12,610
+To do this, we'll use the TensorFlow model analysis library.
+
+33
+00:02:12,610 --> 00:02:17,110
+It lets us easily visualize model metrics and compare models.
+
+34
+00:02:17,110 --> 00:02:22,115
+We can look at the results using KubeFlow's Jupyter hub notebook installation.
+
+35
+00:02:22,115 --> 00:02:24,930
+Okay, let's move to the demo.
+
+36
+00:02:24,930 --> 00:02:32,585
+So, the first thing we're going to do is deploy KubeFlow to our Kubernetes cluster.
+
+37
+00:02:32,585 --> 00:02:35,850
+So, this is super straightforward.
+
+38
+00:02:35,850 --> 00:02:38,690
+What I've done is I've changed to
+
+39
+00:02:38,690 --> 00:02:40,700
+the scripts directory of
+
+40
+00:02:40,700 --> 00:02:45,245
+the KubeFlow repo and I'm back to set some environment variables.
+
+41
+00:02:45,245 --> 00:02:49,115
+I'm telling it what KubeFlow version to use.
+
+42
+00:02:49,115 --> 00:02:55,249
+I'm giving a name to the case on app directory that I'm about to build,
+
+43
+00:02:55,249 --> 00:02:58,220
+and I'm telling it to not actually deploy because, in fact,
+
+44
+00:02:58,220 --> 00:03:03,250
+I've already got it deployed to the demo cluster that I'm going to use.
+
+45
+00:03:03,250 --> 00:03:07,150
+Now, I just run the deploy script,
+
+46
+00:03:09,920 --> 00:03:17,360
+and this uses the case on a tool to write a bunch of
+
+47
+00:03:17,360 --> 00:03:25,955
+configuration information into a directory that we're going to use for the deploy.
+
+48
+00:03:25,955 --> 00:03:27,680
+If I had set the flag to deploy,
+
+49
+00:03:27,680 --> 00:03:31,970
+the last step of the script would have been simply to deploy it to the cluster,
+
+50
+00:03:31,970 --> 00:03:33,995
+and that is it.
+
+51
+00:03:33,995 --> 00:03:36,125
+It's very straight forward.
+
+52
+00:03:36,125 --> 00:03:41,870
+So, now, we'll run our machine learning workflow as
+
+53
+00:03:41,870 --> 00:03:47,300
+we take a look at the pods belong to that workflow as they come online.
+
+54
+00:03:47,300 --> 00:03:49,730
+So, before I launch the workflow,
+
+55
+00:03:49,730 --> 00:03:53,120
+we can take a look at what's already deployed.
+
+56
+00:03:53,120 --> 00:04:00,435
+Many of these Kubernetes pods are associated with KubeFlow.
+
+57
+00:04:00,435 --> 00:04:02,445
+A few of them are not.
+
+58
+00:04:02,445 --> 00:04:09,525
+So, TF hub runs the Jupyter hub installation for KubeFlow.
+
+59
+00:04:09,525 --> 00:04:13,320
+The TF job pods are related to
+
+60
+00:04:13,320 --> 00:04:19,270
+the KubeFlow support for doing distributed TensorFlow training jobs.
+
+61
+00:04:19,270 --> 00:04:24,600
+There are a number of TensorFlow serving,
+
+62
+00:04:24,600 --> 00:04:30,815
+endpoints running, and there's some other stuff that I won't go into detail on.
+
+63
+00:04:30,815 --> 00:04:35,640
+There are a few things that are not KubeFlow related,
+
+64
+00:04:35,640 --> 00:04:40,085
+and, in fact, I'm going to use a framework called Argo,
+
+65
+00:04:40,085 --> 00:04:45,320
+which is a Kubernetes native workflow framework to
+
+66
+00:04:45,320 --> 00:04:51,070
+actually run the workflow and you can see if a few pods related to Argo here as well.
+
+67
+00:04:51,070 --> 00:04:56,980
+All right. So, let's launch our pipeline.
+
+68
+00:05:09,250 --> 00:05:12,430
+That's just for ease of demoing.
+
+69
+00:05:12,430 --> 00:05:16,515
+I've set it up with a bunch of reasonable defaults that I'm going to use for this demo.
+
+70
+00:05:16,515 --> 00:05:21,580
+One thing I have it set it up to do yet is specify at the size
+
+71
+00:05:21,580 --> 00:05:27,070
+of the TensorFlow distributed training cluster that we're going to use.
+
+72
+00:05:27,070 --> 00:05:31,255
+I'll tell it to use two workers and one perimeter server.
+
+73
+00:05:31,255 --> 00:05:33,130
+As you might remember,
+
+74
+00:05:33,130 --> 00:05:38,440
+only one of our two training jobs is going to be a distributed training job.
+
+75
+00:05:38,440 --> 00:05:42,505
+The other one is hard wire- to be a single no training job,
+
+76
+00:05:42,505 --> 00:05:47,570
+just so you can see how easy it is to switch between the two of them. All right.
+
+77
+00:05:47,570 --> 00:05:52,700
+So, we'll deploy our machine learning workflow here.
+
+78
+00:05:55,280 --> 00:05:58,780
+We see that it started to run.
+
+79
+00:06:00,560 --> 00:06:03,420
+This is the start of the workflow graph,
+
+80
+00:06:03,420 --> 00:06:04,875
+and just to be clear,
+
+81
+00:06:04,875 --> 00:06:07,250
+what we're talking about workflow graph here,
+
+82
+00:06:07,250 --> 00:06:11,510
+not TensorFlow model graph as you may have heard about in other modules.
+
+83
+00:06:11,510 --> 00:06:20,680
+This is the workflow graph. Okay. So, now we can take a look in our list of pods.
+
+84
+00:06:20,680 --> 00:06:23,750
+There are a few containers that are started up.
+
+85
+00:06:23,750 --> 00:06:29,500
+These are doing the pre-processing using TensorFlow Transform.
+
+86
+00:06:29,500 --> 00:06:33,740
+Now, I'm going to pause for just a couple of minutes
+
+87
+00:06:33,740 --> 00:06:38,845
+until they complete and the TensorFlow training starts up.
+
+88
+00:06:38,845 --> 00:06:44,880
+Okay. Now we have finished our pre-processing and both training jobs are running,
+
+89
+00:06:44,880 --> 00:06:51,365
+and I particularly wanted to show you this because it highlights the use of KubeFlow's,
+
+90
+00:06:51,365 --> 00:06:55,785
+TF job resource to easily do distributed training.
+
+91
+00:06:55,785 --> 00:06:58,815
+Here's our first training job.
+
+92
+00:06:58,815 --> 00:07:01,214
+It has one master,
+
+93
+00:07:01,214 --> 00:07:05,070
+one parameter server, and two workers.
+
+94
+00:07:05,070 --> 00:07:09,820
+Then here's our single node training job,
+
+95
+00:07:10,580 --> 00:07:13,725
+and it's only got a master.
+
+96
+00:07:13,725 --> 00:07:16,345
+It's not using a distributed training cluster.
+
+97
+00:07:16,345 --> 00:07:18,465
+You can see that their worker is running.
+
+98
+00:07:18,465 --> 00:07:22,070
+If sometimes they error out and then they're able to recover and
+
+99
+00:07:22,070 --> 00:07:25,805
+restart themselves because they're checkpointing all their work.
+
+100
+00:07:25,805 --> 00:07:29,950
+So, that is not of concern to us.
+
+101
+00:07:29,950 --> 00:07:36,290
+Okay. So, I'm going to take another pause until the entire workflow finishes running,
+
+102
+00:07:36,290 --> 00:07:40,950
+and then let's look at the results in our deployed models.
+
+103
+00:07:42,200 --> 00:07:46,195
+Okay. Our machine learning workflow has completed,
+
+104
+00:07:46,195 --> 00:07:51,320
+and you might notice that we have a few new pods running.
+
+105
+00:07:51,320 --> 00:07:56,560
+These are the backends for new TensorFlow serving endpoints,
+
+106
+00:07:56,560 --> 00:07:59,420
+and we'll talk about those in just a second.
+
+107
+00:07:59,420 --> 00:08:06,110
+But first, let's take a look at the results of the model analysis that we did.
+
+108
+00:08:06,110 --> 00:08:12,060
+So, if we look at our workflow graph here again,
+
+109
+00:08:12,060 --> 00:08:14,860
+this is the workflow we just ran,
+
+110
+00:08:15,380 --> 00:08:19,595
+you'll remember that once our two models were trained,
+
+111
+00:08:19,595 --> 00:08:23,640
+we're doing a bit of feature engineering experimentation.
+
+112
+00:08:23,640 --> 00:08:25,430
+They're using two different feature sets.
+
+113
+00:08:25,430 --> 00:08:26,885
+Now that they're trained,
+
+114
+00:08:26,885 --> 00:08:30,065
+let's compare them and see which one worked better.
+
+115
+00:08:30,065 --> 00:08:32,870
+That's these analyze steps right here.
+
+116
+00:08:32,870 --> 00:08:37,260
+We're using TensorFlow model analysis to do that.
+
+117
+00:08:37,260 --> 00:08:39,030
+This is the library with a lot of
+
+118
+00:08:39,030 --> 00:08:46,160
+nice visualization support and we're going to run it in a Jupyter Notebook.
+
+119
+00:08:46,760 --> 00:08:52,530
+So, KubeFlow includes a Jupyter hub install,
+
+120
+00:08:52,530 --> 00:08:53,925
+and when you start it up,
+
+121
+00:08:53,925 --> 00:08:57,370
+you can make user accounts as part of that installation.
+
+122
+00:08:57,370 --> 00:08:59,515
+I have already done that.
+
+123
+00:08:59,515 --> 00:09:02,510
+This is my user account,
+
+124
+00:09:02,510 --> 00:09:08,600
+and the KubeFlow install uses a persistent disk for all of these notebooks,
+
+125
+00:09:08,600 --> 00:09:12,110
+so if the pod goes down or even if the cluster goes down,
+
+126
+00:09:12,110 --> 00:09:14,650
+you won't lose your work.
+
+127
+00:09:14,650 --> 00:09:17,650
+So, I've created a notebook, and again,
+
+128
+00:09:17,650 --> 00:09:22,130
+this is running as part of the KubeFlow install.
+
+129
+00:09:22,130 --> 00:09:26,105
+I've created a notebook to poke around a little
+
+130
+00:09:26,105 --> 00:09:29,930
+with some of the modal analysis that we did as part of this workflow.
+
+131
+00:09:29,930 --> 00:09:34,759
+I don't have time to do it full justice but I'll show a few highlights.
+
+132
+00:09:34,759 --> 00:09:40,049
+So, the first thing we're going to do is do some imports,
+
+133
+00:09:44,200 --> 00:09:49,265
+and you can see we're using TensorFlow 1.6 here.
+
+134
+00:09:49,265 --> 00:09:55,325
+So, now, we're going to look at the model results
+
+135
+00:09:55,325 --> 00:10:01,685
+that were derived using a set of specs that told TFMA,
+
+136
+00:10:01,685 --> 00:10:03,410
+TensorFlow model analysis to,
+
+137
+00:10:03,410 --> 00:10:08,285
+do slice so-called slicing across various dimensions.
+
+138
+00:10:08,285 --> 00:10:13,370
+So, we told it we're interested in some slices that have to do with
+
+139
+00:10:13,370 --> 00:10:20,230
+comparative accuracy across the hour of the day that a taxi trip starts.
+
+140
+00:10:20,230 --> 00:10:21,880
+Remember this is taxi trip data,
+
+141
+00:10:21,880 --> 00:10:25,450
+the day of a week that a taxi trip starts and ends,
+
+142
+00:10:25,450 --> 00:10:26,945
+and some other interesting things.
+
+143
+00:10:26,945 --> 00:10:30,920
+So, we've generated all this ahead of time,
+
+144
+00:10:30,920 --> 00:10:32,510
+it's part of the workflow,
+
+145
+00:10:32,510 --> 00:10:36,900
+and now we can just load it in really quickly, easily.
+
+146
+00:10:38,430 --> 00:10:43,570
+I'm actually using- to save a little typing in my notebook,
+
+147
+00:10:43,570 --> 00:10:49,620
+and I'm using the results of the same workflow run a little bit earlier and pulling
+
+148
+00:10:49,620 --> 00:10:52,495
+in the data for that workflow that was stored in
+
+149
+00:10:52,495 --> 00:10:57,340
+Google Cloud Storage and now we can render it.
+
+150
+00:10:57,960 --> 00:11:04,520
+So, let's slice across trip start hour to start with.
+
+151
+00:11:05,940 --> 00:11:10,840
+Remember, we've already done the hard work to do the analysis as part of our workflow.
+
+152
+00:11:10,840 --> 00:11:14,515
+Now, we just need to look at the results and visualize them.
+
+153
+00:11:14,515 --> 00:11:18,400
+So, there's lot of nice information here.
+
+154
+00:11:18,400 --> 00:11:26,470
+We can see for the different hours of the day when we have the most data.
+
+155
+00:11:26,470 --> 00:11:31,795
+Unsurprisingly, you can see that most taxi trips seemed to happen at noon.
+
+156
+00:11:31,795 --> 00:11:34,990
+If you think about that, that's probably makes sense.
+
+157
+00:11:34,990 --> 00:11:39,440
+We can look at the common sets of
+
+158
+00:11:39,440 --> 00:11:44,155
+machine learning metrics for each of those hours, things like accuracy,
+
+159
+00:11:44,155 --> 00:11:48,010
+area under the curve, average loss, etc.,
+
+160
+00:11:48,010 --> 00:11:56,310
+and see which hour were doing the- our models are doing the best job of modeling on.
+
+161
+00:11:57,410 --> 00:12:03,430
+We do the same for the second result. I'll skip that.
+
+162
+00:12:03,430 --> 00:12:12,535
+It shows the same columns in much the same results across trip hours.
+
+163
+00:12:12,535 --> 00:12:16,210
+Now, I'm going to do something interesting.
+
+164
+00:12:16,210 --> 00:12:21,190
+I'm going to show a cross value spec.
+
+165
+00:12:21,190 --> 00:12:27,435
+This is- if we look at the definition of this here,
+
+166
+00:12:27,435 --> 00:12:32,525
+we're crossing by trip start day,
+
+167
+00:12:32,525 --> 00:12:38,330
+day of the week, where trip start hour is noon.
+
+168
+00:12:39,450 --> 00:12:41,620
+So, now, we can see
+
+169
+00:12:41,620 --> 00:12:50,515
+the same information calculated for each day of the week for the noon hour.
+
+170
+00:12:50,515 --> 00:12:53,450
+So, this is really cool stuff.
+
+171
+00:12:54,740 --> 00:12:57,480
+Again, I don't have time to do it justice,
+
+172
+00:12:57,480 --> 00:13:00,590
+but there's much more of that that you can show.
+
+173
+00:13:00,590 --> 00:13:05,740
+So now, we're interested in seeing which of
+
+174
+00:13:05,740 --> 00:13:11,215
+our two feature experiments seem to give the best results.
+
+175
+00:13:11,215 --> 00:13:27,940
+So, we can look at overall metrics for each model.
+
+176
+00:13:27,940 --> 00:13:28,960
+It turns out in this case,
+
+177
+00:13:28,960 --> 00:13:31,615
+the second one is slightly more accurate.
+
+178
+00:13:31,615 --> 00:13:37,600
+Of course, percentage points can count when you're serving a machine learning model.
+
+179
+00:13:37,600 --> 00:13:39,160
+They're fairly close to each other,
+
+180
+00:13:39,160 --> 00:13:41,710
+but the second one turned out to be a little more accurate.
+
+181
+00:13:41,710 --> 00:13:45,880
+We can also do runs where we compare them directly with each
+
+182
+00:13:45,880 --> 00:13:50,710
+other like I'm going to do here for a given slice.
+
+183
+00:13:50,710 --> 00:13:55,450
+The slice here is feature value spec which
+
+184
+00:13:55,450 --> 00:14:03,480
+is that if we go back and look at our definitions is the noon hour.
+
+185
+00:14:04,180 --> 00:14:07,130
+So, I'm analyzing.
+
+186
+00:14:07,130 --> 00:14:11,590
+Here, the respective model accuracy comparing
+
+187
+00:14:11,590 --> 00:14:17,540
+the two models for predictions made for the noon hour.
+
+188
+00:14:22,260 --> 00:14:31,940
+Here, the scale is actually only showing a few percentage point differences but,
+
+189
+00:14:31,940 --> 00:14:38,250
+again, model two ended up working slightly better.
+
+190
+00:14:40,150 --> 00:14:44,150
+There's much more we can do with TensorFlow model analysis.
+
+191
+00:14:44,150 --> 00:14:49,445
+Let's say we've convinced ourselves that that model two is the best one.
+
+192
+00:14:49,445 --> 00:14:56,305
+So now, we can use it for serving, for making predictions,
+
+193
+00:14:56,305 --> 00:15:01,180
+and we can do this in two ways because remember our workflow deployed
+
+194
+00:15:01,180 --> 00:15:06,820
+the models to both Cloud ML Engine online prediction and to TensorFlow Serving.
+
+195
+00:15:06,820 --> 00:15:11,230
+So, first, let's take a look at making a prediction
+
+196
+00:15:11,230 --> 00:15:16,310
+with this model using Cloud ML Engine.
+
+197
+00:15:17,970 --> 00:15:25,040
+The result, the probabilities here are whether or not there's going to be a tip and,
+
+198
+00:15:25,040 --> 00:15:27,450
+in fact, for this data instance,
+
+199
+00:15:27,450 --> 00:15:31,690
+it predicts that there is going to be a tip that's the second value.
+
+200
+00:15:31,690 --> 00:15:33,320
+In fact, in this case,
+
+201
+00:15:33,320 --> 00:15:36,670
+it was correct that there was indeed a tip.
+
+202
+00:15:36,980 --> 00:15:41,370
+So, say we're happy with this model.
+
+203
+00:15:41,370 --> 00:15:46,395
+We've decided it's the best across all our future experiments.
+
+204
+00:15:46,395 --> 00:15:48,730
+We want to make it the default.
+
+205
+00:15:48,730 --> 00:15:50,890
+We can do that as well.
+
+206
+00:15:50,890 --> 00:15:53,550
+The model name is taxi fare and we're
+
+207
+00:15:53,550 --> 00:15:58,180
+setting the second model to be the taxi fare default.
+
+208
+00:16:01,320 --> 00:16:03,925
+So, let's look at one more thing now.
+
+209
+00:16:03,925 --> 00:16:06,595
+We just showed Cloud ML Engine online prediction.
+
+210
+00:16:06,595 --> 00:16:11,740
+Let's look at doing much the same thing with TensorFlow Serving instead.
+
+211
+00:16:11,740 --> 00:16:14,920
+So, to do this,
+
+212
+00:16:14,920 --> 00:16:17,230
+we'll go back to our Kubernetes cluster.
+
+213
+00:16:17,230 --> 00:16:27,380
+So, let's take a look at the services running on our cluster.
+
+214
+00:16:33,210 --> 00:16:36,204
+The way I have this set up for demo purposes,
+
+215
+00:16:36,204 --> 00:16:42,995
+there's actually- each TensorFlow Serving endpoint has its own external IP.
+
+216
+00:16:42,995 --> 00:16:45,340
+There's other ways you could set it up as well,
+
+217
+00:16:45,340 --> 00:16:50,030
+including fronting all of your TensorFlow Serving
+
+218
+00:16:50,030 --> 00:16:56,720
+endpoints with something like Google Cloud Platform's Identity Aware Proxy.
+
+219
+00:16:56,720 --> 00:16:58,570
+But here, just to make it easy to demo,
+
+220
+00:16:58,570 --> 00:17:00,700
+they've each got their own IP,
+
+221
+00:17:00,700 --> 00:17:05,350
+and you can see the ones that we just deployed,
+
+222
+00:17:05,350 --> 00:17:12,865
+these newest ones, one for each model that we learned.
+
+223
+00:17:12,865 --> 00:17:15,580
+So, behind the service,
+
+224
+00:17:15,580 --> 00:17:17,900
+there are deployments,
+
+225
+00:17:22,920 --> 00:17:25,705
+and we can see that currently,
+
+226
+00:17:25,705 --> 00:17:31,060
+each Kubernetes deployment is running only one pod.
+
+227
+00:17:31,060 --> 00:17:33,370
+If we wanted to, if we are happy with
+
+228
+00:17:33,370 --> 00:17:36,670
+our model and we wanted to serve it out and put it in an app,
+
+229
+00:17:36,670 --> 00:17:43,435
+we could scale up the underlying deployments to let our TensorFlow Serving
+
+230
+00:17:43,435 --> 00:17:50,470
+service scale-up with the larger amount of traffic that we expected to get.
+
+231
+00:17:50,470 --> 00:17:58,275
+So, what if we want to use one of these new models for prediction?
+
+232
+00:17:58,275 --> 00:18:00,085
+Let's look at how that would look.
+
+233
+00:18:00,085 --> 00:18:02,725
+For that, I need the model name,
+
+234
+00:18:02,725 --> 00:18:06,345
+which turns out to be the same as the service name,
+
+235
+00:18:06,345 --> 00:18:09,660
+and the external IP.
+
+236
+00:18:09,660 --> 00:18:14,480
+I'm going to use a little client script
+
+237
+00:18:14,480 --> 00:18:21,710
+to talk to the server and get the information back.
+
+238
+00:18:29,790 --> 00:18:33,100
+So, I'm just editing
+
+239
+00:18:33,100 --> 00:18:39,385
+this little client script with the information about the new model name and IP address;
+
+240
+00:18:39,385 --> 00:18:42,414
+sending off the request.
+
+241
+00:18:42,414 --> 00:18:44,430
+Got back a lot of stuff.
+
+242
+00:18:44,430 --> 00:18:46,985
+That's just the way this client library is written.
+
+243
+00:18:46,985 --> 00:18:50,725
+But you can see amongst the output we got,
+
+244
+00:18:50,725 --> 00:18:53,875
+we got the probabilities, the predictions.
+
+245
+00:18:53,875 --> 00:18:57,645
+It's much the same as we saw with Cloud ML Engine online prediction,
+
+246
+00:18:57,645 --> 00:19:00,935
+which you'd expect because it's the same training model
+
+247
+00:19:00,935 --> 00:19:04,450
+that were serving in two different ways, and again,
+
+248
+00:19:04,450 --> 00:19:09,735
+we predicted that we would get a tip out of this taxi ride,
+
+249
+00:19:09,735 --> 00:19:12,795
+which indeed turns out to be correct.
+
+250
+00:19:12,795 --> 00:19:15,250
+That concludes the demo.
+
+251
+00:19:15,250 --> 00:19:19,025
+Let's recap some of the benefits that you saw in the demo.
+
+252
+00:19:19,025 --> 00:19:21,885
+First up is portability.
+
+253
+00:19:21,885 --> 00:19:25,270
+We can run our workflows on any Kubernetes cluster,
+
+254
+00:19:25,270 --> 00:19:28,010
+whether on-premises or in the Cloud.
+
+255
+00:19:28,030 --> 00:19:33,375
+The case sonnet utility makes it easy to set up different environment configs,
+
+256
+00:19:33,375 --> 00:19:37,015
+for example, running locally versus in the Cloud,
+
+257
+00:19:37,015 --> 00:19:39,390
+Dev cluster versus production cluster.
+
+258
+00:19:39,390 --> 00:19:44,860
+KubeFlow also makes it easy to build hybrid machine-learning workflows, where,
+
+259
+00:19:44,860 --> 00:19:47,770
+say, training is run On-prem but then
+
+260
+00:19:47,770 --> 00:19:52,505
+model serving is done using a Cloud service like Cloud ML Engine.
+
+261
+00:19:52,505 --> 00:19:56,095
+Next is composability and reproducibility.
+
+262
+00:19:56,095 --> 00:20:00,155
+We can reuse our building blocks across multiple workflows.
+
+263
+00:20:00,155 --> 00:20:03,930
+We can run the same machine learning workflow multiple times or run
+
+264
+00:20:03,930 --> 00:20:08,455
+a set of controlled experiments by varying the workflow parameters.
+
+265
+00:20:08,455 --> 00:20:11,005
+Then we have scalability.
+
+266
+00:20:11,005 --> 00:20:14,570
+We can do single node training during initial development than.
+
+267
+00:20:14,570 --> 00:20:16,680
+By just changing a config setting,
+
+268
+00:20:16,680 --> 00:20:19,495
+do distributed training on larger datasets.
+
+269
+00:20:19,495 --> 00:20:25,780
+You saw on the demo how easy it was to do either one.
+
+270
+00:20:25,780 --> 00:20:27,120
+Once our models are trained,
+
+271
+00:20:27,120 --> 00:20:31,245
+we can decide whether to use KubeFlow-based TensorFlow serving or
+
+272
+00:20:31,245 --> 00:20:35,685
+Cloud ML Engine online prediction or both by changing a config setting.
+
+273
+00:20:35,685 --> 00:20:40,590
+We can use Kubernetes to scale out the TensorFlow Serving resources.
+
+274
+00:20:41,140 --> 00:20:44,925
+Lastly, visualization and collaboration.
+
+275
+00:20:44,925 --> 00:20:47,780
+KubeFlows, Jupyter hub installation lets us
+
+276
+00:20:47,780 --> 00:20:51,175
+visualize workflow results and share notebooks.
+
+277
+00:20:51,175 --> 00:20:56,420
+All of the common libraries and extensions we need come pre-installed with KubeFlow.
+
+278
+00:20:56,420 --> 00:21:02,590
+KubeFlow component definitions and workflow building blocks are also easy to share.
+
+279
+00:21:02,760 --> 00:21:06,320
+KubeFlow as a platform has a lot of momentum with
+
+280
+00:21:06,320 --> 00:21:09,855
+a growing list of contributors and participating companies.
+
+281
+00:21:09,855 --> 00:21:11,880
+Even though we have been focused in
+
+282
+00:21:11,880 --> 00:21:15,320
+this specialization on Google Cloud Machine Learning Engine,
+
+283
+00:21:15,320 --> 00:21:18,230
+we've recognized that there are situations where a training or
+
+284
+00:21:18,230 --> 00:21:21,065
+deploying on the Cloud is not an option.
+
+285
+00:21:21,065 --> 00:21:23,720
+In such situations, we recommend that you minimize
+
+286
+00:21:23,720 --> 00:21:27,145
+your infrastructure cognitive load as much as possible.
+
+287
+00:21:27,145 --> 00:21:31,715
+You can use KubeFlow to abstract way the machine-learning infrastructure,
+
+288
+00:21:31,715 --> 00:21:36,460
+plus you get the benefits of portability, composability, and scalability.

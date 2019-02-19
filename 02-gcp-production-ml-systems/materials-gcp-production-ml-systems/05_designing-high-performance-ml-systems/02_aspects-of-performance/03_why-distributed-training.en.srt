@@ -1,0 +1,307 @@
+1
+00:00:00,000 --> 00:00:01,870
+In the previous lesson,
+
+2
+00:00:01,870 --> 00:00:04,965
+we talked about several ways of achieving high performance.
+
+3
+00:00:04,965 --> 00:00:08,550
+We said that you could run the ML model on a hardware that was more suitable for
+
+4
+00:00:08,550 --> 00:00:12,745
+example with faster CPUs or maybe using GPUs or TPUs.
+
+5
+00:00:12,745 --> 00:00:17,160
+You can also scale out the training onto multiple machines and finally,
+
+6
+00:00:17,160 --> 00:00:20,095
+you could look at more efficient model architectures.
+
+7
+00:00:20,095 --> 00:00:24,750
+However, all these three using heterogeneous systems for ML training,
+
+8
+00:00:24,750 --> 00:00:29,310
+training on distributed systems of machines or experimenting with model architectures,
+
+9
+00:00:29,310 --> 00:00:32,820
+they all add complexity to your production ML system.
+
+10
+00:00:32,820 --> 00:00:35,990
+Production machine learning systems become more
+
+11
+00:00:35,990 --> 00:00:39,545
+complex because of this kind of flexibility that you need.
+
+12
+00:00:39,545 --> 00:00:42,350
+Your production ML systems are complex
+
+13
+00:00:42,350 --> 00:00:46,415
+precisely so that they can provide the high performance that you need.
+
+14
+00:00:46,415 --> 00:00:50,495
+If you want high performance training and scalable inference,
+
+15
+00:00:50,495 --> 00:00:54,180
+chances are that the code that you write has to work on CPUs,
+
+16
+00:00:54,180 --> 00:00:56,805
+GPUs and maybe even TPUs.
+
+17
+00:00:56,805 --> 00:01:00,260
+The business or will often dictate that inference has to
+
+18
+00:01:00,260 --> 00:01:03,650
+happen right on the device itself and so,
+
+19
+00:01:03,650 --> 00:01:07,070
+the model code has to be able to run on a phone or
+
+20
+00:01:07,070 --> 00:01:11,380
+an embedded chip such as the Raspberry Pi or an edge TPU.
+
+21
+00:01:11,380 --> 00:01:16,240
+We have a heterogeneous system at the very least whatever code we write,
+
+22
+00:01:16,240 --> 00:01:19,550
+has to work on GPUs and CPUs and as you may
+
+23
+00:01:19,550 --> 00:01:23,030
+know Google has announced that we have special hardware so it
+
+24
+00:01:23,030 --> 00:01:25,760
+should work on our TPU as well and
+
+25
+00:01:25,760 --> 00:01:28,640
+unless you want to rewrite your code when you deploy it in
+
+26
+00:01:28,640 --> 00:01:32,360
+a mobile app it should also work on mobile platforms and
+
+27
+00:01:32,360 --> 00:01:36,140
+for those of you interested in IoT the Internet of Things,
+
+28
+00:01:36,140 --> 00:01:42,230
+It should also work really well on embedded chips such as a Raspberry Pi or an edge TPU.
+
+29
+00:01:42,230 --> 00:01:45,935
+Deep learning works because data sets are large.
+
+30
+00:01:45,935 --> 00:01:48,105
+Look at the x-axis on the graph here,
+
+31
+00:01:48,105 --> 00:01:51,020
+you'll notice that the x-axis is logarithmic.
+
+32
+00:01:51,020 --> 00:01:56,585
+For every doubling in the size of the data the error rate also falls linearly.
+
+33
+00:01:56,585 --> 00:02:00,020
+A more complex model can also help and that's the jump from
+
+34
+00:02:00,020 --> 00:02:04,380
+the blue line to the orange line but more data helps a lot more.
+
+35
+00:02:04,380 --> 00:02:07,850
+As a consequence of both of these trends in terms of
+
+36
+00:02:07,850 --> 00:02:11,060
+larger data sizes and more complex models,
+
+37
+00:02:11,060 --> 00:02:14,480
+the compute required to build state of the art models has grown
+
+38
+00:02:14,480 --> 00:02:18,500
+over time and as you can see this growth is exponential as well.
+
+39
+00:02:18,500 --> 00:02:21,265
+Take a look at the y-axis on this graph,
+
+40
+00:02:21,265 --> 00:02:26,240
+each y-axis take is showing a 10X increase in computational need.
+
+41
+00:02:26,240 --> 00:02:32,000
+AlexNet which started the deep learning revolution in 2013 required less than
+
+42
+00:02:32,000 --> 00:02:37,745
+0.01 petaflops per second day in compute per day for training.
+
+43
+00:02:37,745 --> 00:02:41,090
+By the time you get to neural architecture search,
+
+44
+00:02:41,090 --> 00:02:44,705
+the learn to learn model published by Google in 2017,
+
+45
+00:02:44,705 --> 00:02:48,050
+you need about a 100 petaflops per second day or a
+
+46
+00:02:48,050 --> 00:02:52,160
+thousand times more compute than you needed for AlexNet.
+
+47
+00:02:52,160 --> 00:02:56,360
+This growth in algorithm complexity and data size means that
+
+48
+00:02:56,360 --> 00:03:01,170
+distributed systems are pretty much in necessity when it comes to machine learning.
+
+49
+00:03:01,170 --> 00:03:06,170
+Real-world networks can be very large meaning millions of weights.
+
+50
+00:03:06,170 --> 00:03:11,615
+Training complex networks with large amounts of data can often take a long time.
+
+51
+00:03:11,615 --> 00:03:16,100
+In this graph you can see training time on the x-axis and accuracy of
+
+52
+00:03:16,100 --> 00:03:21,230
+predictions on the y-axis when training an image recognition model on a GPU.
+
+53
+00:03:21,230 --> 00:03:27,135
+As you can see it took more than 80 hours to reach 75% accuracy.
+
+54
+00:03:27,135 --> 00:03:29,810
+If your training takes from a few minutes to
+
+55
+00:03:29,810 --> 00:03:32,555
+a few hours it will make you productive and happy.
+
+56
+00:03:32,555 --> 00:03:35,120
+You can try out different ideas first.
+
+57
+00:03:35,120 --> 00:03:36,820
+If it takes a few days,
+
+58
+00:03:36,820 --> 00:03:40,190
+you can still deal with it by running a few things in parallel.
+
+59
+00:03:40,190 --> 00:03:42,140
+If it starts to take a week or more,
+
+60
+00:03:42,140 --> 00:03:47,540
+your progress will slow down because you cannot try out new ideas quickly and if it
+
+61
+00:03:47,540 --> 00:03:50,000
+takes more than a month then that's probably not even worth
+
+62
+00:03:50,000 --> 00:03:53,135
+thinking about and this is not an exaggeration.
+
+63
+00:03:53,135 --> 00:03:59,695
+Training deep neural networks such as resonant 50 can take over a week on a single GPU.
+
+64
+00:03:59,695 --> 00:04:02,515
+A natural question to ask is,
+
+65
+00:04:02,515 --> 00:04:04,700
+how do you make training fast?
+
+66
+00:04:04,700 --> 00:04:07,550
+There are a number of things that you can do to make it faster.
+
+67
+00:04:07,550 --> 00:04:10,455
+You can use a more powerful device such as TPUs,
+
+68
+00:04:10,455 --> 00:04:13,130
+this is a Tensor Processing Unit or
+
+69
+00:04:13,130 --> 00:04:16,730
+your input pipeline might be slow and you can make that faster.
+
+70
+00:04:16,730 --> 00:04:21,065
+There are in fact many performance guidelines on the TensorFlow website that you can try.
+
+71
+00:04:21,065 --> 00:04:23,855
+We'll look at some of the guidelines in this module.
+
+72
+00:04:23,855 --> 00:04:28,640
+Let us look at distributed training i.e running training in parallel,
+
+73
+00:04:28,640 --> 00:04:34,665
+o n many devices such as CPUs or GPUs or TPUs use in order to make your training foster.
+
+74
+00:04:34,665 --> 00:04:37,550
+This graph shows images per second when
+
+75
+00:04:37,550 --> 00:04:40,309
+training an image recognition model in TensorFlow.
+
+76
+00:04:40,309 --> 00:04:43,895
+You can see that each time we double the numbers of GPUs,
+
+77
+00:04:43,895 --> 00:04:47,810
+we're able to process close to double the number of images.

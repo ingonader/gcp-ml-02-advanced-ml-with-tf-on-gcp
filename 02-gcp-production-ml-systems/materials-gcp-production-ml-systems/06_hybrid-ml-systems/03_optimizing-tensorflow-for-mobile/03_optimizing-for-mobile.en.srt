@@ -1,0 +1,399 @@
+1
+00:00:00,000 --> 00:00:02,470
+Let's take a look at the Inception v3 model.
+
+2
+00:00:02,470 --> 00:00:05,315
+The model takes about 91 megabytes in storage,
+
+3
+00:00:05,315 --> 00:00:07,515
+with about 25 million parameters.
+
+4
+00:00:07,515 --> 00:00:10,735
+That would fit into a server or a desktop machine,
+
+5
+00:00:10,735 --> 00:00:13,685
+but it's a bit too large for mobile.
+
+6
+00:00:13,685 --> 00:00:19,220
+So, there are multiple techniques that you can use to optimize a graph like this.
+
+7
+00:00:19,220 --> 00:00:21,090
+So, you can freeze the graph,
+
+8
+00:00:21,090 --> 00:00:22,980
+you can use a graph transform tool,
+
+9
+00:00:22,980 --> 00:00:24,610
+you can do quantization,
+
+10
+00:00:24,610 --> 00:00:26,530
+you can do memory mapping et cetera.
+
+11
+00:00:26,530 --> 00:00:28,430
+So, let's talk about each of them.
+
+12
+00:00:28,430 --> 00:00:32,160
+Freezing a graph is a low time optimization.
+
+13
+00:00:32,160 --> 00:00:33,430
+So, what this does,
+
+14
+00:00:33,430 --> 00:00:35,015
+is that it goes through the graph,
+
+15
+00:00:35,015 --> 00:00:36,605
+looks at all the variables,
+
+16
+00:00:36,605 --> 00:00:40,145
+and converts those variable nodes into constant nodes.
+
+17
+00:00:40,145 --> 00:00:43,450
+The reason you want to do this is that in TensorFlow,
+
+18
+00:00:43,450 --> 00:00:46,330
+variable nodes are stored in different files,
+
+19
+00:00:46,330 --> 00:00:50,555
+whereas constant nodes are embedded in the graph itself in the same file.
+
+20
+00:00:50,555 --> 00:00:54,560
+So, by converting the variable nodes into constant nodes,
+
+21
+00:00:54,560 --> 00:00:58,880
+you get a slight performance win on mobile and it's easier to handle too.
+
+22
+00:00:58,880 --> 00:01:02,285
+So, you can use a Python script to do this.
+
+23
+00:01:02,285 --> 00:01:04,465
+So, why don't you do this all the time?
+
+24
+00:01:04,465 --> 00:01:06,050
+If you do this,
+
+25
+00:01:06,050 --> 00:01:07,980
+you cannot do continuous training,
+
+26
+00:01:07,980 --> 00:01:09,950
+you cannot do federated learning,
+
+27
+00:01:09,950 --> 00:01:13,410
+because they're no longer variables to train, just constants.
+
+28
+00:01:13,410 --> 00:01:15,490
+So, you lose a little bit of flexibility here.
+
+29
+00:01:15,490 --> 00:01:18,950
+So, you don't want to always convert variables to constants,
+
+30
+00:01:18,950 --> 00:01:22,500
+but, this gives you a little bit of a performance improvement.
+
+31
+00:01:22,500 --> 00:01:26,425
+Another thing that you can do is to use a graph transform tool.
+
+32
+00:01:26,425 --> 00:01:31,745
+The graph transform tool is part of the TensorFlow distribution,
+
+33
+00:01:31,745 --> 00:01:33,250
+and the tool supports
+
+34
+00:01:33,250 --> 00:01:39,010
+various optimization task like stripping nodes that are not used during inference,
+
+35
+00:01:39,010 --> 00:01:41,430
+but that were used during the learning phase.
+
+36
+00:01:41,430 --> 00:01:45,155
+What kind of nodes? Nodes like gradient computation,
+
+37
+00:01:45,155 --> 00:01:47,125
+batch norm, et cetera.
+
+38
+00:01:47,125 --> 00:01:50,230
+These nodes can be removed during inference.
+
+39
+00:01:50,230 --> 00:01:54,810
+The tool supports a removal of such training on the operations.
+
+40
+00:01:54,810 --> 00:01:59,635
+Obviously, debug nodes can also be removed.
+
+41
+00:01:59,635 --> 00:02:04,180
+What fold_batch_norms does, is that it
+
+42
+00:02:04,180 --> 00:02:09,200
+converts convolution 2D or matrix multiplication operations,
+
+43
+00:02:09,200 --> 00:02:14,360
+that are followed by column-wise multiplications into an equivalent app,
+
+44
+00:02:14,360 --> 00:02:17,500
+where the multiplication, the column-wise multiplication,
+
+45
+00:02:17,500 --> 00:02:19,940
+is baked into the convolution weights.
+
+46
+00:02:19,940 --> 00:02:21,220
+So that, instead of two apps,
+
+47
+00:02:21,220 --> 00:02:22,500
+you have only one app.
+
+48
+00:02:22,500 --> 00:02:25,830
+This saves some computation during inference.
+
+49
+00:02:25,830 --> 00:02:28,070
+Finally, if you want,
+
+50
+00:02:28,070 --> 00:02:33,495
+the weights themselves can be quantized to make the model more compressible.
+
+51
+00:02:33,495 --> 00:02:35,855
+But if you quantize the weights,
+
+52
+00:02:35,855 --> 00:02:37,825
+you're reducing the accuracy.
+
+53
+00:02:37,825 --> 00:02:40,950
+So, you're trading off accuracy for model size.
+
+54
+00:02:40,950 --> 00:02:45,300
+The question is, how much accuracy are you trading off?
+
+55
+00:02:45,300 --> 00:02:48,080
+There is no immediate answer to that,
+
+56
+00:02:48,080 --> 00:02:52,865
+you have to measure it because this varies from model to model.
+
+57
+00:02:52,865 --> 00:02:56,245
+When modern neural networks were first developed,
+
+58
+00:02:56,245 --> 00:02:59,415
+accuracy and speed were the prime concerns,
+
+59
+00:02:59,415 --> 00:03:05,460
+and as a result neural networks focused on 32-bit floating point arithmetic.
+
+60
+00:03:05,460 --> 00:03:08,390
+But nowadays, researchers are deploying a lot of
+
+61
+00:03:08,390 --> 00:03:12,150
+different models especially in commercial applications.
+
+62
+00:03:12,150 --> 00:03:15,375
+When we consider the number of cycles needed,
+
+63
+00:03:15,375 --> 00:03:20,355
+then the number of cycles that you need for inference,
+
+64
+00:03:20,355 --> 00:03:24,340
+actually grows in proportion to the number of users,
+
+65
+00:03:24,340 --> 00:03:27,495
+because you do an inference for each user.
+
+66
+00:03:27,495 --> 00:03:31,555
+So, you can see why the focus of neural networks,
+
+67
+00:03:31,555 --> 00:03:37,750
+now has shifted from the efficiency of training to the efficiencies of inference.
+
+68
+00:03:37,750 --> 00:03:40,560
+So, to combat these inefficiencies,
+
+69
+00:03:40,560 --> 00:03:43,700
+inefficiencies during inference, you basically have
+
+70
+00:03:43,700 --> 00:03:47,210
+different techniques for storing numbers and performing calculations.
+
+71
+00:03:47,210 --> 00:03:51,290
+So, these techniques together are often called quantization,
+
+72
+00:03:51,290 --> 00:03:53,060
+and what quantization does,
+
+73
+00:03:53,060 --> 00:03:58,210
+is that it takes a floating point value and compresses it to an eight bit integer.
+
+74
+00:03:58,210 --> 00:04:00,235
+It reduces the size of the files,
+
+75
+00:04:00,235 --> 00:04:04,840
+it reduces computational resources that you need to handle the data,
+
+76
+00:04:04,840 --> 00:04:07,225
+and that's what you see on the slide.
+
+77
+00:04:07,225 --> 00:04:09,425
+The graph on the left,
+
+78
+00:04:09,425 --> 00:04:12,270
+it shows a typical Relu,
+
+79
+00:04:12,270 --> 00:04:14,485
+a rectified linear unit operation,
+
+80
+00:04:14,485 --> 00:04:18,680
+with the internal conversion from float to eight-bit values.
+
+81
+00:04:18,680 --> 00:04:22,395
+The min and max values are from the input flow tensor.
+
+82
+00:04:22,395 --> 00:04:25,400
+Once the Relu operation is performed,
+
+83
+00:04:25,400 --> 00:04:30,675
+the values are dequantized and the output becomes floats.
+
+84
+00:04:30,675 --> 00:04:33,810
+The second graph, the middle graph here,
+
+85
+00:04:33,810 --> 00:04:36,795
+shows the next stage in quantization,
+
+86
+00:04:36,795 --> 00:04:41,525
+removing the unnecessary convergence to and from the float.
+
+87
+00:04:41,525 --> 00:04:44,899
+This stage identifies any patterns
+
+88
+00:04:44,899 --> 00:04:48,140
+in the conversions that are performed in stage number one,
+
+89
+00:04:48,140 --> 00:04:50,890
+and removes those redundancies.
+
+90
+00:04:50,890 --> 00:04:58,550
+The final stage, shows a graph where all the tensor calculations are done in eight bits,
+
+91
+00:04:58,550 --> 00:05:02,785
+and there are no conversions that are needed to floating point.
+
+92
+00:05:02,785 --> 00:05:06,750
+With these optimizations, with all these three stages,
+
+93
+00:05:06,750 --> 00:05:12,505
+the optimized graph of Inception v3 now becomes just 23 megs,
+
+94
+00:05:12,505 --> 00:05:14,990
+which is about 75 percent smaller.
+
+95
+00:05:14,990 --> 00:05:19,660
+So, while you can do the freezing quantization et cetera yourself,
+
+96
+00:05:19,660 --> 00:05:25,460
+we recommend that you check out TensorFlow Lite which is a different TensorFlow runtime.
+
+97
+00:05:25,460 --> 00:05:28,620
+But what TensorFlow Lite lets you do,
+
+98
+00:05:28,620 --> 00:05:32,900
+is that it allows you to run TensorFlow models right on the device,
+
+99
+00:05:32,900 --> 00:05:35,540
+leverages the Android Neural Network API,
+
+100
+00:05:35,540 --> 00:05:38,570
+and it's optimized for mobile apps.

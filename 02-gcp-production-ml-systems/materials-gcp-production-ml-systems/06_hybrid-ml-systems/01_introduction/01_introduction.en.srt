@@ -1,0 +1,299 @@
+1
+00:00:00,000 --> 00:00:02,940
+Hi. I'm Lak, and I lead the team that's
+
+2
+00:00:02,940 --> 00:00:06,185
+putting together this course and this specialization.
+
+3
+00:00:06,185 --> 00:00:11,485
+In this module, we will look at building hybrid machine learning models.
+
+4
+00:00:11,485 --> 00:00:15,375
+You will learn how to build hybrid machine learning models
+
+5
+00:00:15,375 --> 00:00:19,530
+and how to optimize TensorFlow graphs for mobile.
+
+6
+00:00:19,530 --> 00:00:23,440
+Let's start by discussing a technology called Kubeflow,
+
+7
+00:00:23,440 --> 00:00:27,550
+which helps us build hybrid cloud machine learning models.
+
+8
+00:00:27,550 --> 00:00:30,730
+But why are we discussing hybrid in the first place?
+
+9
+00:00:30,730 --> 00:00:33,720
+Why would you need anything other than Google Cloud?
+
+10
+00:00:33,720 --> 00:00:36,805
+Google Cloud is a great place to do machine learning.
+
+11
+00:00:36,805 --> 00:00:42,735
+You have access to ready-made models like the Vision API and Natural Language API, etc.
+
+12
+00:00:42,735 --> 00:00:48,080
+The key aspect of these models is that they are trained on Google's massive datasets.
+
+13
+00:00:48,080 --> 00:00:54,170
+Sometimes, though, ready-to-run models like the Vision API don't quite fit,
+
+14
+00:00:54,170 --> 00:00:55,690
+and in that case,
+
+15
+00:00:55,690 --> 00:00:58,505
+you might want to train a family of models using
+
+16
+00:00:58,505 --> 00:01:03,735
+your own images and your own labels to customize and add in the Vision API.
+
+17
+00:01:03,735 --> 00:01:09,070
+That is called Auto-ML and that is possible only on the Cloud.
+
+18
+00:01:09,070 --> 00:01:13,125
+But even if you're building custom machine learning models,
+
+19
+00:01:13,125 --> 00:01:15,875
+you have reason to do machine learning on GCP.
+
+20
+00:01:15,875 --> 00:01:18,175
+While TensorFlow is open source,
+
+21
+00:01:18,175 --> 00:01:20,720
+a serverless execution environment like
+
+22
+00:01:20,720 --> 00:01:26,275
+Cloud ML Engine allows your data scientists to not have to worry about infrastructure.
+
+23
+00:01:26,275 --> 00:01:28,940
+Plus, of course, the integration with
+
+24
+00:01:28,940 --> 00:01:32,455
+distributed cloud storage and serverless and BigQuery,
+
+25
+00:01:32,455 --> 00:01:36,260
+make the overall development experience a lot better than
+
+26
+00:01:36,260 --> 00:01:40,370
+if you had to provision and manage all that infrastructure yourself.
+
+27
+00:01:40,370 --> 00:01:43,159
+So far, in this series of courses,
+
+28
+00:01:43,159 --> 00:01:47,120
+we have assumed that you're in a cloud native environment, and so,
+
+29
+00:01:47,120 --> 00:01:50,890
+we prototyped and developed our code using Cloud Datalab,
+
+30
+00:01:50,890 --> 00:01:54,500
+and then once we had the code working on a small sample of data,
+
+31
+00:01:54,500 --> 00:01:59,540
+we submitted the training job to Cloud ML Engine to operate on the full dataset.
+
+32
+00:01:59,540 --> 00:02:02,030
+We also served out the model using
+
+33
+00:02:02,030 --> 00:02:05,895
+Cloud ML Engine so that we didn't have to worry about infrastructure.
+
+34
+00:02:05,895 --> 00:02:08,035
+There are times, however,
+
+35
+00:02:08,035 --> 00:02:11,220
+when you cannot be fully cloud native.
+
+36
+00:02:11,220 --> 00:02:13,515
+What kind of situations?
+
+37
+00:02:13,515 --> 00:02:17,710
+You may not be able to do machine learning solely on the Cloud.
+
+38
+00:02:17,710 --> 00:02:22,660
+Perhaps, you are tied to On-Premises Infrastructure,
+
+39
+00:02:22,660 --> 00:02:28,265
+and your ultimate goal is to move to the public cloud but it's going to take a few years.
+
+40
+00:02:28,265 --> 00:02:32,450
+Perhaps, there are constraints about being able to move
+
+41
+00:02:32,450 --> 00:02:36,850
+your training data off your On-Premise cluster or data center.
+
+42
+00:02:36,850 --> 00:02:40,750
+So, you have to make do with a system that you have.
+
+43
+00:02:40,750 --> 00:02:44,165
+Or maybe the data that is being produced
+
+44
+00:02:44,165 --> 00:02:48,135
+is produced by a system that is running on a different cloud.
+
+45
+00:02:48,135 --> 00:02:54,660
+Or the model predictions need to be consumed by an application on some other cloud.
+
+46
+00:02:54,660 --> 00:02:57,715
+So, you need a multi-cloud solution,
+
+47
+00:02:57,715 --> 00:03:01,055
+not a solution that is solely GCP.
+
+48
+00:03:01,055 --> 00:03:05,990
+Or maybe, you're running machine learning on the edge and
+
+49
+00:03:05,990 --> 00:03:11,490
+connectivity constraints force you to have to do your predictions on the edge,
+
+50
+00:03:11,490 --> 00:03:13,915
+on the device itself.
+
+51
+00:03:13,915 --> 00:03:17,705
+So, you have to do inference on the edge.
+
+52
+00:03:17,705 --> 00:03:22,060
+This is a very common situation if you're doing Internet of things.
+
+53
+00:03:22,060 --> 00:03:23,990
+So here, for example,
+
+54
+00:03:23,990 --> 00:03:27,165
+is Cisco's Hybrid Cloud Architecture.
+
+55
+00:03:27,165 --> 00:03:30,270
+Cisco partner with Google Cloud to bridge
+
+56
+00:03:30,270 --> 00:03:32,840
+their private cloud infrastructure and
+
+57
+00:03:32,840 --> 00:03:36,490
+their existing applications with Google Cloud Platform.
+
+58
+00:03:36,490 --> 00:03:42,910
+So, notice the use of Google Kubernetes Engine to manage your container deployments.
+
+59
+00:03:42,910 --> 00:03:46,280
+Kubernetes is a container orchestration system
+
+60
+00:03:46,280 --> 00:03:50,040
+that was designed and then open-sourced by Google.
+
+61
+00:03:50,040 --> 00:03:52,050
+So, why Kubernetes?
+
+62
+00:03:52,050 --> 00:03:56,815
+Using Kubernetes, it is possible to orchestrate containers
+
+63
+00:03:56,815 --> 00:04:01,935
+whether they are running On-Prem or on the Cloud, any cloud.
+
+64
+00:04:01,935 --> 00:04:07,685
+So, one possible solution to retain the ability to move fast,
+
+65
+00:04:07,685 --> 00:04:11,240
+minimize your infrastructure management needs and
+
+66
+00:04:11,240 --> 00:04:16,080
+still retain the ability to move or burst to GCP,
+
+67
+00:04:16,080 --> 00:04:18,165
+is to use Kubernetes.
+
+68
+00:04:18,165 --> 00:04:22,304
+Specifically, a project called Kubeflow
+
+69
+00:04:22,304 --> 00:04:27,350
+helps you migrate between Cloud and On-Prem environments.
+
+70
+00:04:27,350 --> 00:04:33,655
+Kubeflow is an open source machine learning stack built on Kubernetes.
+
+71
+00:04:33,655 --> 00:04:39,740
+On Google Cloud, you can run Kubeflow on Google Kubernetes Engine, GKE.
+
+72
+00:04:39,740 --> 00:04:43,830
+However, you can run Kubeflow on anything from a phone,
+
+73
+00:04:43,830 --> 00:04:45,970
+to a laptop, to an On-Prem cluster.
+
+74
+00:04:45,970 --> 00:04:47,855
+Your code remains the same.
+
+75
+00:04:47,855 --> 00:04:52,430
+Some of the configuration settings change, but that's it.

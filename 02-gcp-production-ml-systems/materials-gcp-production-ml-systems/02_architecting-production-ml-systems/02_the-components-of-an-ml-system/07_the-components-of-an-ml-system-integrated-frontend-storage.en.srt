@@ -1,0 +1,111 @@
+1
+00:00:00,000 --> 00:00:03,360
+And just as everything needs to talk to everything else,
+
+2
+00:00:03,360 --> 00:00:06,845
+the users of the system need to be able to easily accomplish their tasks,
+
+3
+00:00:06,845 --> 00:00:09,635
+and as central a location as possible.
+
+4
+00:00:09,635 --> 00:00:13,455
+In GCP, you can use TensorBoard and Cloud ML Engine.
+
+5
+00:00:13,455 --> 00:00:17,835
+TensorBoard is the visualization software that comes bundled with TensorFlow.
+
+6
+00:00:17,835 --> 00:00:20,520
+We saw in the first specialization about how it can
+
+7
+00:00:20,520 --> 00:00:23,040
+be used to look at loss curves as models train,
+
+8
+00:00:23,040 --> 00:00:26,160
+but TensorBoard is actually capable of a lot more.
+
+9
+00:00:26,160 --> 00:00:29,130
+Out of the box, it comes ready to visualize the graphs of
+
+10
+00:00:29,130 --> 00:00:32,405
+your models and the distributions of things like weights.
+
+11
+00:00:32,405 --> 00:00:34,545
+Additionally, it's possible to write
+
+12
+00:00:34,545 --> 00:00:37,410
+custom visualization modules for other types of input,
+
+13
+00:00:37,410 --> 00:00:40,000
+and people have done so for sound and images.
+
+14
+00:00:40,000 --> 00:00:44,540
+TensorBoard is also capable of showing what the model has learned about the input space,
+
+15
+00:00:44,540 --> 00:00:47,510
+which you can see in the projector tab in the interface.
+
+16
+00:00:47,510 --> 00:00:51,050
+We'll talk about this more in a later course on sequence models,
+
+17
+00:00:51,050 --> 00:00:53,165
+but you can get a sense of what this part of the interface
+
+18
+00:00:53,165 --> 00:00:56,420
+looks like at projectory.tensorflow.org.
+
+19
+00:00:56,420 --> 00:01:01,055
+In the demo, the points represent the meanings of words in semantic space.
+
+20
+00:01:01,055 --> 00:01:03,445
+If you type a word in the right hand search bar,
+
+21
+00:01:03,445 --> 00:01:07,505
+you can find all of the semantically similar words that the model has learned.
+
+22
+00:01:07,505 --> 00:01:11,930
+We've also just recently added the ability to debug models in an environment
+
+23
+00:01:11,930 --> 00:01:15,995
+similar to what you'd find within an IDE with line-by-line execution,
+
+24
+00:01:15,995 --> 00:01:17,750
+and the ability to set break points,
+
+25
+00:01:17,750 --> 00:01:20,395
+and view the contents of tensors in the graph.
+
+26
+00:01:20,395 --> 00:01:23,230
+This is an alpha feature though.
+
+27
+00:01:23,300 --> 00:01:28,160
+Storage is necessary for staging intermediate output of these components.
+
+28
+00:01:28,160 --> 00:01:31,460
+In GCP that's Google Cloud Storage.

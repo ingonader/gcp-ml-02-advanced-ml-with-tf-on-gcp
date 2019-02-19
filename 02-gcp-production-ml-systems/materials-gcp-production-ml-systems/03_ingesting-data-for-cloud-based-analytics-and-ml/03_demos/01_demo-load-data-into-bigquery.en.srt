@@ -1,0 +1,279 @@
+1
+00:00:00,000 --> 00:00:05,940
+Next, let's see how fast we can load a dataset directly into BigQuery,
+
+2
+00:00:05,940 --> 00:00:07,725
+from Google Cloud Storage.
+
+3
+00:00:07,725 --> 00:00:12,225
+In this demo, we'll load taxi cab data from a csv
+
+4
+00:00:12,225 --> 00:00:17,050
+hosted on GCS into BigQuery and preview the results.
+
+5
+00:00:17,050 --> 00:00:21,145
+First, I go ahead and enter BigQuery,
+
+6
+00:00:21,145 --> 00:00:27,560
+and BigQuery is at bigquery.cloud.google.com. Let's do that.
+
+7
+00:00:28,860 --> 00:00:32,625
+Okay. I'm now in BigQuery.
+
+8
+00:00:32,625 --> 00:00:35,880
+First thing I need to do is to create a dataset
+
+9
+00:00:35,880 --> 00:00:39,170
+called a BigQuery example, and to do that,
+
+10
+00:00:39,170 --> 00:00:44,255
+I use that dropdown arrow from my project name,
+
+11
+00:00:44,255 --> 00:00:48,000
+and I hit Create new dataset.
+
+12
+00:00:48,430 --> 00:00:53,450
+I create a dataset called bigquery_example.
+
+13
+00:00:56,230 --> 00:00:59,165
+If I hit Okay,
+
+14
+00:00:59,165 --> 00:01:06,720
+BigQuery has created that dataset that is shown here on the left pane.
+
+15
+00:01:07,050 --> 00:01:14,110
+Next, I want to go ahead and create a new table under dataset.
+
+16
+00:01:14,110 --> 00:01:19,175
+To do that, you use the dropdown menu
+
+17
+00:01:19,175 --> 00:01:24,815
+at the end of the new BigQuery example I just created.
+
+18
+00:01:24,815 --> 00:01:31,405
+So if I click "Create new table" it gives me some options.
+
+19
+00:01:31,405 --> 00:01:35,075
+The first thing I need to change is a location.
+
+20
+00:01:35,075 --> 00:01:39,605
+By default, the location is a file upload.
+
+21
+00:01:39,605 --> 00:01:44,455
+But I'll change that because I want to pull the data,
+
+22
+00:01:44,455 --> 00:01:48,090
+the source data from Google Cloud Storage,
+
+23
+00:01:48,090 --> 00:01:50,475
+and when I do that,
+
+24
+00:01:50,475 --> 00:01:56,945
+it'll ask me for the URL to my GCS bucket.
+
+25
+00:01:56,945 --> 00:02:08,680
+I'll enter the full URL which is the CSV file containing this yellow caps data.
+
+26
+00:02:08,960 --> 00:02:13,905
+Second thing to change here is the name.
+
+27
+00:02:13,905 --> 00:02:17,300
+We need a name for the new table.
+
+28
+00:02:17,300 --> 00:02:18,990
+You can call it anything you like,
+
+29
+00:02:18,990 --> 00:02:22,350
+in this case I'll just call it,"Taxi table."
+
+30
+00:02:22,860 --> 00:02:27,140
+Then the last thing we need to do is a schema.
+
+31
+00:02:27,140 --> 00:02:31,470
+By default, select this option here,
+
+32
+00:02:31,470 --> 00:02:34,045
+if you select the checkbox on schema,
+
+33
+00:02:34,045 --> 00:02:39,780
+which tells BigQuery to automatically detect the schema from the CSV file.
+
+34
+00:02:39,780 --> 00:02:43,255
+At that point, if you create table,
+
+35
+00:02:43,255 --> 00:02:47,080
+BigQuery will go ahead and load that data and new
+
+36
+00:02:47,080 --> 00:02:51,055
+see it loaded it within just a few seconds,
+
+37
+00:02:51,055 --> 00:02:56,350
+and at the end you find it's already loaded the data,
+
+38
+00:02:56,970 --> 00:03:01,285
+welit created the taxi table and load that data into it.
+
+39
+00:03:01,285 --> 00:03:07,310
+Let's look at the taxi table to see what was done here.
+
+40
+00:03:07,310 --> 00:03:09,185
+First, we'll look at the schema.
+
+41
+00:03:09,185 --> 00:03:13,780
+It automatically detected the schema from the CSV file, which is correct.
+
+42
+00:03:13,780 --> 00:03:17,865
+We have fields, an integer field like pickup_hour,
+
+43
+00:03:17,865 --> 00:03:23,380
+there's another integer field for counting the sum of passengers, et cetera.
+
+44
+00:03:23,380 --> 00:03:25,745
+If you click on details,
+
+45
+00:03:25,745 --> 00:03:29,300
+it gives me more details of this particular table.
+
+46
+00:03:29,300 --> 00:03:33,770
+You can see from the timestamp that we just created it right now,
+
+47
+00:03:33,770 --> 00:03:39,560
+we also have the table size which is a very small table, 105 kilobytes.
+
+48
+00:03:39,560 --> 00:03:41,800
+We can also preview this table.
+
+49
+00:03:41,800 --> 00:03:43,910
+If I click on preview,
+
+50
+00:03:43,910 --> 00:03:47,360
+we see a snapshot of that data.
+
+51
+00:03:47,360 --> 00:03:48,470
+You can scroll down,
+
+52
+00:03:48,470 --> 00:03:50,780
+you can scroll left,
+
+53
+00:03:50,780 --> 00:03:53,750
+to see the remaining fields.
+
+54
+00:03:53,750 --> 00:03:56,005
+That sit in a nutshell.
+
+55
+00:03:56,005 --> 00:04:02,285
+I just very quickly showed you how you can import data
+
+56
+00:04:02,285 --> 00:04:10,870
+from a CSV file sitting in Google Cloud Storage into a new table in BigQuery.
+
+57
+00:04:10,870 --> 00:04:21,355
+You just saw how easily you can import your own CSV data from a GCS bucket into BigQuery.
+
+58
+00:04:21,355 --> 00:04:27,460
+BigQuery supports a wide variety of import data types from CSV,
+
+59
+00:04:27,460 --> 00:04:30,984
+Jason to Avro, ORC,
+
+60
+00:04:30,984 --> 00:04:34,355
+and more recently, Parquet as well.
+
+61
+00:04:34,355 --> 00:04:38,575
+Since BigQuery is part of the Google Cloud Platform,
+
+62
+00:04:38,575 --> 00:04:42,785
+you can also load data directly from a readable data source,
+
+63
+00:04:42,785 --> 00:04:47,545
+like Google analytics, or data from Cloud Dataflow.
+
+64
+00:04:47,545 --> 00:04:51,740
+During ingestion, you can specify whether
+
+65
+00:04:51,740 --> 00:04:55,670
+you want new data appended to the end of a table,
+
+66
+00:04:55,670 --> 00:05:00,155
+or to completely replace the existing data in a table.
+
+67
+00:05:00,155 --> 00:05:03,140
+Lastly, we will close with
+
+68
+00:05:03,140 --> 00:05:09,110
+an end-to-end architecture demo by my colleague Tony who will show you how you
+
+69
+00:05:09,110 --> 00:05:12,560
+can set up an automatic ETL pipeline into
+
+70
+00:05:12,560 --> 00:05:18,560
+GCP using the newly available workflow tool, Cloud composer.

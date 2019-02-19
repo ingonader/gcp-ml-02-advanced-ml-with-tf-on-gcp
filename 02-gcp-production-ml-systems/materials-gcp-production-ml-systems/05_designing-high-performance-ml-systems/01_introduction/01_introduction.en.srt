@@ -1,0 +1,94 @@
+1
+00:00:00,225 --> 00:00:01,503
+Hi, I'm Laurence and
+
+2
+00:00:01,503 --> 00:00:05,486
+I'm a developer advocate on Google
+brain focused on intensive flow.
+
+3
+00:00:05,486 --> 00:00:08,920
+In this course, you're going to
+be learning the considerations
+
+4
+00:00:08,920 --> 00:00:13,276
+behind architecting and implementing
+production machine learning systems.
+
+5
+00:00:13,276 --> 00:00:17,264
+Now one key consideration of
+this of course is performance.
+
+6
+00:00:17,264 --> 00:00:21,833
+In this module, you'll learn how to
+identify performance considerations from
+
+7
+00:00:21,833 --> 00:00:23,454
+machine learning modules.
+
+8
+00:00:23,454 --> 00:00:26,196
+Now machine learning models
+are not all identical.
+
+9
+00:00:26,196 --> 00:00:30,299
+For some models you'll be focused
+on improving IO performance and
+
+10
+00:00:30,299 --> 00:00:34,998
+on others, you'll be focused on
+squeezing out more computational speed.
+
+11
+00:00:34,998 --> 00:00:39,806
+Depending on what you're focus is,
+you will need different ML infrastructure.
+
+12
+00:00:39,806 --> 00:00:43,504
+Whether you decide to scale
+out with multiple machines or
+
+13
+00:00:43,504 --> 00:00:46,440
+scale up on a single machine with a GPO or
+TPM.
+
+14
+00:00:46,440 --> 00:00:50,784
+Sometimes you might even to do both
+by using a machine with multiple
+
+15
+00:00:50,784 --> 00:00:52,811
+accelerators attached to it.
+
+16
+00:00:52,811 --> 00:00:55,113
+Now it's not just the hardware choice,
+
+17
+00:00:55,113 --> 00:00:59,593
+the hardware is select also inform your
+choice of the distribution strategy.
+
+18
+00:00:59,593 --> 00:01:01,401
+This is a fast evolving area and
+
+19
+00:01:01,401 --> 00:01:05,298
+some of the things that we show you
+are still are very alpha stage and
+
+20
+00:01:05,298 --> 00:01:08,580
+evolve contributions from
+the tends of low community.

@@ -1,0 +1,87 @@
+1
+00:00:00,000 --> 00:00:02,435
+Next we'll talk about the serving component.
+
+2
+00:00:02,435 --> 00:00:06,510
+The serving component should be low-latency to respond to users quickly.
+
+3
+00:00:06,510 --> 00:00:10,200
+Highly efficient so that many instances can be run simultaneously,
+
+4
+00:00:10,200 --> 00:00:14,705
+and scale horizontally in order to be reliable and robust to failures.
+
+5
+00:00:14,705 --> 00:00:18,300
+In contrast to training when we care about scaling with our data,
+
+6
+00:00:18,300 --> 00:00:20,070
+at serving we care about responding to
+
+7
+00:00:20,070 --> 00:00:25,270
+variable user demand maximizing throughput and minimizing response latency.
+
+8
+00:00:25,270 --> 00:00:30,130
+Another important feature, it should be easy to update to new versions of the model.
+
+9
+00:00:30,130 --> 00:00:33,100
+When we get new data or engineer new features,
+
+10
+00:00:33,100 --> 00:00:36,120
+we'll want to retrain and push a new version of the model and you
+
+11
+00:00:36,120 --> 00:00:39,795
+want the system to seamlessly transition to the new model version.
+
+12
+00:00:39,795 --> 00:00:42,500
+More generally, the system should allow you to set up
+
+13
+00:00:42,500 --> 00:00:46,710
+a multi-armed bandit architecture to verify which model versions are the best.
+
+14
+00:00:46,710 --> 00:00:50,200
+Just as with training, there are two options for serving on GCP.
+
+15
+00:00:50,200 --> 00:00:53,720
+You can either use a fully managed TensorFlow serving service which is
+
+16
+00:00:53,720 --> 00:00:57,905
+ML Engine or you can run TF serving on Kubernetes engine.
+
+17
+00:00:57,905 --> 00:01:01,295
+The next component we'll look at is logging.
+
+18
+00:01:01,295 --> 00:01:05,180
+Logging is critical for debugging and comparison and what's
+
+19
+00:01:05,180 --> 00:01:08,665
+important is that all logs be easily accessible and integrated.
+
+20
+00:01:08,665 --> 00:01:13,220
+With cloud reliability, you get easy integration with all the other GCP products,
+
+21
+00:01:13,220 --> 00:01:15,110
+the ability to craft alerting policies,
+
+22
+00:01:15,110 --> 00:01:18,620
+and the ability to detect when new errors occur.

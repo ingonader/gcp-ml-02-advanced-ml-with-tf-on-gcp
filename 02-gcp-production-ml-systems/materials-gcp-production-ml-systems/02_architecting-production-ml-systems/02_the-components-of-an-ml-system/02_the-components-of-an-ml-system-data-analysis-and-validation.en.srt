@@ -1,0 +1,355 @@
+1
+00:00:00,000 --> 00:00:03,685
+The next component we'll review concerns the quality of the data.
+
+2
+00:00:03,685 --> 00:00:07,080
+Machine learning models are only as good as their training data.
+
+3
+00:00:07,080 --> 00:00:10,020
+And unlike catastrophic bugs which are easy to find,
+
+4
+00:00:10,020 --> 00:00:12,690
+small bugs in the data can be really hard to find
+
+5
+00:00:12,690 --> 00:00:16,570
+even though they can still significantly degrade model quality over time.
+
+6
+00:00:16,570 --> 00:00:19,370
+We'll talk more about the many ways that data can introduce
+
+7
+00:00:19,370 --> 00:00:21,920
+bugs in designing adaptable ML systems.
+
+8
+00:00:21,920 --> 00:00:24,740
+Because bugs can be disastrous and hard to find,
+
+9
+00:00:24,740 --> 00:00:27,970
+we need data analysis and data validation components.
+
+10
+00:00:27,970 --> 00:00:32,240
+The data analysis component is all about understanding the distribution of your data,
+
+11
+00:00:32,240 --> 00:00:34,875
+which is the first step in small bug detection.
+
+12
+00:00:34,875 --> 00:00:37,160
+It may not be apparent to you how changes in
+
+13
+00:00:37,160 --> 00:00:39,410
+the distribution of your data could affect your model,
+
+14
+00:00:39,410 --> 00:00:41,930
+so consider what would happen if an upstream data source
+
+15
+00:00:41,930 --> 00:00:45,960
+encoded a categorical feature using a number, like a product number.
+
+16
+00:00:45,960 --> 00:00:50,180
+Only one day, they changed their product numbering convention and now use
+
+17
+00:00:50,180 --> 00:00:54,460
+a totally different mapping using some old numbers and some new numbers.
+
+18
+00:00:54,460 --> 00:00:56,595
+How would you know that this had happened?
+
+19
+00:00:56,595 --> 00:00:58,915
+How would you debug your ML model?
+
+20
+00:00:58,915 --> 00:01:02,270
+The output of your ML model would tell you if there's a drop them for performance,
+
+21
+00:01:02,270 --> 00:01:03,740
+but it won't tell you why.
+
+22
+00:01:03,740 --> 00:01:08,170
+The raw inputs themselves would appear valid because we're still getting numbers.
+
+23
+00:01:08,170 --> 00:01:10,255
+In order to recognize this change,
+
+24
+00:01:10,255 --> 00:01:13,650
+you would need to look at changes in the distribution of your inputs.
+
+25
+00:01:13,650 --> 00:01:16,145
+If you did, this is what you might find.
+
+26
+00:01:16,145 --> 00:01:19,640
+Whereas earlier, the most commonly occurring value might have been a four.
+
+27
+00:01:19,640 --> 00:01:20,875
+In the new distribution,
+
+28
+00:01:20,875 --> 00:01:22,270
+four might not even occur,
+
+29
+00:01:22,270 --> 00:01:25,335
+and the most commonly occurring value might be a 10.
+
+30
+00:01:25,335 --> 00:01:28,519
+Depending on how you implemented your feature columns,
+
+31
+00:01:28,519 --> 00:01:30,920
+these new values might be mapped to one component of
+
+32
+00:01:30,920 --> 00:01:34,070
+a one-hot encoded vector or many components.
+
+33
+00:01:34,070 --> 00:01:37,850
+If, for example, you used a categorical column with a hash bucket,
+
+34
+00:01:37,850 --> 00:01:40,930
+the new values will be distributed according to the hash function.
+
+35
+00:01:40,930 --> 00:01:45,335
+So, one hash bucket might now get more and different values than before.
+
+36
+00:01:45,335 --> 00:01:47,235
+If you used the vocabulary,
+
+37
+00:01:47,235 --> 00:01:50,425
+then the new values would map to out-of-vocabulary buckets.
+
+38
+00:01:50,425 --> 00:01:53,180
+But what's important is that for a given tensor,
+
+39
+00:01:53,180 --> 00:01:57,905
+its relationship to the label before and now are likely to be very different.
+
+40
+00:01:57,905 --> 00:02:00,035
+After analyzing the data,
+
+41
+00:02:00,035 --> 00:02:01,215
+the next step is to ask,
+
+42
+00:02:01,215 --> 00:02:03,125
+is the data healthy or not?
+
+43
+00:02:03,125 --> 00:02:06,245
+There are a number of questions that relate to health.
+
+44
+00:02:06,245 --> 00:02:09,010
+Is the new distribution similar enough to the old one?
+
+45
+00:02:09,010 --> 00:02:11,595
+There are many ways of comparing distributions.
+
+46
+00:02:11,595 --> 00:02:15,680
+You can look at the five-number summaries to compare the center and spread of the data,
+
+47
+00:02:15,680 --> 00:02:19,369
+you can count the number of modes comparing symmetry and skewness,
+
+48
+00:02:19,369 --> 00:02:21,560
+you can also compute the likelihood of observing
+
+49
+00:02:21,560 --> 00:02:24,514
+the new distribution given the original distribution.
+
+50
+00:02:24,514 --> 00:02:26,900
+Some other questions you can ask are,
+
+51
+00:02:26,900 --> 00:02:28,785
+are all expected features present?
+
+52
+00:02:28,785 --> 00:02:31,250
+Are any unexpected features present?
+
+53
+00:02:31,250 --> 00:02:33,220
+Does the feature have the expected type?
+
+54
+00:02:33,220 --> 00:02:36,300
+Does an expected proportion of the examples contain the feature?
+
+55
+00:02:36,300 --> 00:02:39,880
+Did the examples have the expected number of values for features?
+
+56
+00:02:39,880 --> 00:02:42,475
+Let's practice applying these questions in context.
+
+57
+00:02:42,475 --> 00:02:44,690
+For each scenario, I'd like you to consider
+
+58
+00:02:44,690 --> 00:02:47,585
+which diagnostic question would have caught this issue.
+
+59
+00:02:47,585 --> 00:02:49,270
+For our first scenario,
+
+60
+00:02:49,270 --> 00:02:52,370
+assume that your ML model accepts the prices of goods from all over
+
+61
+00:02:52,370 --> 00:02:56,580
+the world in US dollar in order to make predictions about their future price.
+
+62
+00:02:56,580 --> 00:03:00,800
+In order to accept prices in US dollars for all goods all over the world,
+
+63
+00:03:00,800 --> 00:03:04,780
+the data need to be transformed from their original currency into dollars.
+
+64
+00:03:04,780 --> 00:03:10,190
+One day, a system outside of your ML system changes the format of its data stream and
+
+65
+00:03:10,190 --> 00:03:12,140
+your parser silently starts returning
+
+66
+00:03:12,140 --> 00:03:16,085
+1.0 for the conversion rate between Japanese Yen and the USD.
+
+67
+00:03:16,085 --> 00:03:18,680
+Because your model uses this quantity to convert
+
+68
+00:03:18,680 --> 00:03:22,505
+Yen to dollar those items prices are now unnaturally high.
+
+69
+00:03:22,505 --> 00:03:24,780
+Instead of 100 yen equals $1,
+
+70
+00:03:24,780 --> 00:03:27,295
+those items show up as $100.
+
+71
+00:03:27,295 --> 00:03:29,405
+Which question would have caught that?
+
+72
+00:03:29,405 --> 00:03:31,915
+In this case, question one.
+
+73
+00:03:31,915 --> 00:03:34,040
+What if the parser throws an error when this
+
+74
+00:03:34,040 --> 00:03:37,190
+happens and so the price for such items is null?
+
+75
+00:03:37,190 --> 00:03:39,855
+Then question two would have caught it.
+
+76
+00:03:39,855 --> 00:03:42,470
+What if the parser throws an error for such items
+
+77
+00:03:42,470 --> 00:03:44,810
+and your converter returns the error string?
+
+78
+00:03:44,810 --> 00:03:46,685
+So, instead of $1.05,
+
+79
+00:03:46,685 --> 00:03:49,580
+you get the price as currency rate not available.
+
+80
+00:03:49,580 --> 00:03:52,065
+Then question four would've caught it.
+
+81
+00:03:52,065 --> 00:03:55,055
+What if the ML model uses several prizes?
+
+82
+00:03:55,055 --> 00:04:00,090
+For example, list price and discount price and all the prices exhibit the same error.
+
+83
+00:04:00,090 --> 00:04:02,550
+Then question five would have caught it.
+
+84
+00:04:02,550 --> 00:04:07,700
+What if the error is only on Yen and all other currency conversions are fine?
+
+85
+00:04:07,700 --> 00:04:09,765
+Then question one would have caught it.
+
+86
+00:04:09,765 --> 00:04:12,710
+Each of the diagnostic questions in data validation
+
+87
+00:04:12,710 --> 00:04:15,260
+could be part of a dashboard like Data Studio,
+
+88
+00:04:15,260 --> 00:04:17,790
+or a monitoring system like Cloud Reliability,
+
+89
+00:04:17,790 --> 00:04:20,630
+or you could even write a script in Datalab.
