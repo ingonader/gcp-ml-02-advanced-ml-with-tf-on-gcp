@@ -1,0 +1,535 @@
+1
+00:00:00,000 --> 00:00:03,300
+Welcome to the first module of the image classification course.
+
+2
+00:00:03,300 --> 00:00:05,400
+Here you'll try your hand at classifying images with
+
+3
+00:00:05,400 --> 00:00:07,260
+traditional machine learning techniques that you've learned
+
+4
+00:00:07,260 --> 00:00:09,630
+before and look at what their limitations are,
+
+5
+00:00:09,630 --> 00:00:11,595
+when working with image datasets.
+
+6
+00:00:11,595 --> 00:00:13,380
+We'll start with a brief introduction,
+
+7
+00:00:13,380 --> 00:00:17,040
+we'll cover the MNIST image dataset that you'll be using for part of this course.
+
+8
+00:00:17,040 --> 00:00:19,770
+Then, we'll tackle an image classification problem,
+
+9
+00:00:19,770 --> 00:00:21,720
+with a linear model in TensorFlow.
+
+10
+00:00:21,720 --> 00:00:26,255
+After that, we'll move on to tackling the same problem using a deep neural network.
+
+11
+00:00:26,255 --> 00:00:30,380
+Lastly, we'll close out the discussion and the application of dropout,
+
+12
+00:00:30,380 --> 00:00:32,650
+which is the regularization technique for neural networks.
+
+13
+00:00:32,650 --> 00:00:36,900
+To help them prevent from overfitting or memorizing our training dataset.
+
+14
+00:00:36,900 --> 00:00:39,560
+So, in this module you'll learn how
+
+15
+00:00:39,560 --> 00:00:43,345
+to understand how image data is represented as floating point numbers,
+
+16
+00:00:43,345 --> 00:00:45,005
+that can then be flattened.
+
+17
+00:00:45,005 --> 00:00:48,050
+Then, you can compare functions from model confidence and
+
+18
+00:00:48,050 --> 00:00:51,305
+image classification with the focus on Softmax.
+
+19
+00:00:51,305 --> 00:00:53,300
+Then, you need to train and evaluate
+
+20
+00:00:53,300 --> 00:00:56,255
+a linear model for image classification using TensorFlow.
+
+21
+00:00:56,255 --> 00:00:57,810
+After that as you might guess,
+
+22
+00:00:57,810 --> 00:01:00,875
+you got to do the same thing except with a Deep Neural Network.
+
+23
+00:01:00,875 --> 00:01:03,860
+Lastly you're going to understand and how to actually apply
+
+24
+00:01:03,860 --> 00:01:07,840
+dropout as a regularization technique for Deep Neural Networks.
+
+25
+00:01:07,840 --> 00:01:09,690
+So, here's our problem statement,
+
+26
+00:01:09,690 --> 00:01:13,220
+"You're running a local post office and you need to quickly recognize
+
+27
+00:01:13,220 --> 00:01:15,650
+handwritten digits on envelopes in order to route
+
+28
+00:01:15,650 --> 00:01:18,385
+them to the correct mailing addresses and zip codes.
+
+29
+00:01:18,385 --> 00:01:23,750
+Now, to create our models we use a common dataset that's used in computer vision, MNIST.
+
+30
+00:01:23,750 --> 00:01:26,795
+MNIST is a dataset of handwritten black and white digits.
+
+31
+00:01:26,795 --> 00:01:29,895
+It was created by mixing two of the original datasets,
+
+32
+00:01:29,895 --> 00:01:32,330
+from the National Institute of Science and Technology.
+
+33
+00:01:32,330 --> 00:01:35,490
+That's where you get the M and the name from some modified.
+
+34
+00:01:35,490 --> 00:01:37,590
+The original datasets of handwritten digits,
+
+35
+00:01:37,590 --> 00:01:42,155
+were from the US Census Bureau's employees and American high-school students.
+
+36
+00:01:42,155 --> 00:01:46,120
+They are mixed together and split to create 60,000 labeled
+
+37
+00:01:46,120 --> 00:01:50,875
+training images of handwritten digits and an additional 10,000 for testing.
+
+38
+00:01:50,875 --> 00:01:53,895
+Each image is 28 pixels by 28 pixels,
+
+39
+00:01:53,895 --> 00:01:57,620
+which is really small compared to the images that your camera probably takes and
+
+40
+00:01:57,620 --> 00:02:01,505
+it represents a single handwritten digit from zero to nine.
+
+41
+00:02:01,505 --> 00:02:03,920
+You'll also have the correct label of the image,
+
+42
+00:02:03,920 --> 00:02:05,910
+for your model to train and learn from.
+
+43
+00:02:05,910 --> 00:02:08,840
+Additionally, the images are in grayscale
+
+44
+00:02:08,840 --> 00:02:11,705
+or they're not colored beyond simple black, white, and gray.
+
+45
+00:02:11,705 --> 00:02:14,345
+So, it's a single channel layer for art depth.
+
+46
+00:02:14,345 --> 00:02:16,650
+Remember those three layers that we talked about before;
+
+47
+00:02:16,650 --> 00:02:17,875
+red, blue, and green.
+
+48
+00:02:17,875 --> 00:02:20,035
+Here we're just going to have one channel.
+
+49
+00:02:20,035 --> 00:02:24,470
+If we want to convert this 2-D image into a single dimensional vector.
+
+50
+00:02:24,470 --> 00:02:28,345
+What can we do? Well, we could flatten the image.
+
+51
+00:02:28,345 --> 00:02:33,285
+It'll take each row of the pixel data and line it up and along single row end to end.
+
+52
+00:02:33,285 --> 00:02:39,870
+So, a question for you, if we flatten a 28 by 28 image into a single long array of data,
+
+53
+00:02:39,870 --> 00:02:42,350
+how long would that array be?
+
+54
+00:02:42,350 --> 00:02:44,815
+Now, if you said 784.
+
+55
+00:02:44,815 --> 00:02:46,100
+That's exactly right.
+
+56
+00:02:46,100 --> 00:02:50,535
+On stacking each of the 28 rows and lining them up end to end,
+
+57
+00:02:50,535 --> 00:02:52,570
+with each row having 28 columns,
+
+58
+00:02:52,570 --> 00:02:58,640
+gives us that 28 times 28 value or 784 total elements in our array.
+
+59
+00:02:58,640 --> 00:03:01,700
+Now, remember that the computer doesn't see images like we do.
+
+60
+00:03:01,700 --> 00:03:06,820
+In all the color intensities of each pixel or simply just floating point numbers do.
+
+61
+00:03:06,820 --> 00:03:08,570
+So, the actual array will look more like
+
+62
+00:03:08,570 --> 00:03:11,465
+this and that's going to be the input for our model.
+
+63
+00:03:11,465 --> 00:03:13,925
+Our output is going to be the class of the image,
+
+64
+00:03:13,925 --> 00:03:16,770
+whether it's a zero or eight or five, what have you.
+
+65
+00:03:16,770 --> 00:03:19,570
+So, how many possible classes for your output
+
+66
+00:03:19,570 --> 00:03:22,875
+do you think that the model is going to be choosing or predicting from?
+
+67
+00:03:22,875 --> 00:03:25,550
+If you said 10, that's exactly correct.
+
+68
+00:03:25,550 --> 00:03:30,255
+We've got the digits from zero to nine which is 10 possible output classes.
+
+69
+00:03:30,255 --> 00:03:31,940
+Given that last answer,
+
+70
+00:03:31,940 --> 00:03:34,495
+what type of tasks do you think will be performing?
+
+71
+00:03:34,495 --> 00:03:36,100
+Is a binary classification?
+
+72
+00:03:36,100 --> 00:03:37,290
+Linear regression?
+
+73
+00:03:37,290 --> 00:03:38,975
+Multiclass classification?
+
+74
+00:03:38,975 --> 00:03:40,715
+Or using a neural network?
+
+75
+00:03:40,715 --> 00:03:45,205
+The correct answer for the task is it's multiclass classification.
+
+76
+00:03:45,205 --> 00:03:48,605
+Simply because we have more than two output classes.
+
+77
+00:03:48,605 --> 00:03:53,275
+Now, that last example that you saw before was very clearly a zero.
+
+78
+00:03:53,275 --> 00:03:55,415
+What about these two's?
+
+79
+00:03:55,415 --> 00:03:57,520
+If you solve these in isolation,
+
+80
+00:03:57,520 --> 00:04:00,540
+would be 100 percent certain that they were two's?
+
+81
+00:04:00,540 --> 00:04:03,950
+We can also set up the architecture to output a probability,
+
+82
+00:04:03,950 --> 00:04:05,880
+for each handwritten digit you fit into it.
+
+83
+00:04:05,880 --> 00:04:09,500
+So, you can see the models confidence in each classification prediction it makes.
+
+84
+00:04:09,500 --> 00:04:11,380
+Because this is a classification task,
+
+85
+00:04:11,380 --> 00:04:15,220
+we've chosen the output of the model will be a 10 dimensional vector of numbers.
+
+86
+00:04:15,220 --> 00:04:17,230
+To make the output more interpretable,
+
+87
+00:04:17,230 --> 00:04:20,750
+we use a function that will render them like probabilities.
+
+88
+00:04:20,750 --> 00:04:24,430
+We actually introduce this function back in the first specialization.
+
+89
+00:04:24,430 --> 00:04:26,280
+So, I want to test your memory.
+
+90
+00:04:26,280 --> 00:04:32,130
+Which function takes a vector of floats and converts the numbers to probabilities?
+
+91
+00:04:32,130 --> 00:04:34,780
+Now, if you said this sigmoid function.
+
+92
+00:04:34,780 --> 00:04:38,125
+No. You missed the fact that we have multiple classes.
+
+93
+00:04:38,125 --> 00:04:41,425
+A sigmoid we'll take a logit and convert it into a probability,
+
+94
+00:04:41,425 --> 00:04:44,010
+but that'll only work if you have just two classes.
+
+95
+00:04:44,010 --> 00:04:48,585
+Here we've got 10 numbers and the total of these probabilities has to be equal to one,
+
+96
+00:04:48,585 --> 00:04:51,050
+which means the classes are exclusive.
+
+97
+00:04:51,050 --> 00:04:53,715
+One of the most common ways and the correct answer,
+
+98
+00:04:53,715 --> 00:04:56,065
+is for using a Softmax function.
+
+99
+00:04:56,065 --> 00:04:57,920
+What does the Softmax function does,
+
+100
+00:04:57,920 --> 00:05:01,525
+is it exponentiates its inputs and then it normalizes them.
+
+101
+00:05:01,525 --> 00:05:04,865
+The exponentiation means that one more unit of evidence,
+
+102
+00:05:04,865 --> 00:05:08,885
+increases the weight given to any hypothesis multiplicatively.
+
+103
+00:05:08,885 --> 00:05:11,750
+Conversely, having one less unit of evidence
+
+104
+00:05:11,750 --> 00:05:15,010
+means that hypothesis gets a fraction of its earlier weight.
+
+105
+00:05:15,010 --> 00:05:18,490
+Basically, it makes the high value is higher and the lower value is lower,
+
+106
+00:05:18,490 --> 00:05:21,165
+but keeps the relative order the same.
+
+107
+00:05:21,165 --> 00:05:23,625
+In addition, as you can see here,
+
+108
+00:05:23,625 --> 00:05:26,090
+the Softmax function normalizes the weights.
+
+109
+00:05:26,090 --> 00:05:28,320
+So, they all add up to one when they're summed up
+
+110
+00:05:28,320 --> 00:05:31,890
+together and this forms that valid probability distribution.
+
+111
+00:05:31,890 --> 00:05:34,639
+To get more intuition about the Softmax function,
+
+112
+00:05:34,639 --> 00:05:37,490
+check out the link in the resources section to Michael Nielsen's book,
+
+113
+00:05:37,490 --> 00:05:39,810
+complete with this interactive visualization.
+
+114
+00:05:39,810 --> 00:05:42,685
+So, let's look at an example of Softmax.
+
+115
+00:05:42,685 --> 00:05:47,345
+Here we take an input image that you see on the left and after classification,
+
+116
+00:05:47,345 --> 00:05:50,360
+the Softmax function works its magic on the outputs.
+
+117
+00:05:50,360 --> 00:05:52,700
+The resulting vector on the right clearly
+
+118
+00:05:52,700 --> 00:05:55,880
+shows which of its elements is the largest or the max,
+
+119
+00:05:55,880 --> 00:06:00,800
+but it retains the original relative order to the rest of the values hence the soft.
+
+120
+00:06:00,800 --> 00:06:06,755
+In this case the max is a class of six which is the prediction with 70 percent chance.
+
+121
+00:06:06,755 --> 00:06:09,790
+Now, keep in mind the model could be wrong in it's classification.
+
+122
+00:06:09,790 --> 00:06:11,320
+As it was in this case,
+
+123
+00:06:11,320 --> 00:06:15,710
+where the input image that was actually labeled as a five but the model predicted a six.
+
+124
+00:06:15,710 --> 00:06:19,770
+That's likely because of that a handwritten little loop at the bottom of the image.
+
+125
+00:06:19,770 --> 00:06:21,920
+Optimization requires that we have a number
+
+126
+00:06:21,920 --> 00:06:24,550
+representing the quality of our solution so far.
+
+127
+00:06:24,550 --> 00:06:27,615
+In machine learning, we call that the loss function.
+
+128
+00:06:27,615 --> 00:06:30,650
+For this task, because it's a classification task,
+
+129
+00:06:30,650 --> 00:06:33,140
+we'll use the same loss function that we use for classification in
+
+130
+00:06:33,140 --> 00:06:35,870
+the last specialization, which is cross-entropy.
+
+131
+00:06:35,870 --> 00:06:38,330
+We will avoid numerical issues that come with
+
+132
+00:06:38,330 --> 00:06:41,070
+taking the log of really really tiny tiny numbers,
+
+133
+00:06:41,070 --> 00:06:43,900
+we'll use an optimized TensorFlow function called
+
+134
+00:06:43,900 --> 00:06:47,960
+Softmax cross-entropy with logits version number two.

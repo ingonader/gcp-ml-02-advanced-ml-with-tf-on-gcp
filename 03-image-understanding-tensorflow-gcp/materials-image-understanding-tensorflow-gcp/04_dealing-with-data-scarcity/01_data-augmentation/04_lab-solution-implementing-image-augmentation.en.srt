@@ -1,0 +1,223 @@
+1
+00:00:00,000 --> 00:00:01,635
+Let's take a look at the code.
+
+2
+00:00:01,635 --> 00:00:03,635
+At the top of the IPython Notebook,
+
+3
+00:00:03,635 --> 00:00:07,720
+you see our login credentials for our GCP account.
+
+4
+00:00:07,850 --> 00:00:12,705
+Below that, you'll see us calling the model locally from the command line.
+
+5
+00:00:12,705 --> 00:00:14,590
+In order that this code works,
+
+6
+00:00:14,590 --> 00:00:19,310
+we need to have successfully added code in all the to-do sections in our model.py,
+
+7
+00:00:19,310 --> 00:00:21,465
+so that's what we'll look next.
+
+8
+00:00:21,465 --> 00:00:23,370
+To find our model.py,
+
+9
+00:00:23,370 --> 00:00:27,545
+you need to navigate to the flowersmodel directory inside your Lab folder.
+
+10
+00:00:27,545 --> 00:00:30,690
+In this case, I'm looking at the solution.
+
+11
+00:00:30,690 --> 00:00:35,065
+In our model.py, there are basically two places where we need to make changes;
+
+12
+00:00:35,065 --> 00:00:37,140
+inside our read_and_preprocess function,
+
+13
+00:00:37,140 --> 00:00:39,265
+and inside our input function.
+
+14
+00:00:39,265 --> 00:00:41,405
+In our read_and_preprocess function,
+
+15
+00:00:41,405 --> 00:00:44,495
+we need to introduce the image decode jpeg function,
+
+16
+00:00:44,495 --> 00:00:46,760
+which takes the image bytes which we read from
+
+17
+00:00:46,760 --> 00:00:49,800
+disk and converts them into an image representation.
+
+18
+00:00:49,800 --> 00:00:53,705
+This function requires that we parse in a channel's parameter.
+
+19
+00:00:53,705 --> 00:01:00,245
+After that, because image decode jpeg leaves the image as a range from 0-255,
+
+20
+00:01:00,245 --> 00:01:03,050
+we need to convert the image D type to a float representation.
+
+21
+00:01:03,050 --> 00:01:07,860
+We do this by passing in the tf.float32 type.
+
+22
+00:01:07,940 --> 00:01:13,355
+The next part of the code branches on whether or not we're intending to augment or not.
+
+23
+00:01:13,355 --> 00:01:16,160
+If we're augmenting, the next thing that we're going to do is
+
+24
+00:01:16,160 --> 00:01:19,420
+resize to a size that is bigger than our actual image,
+
+25
+00:01:19,420 --> 00:01:22,070
+in order that when we randomly crop later,
+
+26
+00:01:22,070 --> 00:01:24,410
+it will actually be cropped to the right size.
+
+27
+00:01:24,410 --> 00:01:26,480
+After we resize though,
+
+28
+00:01:26,480 --> 00:01:29,480
+because we've expanded dimensions in order to use the resize function,
+
+29
+00:01:29,480 --> 00:01:33,385
+we squeeze the image to remove the unnecessary dimension.
+
+30
+00:01:33,385 --> 00:01:36,985
+Then finally, we call random crop parsing in height,
+
+31
+00:01:36,985 --> 00:01:38,935
+width and numb channels.
+
+32
+00:01:38,935 --> 00:01:42,020
+This will randomly crop a section of the image,
+
+33
+00:01:42,020 --> 00:01:46,290
+but the resulting crop will be the appropriate size for our model.
+
+34
+00:01:46,290 --> 00:01:50,820
+Then we call another bunch of random functions including random flip left right,
+
+35
+00:01:50,820 --> 00:01:53,630
+random brightness and random contrast.
+
+36
+00:01:53,630 --> 00:01:55,520
+Note again the fact that we parse in
+
+37
+00:01:55,520 --> 00:01:59,030
+some numerical parameters to random brightness and random contrast,
+
+38
+00:01:59,030 --> 00:02:01,400
+and these are the things that you'll
+
+39
+00:02:01,400 --> 00:02:04,295
+understand the best values for by understanding your domain.
+
+40
+00:02:04,295 --> 00:02:05,825
+If augmented set to false,
+
+41
+00:02:05,825 --> 00:02:10,600
+we can simply call resize bi-linear and resize it to the appropriate size of the image.
+
+42
+00:02:10,600 --> 00:02:13,790
+At the end of this, the final thing we need to do is to
+
+43
+00:02:13,790 --> 00:02:18,740
+subtract 0.5 from all the values in our image and then multiply by two,
+
+44
+00:02:18,740 --> 00:02:20,720
+and this maps the range of the values
+
+45
+00:02:20,720 --> 00:02:23,120
+inside our image sensor to the range negative one to one.
+
+46
+00:02:23,120 --> 00:02:25,970
+Finally, we package our image up inside the dictionary.
+
+47
+00:02:25,970 --> 00:02:28,365
+The next thing that we need to do is look at our input function.
+
+48
+00:02:28,365 --> 00:02:31,770
+In our input function, we make one principal modification.
+
+49
+00:02:31,770 --> 00:02:35,525
+What we need to do is condition upon our augment Boolean variable.
+
+50
+00:02:35,525 --> 00:02:37,140
+Any event that augment is true,
+
+51
+00:02:37,140 --> 00:02:39,865
+we're going to map the read_and_preprocess with augment function.
+
+52
+00:02:39,865 --> 00:02:41,280
+In the event that it's false,
+
+53
+00:02:41,280 --> 00:02:43,965
+we're simply going to map the read_and_preprocess function.
+
+54
+00:02:43,965 --> 00:02:47,480
+The only difference between these two functions is that whereas read_and_preprocess with
+
+55
+00:02:47,480 --> 00:02:52,415
+augment simply calls read_and_preprocess with the augment variable set to true,
+
+56
+00:02:52,415 --> 00:02:56,910
+otherwise, the default value for augment is false. That's it.

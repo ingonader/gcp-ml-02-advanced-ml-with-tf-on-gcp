@@ -201,6 +201,20 @@ git config user.email "ingo.nader@gmail.com"
 #git config --global user.email "ingo.nader@gmail.com"
 ```
 
+### Git stuff
+
+Find large files to be committed (when staged):
+
+```bash
+git ls-files -t `find . -type f -size +100k |xargs`
+git ls-files -t `find . -type f -size +100k -exec ls -lh|xargs`
+
+find . -type f -size +30000k -exec ls -lh {} \; | awk '{ print $9 ": " $5 }' 
+
+```
+
+
+
 ## Python / Data Lab
 
 ### get project id in python / data lab

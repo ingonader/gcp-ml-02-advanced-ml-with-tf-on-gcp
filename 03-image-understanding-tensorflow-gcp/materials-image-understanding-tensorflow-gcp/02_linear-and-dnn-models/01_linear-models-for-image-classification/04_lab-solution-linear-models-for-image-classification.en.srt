@@ -1,0 +1,917 @@
+1
+00:00:00,230 --> 00:00:01,904
+All right, as I mentioned,
+here is our first lab.
+
+2
+00:00:01,904 --> 00:00:05,552
+We're going to build a linear model to
+classify those handwritten digits from
+
+3
+00:00:05,552 --> 00:00:08,010
+the MNIST dataset inside of TensorFlow.
+
+4
+00:00:08,010 --> 00:00:08,920
+Let's go ahead and get started.
+
+5
+00:00:10,210 --> 00:00:13,860
+So here I am in my IPython Notebook
+inside of Cloud Datalab.
+
+6
+00:00:13,860 --> 00:00:17,005
+The first thing that I've done,
+I've already cloned the repo and
+
+7
+00:00:17,005 --> 00:00:21,177
+I've navigated to the lab's folder and
+I've got my mnist_linear IPython Notebook.
+
+8
+00:00:21,177 --> 00:00:24,044
+And the first thing that you scroll
+through you see that some of the code is
+
+9
+00:00:24,044 --> 00:00:26,960
+per-written for you, but
+we didn't do everything for you.
+
+10
+00:00:26,960 --> 00:00:29,466
+So in order to define the model
+you're going to see, well,
+
+11
+00:00:29,466 --> 00:00:31,203
+you going to create your linear_model.
+
+12
+00:00:31,203 --> 00:00:35,535
+We provided the train_input_fn and the
+serving_input_fn but not the evaluation
+
+13
+00:00:35,535 --> 00:00:39,507
+input function which again is very
+similar to the train_input_fn except for
+
+14
+00:00:39,507 --> 00:00:41,790
+a few key differentiating points.
+
+15
+00:00:41,790 --> 00:00:43,980
+We've got the custom estimator here.
+
+16
+00:00:43,980 --> 00:00:46,250
+That's going to take all those inputs and
+get you ready for
+
+17
+00:00:46,250 --> 00:00:48,430
+the actual train_and_evaluate function.
+
+18
+00:00:48,430 --> 00:00:51,570
+Which is then going to be called and
+what you're actually going to get when
+
+19
+00:00:51,570 --> 00:00:55,100
+you are running the model, you can get
+your final accuracy for a linear model.
+
+20
+00:00:55,100 --> 00:00:57,400
+So let's start off from
+all the way at the top.
+
+21
+00:00:57,400 --> 00:01:00,280
+So first off, we actually need to import
+some helper functions which in this
+
+22
+00:01:00,280 --> 00:01:02,984
+particular case we've got numpy as
+we're working with numpy arrays.
+
+23
+00:01:02,984 --> 00:01:07,105
+Those are expected inputs later on for
+our training eval specs.
+
+24
+00:01:07,105 --> 00:01:09,590
+And we're working with output directories.
+
+25
+00:01:09,590 --> 00:01:11,010
+So we're going to use shutil and
+
+26
+00:01:11,010 --> 00:01:12,660
+tensorflow of course you
+want to bring that in there.
+
+27
+00:01:12,660 --> 00:01:14,300
+And also get the latest
+version of TensorFlow.
+
+28
+00:01:14,300 --> 00:01:17,310
+And then we actually need
+to bring in our data.
+
+29
+00:01:17,310 --> 00:01:20,190
+So we're going to do,
+grab the data from the tutorials.mnist.
+
+30
+00:01:20,190 --> 00:01:23,080
+We're going to import it,
+we're going to use read_data_sets.
+
+31
+00:01:23,080 --> 00:01:25,219
+In the future, you're going to
+be using the data sets API.
+
+32
+00:01:25,219 --> 00:01:28,020
+So you might get a warning actually
+that this might be deprecated.
+
+33
+00:01:28,020 --> 00:01:30,046
+But for
+now this is what we're going to be doing.
+
+34
+00:01:30,046 --> 00:01:33,236
+And you'll notice that we're not going to
+reshape the data or do any of that here,
+
+35
+00:01:33,236 --> 00:01:34,389
+we're just bringing it in.
+
+36
+00:01:34,389 --> 00:01:37,703
+And then we're going to print out what
+the current shape of the images are,
+
+37
+00:01:37,703 --> 00:01:39,397
+as well as associated labels width.
+
+38
+00:01:39,397 --> 00:01:40,545
+So let's go ahead and do that.
+
+39
+00:01:40,545 --> 00:01:46,585
+So we're going to run,
+We're running 1.8 for TensorFlow.
+
+40
+00:01:50,556 --> 00:01:56,455
+And we've got 55,000 images
+in our training dataset.
+
+41
+00:01:56,455 --> 00:02:01,100
+They're of the shape 28 by 28, of course
+that means they're 28 pixels by 28 pixels.
+
+42
+00:02:01,100 --> 00:02:04,342
+What do you think this 1 means?
+
+43
+00:02:04,342 --> 00:02:05,845
+Yeah, it's the channel depth, maybe 1.
+
+44
+00:02:05,845 --> 00:02:11,766
+55,000, and then we have the 10.
+
+45
+00:02:11,766 --> 00:02:12,848
+What do you think the 10 means?
+
+46
+00:02:12,848 --> 00:02:15,220
+Number of classes.
+
+47
+00:02:15,220 --> 00:02:16,876
+0, 1, 2, 3, 4, 5, 6, 7, 8,
+
+48
+00:02:16,876 --> 00:02:19,880
+9 are the possible classes that
+we're actually going to output.
+
+49
+00:02:19,880 --> 00:02:22,060
+We define those variables here as well.
+
+50
+00:02:22,060 --> 00:02:26,830
+So we have the HEIGHT that's expected is
+28 pixels, WIDTH=28 pixels, NCLASSES=10.
+
+51
+00:02:26,830 --> 00:02:27,930
+Nothing you haven't sen before.
+
+52
+00:02:27,930 --> 00:02:32,300
+Now we want to plot these images, so
+we can take a look at one particular one.
+
+53
+00:02:32,300 --> 00:02:34,920
+So I'm just saying, all right,
+well, give me number 12.
+
+54
+00:02:34,920 --> 00:02:39,260
+Sure, so let's go ahead and
+run this, we've got our variables.
+
+55
+00:02:40,530 --> 00:02:44,230
+Now show me this image, show me number 12.
+
+56
+00:02:44,230 --> 00:02:50,370
+Again, it's going to be 12 from the array,
+so this is going to be whatever this is.
+
+57
+00:02:50,370 --> 00:02:53,200
+And we just know just because we're
+interpreting it with our brains that this
+
+58
+00:02:53,200 --> 00:02:55,030
+is a 9 here.
+
+59
+00:02:55,030 --> 00:02:57,700
+But you also have the label for
+it in your training [UNKOWN].
+
+60
+00:02:57,700 --> 00:02:58,950
+Okay, now for the fun part.
+
+61
+00:02:58,950 --> 00:03:00,598
+You've got your training data.
+
+62
+00:03:00,598 --> 00:03:03,860
+Now you actually need to build the
+linear_model that's going to classify it.
+
+63
+00:03:03,860 --> 00:03:06,805
+So first things first,
+you can have your linear_model defined and
+
+64
+00:03:06,805 --> 00:03:09,863
+you can ultimately return your logits and
+your classes that you have.
+
+65
+00:03:09,863 --> 00:03:12,220
+For linear_models,
+what are the components?
+
+66
+00:03:12,220 --> 00:03:16,972
+Well, you've got your X,
+you've got your weights,
+
+67
+00:03:16,972 --> 00:03:22,080
+and you've got a bias
+term associated with it.
+
+68
+00:03:22,080 --> 00:03:24,700
+So in this particular case, this is where
+we're actually going to do the reshaping.
+
+69
+00:03:24,700 --> 00:03:27,196
+Let me just get these.
+
+70
+00:03:30,889 --> 00:03:32,555
+So x is going to be tf.
+
+71
+00:03:34,889 --> 00:03:35,931
+We're going to reshape.
+
+72
+00:03:35,931 --> 00:03:37,050
+What we're going to pass in?
+
+73
+00:03:37,050 --> 00:03:38,297
+Well, it's going to be an image.
+
+74
+00:03:40,455 --> 00:03:44,836
+And then we're actually going to
+reshape it from a 2D, two dimensions,
+
+75
+00:03:44,836 --> 00:03:48,790
+HEIGHT and WIDTH, we're actually
+going to flatten that all out.
+
+76
+00:03:48,790 --> 00:03:54,175
+You got to remember, this is trying
+to bring it into just one dimension,
+
+77
+00:03:54,175 --> 00:03:57,193
+this is going to be our flatten operation.
+
+78
+00:03:57,193 --> 00:04:01,786
+And then for our weights,
+we're going to get the variable
+
+79
+00:04:01,786 --> 00:04:08,060
+associated with the weights, and
+we'll just specify that as W.
+
+80
+00:04:08,060 --> 00:04:14,127
+Get the HEIGHT and WIDTH,
+and the total NCLASSES.
+
+81
+00:04:14,127 --> 00:04:18,621
+Which again, in this particular
+case is just going to be the 10.
+
+82
+00:04:18,621 --> 00:04:20,480
+After that,
+we're going to initialize the weights.
+
+83
+00:04:32,686 --> 00:04:39,869
+And initialize,
+Your own weights and initial value.
+
+84
+00:04:46,698 --> 00:04:48,111
+And specify a bias term.
+
+85
+00:04:53,296 --> 00:04:56,134
+B, again, NCLASSES.
+
+86
+00:04:56,134 --> 00:05:00,090
+And then we'll initialize
+the bias term to be zero.
+
+87
+00:05:09,707 --> 00:05:14,665
+And then, we actually have to get
+our logits, which is just going to
+
+88
+00:05:14,665 --> 00:05:19,461
+be the matrix multiplication of
+the the weights and our X here.
+
+89
+00:05:19,461 --> 00:05:25,415
+It's going to be matmul,
+X and our weights.
+
+90
+00:05:25,415 --> 00:05:28,765
+And then the last thing you do for
+a linear_model of course,
+
+91
+00:05:28,765 --> 00:05:30,022
+add in your bias term.
+
+92
+00:05:31,965 --> 00:05:33,890
+Great, so now we don't get any output and
+
+93
+00:05:33,890 --> 00:05:36,485
+that's just because you
+defined your linear_model.
+
+94
+00:05:36,485 --> 00:05:39,425
+All right, now we actually need
+to write the input functions.
+
+95
+00:05:39,425 --> 00:05:40,415
+They're three different pieces.
+
+96
+00:05:40,415 --> 00:05:45,007
+The training, the actual evaluation
+that happens, and then the prediction.
+
+97
+00:05:45,007 --> 00:05:48,138
+So we've got your training
+input functions here.
+
+98
+00:05:48,138 --> 00:05:53,154
+You've already done the reshaping where
+you specify things like batch size,
+
+99
+00:05:53,154 --> 00:05:56,802
+the number of epochs and
+the shuffling is going to be True for
+
+100
+00:05:56,802 --> 00:05:58,786
+your training input dataset.
+
+101
+00:05:58,786 --> 00:06:01,440
+Now what about for evaluation?
+
+102
+00:06:01,440 --> 00:06:06,060
+Now for the sake of going through this,
+it's largely going to be the same.
+
+103
+00:06:08,360 --> 00:06:12,011
+Are you going to be using the same data
+for training as you are for evaluation?
+
+104
+00:06:12,011 --> 00:06:14,470
+If you said yes,
+[LAUGH] you're scaring me.
+
+105
+00:06:14,470 --> 00:06:18,690
+Don't forget you have a different data
+set to actually do the evaluation set on.
+
+106
+00:06:18,690 --> 00:06:21,990
+This is going to be your
+test batch of images.
+
+107
+00:06:21,990 --> 00:06:25,590
+And of course,
+
+108
+00:06:25,590 --> 00:06:30,064
+with your test batch of images you
+also have your test batch of labels.
+
+109
+00:06:30,064 --> 00:06:33,028
+Let's do a specified batch_size,
+
+110
+00:06:33,028 --> 00:06:38,092
+then we have epochs 1 is fine,
+because we only need to kind of go
+
+111
+00:06:38,092 --> 00:06:43,850
+through the entirety of it once
+since we're not doing training.
+
+112
+00:06:43,850 --> 00:06:48,835
+We also don't need to shuffle it so
+we're going to set shuffle=False.
+
+113
+00:06:48,835 --> 00:06:51,016
+And same queue_capacity is fine.
+
+114
+00:06:53,295 --> 00:06:57,579
+Great, we've got our eval_input_fn and
+we have our serving_input_fn.
+
+115
+00:06:57,579 --> 00:06:59,907
+Custom estimator is written for
+you as well.
+
+116
+00:06:59,907 --> 00:07:02,252
+And essentially in here, this is just for
+
+117
+00:07:02,252 --> 00:07:06,339
+each of the different logits that we
+pass in, that we defined earlier for
+
+118
+00:07:06,339 --> 00:07:10,299
+our linear_model, that's where
+you're actually going to get that.
+
+119
+00:07:10,299 --> 00:07:14,534
+And then you get the probabilities by
+applying that softmax that you saw in
+
+120
+00:07:14,534 --> 00:07:15,704
+the lecture notes.
+
+121
+00:07:15,704 --> 00:07:18,780
+And then each of the different classes.
+
+122
+00:07:18,780 --> 00:07:23,527
+And associated probabilities with them,
+you're actually going to get here.
+
+123
+00:07:23,527 --> 00:07:25,008
+And here is the fun part.
+
+124
+00:07:25,008 --> 00:07:27,376
+It's a little bit of a logic flow.
+
+125
+00:07:27,376 --> 00:07:28,904
+Based on a logic flow,
+
+126
+00:07:28,904 --> 00:07:34,290
+what we're actually going to be doing
+is governed of course by the mode.
+
+127
+00:07:34,290 --> 00:07:36,175
+If it's training mode or
+
+128
+00:07:36,175 --> 00:07:40,440
+evaluation mode, then we actually
+need to compute the loss function.
+
+129
+00:07:40,440 --> 00:07:43,284
+Which in this particular case,since
+it's classification of course is that
+
+130
+00:07:43,284 --> 00:07:44,400
+cross_entropy.
+
+131
+00:07:44,400 --> 00:07:47,533
+We're doing a little bit of numerical
+stabilization here with a reduced mean,
+
+132
+00:07:47,533 --> 00:07:49,180
+it's just everything that you see here.
+
+133
+00:07:50,340 --> 00:07:53,785
+And then for our classification models,
+you need a performance metric which
+
+134
+00:07:53,785 --> 00:07:56,705
+in this particular case we're just
+going to go with just accuracy.
+
+135
+00:07:59,144 --> 00:08:02,359
+And if we're in the training mode,
+you're going to need a training operation,
+
+136
+00:08:02,359 --> 00:08:05,450
+which is going to take those learning
+parameters like your learning_rate.
+
+137
+00:08:05,450 --> 00:08:06,930
+Those hyper parameters
+that you're going to see,
+
+138
+00:08:06,930 --> 00:08:10,021
+we're going to define later on when
+we call the train and evaluate.
+
+139
+00:08:11,510 --> 00:08:14,570
+And if you're not in training mode,
+you don't need a training operation.
+
+140
+00:08:15,770 --> 00:08:19,870
+And just saving time you should not end
+training or evaluation, AKA you are in
+
+141
+00:08:19,870 --> 00:08:23,490
+testing, you don't need three of
+those things either, or prediction.
+
+142
+00:08:24,860 --> 00:08:27,322
+And then last but not least, you actually
+return the estimators back which is where
+
+143
+00:08:27,322 --> 00:08:28,708
+what we're going to be
+using a little bit later.
+
+144
+00:08:31,289 --> 00:08:33,687
+And to our favorite friend,
+defining the actual,
+
+145
+00:08:33,687 --> 00:08:37,483
+what's actually going to be running your
+model which is the train_and_evaluate
+
+146
+00:08:37,483 --> 00:08:38,839
+function that you see here.
+
+147
+00:08:38,839 --> 00:08:41,692
+So it actually needs to output
+your results to a directory.
+
+148
+00:08:41,692 --> 00:08:44,686
+So we're actually going to
+specify it a little bit later.
+
+149
+00:08:44,686 --> 00:08:47,065
+In the hyper parameters
+that you're passing in,
+
+150
+00:08:47,065 --> 00:08:50,755
+things like your learning_rate, and
+you can actually see those down here.
+
+151
+00:08:50,755 --> 00:08:53,344
+Your learning_rate and
+the number of train_steps that you want.
+
+152
+00:08:53,344 --> 00:08:57,938
+In this particular case, we're just saying
+1,000 with a learning_rate of 0.01.
+
+153
+00:08:57,938 --> 00:08:59,955
+And then you pass in the estimator.
+
+154
+00:08:59,955 --> 00:09:01,037
+Your training_spec.
+
+155
+00:09:01,037 --> 00:09:03,502
+Where you're actually exporting this to?
+
+156
+00:09:03,502 --> 00:09:04,859
+The eval_spec.
+
+157
+00:09:04,859 --> 00:09:06,532
+And then last but not least,
+
+158
+00:09:06,532 --> 00:09:10,727
+this is the estimator that we're
+going to be actually being able to call.
+
+159
+00:09:10,727 --> 00:09:14,757
+And last but not least, we're specifying
+when we're actually getting ready to
+
+160
+00:09:14,757 --> 00:09:18,348
+run this, we need to give a place
+to actually store the results.
+
+161
+00:09:18,348 --> 00:09:21,230
+So your OUTDIR is, in this particular
+case, you call it whatever you want.
+
+162
+00:09:21,230 --> 00:09:22,990
+We're just going to say mnist/learned.
+
+163
+00:09:22,990 --> 00:09:25,640
+And this is where you're using
+shutil to basically say, hey,
+
+164
+00:09:25,640 --> 00:09:29,170
+if you're rerunning this multiple times
+just blow out the entire directory and
+
+165
+00:09:29,170 --> 00:09:33,040
+then pass in these hyper parameters before
+we finally get to call the last line in
+
+166
+00:09:33,040 --> 00:09:35,830
+the notebook, which is train_and_evaluate.
+
+167
+00:09:35,830 --> 00:09:39,460
+So let's go ahead and
+get back to where we were here.
+
+168
+00:09:39,460 --> 00:09:40,510
+We've defined the model.
+
+169
+00:09:41,520 --> 00:09:45,530
+Let's run code that's going to
+create our input functions.
+
+170
+00:09:45,530 --> 00:09:48,252
+We've got our custom estimator that's
+going to do the heavy lifting.
+
+171
+00:09:51,148 --> 00:09:55,022
+And we're going to make it distributed
+with our specs that we're going to
+
+172
+00:09:55,022 --> 00:09:55,770
+passing in.
+
+173
+00:09:55,770 --> 00:09:59,746
+And last but not least, we're going to
+actually specify the directory,
+
+174
+00:09:59,746 --> 00:10:03,001
+pass in our hyper parameters and
+train_and_evaluate.
+
+175
+00:10:03,001 --> 00:10:07,244
+So ultimately, at the end of the day,
+we want to get just a single number for
+
+176
+00:10:07,244 --> 00:10:10,821
+how accurately this linear model
+can classify these images.
+
+177
+00:10:12,539 --> 00:10:19,945
+As you can see, the first over on this,
+I get an error, Likely a typo that I made.
+
+178
+00:10:19,945 --> 00:10:22,630
+get_variable not defined
+all the way at the top.
+
+179
+00:10:22,630 --> 00:10:24,049
+Let's see if I had a simple typo.
+
+180
+00:10:26,298 --> 00:10:27,244
+Where's our model code?
+
+181
+00:10:27,244 --> 00:10:31,215
+tf,get_variable, tf,get_variable,
+there we go.
+
+182
+00:10:31,215 --> 00:10:32,722
+[LAUGH] Let's run it all again.
+
+183
+00:10:40,002 --> 00:10:42,700
+All right, we're calling the function and
+we're stepping through the training.
+
+184
+00:10:44,210 --> 00:10:48,135
+We can see the loss, we can see the loss
+2.4 going down to optimized that loss
+
+185
+00:10:48,135 --> 00:10:49,575
+through gradient descent.
+
+186
+00:10:53,405 --> 00:10:56,590
+Loss for the final step.
+
+187
+00:10:58,532 --> 00:11:03,590
+And what you're looking for ultimately
+is your the dictionary for final step.
+
+188
+00:11:03,590 --> 00:11:05,860
+1000, again that's where we stop it.
+
+189
+00:11:05,860 --> 00:11:09,130
+In my particular case, this might vary for
+you may be between 85 and,
+
+190
+00:11:09,130 --> 00:11:12,090
+this is probably the best I've seen so
+far.
+
+191
+00:11:12,090 --> 00:11:17,121
+We've got a 92% accurate linear_model for
+class final images.
+
+192
+00:11:17,121 --> 00:11:20,230
+You might be happy with 92, maybe that's
+good enough for your business application,
+
+193
+00:11:20,230 --> 00:11:23,090
+but for the rest of this course you'll be
+working with other different models like
+
+194
+00:11:23,090 --> 00:11:23,761
+neural networks.
+
+195
+00:11:23,761 --> 00:11:27,128
+And particularly convolution neural
+networks that can really interpret images
+
+196
+00:11:27,128 --> 00:11:28,127
+really, really well.
+
+197
+00:11:28,127 --> 00:11:30,699
+All right, we'll see you in the next lab.

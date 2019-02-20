@@ -1,0 +1,459 @@
+1
+00:00:00,000 --> 00:00:05,200
+In this module, we are discussing the obstacles that researchers
+
+2
+00:00:05,200 --> 00:00:11,690
+faced in their attempts to train deeper and better performing neural networks,
+
+3
+00:00:11,690 --> 00:00:17,510
+and what ideas have allowed them to overcome those initial obstacles.
+
+4
+00:00:17,510 --> 00:00:21,655
+Specifically, we'll focus on internal covariate shift,
+
+5
+00:00:21,655 --> 00:00:24,725
+which has addressed by batch normalization,
+
+6
+00:00:24,725 --> 00:00:28,150
+gradient preservation, which led to
+
+7
+00:00:28,150 --> 00:00:32,265
+the development of residual networks and AI accelerators.
+
+8
+00:00:32,265 --> 00:00:38,230
+Then, we'll finish by talking about state of the art network designs.
+
+9
+00:00:38,230 --> 00:00:43,230
+So let's start by talking about internal covariate shift.
+
+10
+00:00:43,230 --> 00:00:47,360
+One of the big primary culprits for
+
+11
+00:00:47,360 --> 00:00:51,480
+those long training times was internal covariate shift.
+
+12
+00:00:51,480 --> 00:00:55,520
+It's a fancy term for pretty intuitive concept.
+
+13
+00:00:55,520 --> 00:00:58,970
+Imagine that you're training a deep neural network.
+
+14
+00:00:58,970 --> 00:01:02,330
+So based on a batch of training examples,
+
+15
+00:01:02,330 --> 00:01:04,900
+you change the weights of layer number two.
+
+16
+00:01:04,900 --> 00:01:11,075
+This change is based on the current values for the weights and layer number one.
+
+17
+00:01:11,075 --> 00:01:15,960
+Now, in the next cycle with the next batch of inputs,
+
+18
+00:01:15,960 --> 00:01:19,200
+suppose you update the weights for layer number one.
+
+19
+00:01:19,200 --> 00:01:21,555
+Are the weights for layer number two,
+
+20
+00:01:21,555 --> 00:01:23,385
+are they still optimal?
+
+21
+00:01:23,385 --> 00:01:29,820
+No. The weight for layer number two were set based on the old values for layer one.
+
+22
+00:01:29,820 --> 00:01:32,695
+So the bigger the changes to the weights,
+
+23
+00:01:32,695 --> 00:01:35,320
+the more problematic this becomes,
+
+24
+00:01:35,320 --> 00:01:37,175
+and the deeper the network,
+
+25
+00:01:37,175 --> 00:01:40,070
+the more problematic this becomes because there are
+
+26
+00:01:40,070 --> 00:01:45,560
+many more layers all of whose values are changing all over the place.
+
+27
+00:01:45,560 --> 00:01:51,725
+So this effect is made worse by the shape of your common activation functions.
+
+28
+00:01:51,725 --> 00:01:57,005
+So put yourself in the shoes of a neuron in layer number 50.
+
+29
+00:01:57,005 --> 00:02:01,745
+Every time something changes in any of the layers before you,
+
+30
+00:02:01,745 --> 00:02:06,830
+all the tuning that's happened to your weight, worthless.
+
+31
+00:02:06,830 --> 00:02:09,560
+You don't want to think of neurons as people,
+
+32
+00:02:09,560 --> 00:02:13,370
+but the neuron does exactly what a person would do in that circumstance.
+
+33
+00:02:13,370 --> 00:02:18,080
+It retreats into the zone where the activation function is saturated so
+
+34
+00:02:18,080 --> 00:02:23,380
+that all the changes to its inputs don't affect its outputs.
+
+35
+00:02:23,380 --> 00:02:25,410
+The longer you train,
+
+36
+00:02:25,410 --> 00:02:31,160
+the more of your neurons will go into the zone where they're completely impervious,
+
+37
+00:02:31,160 --> 00:02:34,585
+where they don't listen to any of the outside effects.
+
+38
+00:02:34,585 --> 00:02:37,950
+This is what internal covariate shift is.
+
+39
+00:02:37,950 --> 00:02:39,680
+So how do you fix it?
+
+40
+00:02:39,680 --> 00:02:43,190
+How do you let the neurons continue learning?
+
+41
+00:02:43,190 --> 00:02:47,500
+One approach is to lower the learning rate.
+
+42
+00:02:47,500 --> 00:02:52,330
+If each weight changes only a very small amount,
+
+43
+00:02:52,330 --> 00:02:56,870
+then the changes are in that dramatic and perhaps the weights
+
+44
+00:02:56,870 --> 00:03:01,580
+that preset and the other layers they aren't affected too dramatically.
+
+45
+00:03:01,580 --> 00:03:04,010
+So the smaller the learning rate,
+
+46
+00:03:04,010 --> 00:03:08,900
+the less chance you have of neurons stopping to learn.
+
+47
+00:03:08,900 --> 00:03:12,070
+However, the smaller the learning rate,
+
+48
+00:03:12,070 --> 00:03:14,695
+the slower the network is to train.
+
+49
+00:03:14,695 --> 00:03:17,390
+So, this is what people said neural networks take
+
+50
+00:03:17,390 --> 00:03:19,900
+a long time to train the deeper they are.
+
+51
+00:03:19,900 --> 00:03:21,550
+So how do you fix this?
+
+52
+00:03:21,550 --> 00:03:24,615
+One approach is to use dropout.
+
+53
+00:03:24,615 --> 00:03:28,740
+When you put a dropout layers in between layers two and three,
+
+54
+00:03:28,740 --> 00:03:31,955
+then you make the weights in the hidden layer number three
+
+55
+00:03:31,955 --> 00:03:36,465
+somewhat robust to things that happen in hidden layer number two.
+
+56
+00:03:36,465 --> 00:03:41,125
+However, dropout is a form of regularization.
+
+57
+00:03:41,125 --> 00:03:44,620
+Regularization, by its very nature,
+
+58
+00:03:44,620 --> 00:03:50,250
+is a way of limiting a neurous network's ability to learn,
+
+59
+00:03:50,250 --> 00:03:52,590
+to overfit, but it's an ability to learn.
+
+60
+00:03:52,590 --> 00:03:54,250
+So bottom line,
+
+61
+00:03:54,250 --> 00:04:00,725
+internal covariates shift would typically limit how deep neural networks could be.
+
+62
+00:04:00,725 --> 00:04:02,815
+The deeper the neural network,
+
+63
+00:04:02,815 --> 00:04:05,000
+the harder it gets to train.
+
+64
+00:04:05,000 --> 00:04:07,760
+So a better solution to
+
+65
+00:04:07,760 --> 00:04:13,220
+the internal covariate shift problem was to basically transform the weights in
+
+66
+00:04:13,220 --> 00:04:16,550
+each layer in such a way that
+
+67
+00:04:16,550 --> 00:04:21,800
+subsequent layers could make assumptions about the weights in previous levels.
+
+68
+00:04:21,800 --> 00:04:24,230
+Not about the individual weights,
+
+69
+00:04:24,230 --> 00:04:28,230
+but about the weights of all the neurons in the previous layers.
+
+70
+00:04:28,230 --> 00:04:32,630
+Specifically, a technique called batch normalization
+
+71
+00:04:32,630 --> 00:04:37,480
+takes the weights of each layer and convert them into a z-score.
+
+72
+00:04:37,480 --> 00:04:41,060
+In other words, the weights are transformed such that
+
+73
+00:04:41,060 --> 00:04:47,365
+the average weight of all the neurons in a layer is zero and the variance is one.
+
+74
+00:04:47,365 --> 00:04:52,100
+This is done even as the network is getting trained so that
+
+75
+00:04:52,100 --> 00:04:59,720
+each layer can count on the fact that all of its inputs have been normalized.
+
+76
+00:04:59,720 --> 00:05:02,885
+Even if an individual weight changes,
+
+77
+00:05:02,885 --> 00:05:08,115
+overall, all the weights have the same statistical nature.
+
+78
+00:05:08,115 --> 00:05:11,675
+Because batch normalization has this effect
+
+79
+00:05:11,675 --> 00:05:15,230
+of enhancing the gradients at later iterations,
+
+80
+00:05:15,230 --> 00:05:17,595
+you end up training faster as well.
+
+81
+00:05:17,595 --> 00:05:21,660
+You see this in this graph of the number of training iterations that are
+
+82
+00:05:21,660 --> 00:05:27,045
+required with and without batch normalization.
+
+83
+00:05:27,045 --> 00:05:33,135
+If anything, this understates the effect of using batch norm.
+
+84
+00:05:33,135 --> 00:05:37,399
+Because you don't have to worry too much about internal covariate shift,
+
+85
+00:05:37,399 --> 00:05:41,620
+you can also use higher learning rates as well.
+
+86
+00:05:41,620 --> 00:05:45,905
+Implementing batch normalization is quite
+
+87
+00:05:45,905 --> 00:05:51,065
+straightforward in pre-made or canned estimator models.
+
+88
+00:05:51,065 --> 00:05:55,570
+Just set the batch norm property to be true and you will get
+
+89
+00:05:55,570 --> 00:05:58,450
+batch normalization after every
+
+90
+00:05:58,450 --> 00:06:03,410
+one of the three hidden layers in this particular network.
+
+91
+00:06:03,440 --> 00:06:09,790
+If you're using Keras to implement the model function in a custom estimator,
+
+92
+00:06:09,790 --> 00:06:14,625
+simply add a batch norm layer to your Keras model and you are done.
+
+93
+00:06:14,625 --> 00:06:17,890
+The mean and the variance are then computed during
+
+94
+00:06:17,890 --> 00:06:21,515
+training using an exponential moving average.
+
+95
+00:06:21,515 --> 00:06:25,330
+So the momentum term essentially determines the extent to
+
+96
+00:06:25,330 --> 00:06:29,295
+which recent values of those weights are emphasized,
+
+97
+00:06:29,295 --> 00:06:31,615
+compared to the values from,
+
+98
+00:06:31,615 --> 00:06:34,060
+say, 10 iterations ago.
+
+99
+00:06:34,060 --> 00:06:38,080
+Now, batch norm is a little trickier if you're using
+
+100
+00:06:38,080 --> 00:06:44,004
+custom estimator and your model function is written using core TensorFlow.
+
+101
+00:06:44,004 --> 00:06:46,150
+This code snippet here,
+
+102
+00:06:46,150 --> 00:06:52,470
+shows you how to implement batch normalizations of the outputs of layer number two.
+
+103
+00:06:52,470 --> 00:06:56,590
+The key thing to remember is that like dropout,
+
+104
+00:06:56,590 --> 00:07:01,660
+batch normalization is an operation you do only during training.
+
+105
+00:07:01,660 --> 00:07:04,900
+However, it's also necessary to change
+
+106
+00:07:04,900 --> 00:07:09,215
+the training operation to compute the mean and variance of the weights.
+
+107
+00:07:09,215 --> 00:07:12,535
+So this is done with the second part of the code snippet,
+
+108
+00:07:12,535 --> 00:07:15,340
+where updating of the mean and variance are added
+
+109
+00:07:15,340 --> 00:07:18,190
+as dependencies to the training operations.
+
+110
+00:07:18,190 --> 00:07:20,420
+So they are always done when training happens.
+
+111
+00:07:20,420 --> 00:07:23,480
+So since batch normalization came out,
+
+112
+00:07:23,480 --> 00:07:28,400
+there has been much work to improve upon normalization within neural networks,
+
+113
+00:07:28,400 --> 00:07:31,450
+and this remains an active area of research.
+
+114
+00:07:31,450 --> 00:07:35,590
+If you're curious, checkout these works on weight normalization,
+
+115
+00:07:35,590 --> 00:07:40,100
+layer normalization, self normalizing networks, et cetera.

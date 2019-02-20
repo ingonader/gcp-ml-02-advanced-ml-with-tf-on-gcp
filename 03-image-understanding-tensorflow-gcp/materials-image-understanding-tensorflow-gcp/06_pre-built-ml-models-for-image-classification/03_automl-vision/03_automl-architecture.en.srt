@@ -1,0 +1,145 @@
+1
+00:00:01,160 --> 00:00:05,988
+The big take away here is not what
+we did but what we didn't do.
+
+2
+00:00:05,988 --> 00:00:10,445
+As we talked about at the beginning,
+typically when building a custom model,
+
+3
+00:00:10,445 --> 00:00:13,972
+here are several steps which
+are complex and time intensive.
+
+4
+00:00:13,972 --> 00:00:16,169
+With AutoML,
+we don't have to do any of that.
+
+5
+00:00:16,169 --> 00:00:21,040
+However, as great as AutoML is,
+it can't solve every ML problem,
+
+6
+00:00:21,040 --> 00:00:26,174
+which is why you learned how to build
+a CNN by hand earlier in the course.
+
+7
+00:00:26,174 --> 00:00:31,774
+Behind the scenes, AutoML is
+powered by the latest ML research.
+
+8
+00:00:31,774 --> 00:00:36,297
+While your model trains,
+the AutoML platform actually trains and
+
+9
+00:00:36,297 --> 00:00:40,828
+evaluates multiple models and
+compares them against each other.
+
+10
+00:00:40,828 --> 00:00:44,908
+This NAS net approach or
+Neural Architecture Search,
+
+11
+00:00:44,908 --> 00:00:49,352
+produces an ensemble of ML models and
+chooses the best one.
+
+12
+00:00:49,352 --> 00:00:53,240
+Like Go and self driving cars,
+deep learning is now doing
+
+13
+00:00:53,240 --> 00:00:57,542
+deep learning as you saw with
+the Neural Architecture Search.
+
+14
+00:00:57,542 --> 00:01:02,439
+But how well does a co-list model you
+build with AutoML compare with some of
+
+15
+00:01:02,439 --> 00:01:08,206
+the other image classification models that
+you've heard about as part of this course?
+
+16
+00:01:08,206 --> 00:01:12,893
+Remember the image that
+competition launched in 2010, and
+
+17
+00:01:12,893 --> 00:01:16,288
+the winning CNN network Alex net in 2012?
+
+18
+00:01:16,288 --> 00:01:21,011
+Then, Google created it's Inception
+network for image classification,
+
+19
+00:01:21,011 --> 00:01:25,154
+which was revolutionary at that time for
+the depth of the network.
+
+20
+00:01:25,154 --> 00:01:30,674
+This graph is a refresh of the best
+models for image published in 2017.
+
+21
+00:01:30,674 --> 00:01:35,817
+The x-axis is model size,
+the y-axis is accuracy.
+
+22
+00:01:35,817 --> 00:01:41,744
+What you want is a small model, left on
+the x, with great accuracy, top of the y.
+
+23
+00:01:41,744 --> 00:01:45,545
+The goal is that green dot there.
+
+24
+00:01:45,545 --> 00:01:48,369
+Our world has been trending towards big,
+
+25
+00:01:48,369 --> 00:01:53,430
+heavy models that aren't exactly
+like a brain, that's the black line.
+
+26
+00:01:53,430 --> 00:01:57,429
+AutoML, powered by the NASNet,
+is shown in the red line.
+
+27
+00:01:57,429 --> 00:02:01,463
+The AutoML networks are smaller and
+more efficient.
+
+28
+00:02:01,463 --> 00:02:05,976
+I'll provide a link to the Google AI blog
+so you can track the latest developments.
+
+29
+00:02:05,976 --> 00:02:09,065
+But first, it's time to try
+your hand at both AutoML and
+
+30
+00:02:09,065 --> 00:02:11,120
+the Vision API that you saw earlier.

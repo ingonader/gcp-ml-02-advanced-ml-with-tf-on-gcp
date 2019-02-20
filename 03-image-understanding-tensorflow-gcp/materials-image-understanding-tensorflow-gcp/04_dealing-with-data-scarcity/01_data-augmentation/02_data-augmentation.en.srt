@@ -1,0 +1,699 @@
+1
+00:00:00,000 --> 00:00:02,940
+Let's start by talking about data augmentation.
+
+2
+00:00:02,940 --> 00:00:05,055
+We will use the iris dataset,
+
+3
+00:00:05,055 --> 00:00:07,380
+where each data point describes a flower.
+
+4
+00:00:07,380 --> 00:00:10,530
+Imagine you're trying to build a classification model to predict
+
+5
+00:00:10,530 --> 00:00:14,040
+the species of flower and your data look like this scatterplot.
+
+6
+00:00:14,040 --> 00:00:16,980
+The position in space represents our features and
+
+7
+00:00:16,980 --> 00:00:19,890
+the color represents the true class which each point belongs,
+
+8
+00:00:19,890 --> 00:00:24,185
+which in this case is a species of iris. Here's a question.
+
+9
+00:00:24,185 --> 00:00:26,835
+I've introduced a new point in green.
+
+10
+00:00:26,835 --> 00:00:29,920
+Which species with this point belong to?
+
+11
+00:00:29,920 --> 00:00:31,890
+Probably virginica.
+
+12
+00:00:31,890 --> 00:00:33,880
+But how sure are you?
+
+13
+00:00:33,880 --> 00:00:35,880
+Now, what about in this case?
+
+14
+00:00:35,880 --> 00:00:38,090
+Our unknown data point is not changed at all,
+
+15
+00:00:38,090 --> 00:00:40,585
+but I've included one other class from the data.
+
+16
+00:00:40,585 --> 00:00:42,995
+Maybe now it's not so obvious.
+
+17
+00:00:42,995 --> 00:00:45,380
+During data augmentation, we must determine
+
+18
+00:00:45,380 --> 00:00:48,470
+the ground truth at points in feature space where we have no label.
+
+19
+00:00:48,470 --> 00:00:52,540
+Now, ask yourself, how comfortable are you making these guesses so far?
+
+20
+00:00:52,540 --> 00:00:55,330
+Depending on the relationship between the features and the labels,
+
+21
+00:00:55,330 --> 00:00:56,965
+and where the point in question is,
+
+22
+00:00:56,965 --> 00:01:00,820
+we may be more or less comfortable making these sorts of guesses.
+
+23
+00:01:00,820 --> 00:01:04,010
+However, by framing data augmentation in this way,
+
+24
+00:01:04,010 --> 00:01:06,500
+it should be clear that making the right sorts of guesses
+
+25
+00:01:06,500 --> 00:01:09,870
+is a problem that can be just as hard as training a good model.
+
+26
+00:01:09,870 --> 00:01:15,230
+One way we can make our task easier is by being intentional about which points we add.
+
+27
+00:01:15,230 --> 00:01:18,480
+So, instead of picking a random point in feature space,
+
+28
+00:01:18,480 --> 00:01:20,395
+we can pick points strategically.
+
+29
+00:01:20,395 --> 00:01:22,520
+For example, we could pick points inside
+
+30
+00:01:22,520 --> 00:01:25,955
+a cluster of data points that all belong to the same class.
+
+31
+00:01:25,955 --> 00:01:29,735
+It turns out though that unstructured data like images,
+
+32
+00:01:29,735 --> 00:01:32,345
+these sorts of neighborhoods don't really exist.
+
+33
+00:01:32,345 --> 00:01:35,240
+Most data points are actually very far from each other.
+
+34
+00:01:35,240 --> 00:01:37,265
+So, we need another strategy.
+
+35
+00:01:37,265 --> 00:01:41,240
+Another strategy is to pick a point and think carefully about its neighborhood and
+
+36
+00:01:41,240 --> 00:01:46,155
+which points around it we can safely treat as similar enough to have the same class.
+
+37
+00:01:46,155 --> 00:01:49,640
+The trick is figuring out what we mean by similar enough,
+
+38
+00:01:49,640 --> 00:01:53,510
+and that will vary with every domain and can be more art than science.
+
+39
+00:01:53,510 --> 00:01:55,020
+Both techniques are valid,
+
+40
+00:01:55,020 --> 00:01:57,010
+but we'll focus on using the latter today.
+
+41
+00:01:57,010 --> 00:01:58,780
+Let's see some examples.
+
+42
+00:01:58,780 --> 00:02:04,355
+There are many commonly used data augmentation practices used in the images domain.
+
+43
+00:02:04,355 --> 00:02:06,305
+Here's a picture of a bridge.
+
+44
+00:02:06,305 --> 00:02:09,500
+Let's pretend we want our augmented dataset with images that would also
+
+45
+00:02:09,500 --> 00:02:12,940
+belong to the same class and which are similar to this picture.
+
+46
+00:02:12,940 --> 00:02:14,795
+You can blur the image.
+
+47
+00:02:14,795 --> 00:02:16,640
+You can sharpen the image.
+
+48
+00:02:16,640 --> 00:02:19,710
+You can resize it. You can crop it.
+
+49
+00:02:19,710 --> 00:02:24,320
+You can rotate it. You can flip it either vertically or horizontally.
+
+50
+00:02:24,320 --> 00:02:25,925
+You can change the hue,
+
+51
+00:02:25,925 --> 00:02:28,744
+or the brightness, or the contrast.
+
+52
+00:02:28,744 --> 00:02:31,400
+However, you always have to be careful and
+
+53
+00:02:31,400 --> 00:02:33,890
+consider whether the transformed image will still have
+
+54
+00:02:33,890 --> 00:02:36,800
+the same class and whether forcing the model to deal with
+
+55
+00:02:36,800 --> 00:02:40,270
+this new image will ultimately help it learn or hinder it.
+
+56
+00:02:40,270 --> 00:02:42,705
+Sometimes color is informative.
+
+57
+00:02:42,705 --> 00:02:44,950
+If not for the dark edges on this mushroom,
+
+58
+00:02:44,950 --> 00:02:46,450
+they basically look identical.
+
+59
+00:02:46,450 --> 00:02:49,864
+But one of these is poisonous and the other delicious.
+
+60
+00:02:49,864 --> 00:02:52,735
+Sometimes orientation is important.
+
+61
+00:02:52,735 --> 00:02:57,630
+One of these is the flag of the Ivory Coast and the other the flag for Ireland.
+
+62
+00:02:57,630 --> 00:03:00,165
+Sometimes small details are important,
+
+63
+00:03:00,165 --> 00:03:02,360
+the kind that might disappear with blurring.
+
+64
+00:03:02,360 --> 00:03:04,370
+One of the differences between jaguars and
+
+65
+00:03:04,370 --> 00:03:07,960
+leopards are the small dots that appear in there fir.
+
+66
+00:03:07,960 --> 00:03:12,350
+Sometimes performing a transformation will change an image from one we're likely
+
+67
+00:03:12,350 --> 00:03:16,310
+to encounter in inference time to one we're very unlikely to encounter.
+
+68
+00:03:16,310 --> 00:03:18,750
+That's because often, the set of all inputs we see in
+
+69
+00:03:18,750 --> 00:03:21,325
+inference time is not uniformly distributed.
+
+70
+00:03:21,325 --> 00:03:22,820
+It has some pattern.
+
+71
+00:03:22,820 --> 00:03:26,270
+Forcing the model to try and learn about data that it will never
+
+72
+00:03:26,270 --> 00:03:29,955
+encounter in production could easily make your model worse.
+
+73
+00:03:29,955 --> 00:03:32,990
+Imagine if you horizontally flipped all
+
+74
+00:03:32,990 --> 00:03:35,755
+of your pictures of natural language in an OCR model.
+
+75
+00:03:35,755 --> 00:03:40,530
+Text encountered at prediction time will generally not be flipped this way.
+
+76
+00:03:40,710 --> 00:03:45,045
+What would happen if you augmented your data at decision time?
+
+77
+00:03:45,045 --> 00:03:48,395
+Generally speaking, researchers don't do this.
+
+78
+00:03:48,395 --> 00:03:50,480
+Users are interested in the predictions at
+
+79
+00:03:50,480 --> 00:03:53,480
+the features that they submit and not at similar features.
+
+80
+00:03:53,480 --> 00:03:56,320
+However, sometimes to boost performance,
+
+81
+00:03:56,320 --> 00:03:59,300
+engineers will augment the data many times at
+
+82
+00:03:59,300 --> 00:04:03,120
+decision time and then take the average of all of those predictions.
+
+83
+00:04:03,120 --> 00:04:07,554
+This is actually a form of ensembling like random forests.
+
+84
+00:04:07,554 --> 00:04:10,000
+Let's say our task is to accept
+
+85
+00:04:10,000 --> 00:04:14,070
+a professionally photographed flower picture and classify it by species.
+
+86
+00:04:14,070 --> 00:04:18,080
+Would randomly changing the brightness and contrast during data augmentation likely
+
+87
+00:04:18,080 --> 00:04:22,335
+improved performance? No, it will not.
+
+88
+00:04:22,335 --> 00:04:24,740
+The reason it wouldn't is because these pictures
+
+89
+00:04:24,740 --> 00:04:27,050
+are professionally photographed, and thus,
+
+90
+00:04:27,050 --> 00:04:30,650
+there are consistent brightness and contrast levels both in the dataset,
+
+91
+00:04:30,650 --> 00:04:33,520
+but also in the expected future input.
+
+92
+00:04:33,520 --> 00:04:37,750
+If the task were to classify any picture of the flower however,
+
+93
+00:04:37,750 --> 00:04:41,434
+manipulating brightness and contrast would likely improve performance.
+
+94
+00:04:41,434 --> 00:04:45,775
+Let's see how you would implement your image data augmentation in TensorFlow.
+
+95
+00:04:45,775 --> 00:04:48,380
+Well, you could implement data augmentation as part of
+
+96
+00:04:48,380 --> 00:04:51,540
+a pre-processing pipeline and then store the results on disk.
+
+97
+00:04:51,540 --> 00:04:53,165
+Because feature space is infinite,
+
+98
+00:04:53,165 --> 00:04:55,580
+doing so would mean limiting yourself to a tiny slice of
+
+99
+00:04:55,580 --> 00:04:58,810
+the feature space or potentially incurring massive storage costs.
+
+100
+00:04:58,810 --> 00:05:02,390
+So, instead, we're going to implement it as part of our input function,
+
+101
+00:05:02,390 --> 00:05:06,440
+so that the model gets a different augmented image every time it trains.
+
+102
+00:05:06,440 --> 00:05:09,330
+We'll be making use of the TensorFlow image branch,
+
+103
+00:05:09,330 --> 00:05:12,440
+the library, which has many directly usable functions.
+
+104
+00:05:12,440 --> 00:05:17,025
+For brevity, I'm going to import this branches TFI in my code.
+
+105
+00:05:17,025 --> 00:05:20,690
+Our implementation of augmentation follows the same pattern of how
+
+106
+00:05:20,690 --> 00:05:23,695
+we parse CSV previously during datasets.
+
+107
+00:05:23,695 --> 00:05:26,060
+We wanted to find a function that performs
+
+108
+00:05:26,060 --> 00:05:29,745
+augmentation on an image and then apply it using the map function.
+
+109
+00:05:29,745 --> 00:05:33,575
+Here, I assume that our data set is a CSV files,
+
+110
+00:05:33,575 --> 00:05:35,520
+file names, and labels.
+
+111
+00:05:35,520 --> 00:05:38,785
+The first lines of this function should be familiar to you.
+
+112
+00:05:38,785 --> 00:05:44,360
+We read a CSV file and map the decode CSV function to each row in the file.
+
+113
+00:05:44,360 --> 00:05:47,270
+However, unlike our structured examples previously,
+
+114
+00:05:47,270 --> 00:05:50,715
+where the CSV file contain the data we wanted to parse to our model,
+
+115
+00:05:50,715 --> 00:05:52,880
+and so our decode CSV function simply
+
+116
+00:05:52,880 --> 00:05:56,325
+returned the features dictionary and labels that the model expected,
+
+117
+00:05:56,325 --> 00:05:58,415
+here we do something different.
+
+118
+00:05:58,415 --> 00:06:00,950
+We begin by reading the image that lives at the path
+
+119
+00:06:00,950 --> 00:06:04,085
+specified in the file with the read_file function.
+
+120
+00:06:04,085 --> 00:06:07,155
+This converts that file into bytes in memory.
+
+121
+00:06:07,155 --> 00:06:09,115
+After we've collected the bytes,
+
+122
+00:06:09,115 --> 00:06:11,110
+we need to convert them into JPEGs.
+
+123
+00:06:11,110 --> 00:06:13,010
+To do so, we use another map,
+
+124
+00:06:13,010 --> 00:06:16,235
+but this time, we use the decode_jpeg function.
+
+125
+00:06:16,235 --> 00:06:19,635
+The decode_jpeg function yields a tensor of integers,
+
+126
+00:06:19,635 --> 00:06:21,230
+but we need flows for our model.
+
+127
+00:06:21,230 --> 00:06:23,810
+So, next, we called the convert_image_dtype function,
+
+128
+00:06:23,810 --> 00:06:25,480
+which takes the integer values,
+
+129
+00:06:25,480 --> 00:06:27,510
+which range from zero to 255,
+
+130
+00:06:27,510 --> 00:06:30,135
+and maps them to the range of zero to one.
+
+131
+00:06:30,135 --> 00:06:35,180
+Now we're ready to do some basic resizing to match the shape that our model expects.
+
+132
+00:06:35,180 --> 00:06:38,175
+This is crucial, or we'll get shape errors.
+
+133
+00:06:38,175 --> 00:06:41,085
+Resize bilinear expects a batch of images.
+
+134
+00:06:41,085 --> 00:06:44,635
+So, first, we expand the dimensions and create a batch dimension.
+
+135
+00:06:44,635 --> 00:06:46,455
+However, once we've resized,
+
+136
+00:06:46,455 --> 00:06:47,910
+we no longer need the batch.
+
+137
+00:06:47,910 --> 00:06:50,000
+So, we discard it, we squeeze.
+
+138
+00:06:50,000 --> 00:06:53,265
+This removes the dimensions with only one element in them.
+
+139
+00:06:53,265 --> 00:06:55,920
+After resizing, we're ready to augment.
+
+140
+00:06:55,920 --> 00:07:00,910
+That's is simple as calling map yet again and parsing in our augment_image function.
+
+141
+00:07:00,910 --> 00:07:03,470
+TensorFlow image comes packed with the number
+
+142
+00:07:03,470 --> 00:07:05,870
+of image augmentation functions that we'll use.
+
+143
+00:07:05,870 --> 00:07:08,185
+I encourage you to explore the library.
+
+144
+00:07:08,185 --> 00:07:11,105
+However, even though we have a lot of powerful functions,
+
+145
+00:07:11,105 --> 00:07:13,175
+as we saw on the section on CNNs,
+
+146
+00:07:13,175 --> 00:07:15,650
+a lot of powerful image processing techniques are
+
+147
+00:07:15,650 --> 00:07:18,990
+actually based on simple convolutions behind the scenes.
+
+148
+00:07:18,990 --> 00:07:21,350
+In my implementation of augment image,
+
+149
+00:07:21,350 --> 00:07:25,185
+I first expand the dims by adding an extra dimension at the zeroth index.
+
+150
+00:07:25,185 --> 00:07:28,365
+I do this so that we can call resize bilinear again.
+
+151
+00:07:28,365 --> 00:07:30,300
+Note that when we resize here,
+
+152
+00:07:30,300 --> 00:07:35,120
+we're actually making the resulting image bigger than height and width. We do this.
+
+153
+00:07:35,120 --> 00:07:36,550
+When we crop later on,
+
+154
+00:07:36,550 --> 00:07:39,695
+we're less likely to crop out something crucial in the image.
+
+155
+00:07:39,695 --> 00:07:43,990
+After that, we use a number of functions each with the word random in them,
+
+156
+00:07:43,990 --> 00:07:47,500
+which means that they'll have different effects every time they're called.
+
+157
+00:07:47,500 --> 00:07:51,175
+Random crop randomly crops a portion of the image.
+
+158
+00:07:51,175 --> 00:07:53,190
+Note that we parse in the height, width,
+
+159
+00:07:53,190 --> 00:07:55,445
+and num_channels that our model expects,
+
+160
+00:07:55,445 --> 00:07:57,900
+and so the cropped image is the right size.
+
+161
+00:07:57,900 --> 00:08:00,595
+Then we randomly flip horizontally.
+
+162
+00:08:00,595 --> 00:08:02,975
+Then we randomly change the brightness.
+
+163
+00:08:02,975 --> 00:08:06,390
+Note the parameter max delta that we parse in.
+
+164
+00:08:06,390 --> 00:08:09,620
+As I said before, data augmentation requires
+
+165
+00:08:09,620 --> 00:08:14,390
+a deep understanding of the domain and what transformations are licensed by your task.
+
+166
+00:08:14,390 --> 00:08:19,215
+In this case, we're committing a change of up to 23 percent of the brightness.
+
+167
+00:08:19,215 --> 00:08:23,120
+Determining the best value for these sorts of parameters will be a combination of
+
+168
+00:08:23,120 --> 00:08:27,245
+what you know about the domain and possibly also hyperparameter tuning.
+
+169
+00:08:27,245 --> 00:08:30,280
+The same thing applies to random contrast.
+
+170
+00:08:30,280 --> 00:08:35,000
+The last thing we need to do is to make our image ready for your machine learning code.
+
+171
+00:08:35,000 --> 00:08:38,990
+Our postprocessed_image function takes the values in our image,
+
+172
+00:08:38,990 --> 00:08:40,845
+which currently range from zero to one,
+
+173
+00:08:40,845 --> 00:08:44,160
+and maps them instead to the negative one to one range.
+
+174
+00:08:44,160 --> 00:08:46,205
+This is helpful for the optimizer.
+
+175
+00:08:46,205 --> 00:08:50,780
+Finally, it packages the image backup inside a dictionary.

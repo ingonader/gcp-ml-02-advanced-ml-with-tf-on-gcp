@@ -1,0 +1,383 @@
+1
+00:00:00,000 --> 00:00:03,555
+Hi there, and welcome to dealing with data scarcity.
+
+2
+00:00:03,555 --> 00:00:07,785
+My name is Max and I'm a tactical curriculum developer at Google Cloud.
+
+3
+00:00:07,785 --> 00:00:10,655
+In this module, we'll focus on data scarcity,
+
+4
+00:00:10,655 --> 00:00:12,445
+what it is and why it's important,
+
+5
+00:00:12,445 --> 00:00:15,025
+before moving on to what you need to do about it.
+
+6
+00:00:15,025 --> 00:00:19,140
+In this module, you'll learn how to: calculate the number of parameters for
+
+7
+00:00:19,140 --> 00:00:23,315
+ML models and understand why our data needs grow with the number of parameters,
+
+8
+00:00:23,315 --> 00:00:27,360
+understand how to add data augmentation to a model and the impact that it has,
+
+9
+00:00:27,360 --> 00:00:30,075
+apply your understanding of CNNs to the concepts of
+
+10
+00:00:30,075 --> 00:00:35,365
+task dependence and understand how transfer learning decreases the need for data.
+
+11
+00:00:35,365 --> 00:00:38,130
+A common problem in machine learning is that you
+
+12
+00:00:38,130 --> 00:00:41,200
+don't have enough labeled data to train your model.
+
+13
+00:00:41,200 --> 00:00:44,235
+Although mobile devices, IoT sensors,
+
+14
+00:00:44,235 --> 00:00:48,330
+and other devices outfitted with cameras have made data much more freely available,
+
+15
+00:00:48,330 --> 00:00:51,650
+at the same time, models have also grown more complex,
+
+16
+00:00:51,650 --> 00:00:54,140
+and as a result our data needs are also greater.
+
+17
+00:00:54,140 --> 00:00:58,070
+Let's think about the fact that model training consists of initializing our parameters
+
+18
+00:00:58,070 --> 00:01:02,905
+at more or less random values and then estimating the best value for each one.
+
+19
+00:01:02,905 --> 00:01:05,720
+Generally speaking, the more parameters we have,
+
+20
+00:01:05,720 --> 00:01:06,995
+the more data we need.
+
+21
+00:01:06,995 --> 00:01:11,285
+So, let's consider the number of parameters in the models we've seen so far.
+
+22
+00:01:11,285 --> 00:01:14,525
+The code for our linear model looks like this.
+
+23
+00:01:14,525 --> 00:01:18,380
+Our linear model has a weights variable and a bias term and
+
+24
+00:01:18,380 --> 00:01:22,910
+its output is the product of our input with our weights plus the biases.
+
+25
+00:01:22,910 --> 00:01:26,500
+How many parameters are in our linear model?
+
+26
+00:01:26,680 --> 00:01:32,215
+The correct answer is height times width times nclasses, plus nclasses.
+
+27
+00:01:32,215 --> 00:01:37,180
+A weights variable w has height times width times nclasses elements.
+
+28
+00:01:37,180 --> 00:01:39,690
+For perspective, on our MNIST task,
+
+29
+00:01:39,690 --> 00:01:42,980
+this comes out to 7,840 parameters.
+
+30
+00:01:42,980 --> 00:01:45,650
+Adding a and b are biased term which has
+
+31
+00:01:45,650 --> 00:01:50,980
+nclasses elements and the total becomes 7,850 parameters.
+
+32
+00:01:50,980 --> 00:01:53,315
+The DNN model consists of
+
+33
+00:01:53,315 --> 00:01:57,910
+three fully connected layers with sizes that decrease as we progress through the network.
+
+34
+00:01:57,910 --> 00:02:00,860
+Then, a final layer that linearly combines
+
+35
+00:02:00,860 --> 00:02:05,160
+the nodes in the second to last layer into nclasses different nodes.
+
+36
+00:02:05,160 --> 00:02:08,925
+How many parameters are in the h1 layer?
+
+37
+00:02:08,925 --> 00:02:14,120
+The correct answer is height times width times 300, plus 300.
+
+38
+00:02:14,120 --> 00:02:17,420
+Keep in mind, we're adding weights between every one of
+
+39
+00:02:17,420 --> 00:02:20,870
+our height times width inputs and our 300 neurons.
+
+40
+00:02:20,870 --> 00:02:24,895
+Additionally, each neuron also has its own bias term.
+
+41
+00:02:24,895 --> 00:02:29,080
+If you did the math across the entire network and added all that up,
+
+42
+00:02:29,080 --> 00:02:35,775
+it comes to about 270,000 parameters or over 30 times the number in our linear model.
+
+43
+00:02:35,775 --> 00:02:39,380
+As we mentioned, one of the benefits of using a CNN,
+
+44
+00:02:39,380 --> 00:02:43,115
+is that it requires fewer parameters than a comparably performing DNN.
+
+45
+00:02:43,115 --> 00:02:45,185
+How many does it actually use?
+
+46
+00:02:45,185 --> 00:02:47,035
+Let's take a deeper look.
+
+47
+00:02:47,035 --> 00:02:48,975
+Here's a CNN model,
+
+48
+00:02:48,975 --> 00:02:51,560
+we have two convolutional layers each followed
+
+49
+00:02:51,560 --> 00:02:54,420
+by a pulling layer to further reduce the size of the network.
+
+50
+00:02:54,420 --> 00:02:59,030
+Then finally, a dense layer with 300 neurons before the classification layer.
+
+51
+00:02:59,030 --> 00:03:02,570
+How many parameters are in the C1 layer?
+
+52
+00:03:02,570 --> 00:03:05,730
+The first two answers should strike you as odd,
+
+53
+00:03:05,730 --> 00:03:08,150
+because they suggest that the number of parameters in
+
+54
+00:03:08,150 --> 00:03:11,500
+a given layer of a CNN grows with the size of the input.
+
+55
+00:03:11,500 --> 00:03:13,960
+But think back to how CNN works,
+
+56
+00:03:13,960 --> 00:03:16,725
+we convolve kernels over our input.
+
+57
+00:03:16,725 --> 00:03:18,975
+The kernels are our parameters,
+
+58
+00:03:18,975 --> 00:03:22,710
+where you expect to see a height and width terms is the output.
+
+59
+00:03:22,710 --> 00:03:26,160
+In this case, the correct answer is 10 times nine, plus 10.
+
+60
+00:03:26,160 --> 00:03:31,085
+Where 10 is the number of filters and nine is the volume of each filter which is three,
+
+61
+00:03:31,085 --> 00:03:33,055
+times three, times one.
+
+62
+00:03:33,055 --> 00:03:36,275
+This calculation was done for our MNIST example,
+
+63
+00:03:36,275 --> 00:03:39,920
+but let's see how this approach generalizes to inputs with more than one channel.
+
+64
+00:03:39,920 --> 00:03:43,570
+To compute the number of parameters in a convolutional layer, first,
+
+65
+00:03:43,570 --> 00:03:46,460
+compute the number of parameters per filter and then,
+
+66
+00:03:46,460 --> 00:03:48,910
+multiply by the number of filters.
+
+67
+00:03:48,910 --> 00:03:52,500
+The number of parameters per filter is equal to the height of the kernel,
+
+68
+00:03:52,500 --> 00:03:53,720
+times the width of the kernel,
+
+69
+00:03:53,720 --> 00:03:55,685
+times the depth of the kernel.
+
+70
+00:03:55,685 --> 00:04:00,355
+The depth of the kernel is equal to the depth of the layer that comes before it.
+
+71
+00:04:00,355 --> 00:04:05,375
+Then, multiply the number of parameters per kernel by the number of filters.
+
+72
+00:04:05,375 --> 00:04:08,340
+Finally, add bias terms for each filter.
+
+73
+00:04:08,340 --> 00:04:12,275
+Ultimately, if you compute the number of parameters for the entire network,
+
+74
+00:04:12,275 --> 00:04:14,640
+you'll see the total is about 300,000.
+
+75
+00:04:14,640 --> 00:04:20,250
+You might think, didn't he say that CNNs have fewer parameters than DNNs? I did say that.
+
+76
+00:04:20,250 --> 00:04:23,900
+The number 300,000 is mostly a function of the size,
+
+77
+00:04:23,900 --> 00:04:27,485
+of the fully connected layers after our convolutional layers.
+
+78
+00:04:27,485 --> 00:04:30,275
+About 90 percent of all the parameters in this model,
+
+79
+00:04:30,275 --> 00:04:32,015
+come from this one layer.
+
+80
+00:04:32,015 --> 00:04:33,920
+If you compare the number of parameters in
+
+81
+00:04:33,920 --> 00:04:37,100
+the convolutional portion against the fully connected portion,
+
+82
+00:04:37,100 --> 00:04:39,845
+the latter has many times more parameters.
+
+83
+00:04:39,845 --> 00:04:42,650
+So far we've looked at two examples.
+
+84
+00:04:42,650 --> 00:04:46,495
+Real-world models have significantly more parameters.
+
+85
+00:04:46,495 --> 00:04:49,040
+Here are some of the most high-performing image models of
+
+86
+00:04:49,040 --> 00:04:51,710
+the last few years and the number of parameters in each.
+
+87
+00:04:51,710 --> 00:04:57,260
+We will be going over ResNet and GoogleNet in greater detail, in a later module.
+
+88
+00:04:57,260 --> 00:05:00,665
+Tens of millions of parameters is a lot.
+
+89
+00:05:00,665 --> 00:05:03,525
+What do you do when the number of labeled data points you have,
+
+90
+00:05:03,525 --> 00:05:07,665
+is a lot less than the of number of model parameters you want to fit?
+
+91
+00:05:07,665 --> 00:05:10,850
+Well, if you have some labeled data already,
+
+92
+00:05:10,850 --> 00:05:14,480
+there are two common methods of attacking the problem of data scarcity.
+
+93
+00:05:14,480 --> 00:05:17,375
+The first method which is called data augmentation,
+
+94
+00:05:17,375 --> 00:05:19,950
+addresses the problem by creating more data.
+
+95
+00:05:19,950 --> 00:05:22,430
+The second method which is called transfer learning,
+
+96
+00:05:22,430 --> 00:05:27,680
+addresses the problem by making the model more data efficient reducing its need for data.

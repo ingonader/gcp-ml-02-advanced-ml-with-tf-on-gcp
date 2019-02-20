@@ -1,0 +1,167 @@
+1
+00:00:00,000 --> 00:00:04,785
+Another way to reduce the amount of data that needs to be processed by CNN,
+
+2
+00:00:04,785 --> 00:00:07,570
+is to apply the maxpooling operation.
+
+3
+00:00:07,570 --> 00:00:10,520
+Although maxpooling has fallen out of favor was
+
+4
+00:00:10,520 --> 00:00:13,640
+designers of more recent CNN architectures like resonant,
+
+5
+00:00:13,640 --> 00:00:17,885
+it's still often used in combination with a convolutional layer.
+
+6
+00:00:17,885 --> 00:00:21,600
+The maxpooling operation is like a convolution that returns
+
+7
+00:00:21,600 --> 00:00:26,440
+the maximum value out of all the input data values passed to a kernel.
+
+8
+00:00:26,440 --> 00:00:29,130
+In the graphic, you can see that six is
+
+9
+00:00:29,130 --> 00:00:33,045
+the maximum value when the kernel is in a position shown in pink.
+
+10
+00:00:33,045 --> 00:00:37,755
+Eight is the maximum value for the kernel position shown in green and so on.
+
+11
+00:00:37,755 --> 00:00:42,110
+When this type of maxpooling operation is applied to the grasshopper image,
+
+12
+00:00:42,110 --> 00:00:47,430
+the image size is cut in half along both the horizontal and vertical dimensions.
+
+13
+00:00:47,430 --> 00:00:50,540
+Also, keep in mind that a pooling layer that
+
+14
+00:00:50,540 --> 00:00:53,980
+relies on maxpooling does not require any weights,
+
+15
+00:00:53,980 --> 00:00:55,940
+since the operation only cares about
+
+16
+00:00:55,940 --> 00:01:00,095
+the largest value out of the input values evaluated by the kernel.
+
+17
+00:01:00,095 --> 00:01:01,790
+This means that during
+
+18
+00:01:01,790 --> 00:01:05,690
+training none of the parameters of the pooling layer need to change.
+
+19
+00:01:05,720 --> 00:01:10,670
+Maxpooling operations are just part of a pooling layer in a network.
+
+20
+00:01:10,670 --> 00:01:14,030
+In most cases, the inputs to the pooling layer are
+
+21
+00:01:14,030 --> 00:01:17,705
+the outputs of the convolutional layers as you can see on the screen.
+
+22
+00:01:17,705 --> 00:01:22,595
+TensorFlow provides the TF layers max-pooling two D API,
+
+23
+00:01:22,595 --> 00:01:25,530
+to add the max-pooling layer to a neural network.
+
+24
+00:01:25,530 --> 00:01:28,600
+The values of the parameter shown in the code snippet,
+
+25
+00:01:28,600 --> 00:01:33,250
+configure the maxpooling layer with a two-by-two kernel in a stride of two.
+
+26
+00:01:33,250 --> 00:01:37,450
+These specific values are commonly used for pooling layers.
+
+27
+00:01:37,450 --> 00:01:41,540
+The last thing to notice about this code snippet is that instead of using
+
+28
+00:01:41,540 --> 00:01:45,230
+the parameter name kernel size as with a convolutional layer,
+
+29
+00:01:45,230 --> 00:01:47,435
+you need to use the name pool size.
+
+30
+00:01:47,435 --> 00:01:49,610
+Here's a quiz. What are
+
+31
+00:01:49,610 --> 00:01:53,950
+the smaller red numbers represent in this image you've seen before?
+
+32
+00:01:54,460 --> 00:01:58,790
+The weights of the particular kernel we're applying,
+
+33
+00:01:58,790 --> 00:02:01,900
+in other words, what feature are we detecting.
+
+34
+00:02:01,900 --> 00:02:06,385
+The intensity of the pixel for that area of the original image,
+
+35
+00:02:06,385 --> 00:02:09,700
+the channel depth of the image.
+
+36
+00:02:09,830 --> 00:02:14,295
+The answer is the weights of the particular kernel we're applying.
+
+37
+00:02:14,295 --> 00:02:17,625
+In other words, what feature we're detecting.
+
+38
+00:02:17,625 --> 00:02:20,720
+Given the above, what is the value of
+
+39
+00:02:20,720 --> 00:02:24,670
+the output that the kernel will generate for this part of the image?
+
+40
+00:02:24,720 --> 00:02:27,490
+The correct answer is four.
+
+41
+00:02:27,490 --> 00:02:30,425
+Remember that you just multiply the kernel weights
+
+42
+00:02:30,425 --> 00:02:33,950
+against the input image values and take the sum.

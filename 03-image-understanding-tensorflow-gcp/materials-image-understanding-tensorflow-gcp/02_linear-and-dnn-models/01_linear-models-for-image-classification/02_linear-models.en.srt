@@ -1,0 +1,519 @@
+1
+00:00:00,000 --> 00:00:01,750
+As we talked about before,
+
+2
+00:00:01,750 --> 00:00:05,580
+it's always best to start with a simpler model and gradually introduce complexity,
+
+3
+00:00:05,580 --> 00:00:07,545
+until your performance criteria are met.
+
+4
+00:00:07,545 --> 00:00:09,375
+That's because simple models are less likely to
+
+5
+00:00:09,375 --> 00:00:12,700
+over-fit and are often easier to interpret and maintain.
+
+6
+00:00:12,700 --> 00:00:15,665
+So let's start with the simplest model we've covered so far in this course,
+
+7
+00:00:15,665 --> 00:00:19,740
+the linear model and see how it copes with this new domain of images.
+
+8
+00:00:19,740 --> 00:00:23,400
+Let's take a high-level talks with the TensorFlow code that we're going to use.
+
+9
+00:00:23,400 --> 00:00:26,085
+We'll start with a code that's responsible for learning.
+
+10
+00:00:26,085 --> 00:00:30,794
+Then show how this ties together with a familiar TensorFlow object, the estimator.
+
+11
+00:00:30,794 --> 00:00:35,240
+Then we'll review how the data are passed into the model during training and evaluation.
+
+12
+00:00:35,240 --> 00:00:40,940
+Finally, we'll put all the pieces together by calling our old friend, train and evaluate.
+
+13
+00:00:40,940 --> 00:00:44,245
+Here's the code that's responsible for making predictions.
+
+14
+00:00:44,245 --> 00:00:47,875
+Notice the three constants outside the function, that set the height,
+
+15
+00:00:47,875 --> 00:00:52,730
+the width of each image as 28 and the number of classes as 10.
+
+16
+00:00:52,730 --> 00:00:54,845
+Again you got numbers zero through nine.
+
+17
+00:00:54,845 --> 00:00:58,255
+Notice also that we've added the comments at the end of every line,
+
+18
+00:00:58,255 --> 00:01:01,895
+describing the shape and the tensor at that point of execution.
+
+19
+00:01:01,895 --> 00:01:04,220
+It's a really good practice to get into because it makes
+
+20
+00:01:04,220 --> 00:01:07,205
+debugging your code later that much easier.
+
+21
+00:01:07,205 --> 00:01:09,125
+In this very first line of code,
+
+22
+00:01:09,125 --> 00:01:13,100
+tf.reshaped transforms the shape of the image tensor from a batch of
+
+23
+00:01:13,100 --> 00:01:18,635
+2D tensors to a batch 1D tensors an operation that you can think of as flattening.
+
+24
+00:01:18,635 --> 00:01:22,360
+Next, we create a variable to represent our weights.
+
+25
+00:01:22,360 --> 00:01:24,520
+If this was a binary classification task,
+
+26
+00:01:24,520 --> 00:01:28,950
+we only have one weight for our component vector in our input feature tensor.
+
+27
+00:01:28,950 --> 00:01:32,290
+However, because this is a multi-class classification task,
+
+28
+00:01:32,290 --> 00:01:36,820
+we need connections between every input of which there are height times width
+
+29
+00:01:36,820 --> 00:01:42,020
+and every output of which there are in classes which is 10 for handwritten digit example.
+
+30
+00:01:42,020 --> 00:01:45,610
+We will initialize the values in the w tensor to be zero.
+
+31
+00:01:45,610 --> 00:01:47,570
+A question for you,
+
+32
+00:01:47,570 --> 00:01:49,720
+"Why doesn't the shape of the w tensor include
+
+33
+00:01:49,720 --> 00:01:52,550
+a dimension that's equal to the batch size?
+
+34
+00:01:52,550 --> 00:01:54,725
+Well, there are two reasons.
+
+35
+00:01:54,725 --> 00:01:59,135
+First, and fundamentally, this would imply that we want to learn different models,
+
+36
+00:01:59,135 --> 00:02:01,310
+for different images in our batch.
+
+37
+00:02:01,310 --> 00:02:04,400
+When the whole point is that we want one model to learn,
+
+38
+00:02:04,400 --> 00:02:07,170
+that works well for the entire input domain.
+
+39
+00:02:07,170 --> 00:02:11,665
+Secondly, we've let the batch size dimension of our input to be negative one.
+
+40
+00:02:11,665 --> 00:02:14,885
+That indicates that we expect this to vary at runtime.
+
+41
+00:02:14,885 --> 00:02:18,460
+This would mean that the shape of our variables would change at runtime as well,
+
+42
+00:02:18,460 --> 00:02:20,595
+which will likely throw an error.
+
+43
+00:02:20,595 --> 00:02:23,299
+After defining a variable for our weights,
+
+44
+00:02:23,299 --> 00:02:25,820
+we create a variable to represent our bias terms,
+
+45
+00:02:25,820 --> 00:02:28,285
+because each output node gets its own bias.
+
+46
+00:02:28,285 --> 00:02:32,240
+The shape of the vector in the tensor is nclasses.
+
+47
+00:02:32,240 --> 00:02:35,435
+Finally, we compute our logits for our linear model,
+
+48
+00:02:35,435 --> 00:02:38,505
+by simply multiplying our extensor by our w matrix,
+
+49
+00:02:38,505 --> 00:02:41,085
+add in our bias term to get our logits.
+
+50
+00:02:41,085 --> 00:02:43,070
+Once we have our code for learning,
+
+51
+00:02:43,070 --> 00:02:45,405
+we can construct an estimator spec.
+
+52
+00:02:45,405 --> 00:02:49,595
+Estimator spec is the only required parameter for constructing an estimator,
+
+53
+00:02:49,595 --> 00:02:51,055
+which as you may recall,
+
+54
+00:02:51,055 --> 00:02:54,365
+is the object that we tell to train and evaluate.
+
+55
+00:02:54,365 --> 00:02:58,850
+An estimator spec needs to know the mode of what it is that we're actually doing.
+
+56
+00:02:58,850 --> 00:03:02,110
+Is it training, evaluating or predicting?
+
+57
+00:03:02,110 --> 00:03:05,385
+It also needs to know the predictions for a given input,
+
+58
+00:03:05,385 --> 00:03:07,940
+which in this case will be our probabilities.
+
+59
+00:03:07,940 --> 00:03:10,805
+Then, it needs to know the current loss,
+
+60
+00:03:10,805 --> 00:03:14,220
+in which operation controls model training.
+
+61
+00:03:14,400 --> 00:03:17,020
+Note that the predictions will be collected from
+
+62
+00:03:17,020 --> 00:03:20,950
+our linear model function and that there was passed through a softmax function,
+
+63
+00:03:20,950 --> 00:03:24,265
+that you learned about earlier to ultimately get our probabilities.
+
+64
+00:03:24,265 --> 00:03:26,530
+Note too that our loss function is computed using
+
+65
+00:03:26,530 --> 00:03:28,989
+a different more numerically stable function,
+
+66
+00:03:28,989 --> 00:03:32,200
+which computes the entropy of the softmax vectors.
+
+67
+00:03:32,200 --> 00:03:34,090
+Once we have an estimator spec,
+
+68
+00:03:34,090 --> 00:03:36,580
+we're ready to construct our model.
+
+69
+00:03:36,580 --> 00:03:40,270
+We can do this as simply as passing it to the estimator constructor.
+
+70
+00:03:40,270 --> 00:03:43,310
+Note that we'll refer to it as a model function.
+
+71
+00:03:43,310 --> 00:03:47,025
+Now, let's take a look at how data is passed into our model while it's training.
+
+72
+00:03:47,025 --> 00:03:48,940
+Here we make use of a convenient function,
+
+73
+00:03:48,940 --> 00:03:52,155
+the TensorFlow library, that loads data into memory on our machine.
+
+74
+00:03:52,155 --> 00:03:53,690
+For production level performance,
+
+75
+00:03:53,690 --> 00:03:55,720
+you should consider using the data sets API.
+
+76
+00:03:55,720 --> 00:03:57,090
+However, for our purposes,
+
+77
+00:03:57,090 --> 00:03:58,550
+what you are going to see here works really
+
+78
+00:03:58,550 --> 00:04:01,495
+well and that's what you can be practicing inside of your labs.
+
+79
+00:04:01,495 --> 00:04:04,435
+Our input function expects Numpy arrays,
+
+80
+00:04:04,435 --> 00:04:06,135
+for both input and output.
+
+81
+00:04:06,135 --> 00:04:09,255
+Note that these are defined in the MNIST variable,
+
+82
+00:04:09,255 --> 00:04:11,900
+which you've set using some TensorFlow library code,
+
+83
+00:04:11,900 --> 00:04:14,820
+that retrieves the images and labels.
+
+84
+00:04:14,820 --> 00:04:18,010
+Note that we set the number of epochs to none here.
+
+85
+00:04:18,010 --> 00:04:20,910
+The reason we're doing that is because in a distributed context,
+
+86
+00:04:20,910 --> 00:04:22,280
+which is what we're preparing for,
+
+87
+00:04:22,280 --> 00:04:25,600
+the only supported method of stopping training is through the train spec,
+
+88
+00:04:25,600 --> 00:04:27,445
+an object that we're going to look at next.
+
+89
+00:04:27,445 --> 00:04:32,005
+In essence, this code delegates the decision to stop to the train spec.
+
+90
+00:04:32,005 --> 00:04:36,110
+The definition of the eval input function is identical except for three things.
+
+91
+00:04:36,110 --> 00:04:37,540
+It uses different data,
+
+92
+00:04:37,540 --> 00:04:41,085
+it doesn't shuffle, and the number of epochs is set to one.
+
+93
+00:04:41,085 --> 00:04:43,130
+We don't need to shuffle, because we don't want to go through
+
+94
+00:04:43,130 --> 00:04:45,275
+the entire evaluation set every time.
+
+95
+00:04:45,275 --> 00:04:48,000
+We don't need more than one epoch, because during evaluation,
+
+96
+00:04:48,000 --> 00:04:49,245
+we don't update our model,
+
+97
+00:04:49,245 --> 00:04:52,550
+so one exposure per data point is sufficient.
+
+98
+00:04:52,550 --> 00:04:55,825
+Once we defined our training and eval input functions,
+
+99
+00:04:55,825 --> 00:04:58,595
+we can use them to build or train in eval specs.
+
+100
+00:04:58,595 --> 00:05:02,720
+Train and eval specs are basically configuration for training and evaluation.
+
+101
+00:05:02,720 --> 00:05:04,940
+They both require an input function.
+
+102
+00:05:04,940 --> 00:05:09,275
+Now for train specs, it's also highly recommended that you define max steps.
+
+103
+00:05:09,275 --> 00:05:12,120
+Max steps tells the model when to stop training.
+
+104
+00:05:12,120 --> 00:05:15,455
+It is the only supported way of doing so during distributed training.
+
+105
+00:05:15,455 --> 00:05:20,910
+If you set max steps to none and the input function as number of epoch set to none,
+
+106
+00:05:20,910 --> 00:05:22,800
+the model's going to train forever,
+
+107
+00:05:22,800 --> 00:05:24,575
+which is pretty bad.
+
+108
+00:05:24,575 --> 00:05:26,560
+In addition to the input function,
+
+109
+00:05:26,560 --> 00:05:29,965
+the eval spec also accepts a parameter that governs this steps.
+
+110
+00:05:29,965 --> 00:05:33,770
+Although in this case, it's safe to align the input function itself to stop.
+
+111
+00:05:33,770 --> 00:05:36,860
+That's why we set the steps parameter here to none.
+
+112
+00:05:36,860 --> 00:05:39,610
+The eval spec is also responsible for exporting
+
+113
+00:05:39,610 --> 00:05:42,425
+the model of the disk and so it requires an exporter.
+
+114
+00:05:42,425 --> 00:05:45,860
+Now that the exporter references as serving input function,
+
+115
+00:05:45,860 --> 00:05:47,660
+when it comes time to serve the model,
+
+116
+00:05:47,660 --> 00:05:52,530
+it will need to know how to map what the client sends towards what the model expects.
+
+117
+00:05:52,530 --> 00:05:57,775
+Lastly, throttle and seconds governs how frequently evaluation is done.
+
+118
+00:05:57,775 --> 00:06:01,310
+Evaluation frequency is a trade-off between our desire to understand
+
+119
+00:06:01,310 --> 00:06:03,260
+how well the model's performing and
+
+120
+00:06:03,260 --> 00:06:05,820
+wanting to have a model trained as quickly as possible.
+
+121
+00:06:05,820 --> 00:06:08,260
+The default value is for 600,
+
+122
+00:06:08,260 --> 00:06:10,810
+which is five minutes in between evaluations.
+
+123
+00:06:10,810 --> 00:06:13,820
+That might be fine for models that take a really long time to train,
+
+124
+00:06:13,820 --> 00:06:16,100
+but in our case our model is maturing rather quickly,
+
+125
+00:06:16,100 --> 00:06:18,535
+so I'm going set it to a much smaller number.
+
+126
+00:06:18,535 --> 00:06:22,370
+Finally, we get to call the train and evaluate function,
+
+127
+00:06:22,370 --> 00:06:24,760
+which expects our estimator as well as our train and
+
+128
+00:06:24,760 --> 00:06:27,775
+evals pecs to configure training and evaluation.
+
+129
+00:06:27,775 --> 00:06:30,025
+Train evaluate will initiate training,
+
+130
+00:06:30,025 --> 00:06:35,090
+periodically evaluate the model as per the frequency that we've set in our eval spec.

@@ -1,0 +1,355 @@
+1
+00:00:00,000 --> 00:00:02,570
+Hi. My name is Carl Osipov,
+
+2
+00:00:02,570 --> 00:00:04,990
+and I'm a program manager here at Google.
+
+3
+00:00:04,990 --> 00:00:08,270
+In my role, I work with customers to help them succeed with
+
+4
+00:00:08,270 --> 00:00:11,895
+Google Cloud for machine learning training and certification.
+
+5
+00:00:11,895 --> 00:00:15,695
+This module will introduce convolutional neural networks,
+
+6
+00:00:15,695 --> 00:00:17,235
+or CNN's for short,
+
+7
+00:00:17,235 --> 00:00:21,215
+and gets you started with implementing CNNs using TensorFlow.
+
+8
+00:00:21,215 --> 00:00:25,005
+Since 2012, CNN-based systems achieved
+
+9
+00:00:25,005 --> 00:00:28,740
+unparalleled performance on tasks like image recognition,
+
+10
+00:00:28,740 --> 00:00:34,340
+and even at playing the ancient board game of Go against the best human champions.
+
+11
+00:00:34,750 --> 00:00:41,085
+The plan is to start with just the highlights of history covering how CNNs came about,
+
+12
+00:00:41,085 --> 00:00:44,725
+and why and they help detect visual patterns in images.
+
+13
+00:00:44,725 --> 00:00:47,895
+Then you will learn about what makes
+
+14
+00:00:47,895 --> 00:00:51,320
+CNNs different from traditional neural network architectures,
+
+15
+00:00:51,320 --> 00:00:54,695
+and specifically how convolutions can extract features from
+
+16
+00:00:54,695 --> 00:00:59,090
+images by imitating a filter sliding over image pixels.
+
+17
+00:00:59,090 --> 00:01:02,900
+After that, you will dive deep into the key parameters you
+
+18
+00:01:02,900 --> 00:01:06,375
+should consider when setting up your neural net including padding,
+
+19
+00:01:06,375 --> 00:01:09,005
+stride length, activation functions,
+
+20
+00:01:09,005 --> 00:01:11,100
+and the number of channels.
+
+21
+00:01:11,100 --> 00:01:13,524
+In addition to convolutions,
+
+22
+00:01:13,524 --> 00:01:16,520
+you will see that many CNN architectures use pooling
+
+23
+00:01:16,520 --> 00:01:20,690
+layers to help detect patterns regardless of their location in an image,
+
+24
+00:01:20,690 --> 00:01:24,905
+while reducing the computational requirements for training CNNs.
+
+25
+00:01:24,905 --> 00:01:28,750
+You will explore sample TensorFlow code for creating
+
+26
+00:01:28,750 --> 00:01:31,420
+convolutional layers in implementing all of
+
+27
+00:01:31,420 --> 00:01:34,910
+the filters and pulling settings covered in the module.
+
+28
+00:01:34,910 --> 00:01:39,830
+Lastly, you will review the complete CNN architecture end-to-end,
+
+29
+00:01:39,830 --> 00:01:42,760
+and get started was a TensorFlow code example in
+
+30
+00:01:42,760 --> 00:01:47,405
+the upcoming lab to implement your own convolutional neural network.
+
+31
+00:01:47,405 --> 00:01:51,140
+So, what are convolutional neural networks?
+
+32
+00:01:51,140 --> 00:01:53,255
+To prepare to answer this question,
+
+33
+00:01:53,255 --> 00:01:58,575
+it's important to recap two key points introduced earlier in the course.
+
+34
+00:01:58,575 --> 00:02:01,495
+First, neural networks for
+
+35
+00:02:01,495 --> 00:02:05,640
+image recognition can get complex with hundreds of millions of weights,
+
+36
+00:02:05,640 --> 00:02:07,685
+even for relatively small images.
+
+37
+00:02:07,685 --> 00:02:10,640
+For example, many front-facing cameras on
+
+38
+00:02:10,640 --> 00:02:15,330
+smart phones take pictures consisting of approximately eight megapixels.
+
+39
+00:02:15,330 --> 00:02:19,880
+If each of the pixel values was connected to just 100 neurons,
+
+40
+00:02:19,880 --> 00:02:22,740
+that would mean having to train billions of weights,
+
+41
+00:02:22,740 --> 00:02:26,280
+and that's just for the first hidden layer of the network.
+
+42
+00:02:26,280 --> 00:02:31,920
+This problem is caused by the density of the connections of the neural network layer.
+
+43
+00:02:31,920 --> 00:02:36,980
+In this module, a dense layer is used to describe a neural network layer
+
+44
+00:02:36,980 --> 00:02:42,200
+where every input has a weighted connection to every neuron of the next layer,
+
+45
+00:02:42,200 --> 00:02:44,260
+as shown in the diagram on the screen.
+
+46
+00:02:44,260 --> 00:02:47,110
+Second, in a dense layer,
+
+47
+00:02:47,110 --> 00:02:51,585
+it does not matter which neuron is trained to process which input values.
+
+48
+00:02:51,585 --> 00:02:55,345
+For example, with the deep neural network model for amnesty,
+
+49
+00:02:55,345 --> 00:02:57,190
+which you saw earlier in this course.
+
+50
+00:02:57,190 --> 00:03:00,830
+If you randomly reshuffle the order of pixels in the images,
+
+51
+00:03:00,830 --> 00:03:04,350
+taking care to reshuffle the corresponding weights the same way,
+
+52
+00:03:04,350 --> 00:03:06,955
+the classification performance stays the same.
+
+53
+00:03:06,955 --> 00:03:12,495
+However, when human beings look at images where the pixels have been randomly shuffled,
+
+54
+00:03:12,495 --> 00:03:14,845
+the image just looks like noise.
+
+55
+00:03:14,845 --> 00:03:16,735
+So, for image recognition,
+
+56
+00:03:16,735 --> 00:03:20,465
+how pixels are placed next to each other is critically important.
+
+57
+00:03:20,465 --> 00:03:24,860
+Prior to 2012, many image recognition systems used
+
+58
+00:03:24,860 --> 00:03:27,860
+complex feature engineering approaches to convert
+
+59
+00:03:27,860 --> 00:03:31,185
+input images to features that can be used for machine learning.
+
+60
+00:03:31,185 --> 00:03:33,925
+As you know from the earliest specialization,
+
+61
+00:03:33,925 --> 00:03:39,470
+feature based approaches preprocess raw input data to extract various patterns or
+
+62
+00:03:39,470 --> 00:03:41,570
+features that simplify the training on
+
+63
+00:03:41,570 --> 00:03:45,840
+a machine-learning model for specific tasks like object classification.
+
+64
+00:03:45,840 --> 00:03:48,775
+For example, in an image of a cat,
+
+65
+00:03:48,775 --> 00:03:50,955
+the features could be eyes,
+
+66
+00:03:50,955 --> 00:03:53,840
+ears, nose or whiskers.
+
+67
+00:03:53,840 --> 00:03:57,440
+A feature of a cat side could in turn be defined in terms of
+
+68
+00:03:57,440 --> 00:04:02,155
+lower level features like patterns of bright color next to black color of the pupil,
+
+69
+00:04:02,155 --> 00:04:05,960
+when an elliptical shape feature for the contours of the eye.
+
+70
+00:04:05,960 --> 00:04:08,360
+These used to be done using image
+
+71
+00:04:08,360 --> 00:04:12,970
+pre-processing operations such as Gabor filters or collocation matrices.
+
+72
+00:04:12,970 --> 00:04:17,330
+So, here are the pre-2012 models which relied heavily on
+
+73
+00:04:17,330 --> 00:04:22,450
+the [inaudible] practitioner to engineer and define which features for the model to identify.
+
+74
+00:04:22,450 --> 00:04:25,490
+Since 2012, designers of
+
+75
+00:04:25,490 --> 00:04:30,020
+image recognition systems have started to rely on convolutional neural networks,
+
+76
+00:04:30,020 --> 00:04:34,440
+made popular by systems like AlexNet and Google's own inception network.
+
+77
+00:04:34,440 --> 00:04:38,895
+In addition to achieving high performance on image recognition tasks,
+
+78
+00:04:38,895 --> 00:04:41,390
+CNNs have dramatically reduced the need for
+
+79
+00:04:41,390 --> 00:04:45,830
+feature engineering as part of the image recognition system design.
+
+80
+00:04:45,830 --> 00:04:49,645
+Instead of manually designing image processing filters,
+
+81
+00:04:49,645 --> 00:04:56,010
+CNNs allow the weights of general purpose filters to be learned during training itself.
+
+82
+00:04:56,010 --> 00:04:58,640
+In the remaining part of the module,
+
+83
+00:04:58,640 --> 00:05:00,680
+you will learn about two new types of
+
+84
+00:05:00,680 --> 00:05:05,540
+deep neural network layers; convolutional and pooling.
+
+85
+00:05:05,580 --> 00:05:11,449
+You will explore in more detail what are convolutions and convolutional layers,
+
+86
+00:05:11,449 --> 00:05:14,745
+what types of features they can extract, and later,
+
+87
+00:05:14,745 --> 00:05:18,410
+you will see how sequencing these layers and combining them with
+
+88
+00:05:18,410 --> 00:05:20,495
+a traditional neural network architecture
+
+89
+00:05:20,495 --> 00:05:24,560
+helped improve the performance of image recognition systems.

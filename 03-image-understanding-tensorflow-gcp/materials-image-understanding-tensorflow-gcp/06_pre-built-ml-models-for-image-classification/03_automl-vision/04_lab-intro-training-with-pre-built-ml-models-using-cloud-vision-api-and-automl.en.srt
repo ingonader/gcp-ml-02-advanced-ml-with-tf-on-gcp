@@ -1,0 +1,43 @@
+1
+00:00:00,100 --> 00:00:04,070
+In this lab, you will experiment with pre-built models,
+
+2
+00:00:04,070 --> 00:00:05,490
+so there's no coding.
+
+3
+00:00:05,490 --> 00:00:09,000
+First, we'll start with the pre-trained Vision API,
+
+4
+00:00:09,000 --> 00:00:10,870
+where we don't need to bring our own data,
+
+5
+00:00:10,870 --> 00:00:16,900
+and then we'll progress into AutoML for more sophisticated custom labeling that we need.
+
+6
+00:00:16,900 --> 00:00:20,775
+In this pre-built ML lab for image classification,
+
+7
+00:00:20,775 --> 00:00:24,235
+you will set up an API key for ML Vision API,
+
+8
+00:00:24,235 --> 00:00:28,290
+invoke the pre-trained ML Vision API to classify images,
+
+9
+00:00:28,290 --> 00:00:31,285
+review label predictions from Vision API,
+
+10
+00:00:31,285 --> 00:00:36,105
+train and evaluate a customer Auto ML vision image classification model
+
+11
+00:00:36,105 --> 00:00:39,960
+and predict with Auto ML on new images.

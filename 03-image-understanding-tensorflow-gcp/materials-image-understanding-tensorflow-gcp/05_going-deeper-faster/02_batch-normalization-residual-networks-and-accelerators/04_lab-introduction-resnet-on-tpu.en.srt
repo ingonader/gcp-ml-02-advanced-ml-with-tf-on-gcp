@@ -1,0 +1,107 @@
+1
+00:00:00,000 --> 00:00:06,270
+The code that was submitted for Stanford DAWN benchmark is open source,
+
+2
+00:00:06,270 --> 00:00:08,475
+and it's readily available on GitHub.
+
+3
+00:00:08,475 --> 00:00:11,110
+In the optional lab that follows,
+
+4
+00:00:11,110 --> 00:00:15,435
+you can try training the ResNet model on your own data.
+
+5
+00:00:15,435 --> 00:00:21,545
+You will start with a dataset of JPEG images each of which has been labeled.
+
+6
+00:00:21,545 --> 00:00:26,185
+You will then convert the JPEG images to TensorFlow records.
+
+7
+00:00:26,185 --> 00:00:30,885
+This is particularly important for the TPU because otherwise,
+
+8
+00:00:30,885 --> 00:00:33,515
+the TPU will waste its time waiting for
+
+9
+00:00:33,515 --> 00:00:36,485
+inputs to be processed and read into the pipeline.
+
+10
+00:00:36,485 --> 00:00:38,385
+When you're using TPUs,
+
+11
+00:00:38,385 --> 00:00:41,600
+you want to read data the fastest possible way.
+
+12
+00:00:41,600 --> 00:00:46,295
+So, it's worth converting the images into TF records first.
+
+13
+00:00:46,295 --> 00:00:48,280
+Once you have the TF records,
+
+14
+00:00:48,280 --> 00:00:50,475
+you will run a cloud ML Engine job,
+
+15
+00:00:50,475 --> 00:00:53,675
+specifying the scale tier to be BASIC_TPU.
+
+16
+00:00:53,675 --> 00:00:56,725
+The lab is optional.
+
+17
+00:00:56,725 --> 00:01:02,070
+Why is it optional? Because you have to do it in your own Google Cloud account.
+
+18
+00:01:02,070 --> 00:01:04,865
+You cannot do it on Qwiklabs labs because of
+
+19
+00:01:04,865 --> 00:01:08,785
+technical difficulties today around getting TPU quarter.
+
+20
+00:01:08,785 --> 00:01:11,990
+The total cost to do this lab on Google Cloud,
+
+21
+00:01:11,990 --> 00:01:13,610
+if you decide to do it in your account,
+
+22
+00:01:13,610 --> 00:01:15,275
+it's about three dollars,
+
+23
+00:01:15,275 --> 00:01:16,970
+but the lab is optional.
+
+24
+00:01:16,970 --> 00:01:18,590
+It doesn't involve any coding.
+
+25
+00:01:18,590 --> 00:01:21,740
+It's just a question of running several scripts.
+
+26
+00:01:21,740 --> 00:01:23,205
+So, I'll walk through it,
+
+27
+00:01:23,205 --> 00:01:26,100
+so you could just wait for the debrief.

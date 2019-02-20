@@ -1,0 +1,59 @@
+1
+00:00:00,000 --> 00:00:04,620
+Now, it's time for you to put your linear model to the test using the MNIST dataset.
+
+2
+00:00:04,620 --> 00:00:06,195
+How do you think it will do?
+
+3
+00:00:06,195 --> 00:00:10,095
+In this lab, you will import the training dataset of MNIST handwritten images,
+
+4
+00:00:10,095 --> 00:00:12,675
+you'll reshape and preprocess the image data,
+
+5
+00:00:12,675 --> 00:00:15,980
+then you'll set up your linear classifier model with ten classes,
+
+6
+00:00:15,980 --> 00:00:18,080
+one for each possible digits zero to nine.
+
+7
+00:00:18,080 --> 00:00:20,190
+Then, you'll define and create your estimator spec in
+
+8
+00:00:20,190 --> 00:00:22,450
+TensorFlow to create your custom estimator.
+
+9
+00:00:22,450 --> 00:00:26,000
+Then, you'll define and run your training and evaluate function to train against
+
+10
+00:00:26,000 --> 00:00:30,460
+the input dataset in 60,000 images and evaluate your model's performance.
+
+11
+00:00:30,460 --> 00:00:34,740
+But keep in mind, you have multiple attempts to start and stop each of these Qwiklabs.
+
+12
+00:00:34,740 --> 00:00:37,435
+So, don't worry if you didn't make it through all the way on the first try,
+
+13
+00:00:37,435 --> 00:00:40,250
+or if you want to reverse engineer the code in the notebook and
+
+14
+00:00:40,250 --> 00:00:43,640
+experiment with it after completing the lab, you can do so.
+
+15
+00:00:43,640 --> 00:00:46,740
+We'll review the solution together in the following video.

@@ -1,0 +1,67 @@
+1
+00:00:00,000 --> 00:00:04,705
+Okay. So, let's go ahead and try out Vision API in this lab.
+
+2
+00:00:04,705 --> 00:00:09,905
+As you can see, here I'm logged into cloud.google.com/vision,
+
+3
+00:00:09,905 --> 00:00:13,780
+and this is where I can access the APIs directly from the browser.
+
+4
+00:00:13,780 --> 00:00:15,985
+As I scroll down further in the page,
+
+5
+00:00:15,985 --> 00:00:20,595
+notice that there's a box where you can try the API by dragging an image,
+
+6
+00:00:20,595 --> 00:00:25,315
+and I have already prepared a file that contains a cloud image in it.
+
+7
+00:00:25,315 --> 00:00:26,855
+So, as you recall,
+
+8
+00:00:26,855 --> 00:00:30,530
+the problem statement was to check if an image contains a cloud.
+
+9
+00:00:30,530 --> 00:00:34,175
+In this case, once I've uploaded the file,
+
+10
+00:00:34,175 --> 00:00:38,755
+the cloud was recognized with 99 percent accuracy.
+
+11
+00:00:38,755 --> 00:00:41,990
+So, that's great, but this was an easy problem.
+
+12
+00:00:41,990 --> 00:00:48,240
+Let's make it harder. Now, it's time to try the web browser version of the API yourself.
+
+13
+00:00:48,240 --> 00:00:50,900
+I'll provide these free images for you,
+
+14
+00:00:50,900 --> 00:00:53,875
+but feel free to experiment and provide your own.
+
+15
+00:00:53,875 --> 00:00:57,945
+Head to cloud.google.com/vision.
+
+16
+00:00:57,945 --> 00:00:59,780
+Try the Vision API,
+
+17
+00:00:59,780 --> 00:01:03,070
+and then come back to the lesson when you're done.

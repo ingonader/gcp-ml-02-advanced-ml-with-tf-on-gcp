@@ -1,0 +1,383 @@
+1
+00:00:00,000 --> 00:00:03,360
+One of the other techniques for dealing with data scarcity
+
+2
+00:00:03,360 --> 00:00:06,860
+when you have some labeled data is to use transfer learning.
+
+3
+00:00:06,860 --> 00:00:11,340
+As mentioned before, transfer learning attacks the problem from a different angle.
+
+4
+00:00:11,340 --> 00:00:13,530
+Rather than creating more data,
+
+5
+00:00:13,530 --> 00:00:16,080
+transfer learning decreases our need for data.
+
+6
+00:00:16,080 --> 00:00:19,890
+It does so by initializing our parameters with better values.
+
+7
+00:00:19,890 --> 00:00:23,340
+You can think of optimisation as a journey through weight space,
+
+8
+00:00:23,340 --> 00:00:25,800
+where we pay data in time to get from
+
+9
+00:00:25,800 --> 00:00:29,355
+our random initialization point in weight space to some optimum.
+
+10
+00:00:29,355 --> 00:00:31,005
+As we've said previously,
+
+11
+00:00:31,005 --> 00:00:33,210
+unstructured data domains often require
+
+12
+00:00:33,210 --> 00:00:36,755
+complex models and complex models require lots of data.
+
+13
+00:00:36,755 --> 00:00:39,090
+So, often it's the case that the amount of data that we
+
+14
+00:00:39,090 --> 00:00:42,330
+have is less than the amount of data that we need.
+
+15
+00:00:42,330 --> 00:00:44,440
+So, using the normal optimization procedure,
+
+16
+00:00:44,440 --> 00:00:46,535
+we'd be unable to reach an optimum.
+
+17
+00:00:46,535 --> 00:00:50,150
+Transfer learning changes the problem of optimization.
+
+18
+00:00:50,150 --> 00:00:53,180
+Instead of travelling from a random point in weight space,
+
+19
+00:00:53,180 --> 00:00:55,230
+which is likely to be far from an optimum,
+
+20
+00:00:55,230 --> 00:00:58,990
+we instead start travelling from a point much nearer to an optimum.
+
+21
+00:00:58,990 --> 00:01:02,920
+The way we do this is by starting in an optimum for a related task.
+
+22
+00:01:02,920 --> 00:01:08,090
+Here, the blue line represents the cost paid to train a related model to an optimum.
+
+23
+00:01:08,090 --> 00:01:11,180
+The red line represents the cost we would pay if
+
+24
+00:01:11,180 --> 00:01:14,345
+we wanted to train a model to perform well on our task.
+
+25
+00:01:14,345 --> 00:01:17,765
+The orange line represents the cost to train a model that has
+
+26
+00:01:17,765 --> 00:01:22,035
+already been trained on the related task to do well on our task.
+
+27
+00:01:22,035 --> 00:01:26,370
+The power of transfer learning comes from the relative sizes of these lines.
+
+28
+00:01:26,370 --> 00:01:29,480
+When the orange line is smaller than the red line,
+
+29
+00:01:29,480 --> 00:01:33,530
+then transfer learning is much less expensive than training a model from scratch.
+
+30
+00:01:33,530 --> 00:01:37,735
+The size of the orange line is determined by the similarity of the tasks.
+
+31
+00:01:37,735 --> 00:01:41,900
+So, it's very important to choose as similar a task as possible.
+
+32
+00:01:41,900 --> 00:01:46,010
+ImageNet classification is a popular choice for the related task,
+
+33
+00:01:46,010 --> 00:01:50,635
+when trying to train a computer vision model because of its size and variety.
+
+34
+00:01:50,635 --> 00:01:55,209
+ImageNet has 14 million input-output pairs and 20,000 categories,
+
+35
+00:01:55,209 --> 00:01:58,105
+spanning many objects in the natural world.
+
+36
+00:01:58,105 --> 00:02:00,230
+Because of the variety of its classes,
+
+37
+00:02:00,230 --> 00:02:04,190
+ImageNet remains a common benchmark for computer vision models.
+
+38
+00:02:04,190 --> 00:02:09,460
+So, how do we take a model trained on a related task and use it for our task?
+
+39
+00:02:09,460 --> 00:02:12,260
+A naive form of transfer learning would simply
+
+40
+00:02:12,260 --> 00:02:14,850
+take this model and then use it to predict on our task.
+
+41
+00:02:14,850 --> 00:02:18,800
+But what if the classes in our task don't align with those used in ImageNet,
+
+42
+00:02:18,800 --> 00:02:21,535
+which recall is a general-purpose data set?
+
+43
+00:02:21,535 --> 00:02:24,050
+Not only would you have shape errors if
+
+44
+00:02:24,050 --> 00:02:27,350
+your labels aren't the same as the shapes used to train the model,
+
+45
+00:02:27,350 --> 00:02:31,460
+which is likely to be the case unless your task also has 20,000 categories,
+
+46
+00:02:31,460 --> 00:02:33,950
+but in the event that there isn't a one-to-one
+
+47
+00:02:33,950 --> 00:02:37,100
+one between each of your classes and those on ImageNet,
+
+48
+00:02:37,100 --> 00:02:40,850
+the source models prior training might actually undermine performance.
+
+49
+00:02:40,850 --> 00:02:45,575
+So instead, we take a subtler approach to transfering the source model to our task.
+
+50
+00:02:45,575 --> 00:02:48,169
+Instead of using the model as is,
+
+51
+00:02:48,169 --> 00:02:51,680
+we remove the parts that are closely aligned to the source task and
+
+52
+00:02:51,680 --> 00:02:55,790
+replace them with newly initialized parts that are task appropriate.
+
+53
+00:02:55,790 --> 00:03:01,400
+Which parts of the source image model are most closely aligned to the source task?
+
+54
+00:03:02,300 --> 00:03:05,045
+If you say the layers near the output,
+
+55
+00:03:05,045 --> 00:03:06,580
+you are precisely right.
+
+56
+00:03:06,580 --> 00:03:11,455
+You can think of the parts in the model as existing on a spectrum of task-independence.
+
+57
+00:03:11,455 --> 00:03:13,655
+At one extreme, is the final layer,
+
+58
+00:03:13,655 --> 00:03:17,410
+which has a number of nodes equal to whatever was appropriate to the source task.
+
+59
+00:03:17,410 --> 00:03:20,090
+At the other extreme is the input layer.
+
+60
+00:03:20,090 --> 00:03:22,310
+Assuming you resize the image inputs,
+
+61
+00:03:22,310 --> 00:03:25,370
+your inputs could theoretically handle any RGB image,
+
+62
+00:03:25,370 --> 00:03:27,730
+which means they're completely a task-independent.
+
+63
+00:03:27,730 --> 00:03:30,515
+The convolutional layers following your input are
+
+64
+00:03:30,515 --> 00:03:34,115
+also nearly task-independent and as we progress through the network,
+
+65
+00:03:34,115 --> 00:03:37,075
+they become increasingly task-dependent.
+
+66
+00:03:37,075 --> 00:03:40,580
+Recall that, CNNs learn a hierarchy of features
+
+67
+00:03:40,580 --> 00:03:43,880
+beginning with the most general and ending with the most specific.
+
+68
+00:03:43,880 --> 00:03:48,090
+These early convolutional layers are maximally activated by simple patterns,
+
+69
+00:03:48,090 --> 00:03:52,270
+that the network might observe over a span of a few pixels in the original image.
+
+70
+00:03:52,270 --> 00:03:55,340
+As we progress from input to output in the network,
+
+71
+00:03:55,340 --> 00:03:59,840
+these layers become semantically more specific and consequently more task dependent.
+
+72
+00:03:59,840 --> 00:04:03,430
+I wish it were possible to say where the best place to cut the network is,
+
+73
+00:04:03,430 --> 00:04:05,405
+but neural networks are not modular,
+
+74
+00:04:05,405 --> 00:04:07,145
+like say the parts of a car.
+
+75
+00:04:07,145 --> 00:04:10,520
+There is no layer that could become from the network in order to say,
+
+76
+00:04:10,520 --> 00:04:13,010
+reduce its performance on a certain class and that's
+
+77
+00:04:13,010 --> 00:04:16,025
+because neural networks learn distributed representations,
+
+78
+00:04:16,025 --> 00:04:18,965
+where each neuron is responsible for many things.
+
+79
+00:04:18,965 --> 00:04:22,139
+Because neural networks learn distributed representations,
+
+80
+00:04:22,139 --> 00:04:24,320
+it's also hard to say which parts of
+
+81
+00:04:24,320 --> 00:04:27,135
+the network have learned general functions and which have not.
+
+82
+00:04:27,135 --> 00:04:30,945
+However, by convention, we cut the source network after
+
+83
+00:04:30,945 --> 00:04:35,570
+the convolutional layers and append a number of fully connected layers of our own.
+
+84
+00:04:35,570 --> 00:04:37,550
+This is consistent with the view that
+
+85
+00:04:37,550 --> 00:04:42,015
+convolutional layers are excellent feature extractors for the image domain.
+
+86
+00:04:42,015 --> 00:04:44,955
+At this point, you have an important decision to make.
+
+87
+00:04:44,955 --> 00:04:47,730
+Do I make the source models weights trainable,
+
+88
+00:04:47,730 --> 00:04:49,790
+as in allowing to change values during
+
+89
+00:04:49,790 --> 00:04:53,360
+subsequent model training or do I make them constant?
+
+90
+00:04:53,360 --> 00:04:57,905
+Leaving them constant, effectively treats the source model as a feature extractor.
+
+91
+00:04:57,905 --> 00:04:59,710
+If you're new data set is small,
+
+92
+00:04:59,710 --> 00:05:01,350
+this is the recommended approach,
+
+93
+00:05:01,350 --> 00:05:03,630
+at the risk of over fitting your data.
+
+94
+00:05:03,630 --> 00:05:05,875
+The larger your data set is,
+
+95
+00:05:05,875 --> 00:05:08,000
+the more confident you can be that letting
+
+96
+00:05:08,000 --> 00:05:11,710
+the source network continue to train will not result in overfitting

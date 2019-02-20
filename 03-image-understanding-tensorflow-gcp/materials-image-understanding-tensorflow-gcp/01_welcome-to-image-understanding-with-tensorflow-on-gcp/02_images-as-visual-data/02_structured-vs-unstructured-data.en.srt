@@ -1,0 +1,519 @@
+1
+00:00:00,000 --> 00:00:03,120
+Now, before we build our own image classification models in this course,
+
+2
+00:00:03,120 --> 00:00:05,340
+we firstly do a dress a break from
+
+3
+00:00:05,340 --> 00:00:08,235
+the traditional model inputs that we've been working with so far.
+
+4
+00:00:08,235 --> 00:00:11,970
+Welcome to the battle of structured versus unstructured data.
+
+5
+00:00:11,970 --> 00:00:13,650
+So here's what you've seen before.
+
+6
+00:00:13,650 --> 00:00:18,195
+A single feature vector with a small number of components or elements in that array.
+
+7
+00:00:18,195 --> 00:00:21,120
+Again, if you're already familiar with this structure because these vectors are
+
+8
+00:00:21,120 --> 00:00:25,315
+the tensors that you've been feeding into your early models tensor flow.
+
+9
+00:00:25,315 --> 00:00:28,700
+By way of contrast, image is going to look something like this,
+
+10
+00:00:28,700 --> 00:00:31,460
+it's a collection of pixels, it has a height,
+
+11
+00:00:31,460 --> 00:00:33,520
+a width, the images has color,
+
+12
+00:00:33,520 --> 00:00:35,440
+it also has a depth.
+
+13
+00:00:35,440 --> 00:00:39,580
+A common image encoding scheme for images is RGB, a red, blue,
+
+14
+00:00:39,580 --> 00:00:42,630
+green layers which each have values ranging between zero and
+
+15
+00:00:42,630 --> 00:00:47,655
+255 for each and every pixel representing the color intensity of that pixel.
+
+16
+00:00:47,655 --> 00:00:49,540
+Then digital world zero, zero,
+
+17
+00:00:49,540 --> 00:00:52,130
+zero is black, 255, 255,
+
+18
+00:00:52,130 --> 00:00:56,740
+255 and all three RGB channel depths is white.
+
+19
+00:00:56,740 --> 00:00:58,905
+So, what color do you think 255,
+
+20
+00:00:58,905 --> 00:01:02,055
+zero, zero is in RGB?
+
+21
+00:01:02,055 --> 00:01:06,200
+If you said it's super intense red for that one pixel, you're exactly right.
+
+22
+00:01:06,200 --> 00:01:08,150
+Now, there's often a fourth component that represents
+
+23
+00:01:08,150 --> 00:01:10,580
+the opacity or transparency of that pixel,
+
+24
+00:01:10,580 --> 00:01:12,240
+but we'll leave that one alone for now.
+
+25
+00:01:12,240 --> 00:01:16,160
+If you consider the total number of floating point values representing an image,
+
+26
+00:01:16,160 --> 00:01:18,605
+it's simply the product of the number of channel layers,
+
+27
+00:01:18,605 --> 00:01:20,465
+three for our RGB case,
+
+28
+00:01:20,465 --> 00:01:21,995
+multiplied by the area,
+
+29
+00:01:21,995 --> 00:01:24,265
+the height and width of each layer.
+
+30
+00:01:24,265 --> 00:01:26,660
+With modern cameras, the pixel dimensions and area
+
+31
+00:01:26,660 --> 00:01:29,340
+alone can easily be in the millions of pixels.
+
+32
+00:01:29,340 --> 00:01:34,355
+For example, an eight megapixel camera creates images with eight million pixels each.
+
+33
+00:01:34,355 --> 00:01:36,940
+Multiply that by the three channel layers,
+
+34
+00:01:36,940 --> 00:01:40,875
+you've got over 23 million data points per image.
+
+35
+00:01:40,875 --> 00:01:43,820
+While it makes for amazingly high resolution photos
+
+36
+00:01:43,820 --> 00:01:46,370
+that look great and have really good color depth,
+
+37
+00:01:46,370 --> 00:01:49,840
+it greatly increases the input size for an ML model.
+
+38
+00:01:49,840 --> 00:01:52,940
+This can lead to performance problems like really long training times or
+
+39
+00:01:52,940 --> 00:01:56,815
+even insufficient computing power to complete model training at all.
+
+40
+00:01:56,815 --> 00:02:00,010
+But, thanks to Moore's Law and the advances of computing power,
+
+41
+00:02:00,010 --> 00:02:04,280
+we are able to handle large image input sizes if we had to brute force it.
+
+42
+00:02:04,280 --> 00:02:05,720
+The real challenge though,
+
+43
+00:02:05,720 --> 00:02:08,690
+in which unstructured data like images is different from
+
+44
+00:02:08,690 --> 00:02:12,290
+structured data has to actually do with locality.
+
+45
+00:02:12,290 --> 00:02:15,230
+Now to demonstrate this, consider these pictures.
+
+46
+00:02:15,230 --> 00:02:17,300
+The left hand side image shows a cat,
+
+47
+00:02:17,300 --> 00:02:19,670
+and the right hand side shows a similar photograph.
+
+48
+00:02:19,670 --> 00:02:24,790
+One of them is translated a bit by zooming in same output dimensions of the image.
+
+49
+00:02:24,790 --> 00:02:27,095
+That's still the same image of a cat right?
+
+50
+00:02:27,095 --> 00:02:31,580
+Well, not necessarily, to a computer you're comparing pixel for pixel, it's different.
+
+51
+00:02:31,580 --> 00:02:34,310
+More the computer doesn't see images like the way we do,
+
+52
+00:02:34,310 --> 00:02:36,720
+it just gets an array of numbers representing colors,
+
+53
+00:02:36,720 --> 00:02:38,625
+their intensity and their position.
+
+54
+00:02:38,625 --> 00:02:40,430
+Here for illustration purposes,
+
+55
+00:02:40,430 --> 00:02:44,825
+I've overlaid the two images to show how different the location of the pixels are.
+
+56
+00:02:44,825 --> 00:02:47,420
+So how is this any different from what we've used to
+
+57
+00:02:47,420 --> 00:02:50,250
+compare two data points in our structured data examples?
+
+58
+00:02:50,250 --> 00:02:52,760
+At a differentiating point that'll make this all
+
+59
+00:02:52,760 --> 00:02:56,500
+clear is how we compare one vector of data with the other.
+
+60
+00:02:56,500 --> 00:03:00,435
+One of the most common ways of comparing vectors is the simple euclidean distance.
+
+61
+00:03:00,435 --> 00:03:04,040
+In euclidean distance, we consider the element wise difference between each of
+
+62
+00:03:04,040 --> 00:03:08,705
+the vectors components and the distances between them grows as the sum increases.
+
+63
+00:03:08,705 --> 00:03:12,400
+Lower the distance, the more similar those vectors are.
+
+64
+00:03:12,400 --> 00:03:16,930
+With structured data, euclidean distances behave exactly as you might expect,
+
+65
+00:03:16,930 --> 00:03:20,405
+euclidean distance often correlates with the semantic space.
+
+66
+00:03:20,405 --> 00:03:23,870
+Assume we have two vectors representing a cat's height and weight,
+
+67
+00:03:23,870 --> 00:03:25,820
+in the table that you see here.
+
+68
+00:03:25,820 --> 00:03:30,210
+Say where to compare two similar house cats with the euclidean distance formula.
+
+69
+00:03:30,210 --> 00:03:32,855
+We were relatively low 2.02,
+
+70
+00:03:32,855 --> 00:03:35,800
+keep in mind an output of zero is the exact same vector.
+
+71
+00:03:35,800 --> 00:03:38,480
+This tells us that these feature vectors are quite similar.
+
+72
+00:03:38,480 --> 00:03:42,050
+What about comparing a house cat vector to that of a tiger?
+
+73
+00:03:42,050 --> 00:03:44,180
+As you might expect comparing these feature vectors
+
+74
+00:03:44,180 --> 00:03:46,780
+gives us a much greater distance of 313,
+
+75
+00:03:46,780 --> 00:03:48,020
+which is kind of expected,
+
+76
+00:03:48,020 --> 00:03:51,240
+I mean a tiger weighs over 300 pounds and a normal house cat is about 10.
+
+77
+00:03:51,240 --> 00:03:54,590
+Why can't we just compare feature vectors with a simple straight line distance for
+
+78
+00:03:54,590 --> 00:03:58,305
+images since image data is just numbers in a vector behind the scenes?
+
+79
+00:03:58,305 --> 00:04:02,265
+Here's the critical point that we talked about briefly earlier, locality.
+
+80
+00:04:02,265 --> 00:04:03,580
+To demonstrate this again,
+
+81
+00:04:03,580 --> 00:04:05,300
+consider these two cat pictures.
+
+82
+00:04:05,300 --> 00:04:06,480
+Top one shows a cat,
+
+83
+00:04:06,480 --> 00:04:08,700
+bottom one shows an image that we zoomed in on.
+
+84
+00:04:08,700 --> 00:04:11,040
+The cat on the bottom is just shifted simply left.
+
+85
+00:04:11,040 --> 00:04:14,730
+Again, is it the same photo of a cat or not?
+
+86
+00:04:14,730 --> 00:04:17,275
+Well, again not to a computer.
+
+87
+00:04:17,275 --> 00:04:20,090
+If you were to apply the same procedure of
+
+88
+00:04:20,090 --> 00:04:22,965
+doing the straight line distance between two of these vectors,
+
+89
+00:04:22,965 --> 00:04:25,165
+you will get very large deltas.
+
+90
+00:04:25,165 --> 00:04:27,375
+So, a very large overall distance,
+
+91
+00:04:27,375 --> 00:04:30,565
+even though you as an observer know it's essentially the same cat.
+
+92
+00:04:30,565 --> 00:04:34,940
+Now, this reminds you of a model memorizing or over-fitting for what a cat is,
+
+93
+00:04:34,940 --> 00:04:38,240
+and getting confused where we even slightly vary the image,
+
+94
+00:04:38,240 --> 00:04:40,790
+and then you've understood the whole challenge here.
+
+95
+00:04:40,790 --> 00:04:42,790
+It turns out with the visual data,
+
+96
+00:04:42,790 --> 00:04:46,395
+there are many operations that behave in a similar manner to translation.
+
+97
+00:04:46,395 --> 00:04:48,200
+So, if you rotate it,
+
+98
+00:04:48,200 --> 00:04:51,925
+gray-scale and skew it, zoom in, distorted,
+
+99
+00:04:51,925 --> 00:04:54,445
+or change something like the hue and saturation,
+
+100
+00:04:54,445 --> 00:04:58,570
+most people would still be able to recognize the primary subject matter as a cat,
+
+101
+00:04:58,570 --> 00:05:00,390
+but why not computers?
+
+102
+00:05:00,390 --> 00:05:03,445
+Why? This is the key reason,
+
+103
+00:05:03,445 --> 00:05:06,200
+is because that we know that the feature information that's
+
+104
+00:05:06,200 --> 00:05:09,890
+defined as the relationship between the pixels.
+
+105
+00:05:09,890 --> 00:05:13,340
+Every vector of pixel information in a vacuum may not be
+
+106
+00:05:13,340 --> 00:05:18,260
+the best way for the model to learn what ultimately the image subject matter is.
+
+107
+00:05:18,260 --> 00:05:20,385
+So, onto our fundamental question,
+
+108
+00:05:20,385 --> 00:05:22,190
+how do you create a model that's able to deal with
+
+109
+00:05:22,190 --> 00:05:25,875
+his new visual data as an input and do so with accuracy?
+
+110
+00:05:25,875 --> 00:05:29,010
+How do we get it to be tolerant of variations in an image?
+
+111
+00:05:29,010 --> 00:05:31,040
+Since in the real world, the model's unlikely to
+
+112
+00:05:31,040 --> 00:05:33,635
+see through the exact same or identical images,
+
+113
+00:05:33,635 --> 00:05:35,095
+so set a different way.
+
+114
+00:05:35,095 --> 00:05:38,810
+How do we create a model that through his understanding of the visual domain,
+
+115
+00:05:38,810 --> 00:05:41,960
+is able to map the high dimensional image space to
+
+116
+00:05:41,960 --> 00:05:43,910
+a lower dimensional subspace like
+
+117
+00:05:43,910 --> 00:05:48,100
+a really long feature vector that behaves more like structured data?
+
+118
+00:05:48,100 --> 00:05:51,440
+Well, to start, we've already seen two different types of models so far,
+
+119
+00:05:51,440 --> 00:05:54,440
+linear models and DNN or deep neural networks.
+
+120
+00:05:54,440 --> 00:05:58,610
+It's often best to start with the simplest model first and see if that meets our needs.
+
+121
+00:05:58,610 --> 00:06:00,130
+So, in the next module,
+
+122
+00:06:00,130 --> 00:06:02,390
+you'll build a linear model and
+
+123
+00:06:02,390 --> 00:06:05,635
+a deep neural network to classify images using TensorFlow.
+
+124
+00:06:05,635 --> 00:06:07,760
+Now, before we close our overview,
+
+125
+00:06:07,760 --> 00:06:09,650
+I'd like you to brainstorm what types of
+
+126
+00:06:09,650 --> 00:06:14,080
+image data sets do you think would be very easy for machine learning model to classify?
+
+127
+00:06:14,080 --> 00:06:15,970
+Now, what about the hardest?
+
+128
+00:06:15,970 --> 00:06:18,080
+Can you think of how a model could potentially learn
+
+129
+00:06:18,080 --> 00:06:21,700
+an unintended bias based on the available data that we have?
+
+130
+00:06:21,700 --> 00:06:24,920
+I look forward to seeing your responses in the forum.

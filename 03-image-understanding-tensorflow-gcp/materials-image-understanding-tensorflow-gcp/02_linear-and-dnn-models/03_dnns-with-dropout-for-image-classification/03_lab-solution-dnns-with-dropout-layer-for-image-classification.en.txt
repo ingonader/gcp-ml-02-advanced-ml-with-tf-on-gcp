@@ -1,0 +1,152 @@
+Welcome back to the lab solution video. And here we're going to talk
+about the much awaited topic, deep neural networks with dropout for
+a little bit more regularization. So what's the primary driver in neural
+network that updates the weights during training? If you said back propagation,
+that's exactly right. So back propagation process that minimizes
+your loss function, and ultimately gives better weights and reduces your
+loss function for a better result. But what happens if the neurons in
+your network start to memorize or over fit to that trained dataset? Like they became too dependent on other
+neurons and learn complex relationships in your training dataset that just
+aren't there in the real world? Well, the example I like to imagine is if
+you're back in college during exams and say you had five people in the class
+that stayed up too late, we'll say one, two, three, four, five. And they're going to rely on each other,
+each different person memorizing a specific section of the exam,
+and somehow without the teacher knowing they're going to share their
+notes or cheat during the examination. The method works really well if all
+five people are present, all neurons, all those five neurons are here. And you can just focus on your
+section of the exam and memorize. Now, if you're the teacher and you're
+using a method like say, drop out for your class, for
+each exam you get to randomly move or there is a mute of certain
+students from the main room. Move them to a different room, that's it, in effect muting the contribution tthat
+they have on the overall architecture. What does that do in our toy example? Well, if the original group of five only
+has two of its original members, and they only memorize their own sections,
+they're likely going to fail the exam, in our case get a really,
+really high loss function. And the only remedy for the students or the neurons in this case is to actually
+study the exam content more broadly so that they can think in generalize well
+in the absence of say, overlying or co-adapting to the other
+neurons in the network. That's a dropout in a nutshell. So the two basic points is the hidden
+units of the neurons don't and they can't over-rely or
+co-adapt to other specific neurons. And it must generalize more broadly, because you never know which
+neurons are going to be there. So it's a way of creating more sparse
+connection in your deep neural network. And essentially during training time
+have a bunch of different smaller neural networks rather than just
+a beastly overall architecture. So again, this only happens during
+training because this is the only time when we want something like
+dropout to prevent over fitting. It's not as much. It's not a problem in evaluating and certainly not our problem in testing or
+predicting. So we need to create a final dropout
+layer that targets one of our layers for dropout with a certain probability, and we
+only want that to take effect in training. So let's take a look at your lab and
+see how we can do that. So again, make sure you clone the repo,
+just like you did in the last lab. And within here we're going back still
+into our two different sections of code. You've got the MNIST models which
+is all the way at the top where you want to change now. Again, keeping in mind, specify your
+project ID, your individual project ID, your bucket,
+if you haven't created one already. Be sure to create that and
+set it to be a regional bucket. Set in any region you'd like,
+I'm using us=central1, it's closest to me. And now the model_type,
+we did dnn in the last lab, now I'm going to say dnn_dropout for
+this lab. Then you can run each of those here again,
+set those different parameters, but essentially once you do that and
+take a look at the model.py file. This is what we're going to
+find our TODOs for today. So now what we want to do is want to
+create a neural network architecture that uses dropout. So this architecture we
+had before is great. So let's copy and paste that in here. And let's talk about where
+we're going to apply it. So what we're going to do,
+we want to create a neural network with dropout on the last
+layer with a 10% probability. Let's address that
+probability percent first. So first thing I want to do is,
+I'm going to say the dropout probability, which we're going to specify
+as be hyperparameter. And the dropout probability here,
+Let's say, Just passes in and we're just going to
+say this is going to be a 10% or 0.1. Now, what does that actually get called
+right after that third layer there, that hidden third layer. We're going to say the dropout layer and
+now the code for this is just simply another layer. That's the tf.layers.Dropout. So much like tf.layers.dense there's
+just another layer for dropout, it's pretty convenient. tf.layers.dropout, and
+you need to specify the target layer. In this case the input is going to be this
+third layer in our network right here, the line of code immediately
+that proceeds it. Now, what's the rate? Now, you could hard code the rate,
+but since we already specified it, you could do 0.1 if you wanted to. That's 10% of the network is going to
+be muted of those neurons for that particular layer. But we're just going to say it to
+the parameter that we created a little bit earlier just there on line 43. And now you want it to only
+take effect during training. So basically this is going to
+be training true or false and you actually want to set that based
+on the mode that we have here. And the mode here is going
+to be the tf estimator and let me just bring this in. And, this is going to be our whether or
+not what mode we're currently in. So it could be a training
+evaluation of prediction as well. And we only actually want drop
+out to actually happen as we mentioned during training. All right, that's all there is to it,
+adding just simple probability parameter, 10%. You can feel free to adjust that
+of your model architecture and adding in a dropout layer and
+saving your model file. And this is going to be a slightly
+modified version of our DNN with dropout. And it might have a slightly increased
+training time as you might see because with each training run,
+you're eliminating or muting some of those runs in your network. Here, so you're going to get
+a different architecture each time. And it helps it to be a little
+bit more generalizable. So let's see, so let's run
+the code back in the MNIST models. Making sure that your
+model type is dnn dropout. That's the current one that
+we're going to be testing. And then we can see how well
+it does locally with 100 steps, By simply running this. And, again the reason why we run this
+locally is to make sure you don't have the errors in your code before you
+start spinning up our cloud machine learning engine job. So just like what we did before from
+that runs all the way down here. We see laws for the final step. We're calling it the graphs
+that's been finalized. We're going to get it an accuracy again. We're willing to do 100 steps here and
+an accuracy of 91. So that means our code
+it's running at least. And then what we can
+do it's spin it up and run say 12,000 steps Using a little
+bit more powerful hardware. in this particular case you're going to be
+invoking GPUS much like you did in your last lab. So when you run that and
+we're ACTUALLY going to be using 10,000 steps you can actually start to kick
+off you cloud machine or engine job. I've already done that'll take
+you anywhere between 10 and 20 minutes to run depending
+upon when you run it. And when you go into Cloud Machine
+Learning Engine all at the bottom you see artificial intelligence in your
+navigation menu click on ML Engine. You'll see the job that gets
+submitted is the training job. And then this one completed. It took me about 11 minutes to complete. Then you can click into it and
+view the logs. And here's where you can get the actual
+accuracy over those 10,000 steps, so what I like to do is just either
+type in steps or accuracy. It'll take me to the last one. You'll be able to see that. We have an accuracy of 96 almost 97%. So if you're wondering what's the point of
+dropout if we're getting about the same accuracy percentages as we did with
+the deep neural networks before. And again it's all point
+of generalizeability. This neural network that comes
+out with the dropout layer is, say you add more training data or
+different training data. It's going to be a little bit more robust
+and less rigid and less likely to overfit. So typically, even with networks
+that you're going to see later on, the convolutional neural networks. It's a very good idea for a regularization technique to add
+in a dropout layer just to make your network a little bit more nimble and
+less susceptible to overfitting. So that's 97% there. And once you've done that,
+then we're going to kick off the last bit. We've done training,
+we've done evaluation and now we need to actually deploy and predict Here we run the best script that actually
+does the Cloud ML Engine model creation. This is going to be deploying it so we
+can actually run a prediction against it. I changed the code just because I like
+having multiple different models. One for each of the different
+model types to be mnist_dropout, you can leave it as mnist if you want. Keep in mind if you have a model that
+already exists and you try to run this code, you could get an error that says the
+resource and the project already exists. That's because when you actually head over
+to Cloud ML Engine you go into Models, you could have that model
+that already exists. Now you could replace it if you wanted to
+or you can delete it here in the UI and then just rerun that code. Once that model deployment is complete. Normally it take three to four minutes,
+then we can actually do some predictions with our new deep neural
+network with dropout. So again here much like we did in last
+lab, you can snag one of the images. I'll challenge you to try and
+find one that's is very, very hard for even humans and see how the model does. And here we just chosen image number 115
+we'll be changing that to heart's content, maybe to 9 maybe to 4. I think it's a 4. Maybe it'll confuse the model. It will think that it's a 9. And run that. Keep in mind if you change your model
+name, be sure to change it here as well. This is not prioritized. The model name is just whatever
+you put into this value. And of course,
+it picked it up that it was a 4. And this is the probability. You can see that 0, 1, 2, 3 are all very, very small numbers, to the power of -0.08. And then 98% is going to be the output for
+the class of 4. So that is deep neural networks with
+the additional stability of having a dropout layer, again,
+just reviewing that. The dropout layer that we added
+as a probability of 10% here and you can see that it will only
+applies during training. Just so, there's no point in running it
+for evaluations as well as evaluating for that while loop. And we're only trying to prevent over
+fitting during the training of the model. All right, additional documentation is
+available through the Tensor Flow website, tf.layers.Dropout. And that concludes working with
+the MNIST data set with a linear deep neural network,
+deep neural networks with dropout. We've gotten around 97% accurate, again,
+on the data set that we were given. We'll show you how you can get that
+additional percentage point or two of accuracy, and explore a new model
+type that actually handles the variations in images, like if they are rotated ever
+so slightly, if there was noise in them. You can imagine that linear networks and
+neural networks might perform not as well, especially at scale. That's going to be your
+convolutional neural network and that lecture is coming up next.

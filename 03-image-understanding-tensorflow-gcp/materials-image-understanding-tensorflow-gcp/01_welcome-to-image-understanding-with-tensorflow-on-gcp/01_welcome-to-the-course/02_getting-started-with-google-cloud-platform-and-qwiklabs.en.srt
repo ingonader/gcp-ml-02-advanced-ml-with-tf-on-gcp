@@ -1,0 +1,227 @@
+1
+00:00:00,000 --> 00:00:02,200
+Hello and welcome. I'm Philipp Maier,
+
+2
+00:00:02,200 --> 00:00:04,920
+a course developer with Google Cloud Platform and
+
+3
+00:00:04,920 --> 00:00:08,210
+this is a brief tutorial on using Qwiklabs in this course.
+
+4
+00:00:08,210 --> 00:00:12,620
+I'm about to show you the interactive hands on Labs platform called Qwiklabs,
+
+5
+00:00:12,620 --> 00:00:14,400
+which is part of Google Cloud.
+
+6
+00:00:14,400 --> 00:00:19,320
+Qwiklabs allows you to get practical hands on experience with GCP and
+
+7
+00:00:19,320 --> 00:00:21,900
+provisions you with Google account credentials so you
+
+8
+00:00:21,900 --> 00:00:25,190
+can access that GCP Console at no cost.
+
+9
+00:00:25,190 --> 00:00:29,760
+The first step is to log into Coursera in an incognito window.
+
+10
+00:00:29,760 --> 00:00:31,170
+Depending on your browser,
+
+11
+00:00:31,170 --> 00:00:35,235
+it may also be called private browsing or inprivate browsing.
+
+12
+00:00:35,235 --> 00:00:39,110
+Logging into Coursera from a private window ensures that you don't
+
+13
+00:00:39,110 --> 00:00:43,520
+accidentally use your own Google account while accessing the Google Cloud Console.
+
+14
+00:00:43,520 --> 00:00:47,165
+We don't want you to get any unexpected bills at the end of the month.
+
+15
+00:00:47,165 --> 00:00:51,695
+Check out the links below this video for different browser support articles.
+
+16
+00:00:51,695 --> 00:00:55,085
+Once logged into Coursera using an incognito window,
+
+17
+00:00:55,085 --> 00:00:59,250
+return to your course and go to the lab activity page.
+
+18
+00:00:59,630 --> 00:01:02,640
+So, if prompt that you want to accept
+
+19
+00:01:02,640 --> 00:01:06,660
+the owner code and you might even have to enter your name,
+
+20
+00:01:06,660 --> 00:01:12,740
+then you want to click the Open Tool button to open the lab in a new tab.
+
+21
+00:01:13,650 --> 00:01:16,875
+So, within the new tab, you can now click
+
+22
+00:01:16,875 --> 00:01:22,890
+Start Lab and you want to wait until the Lab running is displayed.
+
+23
+00:01:25,670 --> 00:01:31,000
+For each lab you will have a timer in the top right with the remaining axis time.
+
+24
+00:01:31,000 --> 00:01:34,795
+Your lab will automatically end when the timer runs out.
+
+25
+00:01:34,795 --> 00:01:38,230
+On the left you have the Connections Detail.
+
+26
+00:01:38,230 --> 00:01:42,130
+Click Open Google Console and then
+
+27
+00:01:42,130 --> 00:01:46,455
+sign in with the username and password provided in the Connections Detail pane.
+
+28
+00:01:46,455 --> 00:01:49,400
+So, I'm going to copy the username,
+
+29
+00:01:49,920 --> 00:01:55,940
+paste that in here, I'm also going to take the password,
+
+30
+00:01:56,530 --> 00:01:58,890
+paste it in here, too.
+
+31
+00:01:58,890 --> 00:02:03,030
+Now, Qwiklabs creates a new account for you each time you launch a lab.
+
+32
+00:02:03,030 --> 00:02:05,870
+Therefore, you need to click through the initial account setup Windows.
+
+33
+00:02:05,870 --> 00:02:09,390
+So, essentially, I need to accept this.
+
+34
+00:02:09,550 --> 00:02:15,550
+I don't need to add any recover phone number so I can just click done.
+
+35
+00:02:16,870 --> 00:02:22,380
+I'm going to agree to the terms and services and I don't need any emails.
+
+36
+00:02:24,090 --> 00:02:27,170
+Now, I can verify that I'm using the Qwiklabs
+
+37
+00:02:27,170 --> 00:02:30,635
+provided account and project within the GCP Console.
+
+38
+00:02:30,635 --> 00:02:36,440
+So, up here, I see the project ID and over
+
+39
+00:02:36,440 --> 00:02:37,760
+here I can see
+
+40
+00:02:37,760 --> 00:02:40,430
+the username and these are
+
+41
+00:02:40,430 --> 00:02:44,145
+the same ones that I was provided with in the Connections Detail pane.
+
+42
+00:02:44,145 --> 00:02:48,045
+You can also see that the timer is still running.
+
+43
+00:02:48,045 --> 00:02:53,010
+Now, some labs track your work within the Qwiklabs provided GCP project.
+
+44
+00:02:53,010 --> 00:02:55,400
+If it is enabled, you'll see a score in
+
+45
+00:02:55,400 --> 00:02:59,375
+the top right corner of the cQwiklabs window as you can see right here.
+
+46
+00:02:59,375 --> 00:03:03,080
+Your score increases as objectives are met and you can click on
+
+47
+00:03:03,080 --> 00:03:07,350
+the score to view the individual steps to be scored.
+
+48
+00:03:07,440 --> 00:03:09,935
+Now that I've completed the lab,
+
+49
+00:03:09,935 --> 00:03:15,870
+I can see my score has been updated and I'm ready to click End Lab.
+
+50
+00:03:15,870 --> 00:03:17,555
+Once I click End Lab,
+
+51
+00:03:17,555 --> 00:03:23,100
+the Qwiklabs provided project and any resources within that project will be deleted.
+
+52
+00:03:24,360 --> 00:03:27,810
+You can close the Qwiklabs lab page and
+
+53
+00:03:27,810 --> 00:03:31,025
+my grade will be updated with my lab score in Coursera.
+
+54
+00:03:31,025 --> 00:03:32,810
+That's it for this tutorial.
+
+55
+00:03:32,810 --> 00:03:36,430
+Remember to launch Coursera in an Incognito window and use the Qwiklabs
+
+56
+00:03:36,430 --> 00:03:40,045
+provided credentials to sign in to the GCP console.
+
+57
+00:03:40,045 --> 00:03:43,420
+Good luck with the labs and enjoy the rest of this course.

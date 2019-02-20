@@ -1,0 +1,280 @@
+1
+00:00:00,790 --> 00:00:03,710
+It's time to do a wrap up of
+all the topics we've covered so
+
+2
+00:00:03,710 --> 00:00:04,920
+far in this course.
+
+3
+00:00:06,250 --> 00:00:09,840
+In this course, you learned about
+the rapid growth and high resolution image
+
+4
+00:00:09,840 --> 00:00:13,610
+data available and the types of
+applications that it can be applied to.
+
+5
+00:00:15,320 --> 00:00:17,660
+We covered a number of
+business applications,
+
+6
+00:00:17,660 --> 00:00:21,040
+like how Airbus detects
+clouds versus snow cover and
+
+7
+00:00:21,040 --> 00:00:25,500
+how Q Pie makes better baby food
+by classifying bad potatoes.
+
+8
+00:00:25,500 --> 00:00:29,590
+We also looked at some of the latest
+medical image classification models,
+
+9
+00:00:29,590 --> 00:00:34,730
+like the one helping prevent blindness by
+detecting diabetic retinopathy earlier and
+
+10
+00:00:34,730 --> 00:00:36,790
+assisting physicians with diagnosis.
+
+11
+00:00:38,310 --> 00:00:41,230
+Since it's usually good to
+start with a simpler approach
+
+12
+00:00:41,230 --> 00:00:45,330
+first you build image classifiers using
+linear and deep neural network models.
+
+13
+00:00:46,580 --> 00:00:49,470
+You saw that while linear models
+train quickly, there was room for
+
+14
+00:00:49,470 --> 00:00:51,580
+improvement and accuracy.
+
+15
+00:00:51,580 --> 00:00:53,620
+We turned our attention to
+deep neural networks and
+
+16
+00:00:53,620 --> 00:00:58,020
+saw how they could handle more complex
+classification tasks quite well.
+
+17
+00:00:58,020 --> 00:01:01,330
+We ran into trouble when we
+attempted to train at scale
+
+18
+00:01:01,330 --> 00:01:05,520
+in a reasonable amount of time and
+without memorizing our training data.
+
+19
+00:01:05,520 --> 00:01:10,180
+We then followed the rise of convolutional
+neural networks, with a critical milestone
+
+20
+00:01:10,180 --> 00:01:14,010
+being the Alex Stent Model,
+winning the Image Net competition in 2012.
+
+21
+00:01:14,010 --> 00:01:18,070
+The critical improvement is that using
+
+22
+00:01:18,070 --> 00:01:23,160
+CNNs allows our model to share weights
+thus reducing the number of weights.
+
+23
+00:01:23,160 --> 00:01:26,478
+That also allows our ML
+model to be more tolerant,
+
+24
+00:01:26,478 --> 00:01:32,166
+a slight variations in the images because
+of pattern recognition through kernels and
+
+25
+00:01:32,166 --> 00:01:33,909
+filtered output layers.
+
+26
+00:01:33,909 --> 00:01:38,369
+We covered the fundamental shift of
+having the model itself figure out what
+
+27
+00:01:38,369 --> 00:01:42,190
+filters to learn and
+apply instead of you, the data scientist,
+
+28
+00:01:42,190 --> 00:01:44,904
+specifying what patterns look for
+up front.
+
+29
+00:01:44,904 --> 00:01:49,695
+This front-loaded set of convolutional and
+pulling layers allow CNNs to
+
+30
+00:01:49,695 --> 00:01:54,174
+achieve high accuracy,
+be more tolerant of image distortions, and
+
+31
+00:01:54,174 --> 00:01:59,525
+reduce high dimensionality to eventually
+feed into our DNN for classification.
+
+32
+00:01:59,525 --> 00:02:04,136
+Next we dealt with data scarcity and
+improved our model with augmentation,
+
+33
+00:02:04,136 --> 00:02:07,100
+batch normalization,
+and transfer learning.
+
+34
+00:02:08,610 --> 00:02:14,032
+You practiced augmenting your dataset by
+implying transformations like rotation,
+
+35
+00:02:14,032 --> 00:02:16,073
+zoom, crop, blur, and more.
+
+36
+00:02:17,325 --> 00:02:22,101
+You then delve into transfer learning
+where you use the front part of the CNN,
+
+37
+00:02:22,101 --> 00:02:26,145
+which was already great at
+extracting features from images, and
+
+38
+00:02:26,145 --> 00:02:30,134
+transferred it over to a newly appended,
+fully connected DNN.
+
+39
+00:02:30,134 --> 00:02:33,639
+We then discuss how to implement
+state of the art image models,
+
+40
+00:02:33,639 --> 00:02:35,955
+with tensor processing units, or TPUs,
+
+41
+00:02:35,955 --> 00:02:40,670
+which have a significant performance
+advantage over traditional CPU processing.
+
+42
+00:02:42,480 --> 00:02:45,300
+We then saw how batch
+normalization has the effect
+
+43
+00:02:45,300 --> 00:02:49,450
+of enhancing gradients at later iterations
+which allows you to train faster.
+
+44
+00:02:51,260 --> 00:02:54,120
+Lastly we reviewed how
+you can use pre built ML
+
+45
+00:02:54,120 --> 00:02:58,250
+models like Google Cloud's Vision API or
+AutoML platforms,
+
+46
+00:02:58,250 --> 00:02:59,860
+which are powered by
+some of the latest and
+
+47
+00:02:59,860 --> 00:03:03,770
+greatest image classification model
+behind the scenes like NASnet.
+
+48
+00:03:05,560 --> 00:03:09,460
+In your lab, you created a JSON request
+to Google Clouds Vision API and
+
+49
+00:03:09,460 --> 00:03:11,790
+got back labels associated
+with your image.
+
+50
+00:03:13,290 --> 00:03:17,860
+Then, you experimented with AutoML, which
+is a codeless solution that allows you to
+
+51
+00:03:17,860 --> 00:03:22,900
+train and deploy a vision model offered
+as part of Google AutoML's offering.
+
+52
+00:03:24,120 --> 00:03:27,030
+AutoML uses a combination
+of transfer learning
+
+53
+00:03:27,030 --> 00:03:31,150
+using some of Google's best models and
+neural architecture search.
+
+54
+00:03:31,150 --> 00:03:34,190
+All you have to do is upload your
+models into Cloud Storage and
+
+55
+00:03:34,190 --> 00:03:35,310
+the product does the rest.
+
+56
+00:03:37,255 --> 00:03:41,240
+That's a rap for Image Classification
+Models, we'll see you in the next course
+
+57
+00:03:41,240 --> 00:03:44,920
+on Sequence Models for our time series and
+natural language processing.
+
+58
+00:03:44,920 --> 00:03:45,420
+See you there.

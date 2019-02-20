@@ -1,0 +1,147 @@
+1
+00:00:00,000 --> 00:00:01,695
+In the previous section,
+
+2
+00:00:01,695 --> 00:00:05,710
+we reviewed strategies that are appropriate when you have some labeled data already.
+
+3
+00:00:05,710 --> 00:00:09,675
+But what if your data don't have labels or you don't have any data at all?
+
+4
+00:00:09,675 --> 00:00:12,135
+Don't worry, you still have options.
+
+5
+00:00:12,135 --> 00:00:14,050
+If you don't have any data at all,
+
+6
+00:00:14,050 --> 00:00:15,790
+you can use a pre-trained model.
+
+7
+00:00:15,790 --> 00:00:20,650
+Of course, you need to find a model trained on a task that's close enough to match yours.
+
+8
+00:00:20,650 --> 00:00:22,945
+Google has machine learning APIs,
+
+9
+00:00:22,945 --> 00:00:26,120
+where all we need to do is make an API call with your picture.
+
+10
+00:00:26,120 --> 00:00:30,500
+The Vision API can classify pictures from one of thousands of categories,
+
+11
+00:00:30,500 --> 00:00:32,295
+but can also do a lot more.
+
+12
+00:00:32,295 --> 00:00:35,135
+It can do OCR, Optical Character Recognition,
+
+13
+00:00:35,135 --> 00:00:37,090
+it can recognize unsafe content,
+
+14
+00:00:37,090 --> 00:00:40,815
+and it can even be used to create a visual product similarity search engine.
+
+15
+00:00:40,815 --> 00:00:42,990
+Google Cloud's Vision API is one of
+
+16
+00:00:42,990 --> 00:00:45,385
+the pre-trained models you will experiment with later.
+
+17
+00:00:45,385 --> 00:00:48,450
+Again, you don't need to bring your own image data for training,
+
+18
+00:00:48,450 --> 00:00:50,615
+the model is pre-trained.
+
+19
+00:00:50,615 --> 00:00:53,870
+The Vision API also improves over time as
+
+20
+00:00:53,870 --> 00:00:56,955
+new concepts are introduced and accuracy is improved.
+
+21
+00:00:56,955 --> 00:01:00,420
+Want to create a custom image model with no code whatsoever?
+
+22
+00:01:00,420 --> 00:01:03,425
+With AutoML vision, you can create custom models
+
+23
+00:01:03,425 --> 00:01:06,920
+without any code that highlights specific concepts of your images.
+
+24
+00:01:06,920 --> 00:01:11,590
+You'll practice with both the Cloud Vision API and Cloud AutoML in a later module.
+
+25
+00:01:11,590 --> 00:01:14,260
+The other thing you can do is get more data.
+
+26
+00:01:14,260 --> 00:01:17,120
+There are companies that label data as a service and
+
+27
+00:01:17,120 --> 00:01:21,185
+Google Cloud is partnering with Figure Eight to bring that service to GCP customers.
+
+28
+00:01:21,185 --> 00:01:24,270
+For more information, check out the link that we provide.
+
+29
+00:01:24,270 --> 00:01:28,510
+There you have it. Even though data scarcity is a very real challenge,
+
+30
+00:01:28,510 --> 00:01:30,725
+we have plenty of tools to address it.
+
+31
+00:01:30,725 --> 00:01:31,955
+If we have some data,
+
+32
+00:01:31,955 --> 00:01:35,470
+we can take our data and make more of it using data augmentation,
+
+33
+00:01:35,470 --> 00:01:38,900
+or we can decrease our need for data by using transfer
+
+34
+00:01:38,900 --> 00:01:43,890
+learning and even if you wanna do transfer learning without writing any code, you can.
+
+35
+00:01:43,890 --> 00:01:46,100
+If you don't have any labeled data,
+
+36
+00:01:46,100 --> 00:01:50,375
+you can still use state of the art models for a variety of computer vision tasks,
+
+37
+00:01:50,375 --> 00:01:53,920
+or you can enlist a partner to help you label your data.

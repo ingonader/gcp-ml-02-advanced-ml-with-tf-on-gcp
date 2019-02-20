@@ -1,0 +1,50 @@
+It's time to do a wrap up of
+all the topics we've covered so far in this course. In this course, you learned about
+the rapid growth and high resolution image data available and the types of
+applications that it can be applied to. We covered a number of
+business applications, like how Airbus detects
+clouds versus snow cover and how Q Pie makes better baby food
+by classifying bad potatoes. We also looked at some of the latest
+medical image classification models, like the one helping prevent blindness by
+detecting diabetic retinopathy earlier and assisting physicians with diagnosis. Since it's usually good to
+start with a simpler approach first you build image classifiers using
+linear and deep neural network models. You saw that while linear models
+train quickly, there was room for improvement and accuracy. We turned our attention to
+deep neural networks and saw how they could handle more complex
+classification tasks quite well. We ran into trouble when we
+attempted to train at scale in a reasonable amount of time and
+without memorizing our training data. We then followed the rise of convolutional
+neural networks, with a critical milestone being the Alex Stent Model,
+winning the Image Net competition in 2012. The critical improvement is that using CNNs allows our model to share weights
+thus reducing the number of weights. That also allows our ML
+model to be more tolerant, a slight variations in the images because
+of pattern recognition through kernels and filtered output layers. We covered the fundamental shift of
+having the model itself figure out what filters to learn and
+apply instead of you, the data scientist, specifying what patterns look for
+up front. This front-loaded set of convolutional and
+pulling layers allow CNNs to achieve high accuracy,
+be more tolerant of image distortions, and reduce high dimensionality to eventually
+feed into our DNN for classification. Next we dealt with data scarcity and
+improved our model with augmentation, batch normalization,
+and transfer learning. You practiced augmenting your dataset by
+implying transformations like rotation, zoom, crop, blur, and more. You then delve into transfer learning
+where you use the front part of the CNN, which was already great at
+extracting features from images, and transferred it over to a newly appended,
+fully connected DNN. We then discuss how to implement
+state of the art image models, with tensor processing units, or TPUs, which have a significant performance
+advantage over traditional CPU processing. We then saw how batch
+normalization has the effect of enhancing gradients at later iterations
+which allows you to train faster. Lastly we reviewed how
+you can use pre built ML models like Google Cloud's Vision API or
+AutoML platforms, which are powered by
+some of the latest and greatest image classification model
+behind the scenes like NASnet. In your lab, you created a JSON request
+to Google Clouds Vision API and got back labels associated
+with your image. Then, you experimented with AutoML, which
+is a codeless solution that allows you to train and deploy a vision model offered
+as part of Google AutoML's offering. AutoML uses a combination
+of transfer learning using some of Google's best models and
+neural architecture search. All you have to do is upload your
+models into Cloud Storage and the product does the rest. That's a rap for Image Classification
+Models, we'll see you in the next course on Sequence Models for our time series and
+natural language processing. See you there.

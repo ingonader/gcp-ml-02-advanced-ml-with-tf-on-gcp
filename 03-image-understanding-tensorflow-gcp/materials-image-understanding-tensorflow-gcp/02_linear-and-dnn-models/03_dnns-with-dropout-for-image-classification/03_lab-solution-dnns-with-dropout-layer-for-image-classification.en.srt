@@ -1,0 +1,986 @@
+1
+00:00:00,580 --> 00:00:02,054
+Welcome back to the lab solution video.
+
+2
+00:00:02,054 --> 00:00:05,174
+And here we're going to talk
+about the much awaited topic,
+
+3
+00:00:05,174 --> 00:00:09,216
+deep neural networks with dropout for
+a little bit more regularization.
+
+4
+00:00:09,216 --> 00:00:13,188
+So what's the primary driver in neural
+network that updates the weights during
+
+5
+00:00:13,188 --> 00:00:13,790
+training?
+
+6
+00:00:13,790 --> 00:00:16,195
+If you said back propagation,
+that's exactly right.
+
+7
+00:00:16,195 --> 00:00:20,158
+So back propagation process that minimizes
+your loss function, and ultimately gives
+
+8
+00:00:20,158 --> 00:00:23,266
+better weights and reduces your
+loss function for a better result.
+
+9
+00:00:23,266 --> 00:00:26,776
+But what happens if the neurons in
+your network start to memorize or
+
+10
+00:00:26,776 --> 00:00:28,601
+over fit to that trained dataset?
+
+11
+00:00:28,601 --> 00:00:33,497
+Like they became too dependent on other
+neurons and learn complex relationships
+
+12
+00:00:33,497 --> 00:00:37,800
+in your training dataset that just
+aren't there in the real world?
+
+13
+00:00:37,800 --> 00:00:42,866
+Well, the example I like to imagine is if
+you're back in college during exams and
+
+14
+00:00:42,866 --> 00:00:47,630
+say you had five people in the class
+that stayed up too late, we'll say one,
+
+15
+00:00:47,630 --> 00:00:49,434
+two, three, four, five.
+
+16
+00:00:49,434 --> 00:00:52,971
+And they're going to rely on each other,
+each different person memorizing
+
+17
+00:00:52,971 --> 00:00:56,054
+a specific section of the exam,
+and somehow without the teacher
+
+18
+00:00:56,054 --> 00:00:59,723
+knowing they're going to share their
+notes or cheat during the examination.
+
+19
+00:00:59,723 --> 00:01:04,433
+The method works really well if all
+five people are present, all neurons,
+
+20
+00:01:04,433 --> 00:01:06,544
+all those five neurons are here.
+
+21
+00:01:06,544 --> 00:01:09,319
+And you can just focus on your
+section of the exam and memorize.
+
+22
+00:01:09,319 --> 00:01:14,304
+Now, if you're the teacher and you're
+using a method like say, drop out for
+
+23
+00:01:14,304 --> 00:01:17,679
+your class, for
+each exam you get to randomly move or
+
+24
+00:01:17,679 --> 00:01:21,230
+there is a mute of certain
+students from the main room.
+
+25
+00:01:21,230 --> 00:01:23,488
+Move them to a different room, that's it,
+
+26
+00:01:23,488 --> 00:01:27,648
+in effect muting the contribution tthat
+they have on the overall architecture.
+
+27
+00:01:27,648 --> 00:01:29,972
+What does that do in our toy example?
+
+28
+00:01:29,972 --> 00:01:33,566
+Well, if the original group of five only
+has two of its original members, and
+
+29
+00:01:33,566 --> 00:01:37,217
+they only memorize their own sections,
+they're likely going to fail the exam,
+
+30
+00:01:37,217 --> 00:01:39,737
+in our case get a really,
+really high loss function.
+
+31
+00:01:39,737 --> 00:01:41,807
+And the only remedy for the students or
+
+32
+00:01:41,807 --> 00:01:45,947
+the neurons in this case is to actually
+study the exam content more broadly so
+
+33
+00:01:45,947 --> 00:01:49,956
+that they can think in generalize well
+in the absence of say, overlying or
+
+34
+00:01:49,956 --> 00:01:52,754
+co-adapting to the other
+neurons in the network.
+
+35
+00:01:52,754 --> 00:01:54,568
+That's a dropout in a nutshell.
+
+36
+00:01:54,568 --> 00:01:58,233
+So the two basic points is the hidden
+units of the neurons don't and
+
+37
+00:01:58,233 --> 00:02:01,849
+they can't over-rely or
+co-adapt to other specific neurons.
+
+38
+00:02:01,849 --> 00:02:03,789
+And it must generalize more broadly,
+
+39
+00:02:03,789 --> 00:02:06,464
+because you never know which
+neurons are going to be there.
+
+40
+00:02:06,464 --> 00:02:11,643
+So it's a way of creating more sparse
+connection in your deep neural network.
+
+41
+00:02:11,643 --> 00:02:16,008
+And essentially during training time
+have a bunch of different smaller neural
+
+42
+00:02:16,008 --> 00:02:19,393
+networks rather than just
+a beastly overall architecture.
+
+43
+00:02:19,393 --> 00:02:22,958
+So again, this only happens during
+training because this is the only time
+
+44
+00:02:22,958 --> 00:02:26,159
+when we want something like
+dropout to prevent over fitting.
+
+45
+00:02:26,159 --> 00:02:26,787
+It's not as much.
+
+46
+00:02:26,787 --> 00:02:28,595
+It's not a problem in evaluating and
+
+47
+00:02:28,595 --> 00:02:31,226
+certainly not our problem in testing or
+predicting.
+
+48
+00:02:31,226 --> 00:02:36,170
+So we need to create a final dropout
+layer that targets one of our layers for
+
+49
+00:02:36,170 --> 00:02:42,300
+dropout with a certain probability, and we
+only want that to take effect in training.
+
+50
+00:02:42,300 --> 00:02:45,510
+So let's take a look at your lab and
+see how we can do that.
+
+51
+00:02:45,510 --> 00:02:49,400
+So again, make sure you clone the repo,
+just like you did in the last lab.
+
+52
+00:02:49,400 --> 00:02:54,468
+And within here we're going back still
+into our two different sections of code.
+
+53
+00:02:54,468 --> 00:02:57,996
+You've got the MNIST models which
+is all the way at the top where you
+
+54
+00:02:57,996 --> 00:02:59,014
+want to change now.
+
+55
+00:02:59,014 --> 00:03:02,962
+Again, keeping in mind, specify your
+project ID, your individual project ID,
+
+56
+00:03:02,962 --> 00:03:05,493
+your bucket,
+if you haven't created one already.
+
+57
+00:03:05,493 --> 00:03:08,046
+Be sure to create that and
+set it to be a regional bucket.
+
+58
+00:03:08,046 --> 00:03:12,340
+Set in any region you'd like,
+I'm using us=central1, it's closest to me.
+
+59
+00:03:12,340 --> 00:03:15,520
+And now the model_type,
+we did dnn in the last lab,
+
+60
+00:03:15,520 --> 00:03:18,352
+now I'm going to say dnn_dropout for
+this lab.
+
+61
+00:03:18,352 --> 00:03:22,468
+Then you can run each of those here again,
+set those different parameters, but
+
+62
+00:03:22,468 --> 00:03:25,922
+essentially once you do that and
+take a look at the model.py file.
+
+63
+00:03:25,922 --> 00:03:30,517
+This is what we're going to
+find our TODOs for today.
+
+64
+00:03:30,517 --> 00:03:35,077
+So now what we want to do is want to
+create a neural network architecture that
+
+65
+00:03:35,077 --> 00:03:36,057
+uses dropout.
+
+66
+00:03:36,057 --> 00:03:39,260
+So this architecture we
+had before is great.
+
+67
+00:03:39,260 --> 00:03:41,934
+So let's copy and paste that in here.
+
+68
+00:03:41,934 --> 00:03:44,507
+And let's talk about where
+we're going to apply it.
+
+69
+00:03:44,507 --> 00:03:47,831
+So what we're going to do,
+we want to create a neural
+
+70
+00:03:47,831 --> 00:03:52,280
+network with dropout on the last
+layer with a 10% probability.
+
+71
+00:03:52,280 --> 00:03:55,688
+Let's address that
+probability percent first.
+
+72
+00:03:55,688 --> 00:03:59,978
+So first thing I want to do is,
+I'm going to say the dropout probability,
+
+73
+00:03:59,978 --> 00:04:03,118
+which we're going to specify
+as be hyperparameter.
+
+74
+00:04:04,508 --> 00:04:09,545
+And the dropout probability here,
+Let's say,
+
+75
+00:04:11,724 --> 00:04:17,253
+Just passes in and we're just going to
+say this is going to be a 10% or 0.1.
+
+76
+00:04:17,253 --> 00:04:21,377
+Now, what does that actually get called
+right after that third layer there,
+
+77
+00:04:21,377 --> 00:04:22,781
+that hidden third layer.
+
+78
+00:04:22,781 --> 00:04:27,000
+We're going to say the dropout layer and
+now the code for
+
+79
+00:04:27,000 --> 00:04:29,826
+this is just simply another layer.
+
+80
+00:04:29,826 --> 00:04:32,480
+That's the tf.layers.Dropout.
+
+81
+00:04:32,480 --> 00:04:35,079
+So much like tf.layers.dense there's
+just another layer for dropout,
+
+82
+00:04:35,079 --> 00:04:36,036
+it's pretty convenient.
+
+83
+00:04:36,036 --> 00:04:41,727
+tf.layers.dropout, and
+you need to specify the target layer.
+
+84
+00:04:41,727 --> 00:04:46,730
+In this case the input is going to be this
+third layer in our network right here,
+
+85
+00:04:46,730 --> 00:04:49,870
+the line of code immediately
+that proceeds it.
+
+86
+00:04:49,870 --> 00:04:50,932
+Now, what's the rate?
+
+87
+00:04:50,932 --> 00:04:54,172
+Now, you could hard code the rate,
+but since we already specified it,
+
+88
+00:04:54,172 --> 00:04:55,856
+you could do 0.1 if you wanted to.
+
+89
+00:04:55,856 --> 00:04:59,789
+That's 10% of the network is going to
+be muted of those neurons for
+
+90
+00:04:59,789 --> 00:05:01,272
+that particular layer.
+
+91
+00:05:01,272 --> 00:05:05,337
+But we're just going to say it to
+the parameter that we created a little bit
+
+92
+00:05:05,337 --> 00:05:07,250
+earlier just there on line 43.
+
+93
+00:05:07,250 --> 00:05:10,640
+And now you want it to only
+take effect during training.
+
+94
+00:05:10,640 --> 00:05:13,676
+So basically this is going to
+be training true or false and
+
+95
+00:05:13,676 --> 00:05:17,174
+you actually want to set that based
+on the mode that we have here.
+
+96
+00:05:17,174 --> 00:05:22,342
+And the mode here is going
+to be the tf estimator and
+
+97
+00:05:22,342 --> 00:05:25,060
+let me just bring this in.
+
+98
+00:05:29,550 --> 00:05:32,672
+And, this is going to be our whether or
+not what mode we're currently in.
+
+99
+00:05:32,672 --> 00:05:36,146
+So it could be a training
+evaluation of prediction as well.
+
+100
+00:05:36,146 --> 00:05:41,140
+And we only actually want drop
+out to actually happen as we
+
+101
+00:05:41,140 --> 00:05:43,748
+mentioned during training.
+
+102
+00:05:43,748 --> 00:05:48,185
+All right, that's all there is to it,
+adding just simple probability parameter,
+
+103
+00:05:48,185 --> 00:05:48,693
+10%.
+
+104
+00:05:48,693 --> 00:05:54,168
+You can feel free to adjust that
+of your model architecture and
+
+105
+00:05:54,168 --> 00:05:58,918
+adding in a dropout layer and
+saving your model file.
+
+106
+00:05:58,918 --> 00:06:02,600
+And this is going to be a slightly
+modified version of our DNN with dropout.
+
+107
+00:06:03,900 --> 00:06:07,548
+And it might have a slightly increased
+training time as you might see because
+
+108
+00:06:07,548 --> 00:06:09,886
+with each training run,
+you're eliminating or
+
+109
+00:06:09,886 --> 00:06:11,952
+muting some of those runs in your network.
+
+110
+00:06:11,952 --> 00:06:15,638
+Here, so you're going to get
+a different architecture each time.
+
+111
+00:06:15,638 --> 00:06:18,856
+And it helps it to be a little
+bit more generalizable.
+
+112
+00:06:18,856 --> 00:06:22,090
+So let's see, so let's run
+the code back in the MNIST models.
+
+113
+00:06:22,090 --> 00:06:25,888
+Making sure that your
+model type is dnn dropout.
+
+114
+00:06:25,888 --> 00:06:28,287
+That's the current one that
+we're going to be testing.
+
+115
+00:06:28,287 --> 00:06:31,619
+And then we can see how well
+it does locally with 100
+
+116
+00:06:31,619 --> 00:06:35,399
+steps, By simply running this.
+
+117
+00:06:39,441 --> 00:06:42,483
+And, again the reason why we run this
+locally is to make sure you don't have
+
+118
+00:06:42,483 --> 00:06:45,286
+the errors in your code before you
+start spinning up our cloud machine
+
+119
+00:06:45,286 --> 00:06:46,222
+learning engine job.
+
+120
+00:06:46,222 --> 00:06:51,711
+So just like what we did before from
+that runs all the way down here.
+
+121
+00:06:51,711 --> 00:06:54,563
+We see laws for the final step.
+
+122
+00:06:54,563 --> 00:06:57,290
+We're calling it the graphs
+that's been finalized.
+
+123
+00:06:57,290 --> 00:06:58,111
+We're going to get it an accuracy again.
+
+124
+00:06:58,111 --> 00:07:00,570
+We're willing to do 100 steps here and
+an accuracy of 91.
+
+125
+00:07:00,570 --> 00:07:03,185
+So that means our code
+it's running at least.
+
+126
+00:07:03,185 --> 00:07:05,138
+And then what we can
+do it's spin it up and
+
+127
+00:07:05,138 --> 00:07:08,595
+run say 12,000 steps Using a little
+bit more powerful hardware.
+
+128
+00:07:08,595 --> 00:07:12,672
+in this particular case you're going to be
+invoking GPUS much like you did in your
+
+129
+00:07:12,672 --> 00:07:13,240
+last lab.
+
+130
+00:07:13,240 --> 00:07:16,705
+So when you run that and
+we're ACTUALLY going to be using 10,000
+
+131
+00:07:16,705 --> 00:07:20,429
+steps you can actually start to kick
+off you cloud machine or engine job.
+
+132
+00:07:20,429 --> 00:07:23,368
+I've already done that'll take
+you anywhere between 10 and
+
+133
+00:07:23,368 --> 00:07:25,760
+20 minutes to run depending
+upon when you run it.
+
+134
+00:07:26,840 --> 00:07:30,766
+And when you go into Cloud Machine
+Learning Engine all at the bottom you see
+
+135
+00:07:30,766 --> 00:07:34,520
+artificial intelligence in your
+navigation menu click on ML Engine.
+
+136
+00:07:34,520 --> 00:07:39,490
+You'll see the job that gets
+submitted is the training job.
+
+137
+00:07:39,490 --> 00:07:40,572
+And then this one completed.
+
+138
+00:07:40,572 --> 00:07:42,300
+It took me about 11 minutes to complete.
+
+139
+00:07:43,330 --> 00:07:48,095
+Then you can click into it and
+view the logs.
+
+140
+00:07:50,250 --> 00:07:53,635
+And here's where you can get the actual
+accuracy over those 10,000 steps, so
+
+141
+00:07:53,635 --> 00:07:55,938
+what I like to do is just either
+type in steps or accuracy.
+
+142
+00:07:55,938 --> 00:07:56,795
+It'll take me to the last one.
+
+143
+00:08:02,573 --> 00:08:04,189
+You'll be able to see that.
+
+144
+00:08:06,426 --> 00:08:08,733
+We have an accuracy of 96 almost 97%.
+
+145
+00:08:08,733 --> 00:08:13,573
+So if you're wondering what's the point of
+dropout if we're getting about the same
+
+146
+00:08:13,573 --> 00:08:17,391
+accuracy percentages as we did with
+the deep neural networks before.
+
+147
+00:08:17,391 --> 00:08:19,920
+And again it's all point
+of generalizeability.
+
+148
+00:08:19,920 --> 00:08:23,080
+This neural network that comes
+out with the dropout layer is,
+
+149
+00:08:23,080 --> 00:08:26,130
+say you add more training data or
+different training data.
+
+150
+00:08:26,130 --> 00:08:30,068
+It's going to be a little bit more robust
+and less rigid and less likely to overfit.
+
+151
+00:08:30,068 --> 00:08:32,643
+So typically, even with networks
+that you're going to see later on,
+
+152
+00:08:32,643 --> 00:08:34,098
+the convolutional neural networks.
+
+153
+00:08:34,098 --> 00:08:35,464
+It's a very good idea for
+
+154
+00:08:35,464 --> 00:08:38,980
+a regularization technique to add
+in a dropout layer just to make
+
+155
+00:08:38,980 --> 00:08:43,163
+your network a little bit more nimble and
+less susceptible to overfitting.
+
+156
+00:08:43,163 --> 00:08:44,446
+So that's 97% there.
+
+157
+00:08:44,446 --> 00:08:49,407
+And once you've done that,
+then we're going to kick off the last bit.
+
+158
+00:08:49,407 --> 00:08:53,346
+We've done training,
+we've done evaluation and
+
+159
+00:08:53,346 --> 00:08:56,557
+now we need to actually deploy and predict
+
+160
+00:08:58,078 --> 00:09:02,739
+Here we run the best script that actually
+does the Cloud ML Engine model creation.
+
+161
+00:09:02,739 --> 00:09:06,220
+This is going to be deploying it so we
+can actually run a prediction against it.
+
+162
+00:09:06,220 --> 00:09:08,874
+I changed the code just because I like
+having multiple different models.
+
+163
+00:09:08,874 --> 00:09:12,045
+One for each of the different
+model types to be mnist_dropout,
+
+164
+00:09:12,045 --> 00:09:13,876
+you can leave it as mnist if you want.
+
+165
+00:09:13,876 --> 00:09:17,479
+Keep in mind if you have a model that
+already exists and you try to run this
+
+166
+00:09:17,479 --> 00:09:21,767
+code, you could get an error that says the
+resource and the project already exists.
+
+167
+00:09:21,767 --> 00:09:25,644
+That's because when you actually head over
+to Cloud ML Engine you go into Models,
+
+168
+00:09:25,644 --> 00:09:27,905
+you could have that model
+that already exists.
+
+169
+00:09:27,905 --> 00:09:31,685
+Now you could replace it if you wanted to
+or you can delete it here in the UI and
+
+170
+00:09:31,685 --> 00:09:33,067
+then just rerun that code.
+
+171
+00:09:33,067 --> 00:09:35,049
+Once that model deployment is complete.
+
+172
+00:09:35,049 --> 00:09:39,725
+Normally it take three to four minutes,
+then we can actually do some predictions
+
+173
+00:09:39,725 --> 00:09:42,490
+with our new deep neural
+network with dropout.
+
+174
+00:09:42,490 --> 00:09:46,344
+So again here much like we did in last
+lab, you can snag one of the images.
+
+175
+00:09:46,344 --> 00:09:49,917
+I'll challenge you to try and
+find one that's is very, very hard for
+
+176
+00:09:49,917 --> 00:09:51,960
+even humans and see how the model does.
+
+177
+00:09:51,960 --> 00:09:57,435
+And here we just chosen image number 115
+we'll be changing that to heart's content,
+
+178
+00:09:57,435 --> 00:09:58,910
+maybe to 9 maybe to 4.
+
+179
+00:09:58,910 --> 00:09:59,965
+I think it's a 4.
+
+180
+00:09:59,965 --> 00:10:02,199
+Maybe it'll confuse the model.
+
+181
+00:10:02,199 --> 00:10:03,930
+It will think that it's a 9.
+
+182
+00:10:03,930 --> 00:10:04,804
+And run that.
+
+183
+00:10:04,804 --> 00:10:09,883
+Keep in mind if you change your model
+name, be sure to change it here as well.
+
+184
+00:10:09,883 --> 00:10:11,555
+This is not prioritized.
+
+185
+00:10:11,555 --> 00:10:16,150
+The model name is just whatever
+you put into this value.
+
+186
+00:10:16,150 --> 00:10:18,254
+And of course,
+it picked it up that it was a 4.
+
+187
+00:10:18,254 --> 00:10:18,994
+And this is the probability.
+
+188
+00:10:18,994 --> 00:10:23,152
+You can see that 0, 1, 2, 3 are all very,
+
+189
+00:10:23,152 --> 00:10:27,662
+very small numbers, to the power of -0.08.
+
+190
+00:10:27,662 --> 00:10:32,443
+And then 98% is going to be the output for
+the class of 4.
+
+191
+00:10:32,443 --> 00:10:37,079
+So that is deep neural networks with
+the additional stability of having
+
+192
+00:10:37,079 --> 00:10:40,256
+a dropout layer, again,
+just reviewing that.
+
+193
+00:10:40,256 --> 00:10:44,497
+The dropout layer that we added
+as a probability of 10% here and
+
+194
+00:10:44,497 --> 00:10:48,057
+you can see that it will only
+applies during training.
+
+195
+00:10:48,057 --> 00:10:52,101
+Just so, there's no point in running it
+for evaluations as well as evaluating for
+
+196
+00:10:52,101 --> 00:10:53,160
+that while loop.
+
+197
+00:10:53,160 --> 00:10:56,187
+And we're only trying to prevent over
+fitting during the training of the model.
+
+198
+00:10:56,187 --> 00:11:01,135
+All right, additional documentation is
+available through the Tensor Flow website,
+
+199
+00:11:01,135 --> 00:11:02,568
+tf.layers.Dropout.
+
+200
+00:11:02,568 --> 00:11:07,224
+And that concludes working with
+the MNIST data set with a linear deep
+
+201
+00:11:07,224 --> 00:11:10,990
+neural network,
+deep neural networks with dropout.
+
+202
+00:11:10,990 --> 00:11:15,478
+We've gotten around 97% accurate, again,
+on the data set that we were given.
+
+203
+00:11:15,478 --> 00:11:19,006
+We'll show you how you can get that
+additional percentage point or
+
+204
+00:11:19,006 --> 00:11:23,416
+two of accuracy, and explore a new model
+type that actually handles the variations
+
+205
+00:11:23,416 --> 00:11:27,768
+in images, like if they are rotated ever
+so slightly, if there was noise in them.
+
+206
+00:11:27,768 --> 00:11:32,213
+You can imagine that linear networks and
+neural networks might perform not as well,
+
+207
+00:11:32,213 --> 00:11:33,411
+especially at scale.
+
+208
+00:11:33,411 --> 00:11:36,291
+That's going to be your
+convolutional neural network and
+
+209
+00:11:36,291 --> 00:11:37,953
+that lecture is coming up next.

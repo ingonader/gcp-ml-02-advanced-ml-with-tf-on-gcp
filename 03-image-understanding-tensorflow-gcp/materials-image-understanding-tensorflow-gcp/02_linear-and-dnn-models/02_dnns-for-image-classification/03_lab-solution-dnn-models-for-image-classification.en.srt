@@ -1,0 +1,1575 @@
+1
+00:00:00,000 --> 00:00:02,240
+As you saw in the previous lesson,
+
+2
+00:00:02,240 --> 00:00:05,790
+our main goal here is to build a deep neural network,
+
+3
+00:00:05,790 --> 00:00:08,640
+which has multiple hidden layers with a bunch of neurons,
+
+4
+00:00:08,640 --> 00:00:12,570
+to ultimately enable us to classify those MNIST images in
+
+5
+00:00:12,570 --> 00:00:14,550
+our dataset and see if we can't do it a little
+
+6
+00:00:14,550 --> 00:00:16,885
+bit more accurately than with there linear dataset.
+
+7
+00:00:16,885 --> 00:00:19,025
+To review as you saw within the lecture,
+
+8
+00:00:19,025 --> 00:00:21,980
+this is the linear model it's just the features that
+
+9
+00:00:21,980 --> 00:00:25,175
+you see here and it can't classify the swirl as you see.
+
+10
+00:00:25,175 --> 00:00:28,645
+So what we're going to be doing is were going to be adding a few hidden layers,
+
+11
+00:00:28,645 --> 00:00:31,305
+adding a few more neurons,
+
+12
+00:00:31,305 --> 00:00:35,350
+and then ultimately getting the MNIST dataset images,
+
+13
+00:00:35,350 --> 00:00:39,320
+hopefully with classifying with more accuracy with a more complex model type,
+
+14
+00:00:39,320 --> 00:00:41,825
+the deep neural network as compared to a linear model.
+
+15
+00:00:41,825 --> 00:00:43,760
+Let's take a look at how we can actually add
+
+16
+00:00:43,760 --> 00:00:48,180
+these hidden layers as new lines of TensorFlow code in your model.
+
+17
+00:00:48,180 --> 00:00:51,410
+So first and foremost what you want to do is clone in
+
+18
+00:00:51,410 --> 00:00:55,415
+the GitHub repo that we have which is going to give you your started lab code.
+
+19
+00:00:55,415 --> 00:00:58,040
+Once you do that you'll see something that looks like this.
+
+20
+00:00:58,040 --> 00:00:59,350
+I'm in deep dive,
+
+21
+00:00:59,350 --> 00:01:01,265
+images and then labs.
+
+22
+00:01:01,265 --> 00:01:04,810
+Now there's two IPython notebooks I want to draw your attention to.
+
+23
+00:01:04,810 --> 00:01:06,770
+The first one is MNIST models,
+
+24
+00:01:06,770 --> 00:01:10,470
+when you actually open that one up it's going to look like this.
+
+25
+00:01:10,470 --> 00:01:12,980
+So, we're going to replace the project name,
+
+26
+00:01:12,980 --> 00:01:15,380
+the bucket, the region and the model type.
+
+27
+00:01:15,380 --> 00:01:18,270
+If you realize, here it's actually parameterized.
+
+28
+00:01:18,270 --> 00:01:20,750
+So, unlike the linear model code which we wrote
+
+29
+00:01:20,750 --> 00:01:23,300
+before which is just a one time use for the linear model,
+
+30
+00:01:23,300 --> 00:01:24,680
+from here on out starting with
+
+31
+00:01:24,680 --> 00:01:27,410
+a deep neural network and I'm going to go into a different concept with
+
+32
+00:01:27,410 --> 00:01:29,750
+deep neural networks after this and then eventually
+
+33
+00:01:29,750 --> 00:01:32,580
+work our way up into the convolutional neural network or CNN,
+
+34
+00:01:32,580 --> 00:01:36,320
+we're going to be using this same notebook the MNIST models in
+
+35
+00:01:36,320 --> 00:01:40,400
+order to productionalize it and run it on the Cloud with Cloud Machine Learning Engine.
+
+36
+00:01:40,400 --> 00:01:42,620
+So if you scroll down here you'll notice code that
+
+37
+00:01:42,620 --> 00:01:45,185
+actually does the deploying and the prediction,
+
+38
+00:01:45,185 --> 00:01:48,840
+but the actual model code itself is not in this notebook,
+
+39
+00:01:48,840 --> 00:01:50,735
+and that's because it's in a separate notebook.
+
+40
+00:01:50,735 --> 00:01:53,450
+So if you went into the MNIST model,
+
+41
+00:01:53,450 --> 00:01:57,435
+into trainer, and then opened up model.py,
+
+42
+00:01:57,435 --> 00:01:59,235
+this is what you will see.
+
+43
+00:01:59,235 --> 00:02:02,390
+So here we have our standard import TensorFlow
+
+44
+00:02:02,390 --> 00:02:05,360
+and we have the parameters just like you saw before with the linear model,
+
+45
+00:02:05,360 --> 00:02:09,245
+our input is a 28 by 28 image pixel,
+
+46
+00:02:09,245 --> 00:02:12,350
+our pixel image for the grayscale MNIST images that we're
+
+47
+00:02:12,350 --> 00:02:15,755
+passing in as well as the output classes,
+
+48
+00:02:15,755 --> 00:02:17,630
+this is the numbers zero through
+
+49
+00:02:17,630 --> 00:02:21,310
+nine or ten total classes that we're actually trying to predict for.
+
+50
+00:02:21,310 --> 00:02:23,680
+You have the linear model here available to you,
+
+51
+00:02:23,680 --> 00:02:26,270
+this is what you wrote previously and that is one of
+
+52
+00:02:26,270 --> 00:02:29,525
+the models that we could run as part of this parameterized model.
+
+53
+00:02:29,525 --> 00:02:31,440
+Again going back to the MNIST models,
+
+54
+00:02:31,440 --> 00:02:34,700
+you can just have this run as linear and then change these and then run it just
+
+55
+00:02:34,700 --> 00:02:38,290
+fine and you can run that linear model at scale with cloud machine learning engine.
+
+56
+00:02:38,290 --> 00:02:42,889
+But we want to go a little bit deeper and that's where the purposes of this lab,
+
+57
+00:02:42,889 --> 00:02:46,640
+we need to complete the definition of our deep neural network model.
+
+58
+00:02:46,640 --> 00:02:50,000
+So how do we actually add in these dense layers
+
+59
+00:02:50,000 --> 00:02:53,660
+but do so inside of code? Well, it's not that bad.
+
+60
+00:02:53,660 --> 00:02:55,515
+So the first thing that you want to do, first,
+
+61
+00:02:55,515 --> 00:03:00,170
+is before passing in data into your deep neural network we need to transform it,
+
+62
+00:03:00,170 --> 00:03:02,240
+flatten it from that 28 by
+
+63
+00:03:02,240 --> 00:03:04,280
+28 in the same way
+
+64
+00:03:04,280 --> 00:03:06,535
+that we did for the linear models so we're going to bring that in there,
+
+65
+00:03:06,535 --> 00:03:11,000
+and now at the first layer of our deep neural network,
+
+66
+00:03:11,000 --> 00:03:14,930
+what we're actually going to do is setup a hidden layer called H1,
+
+67
+00:03:14,930 --> 00:03:18,430
+and then we're going to invoke the TF layers API,
+
+68
+00:03:18,430 --> 00:03:22,720
+and then you can create a dense layer for our deep neural network,
+
+69
+00:03:22,720 --> 00:03:24,140
+and then you're going to say,
+
+70
+00:03:24,140 --> 00:03:26,425
+hey what's the input to this layer?
+
+71
+00:03:26,425 --> 00:03:29,640
+Well, we'll just call it the previous one which is going to be our input.
+
+72
+00:03:29,640 --> 00:03:32,385
+That's the X that we just defined in the line beforehand,
+
+73
+00:03:32,385 --> 00:03:36,910
+and you can specify the total number of neurons that's going to be your input.
+
+74
+00:03:36,910 --> 00:03:42,290
+This technically input equals but you can just write just a number for short.
+
+75
+00:03:42,290 --> 00:03:45,745
+Again for our architecture we're going to specify just save 300,
+
+76
+00:03:45,745 --> 00:03:48,195
+and we'll give it an activation function.
+
+77
+00:03:48,195 --> 00:03:51,645
+What's the activation function commonly used for neural networks?
+
+78
+00:03:51,645 --> 00:03:54,265
+If you said Relu, that's exactly correct.
+
+79
+00:03:54,265 --> 00:03:57,570
+Boom, just like that we already have one layer.
+
+80
+00:03:57,570 --> 00:04:00,560
+Say we want to add in a few more to our architecture.
+
+81
+00:04:00,560 --> 00:04:03,510
+Let's add in, I'll simply copy and paste.
+
+82
+00:04:03,510 --> 00:04:06,410
+Say we want to add two more layers.
+
+83
+00:04:06,410 --> 00:04:09,410
+Now what you'll have to change here is,
+
+84
+00:04:09,410 --> 00:04:11,540
+this is going to be our second and our third hidden layers
+
+85
+00:04:11,540 --> 00:04:13,175
+and you're going to have to change the inputs.
+
+86
+00:04:13,175 --> 00:04:14,780
+So for the second hidden layer,
+
+87
+00:04:14,780 --> 00:04:18,290
+its input is the first hidden layer and we'll
+
+88
+00:04:18,290 --> 00:04:21,830
+reduce the number of neurons and same thing with our third hidden layer,
+
+89
+00:04:21,830 --> 00:04:23,360
+it takes the input from
+
+90
+00:04:23,360 --> 00:04:26,870
+the second hidden layer and it will reduce the neurons again here.
+
+91
+00:04:26,870 --> 00:04:28,550
+Then the number of neurons and the number of
+
+92
+00:04:28,550 --> 00:04:32,360
+layers overall is just called your neural network architecture.
+
+93
+00:04:32,360 --> 00:04:33,860
+Now we're not done yet,
+
+94
+00:04:33,860 --> 00:04:37,130
+what do we have up here the logits that
+
+95
+00:04:37,130 --> 00:04:41,165
+we don't have down here and that's exactly what we're going to have to copy over.
+
+96
+00:04:41,165 --> 00:04:44,930
+Now, for the logits which is just going to
+
+97
+00:04:44,930 --> 00:04:48,110
+be our layer that returns the role values for our predictions,
+
+98
+00:04:48,110 --> 00:04:52,220
+this is also a dense layer and we're going to pass it in an input
+
+99
+00:04:52,220 --> 00:04:57,140
+but its X for the linear model because that's the only input that we have here.
+
+100
+00:04:57,140 --> 00:04:59,880
+What's the last layer that we just wrote previously?
+
+101
+00:04:59,880 --> 00:05:02,550
+It's actually, H3, so I'm going to actually update that,
+
+102
+00:05:02,550 --> 00:05:04,260
+the third hidden layer.
+
+103
+00:05:04,260 --> 00:05:06,685
+We're going to pass in ten classes, again,
+
+104
+00:05:06,685 --> 00:05:08,330
+this is just the placeholder that we have
+
+105
+00:05:08,330 --> 00:05:11,165
+N classes is equal to ten we define that up here.
+
+106
+00:05:11,165 --> 00:05:15,410
+That is actually creating those raw values for our prediction and then it's just going to
+
+107
+00:05:15,410 --> 00:05:19,830
+be a activation of nano which is default for linear for this last layer.
+
+108
+00:05:19,830 --> 00:05:22,690
+Then I'm gonna return that.
+
+109
+00:05:23,250 --> 00:05:25,820
+Perfect. You've just set up
+
+110
+00:05:25,820 --> 00:05:28,820
+your deep neural network model code with three different layers.
+
+111
+00:05:28,820 --> 00:05:31,685
+Essentially, you just did the code version of what you saw here
+
+112
+00:05:31,685 --> 00:05:35,120
+except with many more neurons than just four, four and four.
+
+113
+00:05:35,120 --> 00:05:39,190
+So, let's take a look at what else is in the notebook.
+
+114
+00:05:39,190 --> 00:05:41,180
+You can see if you're scrolling ahead and looking ahead,
+
+115
+00:05:41,180 --> 00:05:43,740
+by the way pass means just ignore.
+
+116
+00:05:44,150 --> 00:05:47,170
+All right we're going to do something with dropout,
+
+117
+00:05:47,170 --> 00:05:50,030
+which is a regularization technique that we're going to explore after this.
+
+118
+00:05:50,030 --> 00:05:52,370
+Then later on, if you're looking ahead,
+
+119
+00:05:52,370 --> 00:05:54,680
+you'll see that you're actually going to be creating or working
+
+120
+00:05:54,680 --> 00:05:57,500
+with a convolutional neural network.
+
+121
+00:05:57,500 --> 00:06:02,030
+You're going to see some of the unique layers that occur here but it
+
+122
+00:06:02,030 --> 00:06:07,095
+also uses some of the same layers for deep neural network all the way at the end,
+
+123
+00:06:07,095 --> 00:06:10,580
+and you're going to see that in your next few lessons and then the lab there,
+
+124
+00:06:10,580 --> 00:06:12,560
+but that's looking way ahead first we want to see
+
+125
+00:06:12,560 --> 00:06:14,945
+the performance of using just a deep neural network.
+
+126
+00:06:14,945 --> 00:06:16,565
+So we're going to save that,
+
+127
+00:06:16,565 --> 00:06:18,740
+and then once we have our deep neural network all the way at
+
+128
+00:06:18,740 --> 00:06:20,780
+the bottom don't forget you have your train and evaluate
+
+129
+00:06:20,780 --> 00:06:24,870
+function just like you were previously with the batch size,
+
+130
+00:06:24,870 --> 00:06:27,350
+and your estimators, and everything that you've learned previously and
+
+131
+00:06:27,350 --> 00:06:31,410
+that you worked with in linear lab is still in play here.
+
+132
+00:06:31,410 --> 00:06:34,040
+Okay. Saving that notebook and then hopping
+
+133
+00:06:34,040 --> 00:06:36,420
+over into how we're actually going to test this,
+
+134
+00:06:36,420 --> 00:06:38,360
+evaluate it and then productionalize it,
+
+135
+00:06:38,360 --> 00:06:41,420
+is back in the MNIST models notebook.
+
+136
+00:06:41,420 --> 00:06:43,625
+So the first thing that we need to do is we need to change
+
+137
+00:06:43,625 --> 00:06:46,910
+the placeholder project names to our own.
+
+138
+00:06:46,910 --> 00:06:51,850
+So for us, I'm going to go to the home,
+
+139
+00:06:51,850 --> 00:06:55,565
+and I'm just going to grab my project ID,
+
+140
+00:06:55,565 --> 00:07:04,520
+paste that in, and specify a bucket if you haven't created one already,
+
+141
+00:07:04,520 --> 00:07:09,190
+just opening up the navigation menu let's find where our storage is.
+
+142
+00:07:09,190 --> 00:07:11,570
+I scrolled past it.
+
+143
+00:07:11,570 --> 00:07:15,620
+Let's find the storage.
+
+144
+00:07:15,620 --> 00:07:18,885
+Storage here. Now I already created a bucket.
+
+145
+00:07:18,885 --> 00:07:21,170
+Generally for big data and analytics and machine
+
+146
+00:07:21,170 --> 00:07:23,645
+learning use cases it'll be a regional bucket that you'll create.
+
+147
+00:07:23,645 --> 00:07:25,800
+I created a placeholder one called,
+
+148
+00:07:25,800 --> 00:07:27,480
+my cloud bucket 99,
+
+149
+00:07:27,480 --> 00:07:29,570
+and you'll notice that the location is specific,
+
+150
+00:07:29,570 --> 00:07:31,910
+it's a region, US Central1.
+
+151
+00:07:31,910 --> 00:07:35,550
+So, let's go back into our notebook,
+
+152
+00:07:35,550 --> 00:07:40,540
+specify that bucket for
+
+153
+00:07:40,540 --> 00:07:44,670
+a generic name for my bucket and then the region name is the same as it was here.
+
+154
+00:07:44,670 --> 00:07:47,140
+Really, really important, you could evaluate and
+
+155
+00:07:47,140 --> 00:07:49,810
+test it against that linear model but since you've already done that,
+
+156
+00:07:49,810 --> 00:07:54,745
+let's see if we can beat the linear model with a deep neural network.
+
+157
+00:07:54,745 --> 00:07:58,355
+Go ahead and run this,
+
+158
+00:07:58,355 --> 00:08:04,620
+environmental variables, this is going to set our project and our compute region,
+
+159
+00:08:05,850 --> 00:08:08,910
+and the note in here just says,
+
+160
+00:08:08,910 --> 00:08:11,160
+"complete what you just did," which is the
+
+161
+00:08:11,160 --> 00:08:13,475
+to-dos to make sure that your model actually works,
+
+162
+00:08:13,475 --> 00:08:16,615
+you've added those layers to your neural network architecture,
+
+163
+00:08:16,615 --> 00:08:21,080
+and then here is where we are actually going to be getting ready to train.
+
+164
+00:08:21,570 --> 00:08:25,550
+So we're going to be running it locally with
+
+165
+00:08:25,550 --> 00:08:28,940
+the running rate you see here and running it for just 100 steps.
+
+166
+00:08:28,940 --> 00:08:32,505
+So we're actually going to see what the accuracy is here.
+
+167
+00:08:32,505 --> 00:08:34,835
+So, scrolling down.
+
+168
+00:08:34,835 --> 00:08:37,305
+Here we're calling on the model function,
+
+169
+00:08:37,305 --> 00:08:39,199
+we're getting checkpoints saved,
+
+170
+00:08:39,199 --> 00:08:41,540
+and then we're actually going to start the training right here.
+
+171
+00:08:41,540 --> 00:08:45,845
+So step number one we had a gigantic loss of 2.36 and that's fine.
+
+172
+00:08:45,845 --> 00:08:49,940
+We've finalized the graph and here we see what that actually looks
+
+173
+00:08:49,940 --> 00:08:54,440
+like inside of a tensor board once we actually get to deploy this and get it to work.
+
+174
+00:08:54,440 --> 00:08:58,310
+Alright, so at step 100 the accuracy for the deep neural network is okay.
+
+175
+00:08:58,310 --> 00:09:01,375
+We're about 91 at least from when I ran this,
+
+176
+00:09:01,375 --> 00:09:03,170
+maybe yours is a little bit similar, a little bit higher,
+
+177
+00:09:03,170 --> 00:09:06,960
+a little bit lower, 91 for the deep neural network.
+
+178
+00:09:06,960 --> 00:09:13,570
+Okay. So how do we actually deploy this and use Google Cloud resources like a GPU?
+
+179
+00:09:13,570 --> 00:09:14,970
+Eventually later on in this course,
+
+180
+00:09:14,970 --> 00:09:19,645
+you're going to be using TPUs which are even faster for training machine learning models.
+
+181
+00:09:19,645 --> 00:09:23,705
+So, the first thing that we need to do is basically specify.
+
+182
+00:09:23,705 --> 00:09:25,595
+All right, well we want to create
+
+183
+00:09:25,595 --> 00:09:29,865
+a Cloud Machine Learning Engine job and we have a bunch of parameters basically saying,
+
+184
+00:09:29,865 --> 00:09:33,755
+MNIST and it's going to be a DNN model type and then the date
+
+185
+00:09:33,755 --> 00:09:37,670
+of the job and the output directory we actually want to store it in
+
+186
+00:09:37,670 --> 00:09:41,525
+our Google Cloud Storage bucket in the MNIST folder under
+
+187
+00:09:41,525 --> 00:09:44,000
+trained and then again prepend it with
+
+188
+00:09:44,000 --> 00:09:46,730
+a suffix for what type of model that we're actually training.
+
+189
+00:09:46,730 --> 00:09:48,770
+Here's the actual code that calls the job.
+
+190
+00:09:48,770 --> 00:09:53,000
+If you remember from your earlier course we looked at the end-to-end labs.
+
+191
+00:09:53,000 --> 00:09:54,020
+This is very, very similar.
+
+192
+00:09:54,020 --> 00:09:55,400
+We're submitting a training job,
+
+193
+00:09:55,400 --> 00:09:57,275
+specifying the region that we're in,
+
+194
+00:09:57,275 --> 00:10:01,335
+and then ultimately deploying the package path to the train directory.
+
+195
+00:10:01,335 --> 00:10:05,555
+Right now we're just using basic GPU for this scale tier,
+
+196
+00:10:05,555 --> 00:10:08,360
+you can check out some of the latest scale tiers,
+
+197
+00:10:08,360 --> 00:10:12,300
+you just explore that option and see what the available enumerated values are.
+
+198
+00:10:12,300 --> 00:10:15,440
+We're not just training for a 100 steps are actually going to train for
+
+199
+00:10:15,440 --> 00:10:18,525
+10,000 now. All right.
+
+200
+00:10:18,525 --> 00:10:20,360
+So we have that ready to go,
+
+201
+00:10:20,360 --> 00:10:24,900
+let's go ahead and submit that job to Cloud Machine Learning Engine.
+
+202
+00:10:25,450 --> 00:10:32,725
+Once you have that submitted what you can do is immediately it says it's queued before.
+
+203
+00:10:32,725 --> 00:10:34,540
+Previously I had trained this,
+
+204
+00:10:34,540 --> 00:10:36,940
+so if you actually have model code in there already,
+
+205
+00:10:36,940 --> 00:10:40,065
+if you're rerunning your model it'll actually remove that for you.
+
+206
+00:10:40,065 --> 00:10:42,780
+Likely you might get a warning or an error that says, 'hey,
+
+207
+00:10:42,780 --> 00:10:44,770
+I can't remove this' and that's because you didn't
+
+208
+00:10:44,770 --> 00:10:47,540
+have a model code model in there already,
+
+209
+00:10:47,540 --> 00:10:49,130
+and that's completely fine.
+
+210
+00:10:49,130 --> 00:10:51,370
+So it's removing all of those files for me,
+
+211
+00:10:51,370 --> 00:10:54,720
+and then it actually is queuing up the job.
+
+212
+00:10:54,720 --> 00:10:56,950
+How can you check the progress of the job?
+
+213
+00:10:56,950 --> 00:11:00,060
+Well, back in the navigation menu all the way at the bottom,
+
+214
+00:11:00,060 --> 00:11:04,040
+under artificial intelligence you can click on ML engine.
+
+215
+00:11:05,030 --> 00:11:08,144
+Then for our jobs once it's queued,
+
+216
+00:11:08,144 --> 00:11:12,395
+it'll actually show up inside of your ML Engine jobs.
+
+217
+00:11:12,395 --> 00:11:15,400
+Let's go back in the notebook and inspect.
+
+218
+00:11:17,360 --> 00:11:24,265
+Our job, MNIST DNN and then we have the date has been submitted successfully.
+
+219
+00:11:24,265 --> 00:11:26,720
+We can actually view the status of the job
+
+220
+00:11:26,720 --> 00:11:32,700
+through CloudShell or we can wait for the UI to refresh.
+
+221
+00:11:34,100 --> 00:11:36,540
+It's going to pull up,
+
+222
+00:11:36,540 --> 00:11:41,060
+Cloud Shell, get that to and get ready.
+
+223
+00:11:41,490 --> 00:11:46,520
+Let's see a few of the job and the console.
+
+224
+00:11:46,760 --> 00:11:50,610
+Let's see if it's made it into the queue.
+
+225
+00:11:51,160 --> 00:11:54,175
+All right. Training has begun.
+
+226
+00:11:54,175 --> 00:11:56,500
+At least this particular job is just for training.
+
+227
+00:11:56,500 --> 00:11:59,635
+It's running. It's about a minute and 23 seconds right now.
+
+228
+00:11:59,635 --> 00:12:01,180
+On average, when I've run this before,
+
+229
+00:12:01,180 --> 00:12:04,900
+it takes about eight or nine minutes for that deep neural network to finish training.
+
+230
+00:12:04,900 --> 00:12:08,405
+That's 10,000 steps that we specified in training.
+
+231
+00:12:08,405 --> 00:12:10,610
+Then, ultimately when you get ready to actually
+
+232
+00:12:10,610 --> 00:12:13,220
+create the model on given the to predict with it,
+
+233
+00:12:13,220 --> 00:12:16,340
+we can actually deploy that as a model that we can predict with.
+
+234
+00:12:16,340 --> 00:12:19,240
+But, once that's going,
+
+235
+00:12:21,140 --> 00:12:26,020
+we can actually monitor and take a look at the architecture through TensorBoard.
+
+236
+00:12:26,020 --> 00:12:29,235
+So, this is pretty cool. So, we're going to launch this,
+
+237
+00:12:29,235 --> 00:12:32,035
+and this will actually give us a link.
+
+238
+00:12:32,035 --> 00:12:34,900
+It's looking at the output directory.
+
+239
+00:12:34,900 --> 00:12:37,850
+Look at that, it's starting TensorBoard on the MNIST trained directory
+
+240
+00:12:37,850 --> 00:12:40,915
+where you're passing in the bucket type as a parameter there,
+
+241
+00:12:40,915 --> 00:12:42,040
+and then the model type again,
+
+242
+00:12:42,040 --> 00:12:44,725
+it just matches the directory that we specified earlier.
+
+243
+00:12:44,725 --> 00:12:47,075
+We can open this up,
+
+244
+00:12:47,075 --> 00:12:51,120
+and then once that model gets to
+
+245
+00:12:51,120 --> 00:12:55,110
+a place where it starts actually outputting results in the train there,
+
+246
+00:12:55,110 --> 00:12:58,425
+you're going to see the graph of results.
+
+247
+00:12:58,425 --> 00:13:01,030
+For previously ran model,
+
+248
+00:13:01,030 --> 00:13:04,815
+same model code, this is what the graph of the model looks like.
+
+249
+00:13:04,815 --> 00:13:09,270
+So, you can see, if we go down and zoom in just a little bit,
+
+250
+00:13:09,270 --> 00:13:15,210
+that input data comes in and passes through the deep neural network layers again,
+
+251
+00:13:15,210 --> 00:13:17,550
+that's the dense layers that we have there.
+
+252
+00:13:17,550 --> 00:13:21,210
+You can see our friend Softmax there helping with the probabilities,
+
+253
+00:13:21,210 --> 00:13:22,980
+and then ultimately it's very hard to read,
+
+254
+00:13:22,980 --> 00:13:25,935
+but at the top you can see that the the result
+
+255
+00:13:25,935 --> 00:13:29,210
+are through after the rest of the transformations that happened here,
+
+256
+00:13:29,210 --> 00:13:30,884
+that their matrix multiplication,
+
+257
+00:13:30,884 --> 00:13:32,730
+that we ultimately get an accuracy number,
+
+258
+00:13:32,730 --> 00:13:34,925
+and that's where we get that point nine two from.
+
+259
+00:13:34,925 --> 00:13:39,470
+So, this is essentially what we did with the simple web browser,
+
+260
+00:13:39,470 --> 00:13:40,845
+UI with the TensorFlow Playground,
+
+261
+00:13:40,845 --> 00:13:42,750
+now represented in a graph.
+
+262
+00:13:42,750 --> 00:13:45,420
+Again, keep in mind that unless using TF eager,
+
+263
+00:13:45,420 --> 00:13:48,310
+TensorFlow is going to build out this graph
+
+264
+00:13:48,310 --> 00:13:52,160
+first before actually initializing doing any execution as well.
+
+265
+00:13:52,160 --> 00:13:54,965
+So, that's the first step is build the graph and the second step is
+
+266
+00:13:54,965 --> 00:13:58,080
+execute on the graph and start training. All right.
+
+267
+00:13:58,080 --> 00:14:01,590
+Well, we'll tune back in after the model training is complete,
+
+268
+00:14:01,590 --> 00:14:04,540
+and about eight minutes is generally what you can expect,
+
+269
+00:14:04,540 --> 00:14:08,390
+and then we can evaluate some predictions against this once we
+
+270
+00:14:08,390 --> 00:14:12,380
+deploy out the job as an official model on ML Engine,
+
+271
+00:14:12,380 --> 00:14:14,980
+and see what a prediction looks like.
+
+272
+00:14:16,790 --> 00:14:19,240
+After your model finishes training,
+
+273
+00:14:19,240 --> 00:14:20,570
+the deep neural network here again,
+
+274
+00:14:20,570 --> 00:14:23,115
+I'm in the jobs for ML Engine.
+
+275
+00:14:23,115 --> 00:14:24,850
+We finally have one version of it,
+
+276
+00:14:24,850 --> 00:14:27,935
+I just trained three just experimenting with different architectures.
+
+277
+00:14:27,935 --> 00:14:31,280
+For each one of them, what you can do is to test the evaluate,
+
+278
+00:14:31,280 --> 00:14:34,830
+the accuracy of it and you can click into "view logs"
+
+279
+00:14:35,030 --> 00:14:37,920
+and what you can do is look at the logs for each of
+
+280
+00:14:37,920 --> 00:14:41,055
+the different steps in training that you have.
+
+281
+00:14:41,055 --> 00:14:42,470
+So, you had steps here,
+
+282
+00:14:42,470 --> 00:14:45,080
+and one of the things that you can do just to search for that last step.
+
+283
+00:14:45,080 --> 00:14:47,450
+I think there was 10,000 steps to going through
+
+284
+00:14:47,450 --> 00:14:50,915
+training is just searched for their performance metric.
+
+285
+00:14:50,915 --> 00:14:57,050
+We're searching for accuracy and let's see what we ended up with.
+
+286
+00:14:57,050 --> 00:15:00,560
+Accuracy at step 10,000 when the model stop,
+
+287
+00:15:00,560 --> 00:15:04,320
+we have 97 percent accurate for the deep neural network.
+
+288
+00:15:04,320 --> 00:15:07,555
+Great. So, now lets us simple evaluation.
+
+289
+00:15:07,555 --> 00:15:09,890
+Let's see if we can't do some predictions.
+
+290
+00:15:09,890 --> 00:15:12,995
+So, we're happy with our Job,
+
+291
+00:15:12,995 --> 00:15:17,140
+we are getting ready to actually deploy it to be an actual model.
+
+292
+00:15:17,140 --> 00:15:18,915
+So, this is what we're going to be creating.
+
+293
+00:15:18,915 --> 00:15:20,390
+We're going to give the model a name,
+
+294
+00:15:20,390 --> 00:15:21,900
+specified the default version,
+
+295
+00:15:21,900 --> 00:15:23,930
+optionally give it a description and a label.
+
+296
+00:15:23,930 --> 00:15:25,265
+Then, once it's a model,
+
+297
+00:15:25,265 --> 00:15:27,925
+we can then invoke the model through
+
+298
+00:15:27,925 --> 00:15:31,245
+simple APIs and pass in new data that it hasn't seen before.
+
+299
+00:15:31,245 --> 00:15:34,705
+In this particular case, just some images and see the predictions that we get back.
+
+300
+00:15:34,705 --> 00:15:36,200
+So, that's the really fun part.
+
+301
+00:15:36,200 --> 00:15:38,515
+So, heading back into our notebook.
+
+302
+00:15:38,515 --> 00:15:42,920
+If you haven't already you can actually go ahead and stop TensorBoard from running.
+
+303
+00:15:42,920 --> 00:15:44,940
+Now, it's actually time,
+
+304
+00:15:44,940 --> 00:15:49,195
+how you actually create one of those models am back in ML Engine here.
+
+305
+00:15:49,195 --> 00:15:52,500
+In order to get this, we need to create a new Cloud ML Engine Job,
+
+306
+00:15:52,500 --> 00:15:54,880
+and this is going to be a deployment.
+
+307
+00:15:54,880 --> 00:15:57,350
+So, we're going to give it a model name,
+
+308
+00:15:57,350 --> 00:16:00,245
+we'll just call this MNIST2 since I already have one in there.
+
+309
+00:16:00,245 --> 00:16:02,040
+Specify the model version.
+
+310
+00:16:02,040 --> 00:16:04,220
+In this particular case, we're just saying the version is equal
+
+311
+00:16:04,220 --> 00:16:06,845
+to the type which is that parameter that we had previously.
+
+312
+00:16:06,845 --> 00:16:09,035
+Then, where the model actually is.
+
+313
+00:16:09,035 --> 00:16:11,715
+Again, that's just the results of the previous step.
+
+314
+00:16:11,715 --> 00:16:13,460
+If there's an existing one in there,
+
+315
+00:16:13,460 --> 00:16:15,130
+we remove it. So, let's see.
+
+316
+00:16:15,130 --> 00:16:19,035
+We're are going and create another Cloud Machine Learning Engine Job,
+
+317
+00:16:19,035 --> 00:16:21,145
+we're actually going to deploy this model,
+
+318
+00:16:21,145 --> 00:16:22,300
+and as soon as it's deployed,
+
+319
+00:16:22,300 --> 00:16:24,580
+then we can predict from it.
+
+320
+00:16:24,990 --> 00:16:27,415
+Now, we don't have to actually wait.
+
+321
+00:16:27,415 --> 00:16:31,715
+I've already pretrained one of those models and deployed it out as you can see,
+
+322
+00:16:31,715 --> 00:16:34,210
+I had a version of MNIST already here,
+
+323
+00:16:34,210 --> 00:16:36,970
+both MNIST and MNIST2 is here already.
+
+324
+00:16:36,970 --> 00:16:40,635
+So, what we can do is, we can actually pass in some images for prediction.
+
+325
+00:16:40,635 --> 00:16:42,950
+So, we're getting the height and the width.
+
+326
+00:16:42,950 --> 00:16:46,665
+Specifying that, it's reading it from a particular dataset, the MNIST dataset.
+
+327
+00:16:46,665 --> 00:16:50,040
+It's grabbing, not a random but we're hard-coding into say,
+
+328
+00:16:50,040 --> 00:16:52,395
+hey predict on image number five.
+
+329
+00:16:52,395 --> 00:16:55,260
+Again, that's just the index of what it appears in that dataset.
+
+330
+00:16:55,260 --> 00:16:57,785
+So, let's see what number five actually is.
+
+331
+00:16:57,785 --> 00:16:59,305
+Some execute this block,
+
+332
+00:16:59,305 --> 00:17:01,220
+and this is the image that's returned,
+
+333
+00:17:01,220 --> 00:17:02,955
+that we could do a prediction on.
+
+334
+00:17:02,955 --> 00:17:06,335
+Let's see if we actually call a prediction service.
+
+335
+00:17:06,335 --> 00:17:08,690
+Again, you may both know that this is number one.
+
+336
+00:17:08,690 --> 00:17:10,110
+Hopefully, the model gets that right,
+
+337
+00:17:10,110 --> 00:17:12,350
+now 97 percent accurate neural network, let's see.
+
+338
+00:17:12,350 --> 00:17:16,550
+It's going to output as a class, a predicted class,
+
+339
+00:17:16,550 --> 00:17:22,965
+and then it's going to output other probabilities for each of those different classes.
+
+340
+00:17:22,965 --> 00:17:25,700
+Here, you see it. It's predicted to that,
+
+341
+00:17:25,700 --> 00:17:27,800
+it was a one by a landslide,
+
+342
+00:17:27,800 --> 00:17:32,370
+you can see that this to the negative 24 is an extremely small number, that's zero.
+
+343
+00:17:32,370 --> 00:17:34,355
+So, zero, one, two,
+
+344
+00:17:34,355 --> 00:17:35,985
+three, reader just like an array.
+
+345
+00:17:35,985 --> 00:17:38,710
+So, predicting for the number one pretty much got
+
+346
+00:17:38,710 --> 00:17:42,280
+a 100 percent because all the numbers are super miniscule here.
+
+347
+00:17:42,280 --> 00:17:45,470
+Now, if you actually went through the dataset,
+
+348
+00:17:45,470 --> 00:17:47,640
+I'm going to pull up some more challenging one.
+
+349
+00:17:47,640 --> 00:17:51,920
+I just happen to know that number 87, let's take a look at.
+
+350
+00:17:52,230 --> 00:17:54,350
+Maybe this could get it,
+
+351
+00:17:54,350 --> 00:17:56,800
+we'll see what looks like a three to me,
+
+352
+00:17:56,800 --> 00:17:58,900
+but it also you've got a loop at the bottom which
+
+353
+00:17:58,900 --> 00:18:01,360
+confused a little bit of that linear network the last time.
+
+354
+00:18:01,360 --> 00:18:05,295
+So, it could be interpreted as a six or something strange.
+
+355
+00:18:05,295 --> 00:18:08,835
+Let's see what happens if we pass that intuitively if recognizes that it's a three.
+
+356
+00:18:08,835 --> 00:18:11,080
+That was immediate.
+
+357
+00:18:11,080 --> 00:18:14,210
+Three with a very small number.
+
+358
+00:18:14,210 --> 00:18:17,050
+So, zero, one, two and three.
+
+359
+00:18:17,050 --> 00:18:19,120
+Yeah. No trouble. All right.
+
+360
+00:18:19,120 --> 00:18:20,995
+Let's see if we can grab another.
+
+361
+00:18:20,995 --> 00:18:26,860
+I think 95 is another one that's a little bit on the border. Let's see.
+
+362
+00:18:26,860 --> 00:18:29,580
+This is a fat for here,
+
+363
+00:18:29,580 --> 00:18:32,930
+but also maybe could be a strange six or seven.
+
+364
+00:18:32,930 --> 00:18:34,645
+There's a lot of ink that's going on there.
+
+365
+00:18:34,645 --> 00:18:37,105
+Let's see if we can't get in some trouble.
+
+366
+00:18:37,105 --> 00:18:39,480
+Four now, we got that was a four.
+
+367
+00:18:39,480 --> 00:18:42,310
+Again, with very high degree of certainty. All right.
+
+368
+00:18:42,310 --> 00:18:46,630
+Last one and then honestly you can experiment with these to your heart's content.
+
+369
+00:18:48,510 --> 00:18:52,610
+So, forward to us could also possibly be a nine,
+
+370
+00:18:52,610 --> 00:18:53,975
+just based on that location.
+
+371
+00:18:53,975 --> 00:18:56,820
+Let's see if there's any hesitation from the model.
+
+372
+00:18:56,820 --> 00:18:58,520
+No got that it was a four.
+
+373
+00:18:58,520 --> 00:19:01,130
+Again, with not 100 percent, but very,
+
+374
+00:19:01,130 --> 00:19:06,080
+from point nine nine nine eight probability again. All right.
+
+375
+00:19:06,080 --> 00:19:09,925
+So, that is how our neural network did again 97 percent accurate here.
+
+376
+00:19:09,925 --> 00:19:11,870
+One of the last topics that we want to cover
+
+377
+00:19:11,870 --> 00:19:13,940
+before moving on to Convolutional neural networks,
+
+378
+00:19:13,940 --> 00:19:17,250
+which are great at processing, variations in images.
+
+379
+00:19:17,250 --> 00:19:19,420
+If you're going to rotate this M, this dataset,
+
+380
+00:19:19,420 --> 00:19:22,560
+if you're going to add things like noise or something like that,
+
+381
+00:19:22,560 --> 00:19:25,060
+the neural networks couldn't perform as well.
+
+382
+00:19:25,060 --> 00:19:26,930
+But one of the things that we can do to
+
+383
+00:19:26,930 --> 00:19:29,360
+help address one of the limitations of training on
+
+384
+00:19:29,360 --> 00:19:31,600
+a very large neural network was the likelihood of
+
+385
+00:19:31,600 --> 00:19:34,860
+the neural network to overfit itself on the training dataset.
+
+386
+00:19:34,860 --> 00:19:37,665
+So, one of the common layer is that you add onto the end of it,
+
+387
+00:19:37,665 --> 00:19:41,480
+is a layer that basically looks at your neural network architecture,
+
+388
+00:19:41,480 --> 00:19:45,095
+and then randomly selects neurons to drop them out of the architecture.
+
+389
+00:19:45,095 --> 00:19:46,320
+It's called a dropout layer,
+
+390
+00:19:46,320 --> 00:19:47,820
+and that's what we're going to look at next.
+
+391
+00:19:47,820 --> 00:19:49,340
+But give this Lab another try,
+
+392
+00:19:49,340 --> 00:19:51,180
+feel free to edit the architecture,
+
+393
+00:19:51,180 --> 00:19:54,050
+experiment with the different predictions that you have here,
+
+394
+00:19:54,050 --> 00:19:57,360
+and then move on to the next lesson in Dropout. We'll see you there.

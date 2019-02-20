@@ -1,0 +1,195 @@
+1
+00:00:00,000 --> 00:00:06,955
+Finally, let's look at an exciting development, neural architecture search.
+
+2
+00:00:06,955 --> 00:00:11,265
+So far, we've looked at a variety of neural network architectures.
+
+3
+00:00:11,265 --> 00:00:16,070
+All these architectures, whether it was AlexNet, or GoogleNet,
+
+4
+00:00:16,070 --> 00:00:22,300
+or ResNet, they were painstakingly designed by machine learning researchers.
+
+5
+00:00:22,300 --> 00:00:24,915
+After they did the design,
+
+6
+00:00:24,915 --> 00:00:28,945
+these models where basically put into hyperparameter tuning,
+
+7
+00:00:28,945 --> 00:00:31,245
+and the parameters of these models,
+
+8
+00:00:31,245 --> 00:00:35,240
+they were hyperparameter tuned to optimize the performance of
+
+9
+00:00:35,240 --> 00:00:40,240
+the model on some chosen dataset, typically ImageNet.
+
+10
+00:00:40,240 --> 00:00:42,830
+Something that a lot of researchers have
+
+11
+00:00:42,830 --> 00:00:47,440
+considered is whether you can automate the building of models.
+
+12
+00:00:47,440 --> 00:00:53,240
+Maybe you can simply try adding layers one at a time to see if they help.
+
+13
+00:00:53,240 --> 00:00:57,800
+Sure. But the combinatorial space that you will
+
+14
+00:00:57,800 --> 00:01:02,790
+have to search is extremely large. How large?
+
+15
+00:01:02,790 --> 00:01:05,830
+A 10-layer network can have
+
+16
+00:01:05,830 --> 00:01:10,130
+about 10 billion candidate networks that you will have to explore.
+
+17
+00:01:10,130 --> 00:01:14,725
+A brute force approach will simply not work.
+
+18
+00:01:14,725 --> 00:01:19,390
+Researchers also tried using approaches like genetic algorithms
+
+19
+00:01:19,390 --> 00:01:24,415
+to combine high-performing models to create even better models.
+
+20
+00:01:24,415 --> 00:01:26,660
+But they were not all that successful.
+
+21
+00:01:26,660 --> 00:01:32,055
+They were not able to approach the skill of human-designed networks.
+
+22
+00:01:32,055 --> 00:01:36,310
+In 2017, Google researchers proposed
+
+23
+00:01:36,310 --> 00:01:40,475
+using reinforcement learning to address this problem.
+
+24
+00:01:40,475 --> 00:01:45,240
+The idea is to have two neural networks: a controller,
+
+25
+00:01:45,240 --> 00:01:46,660
+shown here in pink,
+
+26
+00:01:46,660 --> 00:01:49,370
+and a child, shown here in blue.
+
+27
+00:01:49,370 --> 00:01:54,780
+The controller network proposes a child model architecture,
+
+28
+00:01:54,780 --> 00:01:59,915
+which is then trained and evaluated for quality on a particular task,
+
+29
+00:01:59,915 --> 00:02:05,155
+perhaps to do image classification on the CIFAR-10 dataset.
+
+30
+00:02:05,155 --> 00:02:09,440
+The evaluation measurement is then used to inform
+
+31
+00:02:09,440 --> 00:02:14,980
+the controller how to improve its proposals for the next round.
+
+32
+00:02:14,980 --> 00:02:22,130
+The researchers repeated this process thousands of times generating new architectures,
+
+33
+00:02:22,130 --> 00:02:26,970
+testing them, and giving that feedback to the controller to learn from.
+
+34
+00:02:26,970 --> 00:02:30,410
+Eventually, the controller learns to
+
+35
+00:02:30,410 --> 00:02:35,420
+assign high probability to areas of the architecture space that
+
+36
+00:02:35,420 --> 00:02:39,620
+achieve better accuracy on a holdout validation set and
+
+37
+00:02:39,620 --> 00:02:44,555
+low probability to areas of architectural space that score poorly.
+
+38
+00:02:44,555 --> 00:02:47,855
+The researchers call this Auto ML.
+
+39
+00:02:47,855 --> 00:02:53,605
+It forms the basis of the Google Cloud product that you will see in the next module.
+
+40
+00:02:53,605 --> 00:02:56,390
+Fortunately, you don't have to retrain and
+
+41
+00:02:56,390 --> 00:02:59,885
+rediscover a neural network for image classification.
+
+42
+00:02:59,885 --> 00:03:03,845
+Remember the official repository of TPU models?
+
+43
+00:03:03,845 --> 00:03:07,465
+It includes a model called AmoebaNet-D.
+
+44
+00:03:07,465 --> 00:03:10,370
+This model as a result of
+
+45
+00:03:10,370 --> 00:03:16,390
+neural architecture search on the CIFAR-10 dataset but with a twist.
+
+46
+00:03:16,390 --> 00:03:23,530
+The researchers explicitly look for neural networks that will be very efficient on a TPU.
+
+47
+00:03:23,530 --> 00:03:31,090
+So, if you're looking for a high-performing fast training image classification model,
+
+48
+00:03:31,090 --> 00:03:34,060
+AmoebaNet is what it should use.
+
+49
+00:03:34,060 --> 00:03:40,820
+You can use it the same way that you use a ResNet-50 model in the previous lesson.

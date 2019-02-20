@@ -1,0 +1,63 @@
+1
+00:00:00,000 --> 00:00:03,210
+Let's practice implementing transfer learning using Inception,
+
+2
+00:00:03,210 --> 00:00:05,195
+also known as Google net.
+
+3
+00:00:05,195 --> 00:00:08,670
+Inception is a model that Google described in 2014
+
+4
+00:00:08,670 --> 00:00:12,205
+paper that recognizes 1,000 categories of images.
+
+5
+00:00:12,205 --> 00:00:16,350
+The source model that will draw from has been trained on millions of images,
+
+6
+00:00:16,350 --> 00:00:18,900
+far more than we have and it will improve on performance
+
+7
+00:00:18,900 --> 00:00:22,440
+over a model that we could train with the limited data set that we have.
+
+8
+00:00:22,440 --> 00:00:25,740
+The first part of our Lab consists of a Dataflow pipeline
+
+9
+00:00:25,740 --> 00:00:28,769
+that does some of the same things we did with our input function,
+
+10
+00:00:28,769 --> 00:00:32,130
+but ultimately converts the images into TF record files which
+
+11
+00:00:32,130 --> 00:00:36,245
+the model will read from much faster than our original image files.
+
+12
+00:00:36,245 --> 00:00:38,455
+Then, we train the model.
+
+13
+00:00:38,455 --> 00:00:40,275
+Because our data set is small,
+
+14
+00:00:40,275 --> 00:00:42,430
+we'll freeze the Inception Model.
+
+15
+00:00:42,430 --> 00:00:44,390
+Check out how much better this model
+
+16
+00:00:44,390 --> 00:00:47,950
+performs compared to the one that we trained on just our data.

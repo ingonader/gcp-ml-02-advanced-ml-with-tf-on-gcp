@@ -1,0 +1,303 @@
+1
+00:00:00,000 --> 00:00:02,315
+How did our linear model do?
+
+2
+00:00:02,315 --> 00:00:04,895
+What are the limitations of linear models?
+
+3
+00:00:04,895 --> 00:00:07,710
+If you remember back to the first specialization of this course,
+
+4
+00:00:07,710 --> 00:00:09,570
+you were solving linear classification models in
+
+5
+00:00:09,570 --> 00:00:13,015
+the TensorFlow Playground like this one that you've seen here before.
+
+6
+00:00:13,015 --> 00:00:15,540
+The two classes were easily separated by
+
+7
+00:00:15,540 --> 00:00:19,135
+a decision boundary and a line could very easily divide the two.
+
+8
+00:00:19,135 --> 00:00:21,290
+For more complex input features,
+
+9
+00:00:21,290 --> 00:00:23,285
+like the data swirl that you see here,
+
+10
+00:00:23,285 --> 00:00:25,665
+modeling that might not be so easy.
+
+11
+00:00:25,665 --> 00:00:27,530
+What you've figured out by now is using
+
+12
+00:00:27,530 --> 00:00:30,585
+the feature option available to us in this type of model,
+
+13
+00:00:30,585 --> 00:00:33,184
+this dataset is not linearly solvable.
+
+14
+00:00:33,184 --> 00:00:37,235
+The best model that I could train had loss of about 0.6.
+
+15
+00:00:37,235 --> 00:00:42,410
+However, this qualifier of the feature options available to us is crucial,
+
+16
+00:00:42,410 --> 00:00:45,980
+because in fact, there is a feature that can make learning this relationship trivial.
+
+17
+00:00:45,980 --> 00:00:48,160
+You get a magical feature that can unswirl
+
+18
+00:00:48,160 --> 00:00:51,740
+the data and create one through feature engineering but,
+
+19
+00:00:51,740 --> 00:00:54,050
+in absence of that, what we can do in our attempts to
+
+20
+00:00:54,050 --> 00:00:57,575
+engineer new features for linear models fail, what do we do?
+
+21
+00:00:57,575 --> 00:01:01,165
+Well, we could use more complex or complicated models.
+
+22
+00:01:01,165 --> 00:01:05,265
+There are many types of models that are able to learn non-linear decision boundaries.
+
+23
+00:01:05,265 --> 00:01:07,730
+In this course, we'll be focusing on neural networks,
+
+24
+00:01:07,730 --> 00:01:09,200
+and specifically later on,
+
+25
+00:01:09,200 --> 00:01:12,035
+a special type called a convolutional neural network.
+
+26
+00:01:12,035 --> 00:01:15,165
+Because the source of business problems are becoming increasingly popular,
+
+27
+00:01:15,165 --> 00:01:16,755
+seemed bias towards these,
+
+28
+00:01:16,755 --> 00:01:18,925
+well, that's where neural network shine.
+
+29
+00:01:18,925 --> 00:01:22,310
+In this classification is exactly one of those problems.
+
+30
+00:01:22,310 --> 00:01:26,720
+We've already seen how a linear model can't classify this complex dataset,
+
+31
+00:01:26,720 --> 00:01:29,150
+let's see how a neural network does.
+
+32
+00:01:29,150 --> 00:01:31,310
+Before we do though, we need to review some of
+
+33
+00:01:31,310 --> 00:01:34,145
+the additional features I've enabled in the TensorFlow Playground.
+
+34
+00:01:34,145 --> 00:01:37,245
+The first I've enabled is the activation function.
+
+35
+00:01:37,245 --> 00:01:39,440
+This choice of the activation function is what
+
+36
+00:01:39,440 --> 00:01:41,995
+separates linear models from neural networks.
+
+37
+00:01:41,995 --> 00:01:44,280
+In the linear models we've constructed previously,
+
+38
+00:01:44,280 --> 00:01:47,145
+the activation function was unbeknownst to you,
+
+39
+00:01:47,145 --> 00:01:48,955
+set to be linear.
+
+40
+00:01:48,955 --> 00:01:52,550
+The second additional feature I've enabled is the hidden layers feature.
+
+41
+00:01:52,550 --> 00:01:54,740
+The hidden layers feature allows you to change the number of
+
+42
+00:01:54,740 --> 00:01:58,100
+hidden layers and the number of neurons within each of those hidden layers.
+
+43
+00:01:58,100 --> 00:01:59,900
+You can think of this as changing the number of
+
+44
+00:01:59,900 --> 00:02:03,105
+transformations that the network performs in your input data.
+
+45
+00:02:03,105 --> 00:02:05,930
+Each neuron in every hidden layer receives
+
+46
+00:02:05,930 --> 00:02:08,690
+all the output from the layer that precedes it.
+
+47
+00:02:08,690 --> 00:02:11,330
+It then transforms that input and passes
+
+48
+00:02:11,330 --> 00:02:13,970
+the output to all the neurons in this subsequent layer.
+
+49
+00:02:13,970 --> 00:02:17,270
+The shorthand way for describing the number of neurons and how they pass
+
+50
+00:02:17,270 --> 00:02:21,215
+information to each other is called the neural networks architecture.
+
+51
+00:02:21,215 --> 00:02:23,310
+Following the link that you'll see shortly,
+
+52
+00:02:23,310 --> 00:02:26,775
+try and train a model that can classify that's swirl dataset.
+
+53
+00:02:26,775 --> 00:02:29,920
+However, instead of introducing non-linear features,
+
+54
+00:02:29,920 --> 00:02:33,875
+try to improve the performance only by changing the network's architecture,
+
+55
+00:02:33,875 --> 00:02:36,290
+so number of layers and number of neurons.
+
+56
+00:02:36,290 --> 00:02:40,715
+Now, your model should have finished training and it should look something like this.
+
+57
+00:02:40,715 --> 00:02:42,980
+Now, the first thing to color is relationship between
+
+58
+00:02:42,980 --> 00:02:45,680
+the first hidden layer and those that come after it.
+
+59
+00:02:45,680 --> 00:02:47,870
+What should be apparent is that although the outputs from
+
+60
+00:02:47,870 --> 00:02:50,805
+the neurons in the first hidden layer we're basically lines,
+
+61
+00:02:50,805 --> 00:02:54,775
+subsequent hidden layers had far more complicated outputs.
+
+62
+00:02:54,775 --> 00:02:57,880
+These subsequent layers built upon those that came before it,
+
+63
+00:02:57,880 --> 00:03:00,110
+much in the same way that we did when we stacked up
+
+64
+00:03:00,110 --> 00:03:03,290
+the outputs of the hidden layer to understand the output.
+
+65
+00:03:03,290 --> 00:03:07,155
+Consequently, you can think of a neural network as a hierarchy of features.
+
+66
+00:03:07,155 --> 00:03:10,190
+This will be a particularly important concept as you explore
+
+67
+00:03:10,190 --> 00:03:13,640
+the convolutional neural networks in the next module.
+
+68
+00:03:13,640 --> 00:03:16,075
+This idea of taking the inputs,
+
+69
+00:03:16,075 --> 00:03:19,070
+transforming them in more complex ways many
+
+70
+00:03:19,070 --> 00:03:22,760
+times before ultimately classifying them is very typical of neural networks.
+
+71
+00:03:22,760 --> 00:03:24,800
+It represents a significant departure from
+
+72
+00:03:24,800 --> 00:03:27,195
+the approach used classically in machine learning.
+
+73
+00:03:27,195 --> 00:03:29,750
+Before neural networks, data scientists
+
+74
+00:03:29,750 --> 00:03:32,360
+spent much of their time doing feature engineering.
+
+75
+00:03:32,360 --> 00:03:36,320
+Now, the model itself is taking some of that responsibility and you can
+
+76
+00:03:36,320 --> 00:03:41,450
+think of these layers as being a form of feature engineering onto themselves.

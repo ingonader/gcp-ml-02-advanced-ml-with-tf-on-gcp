@@ -1,0 +1,75 @@
+1
+00:00:00,000 --> 00:00:02,190
+Now that you've seen how neural networks can tackle
+
+2
+00:00:02,190 --> 00:00:04,550
+more difficult datasets like this one,
+
+3
+00:00:04,550 --> 00:00:06,165
+let's see how a deep neural network,
+
+4
+00:00:06,165 --> 00:00:09,865
+many layers, performs on your MNIST dataset from before.
+
+5
+00:00:09,865 --> 00:00:12,100
+We've got the same objectives that we had prior,
+
+6
+00:00:12,100 --> 00:00:14,575
+but this time we've got a little bit more of a complex model,
+
+7
+00:00:14,575 --> 00:00:15,790
+your deep neural network.
+
+8
+00:00:15,790 --> 00:00:18,960
+You'll see that when you're creating the layers of your neural network,
+
+9
+00:00:18,960 --> 00:00:21,800
+in specifying your activation function in your code,
+
+10
+00:00:21,800 --> 00:00:24,420
+the overall process will be similar to what you did before.
+
+11
+00:00:24,420 --> 00:00:27,100
+You import the training dataset of MNIST handwritten images,
+
+12
+00:00:27,100 --> 00:00:29,540
+then reshape and preprosses the image data,
+
+13
+00:00:29,540 --> 00:00:32,064
+set up your neural network model with those 10 classes,
+
+14
+00:00:32,064 --> 00:00:35,935
+then define and create your EstimatorSpec and TensorFlow to create your custom estimator,
+
+15
+00:00:35,935 --> 00:00:38,210
+then you're going to define and run your train and evaluate
+
+16
+00:00:38,210 --> 00:00:40,460
+function to train against your input dataset,
+
+17
+00:00:40,460 --> 00:00:44,160
+and ultimately evaluate your neural network models performance on the dataset.
+
+18
+00:00:44,160 --> 00:00:45,900
+Give it a try and come back,
+
+19
+00:00:45,900 --> 00:00:47,790
+and we'll compare performance.

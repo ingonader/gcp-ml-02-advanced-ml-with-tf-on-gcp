@@ -1,0 +1,267 @@
+1
+00:00:00,180 --> 00:00:05,440
+In this module, we learned why deep networks work.
+
+2
+00:00:05,440 --> 00:00:09,120
+The earlier layers identify primitives in the images,
+
+3
+00:00:09,120 --> 00:00:13,620
+that are then put together into matching filters by later layers.
+
+4
+00:00:13,620 --> 00:00:18,390
+The deeper the network the more relationships the network can learn.
+
+5
+00:00:18,390 --> 00:00:21,120
+However, we discovered that there were
+
+6
+00:00:21,120 --> 00:00:26,380
+practical issues to simply training deeper and deeper networks.
+
+7
+00:00:26,380 --> 00:00:30,180
+We learned about the problem of internal covariate shift,
+
+8
+00:00:30,180 --> 00:00:33,750
+and how by normalizing the weights in each layer,
+
+9
+00:00:33,750 --> 00:00:38,625
+you can train deeper models to be more accurate and to do this training faster.
+
+10
+00:00:38,625 --> 00:00:45,060
+We learned that parallel paths and shortcuts can help us get more accurate models,
+
+11
+00:00:45,060 --> 00:00:48,085
+and we discussed the ResNet architecture.
+
+12
+00:00:48,085 --> 00:00:52,100
+We then looked at trends or processing units or TPUs,
+
+13
+00:00:52,100 --> 00:00:54,575
+which are hardware accelerators that
+
+14
+00:00:54,575 --> 00:00:58,150
+greatly speed up the training of deep learning models.
+
+15
+00:00:58,150 --> 00:01:04,210
+We looked at how to train a ResNet model on your own data on the Cloud TPU.
+
+16
+00:01:04,210 --> 00:01:10,805
+We also looked at how to implement custom estimators on the TPU.
+
+17
+00:01:10,805 --> 00:01:16,640
+Finally, we discussed neural architecture search to automatically
+
+18
+00:01:16,640 --> 00:01:23,110
+design high performing networks for a specific dataset and the specific hardware device.
+
+19
+00:01:23,110 --> 00:01:26,705
+We started this module by saying that we were looking at ways to
+
+20
+00:01:26,705 --> 00:01:30,340
+train deeper more accurate neural networks,
+
+21
+00:01:30,340 --> 00:01:32,465
+and ways to train them faster.
+
+22
+00:01:32,465 --> 00:01:35,030
+We followed the trajectory of research
+
+23
+00:01:35,030 --> 00:01:39,245
+advances that steadily gave us better and better results,
+
+24
+00:01:39,245 --> 00:01:44,260
+and ended up with a way to successfully automate model design.
+
+25
+00:01:44,260 --> 00:01:51,260
+So, does this mean that all of our knowledge of image models is wasted? Not at all.
+
+26
+00:01:51,260 --> 00:01:55,595
+AmoebaDB was trained for one task,
+
+27
+00:01:55,595 --> 00:01:59,140
+image classification and one dataset,
+
+28
+00:01:59,140 --> 00:02:04,385
+CIFAR 10 to train fast on one architecture TPS.
+
+29
+00:02:04,385 --> 00:02:09,530
+For other tasks, other datasets, and other architectures,
+
+30
+00:02:09,530 --> 00:02:12,405
+you may have to rerun this regimen,
+
+31
+00:02:12,405 --> 00:02:19,965
+discover appropriate architectures, and train that neural network on your problem.
+
+32
+00:02:19,965 --> 00:02:21,965
+Having said that though,
+
+33
+00:02:21,965 --> 00:02:25,350
+much of this is automated.
+
+34
+00:02:25,350 --> 00:02:27,325
+In the next module,
+
+35
+00:02:27,325 --> 00:02:29,190
+we will look at AutoML,
+
+36
+00:02:29,190 --> 00:02:33,940
+the Google product that does this for you with one press of a button.
+
+37
+00:02:33,940 --> 00:02:36,200
+As a practitioner then,
+
+38
+00:02:36,200 --> 00:02:40,140
+it's time to let the machines take care of design.
+
+39
+00:02:40,140 --> 00:02:44,825
+The real action in machine learning is going to be in two areas.
+
+40
+00:02:44,825 --> 00:02:49,214
+First, discovering what data to collect,
+
+41
+00:02:49,214 --> 00:02:53,240
+designing the collection and curation of that data,
+
+42
+00:02:53,240 --> 00:02:59,490
+and processing the data into a form that's amenable for machine learning.
+
+43
+00:02:59,490 --> 00:03:05,420
+The second area that it's going to stay highly relevant is knowing
+
+44
+00:03:05,420 --> 00:03:11,390
+what questions to ask and what models to build from that data.
+
+45
+00:03:11,390 --> 00:03:14,465
+Once the model has produced a prediction,
+
+46
+00:03:14,465 --> 00:03:21,580
+you will also have to figure out what decisions are suggested by those predictions.
+
+47
+00:03:21,580 --> 00:03:25,275
+This is an inherently data-driven undertaking,
+
+48
+00:03:25,275 --> 00:03:28,940
+and the availability of high quality predictions will
+
+49
+00:03:28,940 --> 00:03:33,260
+enable better and more fine-grained decisions.
+
+50
+00:03:33,260 --> 00:03:35,045
+So, on the one hand,
+
+51
+00:03:35,045 --> 00:03:37,740
+the data engineer bringing in the data,
+
+52
+00:03:37,740 --> 00:03:40,820
+and on the other hand the decision-makers in
+
+53
+00:03:40,820 --> 00:03:46,420
+the product designers taking advantage of the machine learning models.
+
+54
+00:03:46,420 --> 00:03:52,850
+In-between, simply taking up a cleaned up dataset and training
+
+55
+00:03:52,850 --> 00:03:59,225
+a standard machine learning model to do some already specified set of predictions.
+
+56
+00:03:59,225 --> 00:04:04,885
+That part in between is likely to get automated away.
+
+57
+00:04:04,885 --> 00:04:11,135
+In other words, both ends of the data pipeline will remain highly important.
+
+58
+00:04:11,135 --> 00:04:16,895
+The imagination and the entrepreneurship that's required to collect,
+
+59
+00:04:16,895 --> 00:04:19,340
+curate, and process data,
+
+60
+00:04:19,340 --> 00:04:24,065
+that entrepreneurship and imagination will remain highly valued.
+
+61
+00:04:24,065 --> 00:04:28,970
+As with the boldness and the judgment required in
+
+62
+00:04:28,970 --> 00:04:35,815
+making really fine grain decisions and machine learning enabled products.
+
+63
+00:04:35,815 --> 00:04:38,605
+You will be a better data engineer,
+
+64
+00:04:38,605 --> 00:04:40,850
+a better data analyst,
+
+65
+00:04:40,850 --> 00:04:43,160
+and a better product manager,
+
+66
+00:04:43,160 --> 00:04:47,290
+if you understand what the machines in the middle are doing.
+
+67
+00:04:47,290 --> 00:04:51,900
+I hope that this course gave you that understanding.

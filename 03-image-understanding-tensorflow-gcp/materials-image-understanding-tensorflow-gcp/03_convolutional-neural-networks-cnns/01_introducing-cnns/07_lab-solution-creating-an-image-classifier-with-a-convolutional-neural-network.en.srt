@@ -1,0 +1,635 @@
+1
+00:00:00,000 --> 00:00:02,280
+Okay. To get started with this lab,
+
+2
+00:00:02,280 --> 00:00:04,830
+I'm going to clone the code that is used to train
+
+3
+00:00:04,830 --> 00:00:08,730
+a convolutional neural network using MNIST data.
+
+4
+00:00:08,730 --> 00:00:12,075
+To clone the code, I will simply create a new notebook
+
+5
+00:00:12,075 --> 00:00:16,060
+and run the Git Clone command. All right.
+
+6
+00:00:16,060 --> 00:00:18,275
+Once the command is done executing,
+
+7
+00:00:18,275 --> 00:00:21,000
+I will see a training data analyst directory
+
+8
+00:00:21,000 --> 00:00:24,355
+and will need to navigate into the training data analyst,
+
+9
+00:00:24,355 --> 00:00:28,200
+courses, machine learning, deep dive
+
+10
+00:00:28,200 --> 00:00:33,710
+and I will work with the labs notebook in the directory listed here on the screen.
+
+11
+00:00:33,710 --> 00:00:38,700
+So, to get started, make sure you open the MNIST models notebook.
+
+12
+00:00:39,250 --> 00:00:43,930
+Once you're there, here is a few set up steps that you need to perform.
+
+13
+00:00:43,930 --> 00:00:46,880
+First, you need to make sure that the project in
+
+14
+00:00:46,880 --> 00:00:49,700
+the bucket variables in the notebook are set to match
+
+15
+00:00:49,700 --> 00:00:51,260
+the Google Cloud Project in
+
+16
+00:00:51,260 --> 00:00:55,605
+the Cloud Storage bucket you have already set up earlier in this course.
+
+17
+00:00:55,605 --> 00:01:00,580
+In my case, both the project and the bucket had been set up with the same ID.
+
+18
+00:01:00,580 --> 00:01:02,990
+So, I will go ahead and replace
+
+19
+00:01:02,990 --> 00:01:07,715
+the existing values and notebook with a corresponding value for the ID.
+
+20
+00:01:07,715 --> 00:01:11,749
+Since my bucket was created in the US East1 region,
+
+21
+00:01:11,749 --> 00:01:14,765
+that's what I'll use for the region variable.
+
+22
+00:01:14,765 --> 00:01:19,885
+As this part of the lab focuses on the convolutional neural network model,
+
+23
+00:01:19,885 --> 00:01:23,529
+I need to make sure that I have a CNN specified.
+
+24
+00:01:23,529 --> 00:01:29,110
+Next, I hit run to set the environment variables and then use
+
+25
+00:01:29,110 --> 00:01:31,225
+those environment variables to configure
+
+26
+00:01:31,225 --> 00:01:35,320
+Google Cloud settings for the current project and the compute region.
+
+27
+00:01:35,320 --> 00:01:40,295
+Alright. The next step is to run this lab as a Python module.
+
+28
+00:01:40,295 --> 00:01:42,455
+You can take a look at the instructions,
+
+29
+00:01:42,455 --> 00:01:44,739
+and in the code immediately below,
+
+30
+00:01:44,739 --> 00:01:46,660
+you will notice that the code relies on
+
+31
+00:01:46,660 --> 00:01:50,240
+the models located in the MNIST trained directory.
+
+32
+00:01:50,240 --> 00:01:55,015
+The first step is to remove any of the previous models that may have been trained
+
+33
+00:01:55,015 --> 00:02:00,295
+earlier and then train a new model using the MNIST dataset.
+
+34
+00:02:00,295 --> 00:02:02,600
+Before you can run this code,
+
+35
+00:02:02,600 --> 00:02:06,455
+you need to make sure you complete the to-dos in the model.py file.
+
+36
+00:02:06,455 --> 00:02:09,170
+Let's go ahead and open that file.
+
+37
+00:02:09,170 --> 00:02:11,285
+Once it comes up in the browser,
+
+38
+00:02:11,285 --> 00:02:14,120
+you'll notice that in the beginning of the file,
+
+39
+00:02:14,120 --> 00:02:16,855
+you have a variety of alternative model definitions.
+
+40
+00:02:16,855 --> 00:02:21,675
+But the one that's used in this lab is in the CNN model method.
+
+41
+00:02:21,675 --> 00:02:25,400
+There are few hyper-parameters that are provided for you as
+
+42
+00:02:25,400 --> 00:02:30,165
+defaults for training the convolutional neural network on MNIST data.
+
+43
+00:02:30,165 --> 00:02:37,290
+These are kernel sizes for the first second layer the CNN and also the number of filters,
+
+44
+00:02:37,290 --> 00:02:41,795
+in other words, total number of distinct kernels per CNN layer.
+
+45
+00:02:41,795 --> 00:02:47,760
+Here, the first layer uses 10 filters and the second layer uses 20 filters.
+
+46
+00:02:47,760 --> 00:02:53,500
+The to-dos for this code snippet are to create a second convolutional layer that takes as
+
+47
+00:02:53,500 --> 00:02:58,905
+input the output of the previous max-pooling layer and generates a result.
+
+48
+00:02:58,905 --> 00:03:05,080
+So, let's go ahead and set up tf.layers.conv2d taking p1 as
+
+49
+00:03:05,080 --> 00:03:07,360
+an input and also specifying the number of
+
+50
+00:03:07,360 --> 00:03:11,635
+filters to be the hyper-parameter of value per nfil2.
+
+51
+00:03:11,635 --> 00:03:15,485
+In addition, you have to specify the kernel size.
+
+52
+00:03:15,485 --> 00:03:18,760
+In this case the kernel size is also based on the hyperparameter.
+
+53
+00:03:18,760 --> 00:03:21,460
+So, I will use the size equal to
+
+54
+00:03:21,460 --> 00:03:26,595
+ksize2 and the rest of the parameters are set as defaults.
+
+55
+00:03:26,595 --> 00:03:30,980
+So, this rise should be one using the same padding.
+
+56
+00:03:30,980 --> 00:03:32,455
+In the activation function,
+
+57
+00:03:32,455 --> 00:03:35,910
+it's going to be tf activation relu.
+
+58
+00:03:35,910 --> 00:03:38,780
+The next to-do is to take the output of
+
+59
+00:03:38,780 --> 00:03:42,700
+the convolutional layer and to perform a max-pooling operation.
+
+60
+00:03:42,700 --> 00:03:45,740
+So, the code should use the max-pooling method from
+
+61
+00:03:45,740 --> 00:03:48,770
+tf layers package and take the output of
+
+62
+00:03:48,770 --> 00:03:55,070
+c2 and apply the pool size equals two and strides equals two.
+
+63
+00:03:55,070 --> 00:03:57,830
+Now, just as a sanity check.
+
+64
+00:03:57,830 --> 00:04:00,535
+Think about the dimensions of the changes.
+
+65
+00:04:00,535 --> 00:04:06,520
+Since padding is the same and stride is one for the second convolutional layer,
+
+66
+00:04:06,520 --> 00:04:08,960
+the output of this layer is going to have
+
+67
+00:04:08,960 --> 00:04:12,875
+the same batch size as indicated here with the question mark,
+
+68
+00:04:12,875 --> 00:04:19,720
+14 by 14 due to the same padding and the number of filters in the layer was 20.
+
+69
+00:04:19,720 --> 00:04:24,785
+So, this means that the output will be batch size by 14,
+
+70
+00:04:24,785 --> 00:04:27,780
+by 14, by 20.
+
+71
+00:04:29,030 --> 00:04:31,615
+The output of the next layer,
+
+72
+00:04:31,615 --> 00:04:34,750
+the pooling layer, is going to depend on the two-by-two.
+
+73
+00:04:34,750 --> 00:04:37,160
+Pooling kernel was the stride of two,
+
+74
+00:04:37,160 --> 00:04:42,130
+which means that the size of the output of this layer will be batch size by seven,
+
+75
+00:04:42,130 --> 00:04:44,105
+by seven, by 20.
+
+76
+00:04:44,105 --> 00:04:48,350
+To confirm, notice that the output of the max-pooling layer should
+
+77
+00:04:48,350 --> 00:04:53,095
+generate 980 values and seven times seven is 49,
+
+78
+00:04:53,095 --> 00:04:56,520
+and that times twenty 20 will give you 980.
+
+79
+00:04:56,520 --> 00:05:01,855
+So, the expectation for the total number of outputs from this pooling layer is correct.
+
+80
+00:05:01,855 --> 00:05:04,985
+At this point, the implementation is done.
+
+81
+00:05:04,985 --> 00:05:07,395
+So, go ahead and save the file.
+
+82
+00:05:07,395 --> 00:05:09,250
+Once the file is saved,
+
+83
+00:05:09,250 --> 00:05:12,980
+you can go back to MNIST models notebook to run the training of
+
+84
+00:05:12,980 --> 00:05:17,720
+the CNN model locally and validate that the code was implemented correctly.
+
+85
+00:05:17,720 --> 00:05:20,810
+Since the training is going to take a few seconds,
+
+86
+00:05:20,810 --> 00:05:24,845
+you will see the video fast forward to a point after the training is finished.
+
+87
+00:05:24,845 --> 00:05:29,180
+Alright. You can be sure that the training is completed and you can see
+
+88
+00:05:29,180 --> 00:05:33,560
+these messages confirming that the code downloaded the MNIST data.
+
+89
+00:05:33,560 --> 00:05:37,069
+Although you see the messages in pink that look like errors,
+
+90
+00:05:37,069 --> 00:05:41,180
+in reality, these are just warnings from TensorFlow due to some code applications.
+
+91
+00:05:41,180 --> 00:05:44,325
+You can scroll down the output section with
+
+92
+00:05:44,325 --> 00:05:47,629
+the training message and notice that the end of the training,
+
+93
+00:05:47,629 --> 00:05:50,660
+a model is written to a local file system.
+
+94
+00:05:50,660 --> 00:05:54,055
+This means that the training is completed.
+
+95
+00:05:54,055 --> 00:05:57,050
+In the next notebook, take a look at
+
+96
+00:05:57,050 --> 00:06:01,955
+another G Cloud command that will set up a job on Cloud ML Engine for training.
+
+97
+00:06:01,955 --> 00:06:06,425
+Go ahead and run this job to get training on graphical processing units,
+
+98
+00:06:06,425 --> 00:06:10,185
+GPUs, that will get you results faster.
+
+99
+00:06:10,185 --> 00:06:16,070
+The output of this command should be an ID of a job for the Cloud ML Engine.
+
+100
+00:06:16,070 --> 00:06:19,310
+As from the last time you use Cloud ML Engine,
+
+101
+00:06:19,310 --> 00:06:23,610
+you will take a few moments to start the job and to return the job ID.
+
+102
+00:06:23,610 --> 00:06:27,275
+So, the video will fast-forward to a point where the ID is ready.
+
+103
+00:06:27,275 --> 00:06:31,325
+Okay. Now, you can see that this job has been queued.
+
+104
+00:06:31,325 --> 00:06:33,590
+The message is about removed files,
+
+105
+00:06:33,590 --> 00:06:39,005
+simply confirm that any old versions of previously trained models had been deleted.
+
+106
+00:06:39,005 --> 00:06:42,440
+When the output reports the job is still active,
+
+107
+00:06:42,440 --> 00:06:45,620
+it means that cloud ML Engine is doing the training.
+
+108
+00:06:45,620 --> 00:06:49,760
+You can confirm that the training operation is running by opening
+
+109
+00:06:49,760 --> 00:06:55,080
+the Cloud ML Engine user interface and check that the model exists.
+
+110
+00:06:56,160 --> 00:06:59,960
+Let's take a closer look at how to do this.
+
+111
+00:06:59,960 --> 00:07:02,815
+Return back to the Google Cloud Platform dashboard
+
+112
+00:07:02,815 --> 00:07:06,060
+and navigate to Cloud Machine Learning Engine.
+
+113
+00:07:06,060 --> 00:07:10,465
+From here, you can see that there's a job that's doing the training.
+
+114
+00:07:10,465 --> 00:07:12,850
+If you go ahead and click on that job,
+
+115
+00:07:12,850 --> 00:07:14,970
+you can monitor it in more detail.
+
+116
+00:07:14,970 --> 00:07:17,855
+As you can see the training inputs show
+
+117
+00:07:17,855 --> 00:07:22,180
+the same configuration parameters as you specified in the Jupiter notebook.
+
+118
+00:07:22,180 --> 00:07:25,355
+The job takes almost 10 minutes to train.
+
+119
+00:07:25,355 --> 00:07:30,130
+So, this video will jump forward to a point when the job is complete.
+
+120
+00:07:30,630 --> 00:07:33,785
+Okay. So, now the job is done,
+
+121
+00:07:33,785 --> 00:07:37,500
+and for me, it took just under eight minutes to finish training.
+
+122
+00:07:37,500 --> 00:07:42,200
+At this point, you can return back to the MNIST model notebook and
+
+123
+00:07:42,200 --> 00:07:46,870
+also launch TensorBoard to monitor how training went with this model.
+
+124
+00:07:46,870 --> 00:07:49,430
+For that, I'll go ahead and execute
+
+125
+00:07:49,430 --> 00:07:54,075
+this next step in the notebook that starts an instance of TensorBoard,
+
+126
+00:07:54,075 --> 00:07:56,750
+and I'll click on the resulting hyperlink to open
+
+127
+00:07:56,750 --> 00:08:01,930
+a new browser tab with TensorBoard and to review the details of training.
+
+128
+00:08:01,930 --> 00:08:05,090
+From TensorBoard, you can find out the results of
+
+129
+00:08:05,090 --> 00:08:09,625
+the loss function and get the accuracy details for this model.
+
+130
+00:08:09,625 --> 00:08:12,380
+To make the metrics easier to understand,
+
+131
+00:08:12,380 --> 00:08:14,585
+I like to smooth out the functions.
+
+132
+00:08:14,585 --> 00:08:20,195
+So, here you can see that loss value was about 0.1 at the end of training.
+
+133
+00:08:20,195 --> 00:08:25,385
+To stop TensorBoard, simply run the next step on the lab notebook.
+
+134
+00:08:25,385 --> 00:08:27,685
+Okay. At this point,
+
+135
+00:08:27,685 --> 00:08:32,435
+you're ready to deploy the CNN based model and use it to generate predictions.
+
+136
+00:08:32,435 --> 00:08:34,250
+To deploy the model,
+
+137
+00:08:34,250 --> 00:08:40,790
+you will run another G Cloud ML Engine command and this step will also take some time.
+
+138
+00:08:40,790 --> 00:08:43,615
+To confirm that the model is being deployed,
+
+139
+00:08:43,615 --> 00:08:46,520
+you can return back to Cloud Machine Learning Engine
+
+140
+00:08:46,520 --> 00:08:50,355
+and navigate to the models section of the UI.
+
+141
+00:08:50,355 --> 00:08:55,490
+Here you can see that there's already a model called MNIST and if you click on it,
+
+142
+00:08:55,490 --> 00:08:58,850
+you can monitor the process of deploying this model.
+
+143
+00:08:58,850 --> 00:09:01,070
+Alternatively, you can return back to
+
+144
+00:09:01,070 --> 00:09:04,220
+the notebook and wait for the cell to finish running.
+
+145
+00:09:04,220 --> 00:09:10,330
+So, you don't have to wait, this video is fast-forwarding until after the step is done.
+
+146
+00:09:10,330 --> 00:09:14,480
+Now, the model deployment is complete and you can see that there's
+
+147
+00:09:14,480 --> 00:09:16,850
+a CNN model that has been deployed as
+
+148
+00:09:16,850 --> 00:09:20,430
+a service as an API on Cloud Machine Learning Engine.
+
+149
+00:09:20,430 --> 00:09:23,555
+To test out the predictions from the API,
+
+150
+00:09:23,555 --> 00:09:26,725
+you need to return back to the MNIST model notebook,
+
+151
+00:09:26,725 --> 00:09:31,790
+confirm that the model was actually deployed and then in the next code cell,
+
+152
+00:09:31,790 --> 00:09:37,985
+you'll find out how to submit an image from the MNIST dataset to test our predictions.
+
+153
+00:09:37,985 --> 00:09:42,785
+Once you can see an image of the one digit at the bottom of the code block,
+
+154
+00:09:42,785 --> 00:09:46,080
+go ahead and submit the image to the API.
+
+155
+00:09:46,080 --> 00:09:50,070
+To do that, you call the G Cloud ML Engine predict.
+
+156
+00:09:50,070 --> 00:09:52,135
+As you can see in this case,
+
+157
+00:09:52,135 --> 00:09:53,900
+once you've submitted the image,
+
+158
+00:09:53,900 --> 00:09:58,415
+you get back a prediction of class one which matches the digit on that image.
+
+159
+00:09:58,415 --> 00:10:02,440
+All right. That's it for this lab. Thank you for watching.

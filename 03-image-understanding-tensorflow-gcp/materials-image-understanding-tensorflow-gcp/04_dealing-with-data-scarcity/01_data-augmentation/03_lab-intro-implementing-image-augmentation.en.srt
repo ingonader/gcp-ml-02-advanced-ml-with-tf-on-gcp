@@ -1,0 +1,87 @@
+1
+00:00:00,000 --> 00:00:02,950
+Let's put this into practice with the lab.
+
+2
+00:00:02,950 --> 00:00:05,400
+In this lab, we'll implement data augmentation
+
+3
+00:00:05,400 --> 00:00:08,565
+ourselves using some of the techniques we've discussed.
+
+4
+00:00:08,565 --> 00:00:11,835
+We'll be working with a more realistic dataset in MNIST,
+
+5
+00:00:11,835 --> 00:00:13,855
+color pictures of flowers.
+
+6
+00:00:13,855 --> 00:00:18,120
+The introduction of colors simply means that the shape of our inputs will change.
+
+7
+00:00:18,120 --> 00:00:21,480
+Whereas before, our input was batch size by height by width.
+
+8
+00:00:21,480 --> 00:00:25,235
+Now, we're adding another dimension to allow us to have multiple channels.
+
+9
+00:00:25,235 --> 00:00:29,020
+To our model though, it's simply a tensor of higher rank.
+
+10
+00:00:29,020 --> 00:00:33,440
+The data set for this task is arranged just like the code I discussed earlier.
+
+11
+00:00:33,440 --> 00:00:35,030
+The input CSV file,
+
+12
+00:00:35,030 --> 00:00:37,770
+will consists of two columns: one of which is a path to
+
+13
+00:00:37,770 --> 00:00:40,530
+an image on cloud storage and the other of which is the label,
+
+14
+00:00:40,530 --> 00:00:42,525
+which is a flower species name.
+
+15
+00:00:42,525 --> 00:00:45,530
+Keep in mind though, the header is just for the slides,
+
+16
+00:00:45,530 --> 00:00:47,585
+the actual file doesn't have one.
+
+17
+00:00:47,585 --> 00:00:51,850
+For extra credit, try implementing a custom data augmentation function.
+
+18
+00:00:51,850 --> 00:00:56,120
+One classic way of augmenting image data is by blurring the image.
+
+19
+00:00:56,120 --> 00:00:57,830
+When data is blurred,
+
+20
+00:00:57,830 --> 00:01:01,160
+each pixel becomes the average of its neighbors and
+
+21
+00:01:01,160 --> 00:01:02,840
+one simple way of doing this is by using
+
+22
+00:01:02,840 --> 00:01:05,780
+a convolutional kernel. I'll leave the rest to you.

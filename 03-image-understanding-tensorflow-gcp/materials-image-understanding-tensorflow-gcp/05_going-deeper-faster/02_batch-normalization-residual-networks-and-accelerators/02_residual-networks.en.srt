@@ -1,0 +1,375 @@
+1
+00:00:00,000 --> 00:00:03,345
+Let's talk about the next obstacle,
+
+2
+00:00:03,345 --> 00:00:06,090
+that deep learning researchers faced in
+
+3
+00:00:06,090 --> 00:00:10,465
+their quest to train deeper networks more quickly,
+
+4
+00:00:10,465 --> 00:00:13,590
+the problem of gradient preservation.
+
+5
+00:00:13,590 --> 00:00:15,630
+Even with batch norm,
+
+6
+00:00:15,630 --> 00:00:19,365
+there were obstacles to making very deep networks.
+
+7
+00:00:19,365 --> 00:00:24,790
+Although theoretically deeper networks should always perform better,
+
+8
+00:00:24,790 --> 00:00:26,815
+when they did experiments,
+
+9
+00:00:26,815 --> 00:00:32,520
+researchers discovered that adding depth seemed to actually worsen performance.
+
+10
+00:00:32,520 --> 00:00:35,935
+For example, in a very influential paper,
+
+11
+00:00:35,935 --> 00:00:38,285
+four researchers from Microsoft.,
+
+12
+00:00:38,285 --> 00:00:42,800
+showed a 56 layer network lagging behind
+
+13
+00:00:42,800 --> 00:00:49,110
+the 20 layer network in terms of both training and test performance.
+
+14
+00:00:49,110 --> 00:00:54,320
+Because there's a gap in their training error as well as the test error,
+
+15
+00:00:54,320 --> 00:00:59,835
+this means that the tester or a gap is not just a consequence of overfitting.
+
+16
+00:00:59,835 --> 00:01:07,920
+So, why would a 56 layer network perform so much worse than a 20 layer one?
+
+17
+00:01:07,920 --> 00:01:11,445
+The problem when they investigated,
+
+18
+00:01:11,445 --> 00:01:15,915
+seemed to be that gradients were not being preserved.
+
+19
+00:01:15,915 --> 00:01:21,725
+Recall that the error from the output nodes gets propagated
+
+20
+00:01:21,725 --> 00:01:25,040
+backwards and then each of the weights are
+
+21
+00:01:25,040 --> 00:01:29,920
+updated based on the gradient of the error with respect to the weight,
+
+22
+00:01:29,920 --> 00:01:32,400
+and this happens at every layer.
+
+23
+00:01:32,400 --> 00:01:35,570
+So, as you add more and more layers,
+
+24
+00:01:35,570 --> 00:01:38,360
+the signal that is used to make updates which is
+
+25
+00:01:38,360 --> 00:01:43,390
+the error basically gets lost in transmission,
+
+26
+00:01:43,390 --> 00:01:46,809
+because as you go backward in the layers,
+
+27
+00:01:46,809 --> 00:01:51,380
+the size of the error that is being propagated is smaller and smaller.
+
+28
+00:01:51,380 --> 00:01:56,075
+Some of the error has been used up in these last layers of the network.
+
+29
+00:01:56,075 --> 00:02:00,500
+As a result, the gradients towards the early layers,
+
+30
+00:02:00,500 --> 00:02:02,875
+they become vanishingly small.
+
+31
+00:02:02,875 --> 00:02:07,840
+To some extent, batch normalization helps here,
+
+32
+00:02:07,840 --> 00:02:12,640
+because what it does is that it normalizes all the weights within each layer,
+
+33
+00:02:12,640 --> 00:02:16,635
+and even though all of those gradients are small,
+
+34
+00:02:16,635 --> 00:02:19,690
+the weight updates get amplified in
+
+35
+00:02:19,690 --> 00:02:24,775
+those earlier layers because they are normalized only within those layers.
+
+36
+00:02:24,775 --> 00:02:28,975
+But even this works only to some extent.
+
+37
+00:02:28,975 --> 00:02:31,780
+To get to more than about 20 layers,
+
+38
+00:02:31,780 --> 00:02:34,470
+we need something more than just batch norm,
+
+39
+00:02:34,470 --> 00:02:36,365
+we need something else.
+
+40
+00:02:36,365 --> 00:02:40,390
+The GoogleNet paper from 2014,
+
+41
+00:02:40,390 --> 00:02:47,925
+tried to tackle this problem of vanishing gradient descents using two novel ideas.
+
+42
+00:02:47,925 --> 00:02:52,825
+The first idea was instead of having just one output node,
+
+43
+00:02:52,825 --> 00:02:58,190
+have auxiliary outputs at intermediate layers in the network,
+
+44
+00:02:58,190 --> 00:03:04,005
+to make sure that there is a stronger loss signal available to the early layers.
+
+45
+00:03:04,005 --> 00:03:11,090
+The second idea was to have alternate routes through the network that are shorter,
+
+46
+00:03:11,090 --> 00:03:16,555
+because shallower networks mean that the gradient gets preserved as it goes backward.
+
+47
+00:03:16,555 --> 00:03:20,990
+In the picture, note the yellow rectangles.
+
+48
+00:03:20,990 --> 00:03:27,850
+Those yellow rectangles are output layers and notice that in GoogleNet,
+
+49
+00:03:27,850 --> 00:03:31,395
+you have output layers in the middle of the network.
+
+50
+00:03:31,395 --> 00:03:35,125
+So, by computing the loss at these layers,
+
+51
+00:03:35,125 --> 00:03:39,090
+the loss signal gets boosted.
+
+52
+00:03:40,290 --> 00:03:47,235
+So, if this is a zoomed in picture of one small part of the network,
+
+53
+00:03:47,235 --> 00:03:50,475
+note the connection on the left side,
+
+54
+00:03:50,475 --> 00:03:54,670
+information travelling down this path has
+
+55
+00:03:54,670 --> 00:04:01,540
+one fewer step to go than information traveling around other paths.
+
+56
+00:04:01,540 --> 00:04:06,875
+Note also that GoogleNet use a repeating structure.
+
+57
+00:04:06,875 --> 00:04:08,780
+Each of the blue boxes is
+
+58
+00:04:08,780 --> 00:04:13,305
+a convolutional layer and each of the red boxes is a max pool layer.
+
+59
+00:04:13,305 --> 00:04:17,470
+But instead of designing each layer individually,
+
+60
+00:04:17,470 --> 00:04:21,830
+the Google Net designers used a repeating structure that
+
+61
+00:04:21,830 --> 00:04:27,080
+consists of these convolutional max pool layers organized in a specific manner,
+
+62
+00:04:27,080 --> 00:04:29,920
+and they distributed them throughout the network.
+
+63
+00:04:29,920 --> 00:04:36,315
+So, expanding on these ideas of shortcuts and repeating structures,
+
+64
+00:04:36,315 --> 00:04:41,030
+that yielded a network that was both significantly better
+
+65
+00:04:41,030 --> 00:04:46,470
+performing and also about five times deeper.
+
+66
+00:04:46,630 --> 00:04:51,080
+Instead of using a convolutional layer as a shortcut,
+
+67
+00:04:51,080 --> 00:04:54,620
+the Microsoft researchers used an identity function.
+
+68
+00:04:54,620 --> 00:04:57,910
+Note the identity function on the right hand edge.
+
+69
+00:04:57,910 --> 00:05:04,585
+They call this entire structure residual network because once you take out the identity,
+
+70
+00:05:04,585 --> 00:05:09,765
+what's left, the rest of the network is a residual.
+
+71
+00:05:09,765 --> 00:05:13,075
+The intuition for why this,
+
+72
+00:05:13,075 --> 00:05:17,950
+the identity function should help and definitely shouldn't hurt,
+
+73
+00:05:17,950 --> 00:05:23,450
+stems from the fact that a network composed of many blocks like this is
+
+74
+00:05:23,450 --> 00:05:28,915
+functionally equivalent to a shallower network where the weights in the longer path,
+
+75
+00:05:28,915 --> 00:05:34,510
+they're zero, and information completely flows through the identity shortcut.
+
+76
+00:05:34,510 --> 00:05:37,165
+A more complex rationale,
+
+77
+00:05:37,165 --> 00:05:41,345
+stems from the fact that this network is changing the nature of the task.
+
+78
+00:05:41,345 --> 00:05:45,210
+Instead of learning the mapping from inputs to outputs,
+
+79
+00:05:45,210 --> 00:05:49,725
+which as you've seen becomes harder as networks become deeper,
+
+80
+00:05:49,725 --> 00:05:51,500
+this network is trying to learn
+
+81
+00:05:51,500 --> 00:05:55,965
+the difference between the desired output and the original inputs.
+
+82
+00:05:55,965 --> 00:06:00,020
+This difference, that's almost like normalization.
+
+83
+00:06:00,020 --> 00:06:06,185
+So, if learning that desired output relative to the original input is easier,
+
+84
+00:06:06,185 --> 00:06:08,480
+then this should help substantially.
+
+85
+00:06:08,480 --> 00:06:17,550
+So, this ResNet is residual network with 152 layers won the ImageNet Competition in 2015.
+
+86
+00:06:17,550 --> 00:06:20,465
+Remember that the ImageNet dataset though,
+
+87
+00:06:20,465 --> 00:06:23,015
+has one million images.
+
+88
+00:06:23,015 --> 00:06:25,910
+So, ResNet 152 was okay.
+
+89
+00:06:25,910 --> 00:06:31,605
+For smaller datasets, it's more common to use ResNet 18 or ResNet 50,
+
+90
+00:06:31,605 --> 00:06:34,895
+same principle but fewer weights.
+
+91
+00:06:34,895 --> 00:06:41,760
+Residual connections and network design remain extremely popular research areas.
+
+92
+00:06:41,760 --> 00:06:44,380
+So, for more recent work on this topic,
+
+93
+00:06:44,380 --> 00:06:46,350
+checkout papers on ResNet,
+
+94
+00:06:46,350 --> 00:06:52,530
+DenseNet, FractalNet, SqueezeNet and on Stochastic Depth.

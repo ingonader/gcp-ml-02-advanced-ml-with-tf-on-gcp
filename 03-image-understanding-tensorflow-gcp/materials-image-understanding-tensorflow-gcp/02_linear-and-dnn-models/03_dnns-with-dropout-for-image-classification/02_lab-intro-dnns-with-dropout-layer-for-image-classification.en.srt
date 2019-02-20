@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:02,910
+Now, let's add the final piece to our neural network puzzle.
+
+2
+00:00:02,910 --> 00:00:06,190
+When I add a layer for dropout to our previous neural network model,
+
+3
+00:00:06,190 --> 00:00:08,620
+and see how that impacts performance.
+
+4
+00:00:08,620 --> 00:00:11,400
+The overall process will be still similar to what we did before,
+
+5
+00:00:11,400 --> 00:00:13,910
+except that this time you're adding a new layer for dropout to
+
+6
+00:00:13,910 --> 00:00:17,430
+your DNN and then specifying that probability parameter.
+
+7
+00:00:17,430 --> 00:00:20,240
+Complete the lab, again you have multiple attempts,
+
+8
+00:00:20,240 --> 00:00:23,340
+and return back here we'll walk through the solution together.

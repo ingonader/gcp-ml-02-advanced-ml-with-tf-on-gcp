@@ -1,0 +1,355 @@
+1
+00:00:00,000 --> 00:00:02,830
+Why the input and output sizes different?
+
+2
+00:00:02,830 --> 00:00:06,480
+Why is the input of a 300 by 300 image,
+
+3
+00:00:06,480 --> 00:00:11,815
+but each filter output is only 296 by 296?
+
+4
+00:00:11,815 --> 00:00:16,380
+If you said, this was because of the pixels at the edge of the image for which
+
+5
+00:00:16,380 --> 00:00:20,755
+there are no valid neighbors to compute the full convolution, then you're correct.
+
+6
+00:00:20,755 --> 00:00:23,235
+The larger the size of the kernel,
+
+7
+00:00:23,235 --> 00:00:26,320
+the smaller the output of the convolution operation.
+
+8
+00:00:26,320 --> 00:00:31,510
+Since this makes sequences of convolutional layers more difficult to analyze and to use.
+
+9
+00:00:31,510 --> 00:00:34,835
+Next, you will look at a way to avoid this problem.
+
+10
+00:00:34,835 --> 00:00:37,880
+The diagram illustrates an approach called padding,
+
+11
+00:00:37,880 --> 00:00:40,370
+to help you maintain the same size across
+
+12
+00:00:40,370 --> 00:00:43,340
+the input and the output of the convolutional layer.
+
+13
+00:00:43,340 --> 00:00:45,710
+The approach as an outer border,
+
+14
+00:00:45,710 --> 00:00:49,640
+shown here in white, around the input values in green.
+
+15
+00:00:49,640 --> 00:00:51,365
+The values in the border,
+
+16
+00:00:51,365 --> 00:00:52,940
+are commonly said to be zeros,
+
+17
+00:00:52,940 --> 00:00:55,830
+but it's also possible to use another value.
+
+18
+00:00:55,830 --> 00:00:59,825
+The thickness of the border depends on the size of the kernel.
+
+19
+00:00:59,825 --> 00:01:05,480
+If you're using square kernels and the size of the kernel side is an odd number,
+
+20
+00:01:05,480 --> 00:01:07,400
+just take the length of the kernel side,
+
+21
+00:01:07,400 --> 00:01:10,235
+subtract one, and then divide that in half.
+
+22
+00:01:10,235 --> 00:01:13,985
+You will get the required thickness of the border to preserve the shape of the input.
+
+23
+00:01:13,985 --> 00:01:16,400
+Keep in mind, that unless you're building
+
+24
+00:01:16,400 --> 00:01:19,040
+your own implementation of the convolutional layer,
+
+25
+00:01:19,040 --> 00:01:21,450
+you won't have to do these calculations yourself.
+
+26
+00:01:21,450 --> 00:01:23,090
+Most machine learning frameworks,
+
+27
+00:01:23,090 --> 00:01:26,195
+like TensorFlow, provide built-in support for padding.
+
+28
+00:01:26,195 --> 00:01:31,085
+A convolutional layer is just another layer available in the TensorFlow library.
+
+29
+00:01:31,085 --> 00:01:32,750
+When creating a CNN,
+
+30
+00:01:32,750 --> 00:01:35,680
+simply call the tf layer conv2d method,
+
+31
+00:01:35,680 --> 00:01:38,230
+passing the input from the previous layer.
+
+32
+00:01:38,230 --> 00:01:42,900
+For example, if you're creating a CNN to recognize MNIST digits,
+
+33
+00:01:42,900 --> 00:01:46,685
+the input parameter will have the filter height and width of 28,
+
+34
+00:01:46,685 --> 00:01:49,735
+with a value of one for the in-channels dimension,
+
+35
+00:01:49,735 --> 00:01:53,455
+because MNIST uses a single gray scale channel.
+
+36
+00:01:53,455 --> 00:01:55,785
+When designing a CNN,
+
+37
+00:01:55,785 --> 00:01:58,670
+you have to decide on the number of output channels,
+
+38
+00:01:58,670 --> 00:02:01,880
+which is based on your choice for the number of filters.
+
+39
+00:02:01,880 --> 00:02:06,890
+Finally, you need to pick a kernel size that's used across all filters.
+
+40
+00:02:06,890 --> 00:02:09,230
+Common sizes include; three by three,
+
+41
+00:02:09,230 --> 00:02:11,660
+five by five and seven by seven.
+
+42
+00:02:11,660 --> 00:02:14,270
+Recent research has shown that it's better to use
+
+43
+00:02:14,270 --> 00:02:18,080
+smaller kernel sizes and add more convolutional layers.
+
+44
+00:02:18,080 --> 00:02:21,510
+In other words, instead of using a nine by nine filter,
+
+45
+00:02:21,510 --> 00:02:25,365
+try sequencing two layers of three by three filters.
+
+46
+00:02:25,365 --> 00:02:28,790
+The final required option is for padding.
+
+47
+00:02:28,790 --> 00:02:31,775
+There are two padding methods available in TensorFlow,
+
+48
+00:02:31,775 --> 00:02:34,820
+one is called same and the other is called valid.
+
+49
+00:02:34,820 --> 00:02:36,650
+The nuances of the differences between them,
+
+50
+00:02:36,650 --> 00:02:41,480
+have to do with what happens to pixels that are on the very edges of the image,
+
+51
+00:02:41,480 --> 00:02:46,325
+and that are leftover when the image size is not exactly divisible by the kernel size.
+
+52
+00:02:46,325 --> 00:02:51,065
+In general, when you use small square and odd-numbered sizes for the kernels,
+
+53
+00:02:51,065 --> 00:02:54,590
+the differences are not very meaningful. Just go with same.
+
+54
+00:02:54,590 --> 00:02:57,480
+Other key parameters to the conv2d method includes,
+
+55
+00:02:57,480 --> 00:02:59,735
+stride and the activation function,
+
+56
+00:02:59,735 --> 00:03:02,355
+usually, the royal function.
+
+57
+00:03:02,355 --> 00:03:06,500
+As you recall from the animation that illustrated the convolution operation,
+
+58
+00:03:06,500 --> 00:03:10,220
+the kernel was moving across the image one pixel at a time.
+
+59
+00:03:10,220 --> 00:03:15,345
+It is possible to change this behavior using the stride parameter in the conv2d function.
+
+60
+00:03:15,345 --> 00:03:17,140
+As shown in the graphic,
+
+61
+00:03:17,140 --> 00:03:18,940
+steadying stride to two,
+
+62
+00:03:18,940 --> 00:03:21,760
+will force the kernel to move two pixels to the right,
+
+63
+00:03:21,760 --> 00:03:25,070
+after processing the image pixels in the upper left.
+
+64
+00:03:25,070 --> 00:03:29,025
+Here, the stride is both vertical and horizontal.
+
+65
+00:03:29,025 --> 00:03:32,480
+So, after processing all the pixels in the top three rows,
+
+66
+00:03:32,480 --> 00:03:35,115
+the kernel will also move two rows down.
+
+67
+00:03:35,115 --> 00:03:40,425
+Increasing the stride, requires the computation required to process the input data.
+
+68
+00:03:40,425 --> 00:03:43,275
+However, setting the parameter too high,
+
+69
+00:03:43,275 --> 00:03:46,375
+means the some data might be ignored by the neural network.
+
+70
+00:03:46,375 --> 00:03:48,505
+In most CNN architectures,
+
+71
+00:03:48,505 --> 00:03:50,395
+stride is set to be equal to,
+
+72
+00:03:50,395 --> 00:03:52,945
+or smaller than the size of the kernel.
+
+73
+00:03:52,945 --> 00:03:58,240
+You also need to remember that using a stride with a value greater than one,
+
+74
+00:03:58,240 --> 00:04:01,650
+will reduce the shape produced by your convolutional layer.
+
+75
+00:04:01,650 --> 00:04:04,345
+The size of the output will be divided along
+
+76
+00:04:04,345 --> 00:04:07,315
+every dimension by the size of your stride step.
+
+77
+00:04:07,315 --> 00:04:10,930
+For example, if you're processing a 28 by 28 image,
+
+78
+00:04:10,930 --> 00:04:12,220
+and the stride as two,
+
+79
+00:04:12,220 --> 00:04:15,250
+the output will have a shape of 14 by 14.
+
+80
+00:04:15,250 --> 00:04:18,625
+What does the green part of the below diagram represent?
+
+81
+00:04:18,625 --> 00:04:23,930
+The kernel, the filter output, the original image?
+
+82
+00:04:23,930 --> 00:04:27,330
+The answer is the original image.
+
+83
+00:04:27,720 --> 00:04:31,920
+What does the yellow part of the below diagram represent?
+
+84
+00:04:31,920 --> 00:04:37,990
+The kernel convolving, the filter output, the original image?
+
+85
+00:04:37,990 --> 00:04:42,480
+The answer is, the kernel convolving of the image.
+
+86
+00:04:42,890 --> 00:04:47,305
+What is the size of the stride step in the below diagram?
+
+87
+00:04:47,305 --> 00:04:50,955
+Is it a stride of three, stride of two,
+
+88
+00:04:50,955 --> 00:04:55,740
+stride of one, or is stride unknown?
+
+89
+00:04:55,740 --> 00:04:58,530
+The answer is stride of one.

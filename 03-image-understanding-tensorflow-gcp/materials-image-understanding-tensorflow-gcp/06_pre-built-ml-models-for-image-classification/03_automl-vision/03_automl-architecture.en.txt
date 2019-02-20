@@ -1,0 +1,27 @@
+The big take away here is not what
+we did but what we didn't do. As we talked about at the beginning,
+typically when building a custom model, here are several steps which
+are complex and time intensive. With AutoML,
+we don't have to do any of that. However, as great as AutoML is,
+it can't solve every ML problem, which is why you learned how to build
+a CNN by hand earlier in the course. Behind the scenes, AutoML is
+powered by the latest ML research. While your model trains,
+the AutoML platform actually trains and evaluates multiple models and
+compares them against each other. This NAS net approach or
+Neural Architecture Search, produces an ensemble of ML models and
+chooses the best one. Like Go and self driving cars,
+deep learning is now doing deep learning as you saw with
+the Neural Architecture Search. But how well does a co-list model you
+build with AutoML compare with some of the other image classification models that
+you've heard about as part of this course? Remember the image that
+competition launched in 2010, and the winning CNN network Alex net in 2012? Then, Google created it's Inception
+network for image classification, which was revolutionary at that time for
+the depth of the network. This graph is a refresh of the best
+models for image published in 2017. The x-axis is model size,
+the y-axis is accuracy. What you want is a small model, left on
+the x, with great accuracy, top of the y. The goal is that green dot there. Our world has been trending towards big, heavy models that aren't exactly
+like a brain, that's the black line. AutoML, powered by the NASNet,
+is shown in the red line. The AutoML networks are smaller and
+more efficient. I'll provide a link to the Google AI blog
+so you can track the latest developments. But first, it's time to try
+your hand at both AutoML and the Vision API that you saw earlier.

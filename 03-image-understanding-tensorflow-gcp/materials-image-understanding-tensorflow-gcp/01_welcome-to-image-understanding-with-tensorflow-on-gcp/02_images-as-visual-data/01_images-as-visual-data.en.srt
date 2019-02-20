@@ -1,0 +1,419 @@
+1
+00:00:00,000 --> 00:00:01,965
+In this introductory module,
+
+2
+00:00:01,965 --> 00:00:03,720
+we'll review the business applications for
+
+3
+00:00:03,720 --> 00:00:06,865
+computer vision and modern image classification models.
+
+4
+00:00:06,865 --> 00:00:09,570
+Then will break down images themselves as
+
+5
+00:00:09,570 --> 00:00:12,260
+just a collection of pixel data which has a height,
+
+6
+00:00:12,260 --> 00:00:15,265
+a width, and even a depth of color intensity.
+
+7
+00:00:15,265 --> 00:00:17,850
+Lastly, we'll brainstorm and compare the limits of
+
+8
+00:00:17,850 --> 00:00:21,480
+analyzing unstructured data with traditional methods.
+
+9
+00:00:21,480 --> 00:00:25,930
+While capturing an image into his digital form has been around since the 1970s,
+
+10
+00:00:25,930 --> 00:00:27,900
+getting computers to really understand
+
+11
+00:00:27,900 --> 00:00:30,680
+the subject matter or the meaning behind all those pixels,
+
+12
+00:00:30,680 --> 00:00:34,700
+has only recently made a huge strides in both research and application.
+
+13
+00:00:34,700 --> 00:00:36,930
+It's only within the last few years with the advent
+
+14
+00:00:36,930 --> 00:00:39,030
+of cloud computing and specialized processors,
+
+15
+00:00:39,030 --> 00:00:42,020
+that we can now classify many high-resolution images
+
+16
+00:00:42,020 --> 00:00:45,500
+quickly at scale and with high accuracy.
+
+17
+00:00:45,500 --> 00:00:50,145
+By 2006, more than half of all phones had integrated cameras.
+
+18
+00:00:50,145 --> 00:00:52,440
+Now, a little more than 10 years later,
+
+19
+00:00:52,440 --> 00:00:54,065
+there're arguably more cameras and
+
+20
+00:00:54,065 --> 00:00:56,810
+other sensors than the total number of people on the planet.
+
+21
+00:00:56,810 --> 00:00:59,870
+These phones in your pockets can capture high resolution,
+
+22
+00:00:59,870 --> 00:01:03,560
+millions of pixel images and automatically upload them to the cloud.
+
+23
+00:01:03,560 --> 00:01:05,090
+Just think of how many pictures you've taken in
+
+24
+00:01:05,090 --> 00:01:07,740
+the last year or have seen when browsing online.
+
+25
+00:01:07,740 --> 00:01:10,410
+To give you a sense of the scale of visual data,
+
+26
+00:01:10,410 --> 00:01:11,895
+it's both images and video,
+
+27
+00:01:11,895 --> 00:01:14,100
+consider that as every second passes,
+
+28
+00:01:14,100 --> 00:01:17,690
+five hours of videos are uploaded to YouTube.
+
+29
+00:01:17,690 --> 00:01:21,645
+That's 300 hours of video every minute,
+
+30
+00:01:21,645 --> 00:01:23,995
+and that's just data, video data to YouTube.
+
+31
+00:01:23,995 --> 00:01:29,495
+For images, over 1.2 billion photos are uploaded every day to Google Photos,
+
+32
+00:01:29,495 --> 00:01:34,160
+which is roughly 13,000 of high-resolution images every second.
+
+33
+00:01:34,160 --> 00:01:37,880
+Let's do a quick walk-through of how some companies and organizations are applying
+
+34
+00:01:37,880 --> 00:01:41,750
+intelligent computer vision and ML classification models for their businesses.
+
+35
+00:01:41,750 --> 00:01:44,960
+First, you might be Airbus and you're using
+
+36
+00:01:44,960 --> 00:01:47,120
+image classification and recognition techniques to
+
+37
+00:01:47,120 --> 00:01:50,150
+differentiate between clouds and snow cover.
+
+38
+00:01:50,150 --> 00:01:54,010
+Which is critical for planning safe flight routes and tracking weather patterns.
+
+39
+00:01:54,010 --> 00:01:55,715
+If you're stumped like I am,
+
+40
+00:01:55,715 --> 00:01:57,800
+the clouds are actually in the upper right-hand corner
+
+41
+00:01:57,800 --> 00:02:00,325
+of the right image highlighted in red.
+
+42
+00:02:00,325 --> 00:02:02,750
+As you can see, the models have gotten really advanced in
+
+43
+00:02:02,750 --> 00:02:05,560
+the last decade. Let's take a look at another.
+
+44
+00:02:05,560 --> 00:02:08,720
+You might be Kewpie, and use machine-learning to differentiate between
+
+45
+00:02:08,720 --> 00:02:12,110
+bad potatoes and good potatoes while making baby food.
+
+46
+00:02:12,110 --> 00:02:15,620
+What's really impressive to me is that the team uses Tensorflow model with pictures of
+
+47
+00:02:15,620 --> 00:02:19,190
+diced potatoes like the ones that you see here as the image input,
+
+48
+00:02:19,190 --> 00:02:20,915
+not even the whole potato.
+
+49
+00:02:20,915 --> 00:02:23,150
+After training, the model was able to pick out
+
+50
+00:02:23,150 --> 00:02:25,550
+the bad potatoes with near perfect accuracy,
+
+51
+00:02:25,550 --> 00:02:30,415
+which reduces the overall volume of cases for the plant workers to review themselves.
+
+52
+00:02:30,415 --> 00:02:32,945
+Again, it's with the review of the foundations of
+
+53
+00:02:32,945 --> 00:02:35,945
+ML that the team provided a labeled image
+
+54
+00:02:35,945 --> 00:02:41,370
+of good high-quality data and bad diced potatoes and not hard-coded rules.
+
+55
+00:02:41,370 --> 00:02:44,285
+Like, if it's a green potato if you see that then it's bad.
+
+56
+00:02:44,285 --> 00:02:46,745
+The model itself figures the rules between
+
+57
+00:02:46,745 --> 00:02:50,035
+your training dataset that's labeled and ultimately the correct output.
+
+58
+00:02:50,035 --> 00:02:53,480
+Next up, you might be an economic forecast firm looking at
+
+59
+00:02:53,480 --> 00:02:56,885
+track the global fleet of container ships via satellite imagery.
+
+60
+00:02:56,885 --> 00:02:59,410
+Knowing the amount of cargo being carried,
+
+61
+00:02:59,410 --> 00:03:01,940
+might improve your economic forecast days or months
+
+62
+00:03:01,940 --> 00:03:04,720
+ahead of the official numbers, you can track those ships.
+
+63
+00:03:04,720 --> 00:03:07,100
+After this course, if you want your practice your own
+
+64
+00:03:07,100 --> 00:03:09,410
+hand and image recognition on satellite imagery,
+
+65
+00:03:09,410 --> 00:03:13,400
+I'll provide a link to the public datasets and a cool weather prediction tutorial that [inaudible].
+
+66
+00:03:13,400 --> 00:03:18,010
+What about classifying medical images to help out doctors?
+
+67
+00:03:18,010 --> 00:03:20,900
+You can diagnose medical conditions like diabetic
+
+68
+00:03:20,900 --> 00:03:24,840
+retinopathy earlier when it's easier to treat and prevent blindness.
+
+69
+00:03:24,840 --> 00:03:28,760
+Diabetic retinopathy is one of the fastest growing causes of blindness.
+
+70
+00:03:28,760 --> 00:03:32,450
+With nearly 415 million diabetic patients at risk worldwide.
+
+71
+00:03:32,450 --> 00:03:34,980
+If caught early, the disease can be treated.
+
+72
+00:03:34,980 --> 00:03:37,565
+If not, it can lead to irreversible blindness.
+
+73
+00:03:37,565 --> 00:03:41,870
+The Google Teams model showed that the results that ML algorithms performance is on
+
+74
+00:03:41,870 --> 00:03:46,645
+par with that of ophthalmologist who then use it in assisting and making diagnoses.
+
+75
+00:03:46,645 --> 00:03:48,740
+I'll provide links for each of these different models in
+
+76
+00:03:48,740 --> 00:03:51,105
+the resources for your additional reading.
+
+77
+00:03:51,105 --> 00:03:54,290
+Now, the key takeaway here is that image classification can now automate
+
+78
+00:03:54,290 --> 00:03:57,140
+tasks that may save or even assist human team,
+
+79
+00:03:57,140 --> 00:03:59,210
+and recently, these models have been even
+
+80
+00:03:59,210 --> 00:04:02,785
+outperforming humans and some particular image domains.
+
+81
+00:04:02,785 --> 00:04:04,910
+Image classification as a field,
+
+82
+00:04:04,910 --> 00:04:07,475
+is far more than just a binary classification tool.
+
+83
+00:04:07,475 --> 00:04:11,370
+Later on in this course, we'll experiment with a pre-built vision API model,
+
+84
+00:04:11,370 --> 00:04:14,180
+which allows you to pass through a JSON request and get
+
+85
+00:04:14,180 --> 00:04:17,235
+back a ranked list of associated labels for your image.
+
+86
+00:04:17,235 --> 00:04:21,290
+It's pretty good. Also, if you have more than one subject matter in one photo,
+
+87
+00:04:21,290 --> 00:04:25,535
+it can draw bounding boxes and classifying pieces of the image as well.
+
+88
+00:04:25,535 --> 00:04:28,760
+Modern image classification models can even generate captions that
+
+89
+00:04:28,760 --> 00:04:32,220
+describe what's going on in an image like map of dependencies,
+
+90
+00:04:32,220 --> 00:04:35,055
+two hockey players are fighting over a puck.
+
+91
+00:04:35,055 --> 00:04:36,490
+Here's important to call up that
+
+92
+00:04:36,490 --> 00:04:38,960
+even the best models can make mistakes with their predictions,
+
+93
+00:04:38,960 --> 00:04:43,895
+like a road sign here captioned as a refrigerator filled with lots of food and drinks.
+
+94
+00:04:43,895 --> 00:04:47,260
+As you saw, there's a lot of really impressive use cases for machine learning,
+
+95
+00:04:47,260 --> 00:04:49,085
+like detecting objects and images,
+
+96
+00:04:49,085 --> 00:04:50,640
+helping you to detect diseases,
+
+97
+00:04:50,640 --> 00:04:55,620
+even building real-time road data to enable cars to drive themselves.
+
+98
+00:04:55,620 --> 00:04:58,440
+But ML can also be used in more playful ways too.
+
+99
+00:04:58,440 --> 00:05:00,575
+Through a pose estimation model,
+
+100
+00:05:00,575 --> 00:05:03,530
+a Google AI experiment called Move Mirror matches
+
+101
+00:05:03,530 --> 00:05:05,630
+your real-time movements to hundreds of images of
+
+102
+00:05:05,630 --> 00:05:08,450
+people doing similar poses from around the world.
+
+103
+00:05:08,450 --> 00:05:11,375
+Feel free to try it out yourself and have some fun and get inspired.
+
+104
+00:05:11,375 --> 00:05:14,390
+Then tune back into this course and learn how image classification models
+
+105
+00:05:14,390 --> 00:05:18,990
+extract features from those images and how you can make the magic happen.

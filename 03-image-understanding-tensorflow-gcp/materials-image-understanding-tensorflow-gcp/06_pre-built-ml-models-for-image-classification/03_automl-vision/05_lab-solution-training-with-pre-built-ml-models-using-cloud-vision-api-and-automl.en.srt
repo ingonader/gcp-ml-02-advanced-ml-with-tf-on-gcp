@@ -1,0 +1,963 @@
+1
+00:00:00,000 --> 00:00:02,855
+Okay. Welcome to using the Cloud Vision API.
+
+2
+00:00:02,855 --> 00:00:05,010
+We're going to go through the lab using
+
+3
+00:00:05,010 --> 00:00:09,155
+the Cloud Vision API on a real example and show you how to do that.
+
+4
+00:00:09,155 --> 00:00:12,630
+So, you should already have platform setup.
+
+5
+00:00:12,630 --> 00:00:14,440
+The first thing you're going to do is,
+
+6
+00:00:14,440 --> 00:00:16,760
+you're going to go ahead and create an API key.
+
+7
+00:00:16,760 --> 00:00:19,775
+So, you're going to go ahead and click the Navigation menu,
+
+8
+00:00:19,775 --> 00:00:23,035
+go to APIs and Services and click Credentials.
+
+9
+00:00:23,035 --> 00:00:26,480
+There, we already have an API key setup,
+
+10
+00:00:26,480 --> 00:00:28,240
+we're going to go ahead and create another one.
+
+11
+00:00:28,240 --> 00:00:31,045
+You want to go to click Create Credentials,
+
+12
+00:00:31,045 --> 00:00:34,745
+API key, and you'll get an API key here.
+
+13
+00:00:34,745 --> 00:00:36,075
+We don't want to restrict it all,
+
+14
+00:00:36,075 --> 00:00:37,745
+we'll first press Close.
+
+15
+00:00:37,745 --> 00:00:41,415
+Okay. Then we're going to go ahead and copy that,
+
+16
+00:00:41,415 --> 00:00:44,840
+you'll copy API key 2.
+
+17
+00:00:44,840 --> 00:00:47,360
+You want to open up to the cloud shell so,
+
+18
+00:00:47,360 --> 00:00:49,560
+we'll go ahead and open up an instance of the Cloud Shell,
+
+19
+00:00:49,560 --> 00:00:51,230
+and what we want to do is,
+
+20
+00:00:51,230 --> 00:00:56,580
+we want to assign environment variable there.
+
+21
+00:00:58,450 --> 00:01:08,995
+So, we're going to go ahead and type export API_KEY equals that API key.
+
+22
+00:01:08,995 --> 00:01:14,135
+Okay. So now, API key is stored as an environment variable and Cloud Shell.
+
+23
+00:01:14,135 --> 00:01:15,920
+Next thing we're going to do is,
+
+24
+00:01:15,920 --> 00:01:20,490
+we're going to go ahead and create a storage bucket on cloud storage.
+
+25
+00:01:20,490 --> 00:01:23,180
+So, we'll go ahead to our navigation menu,
+
+26
+00:01:23,180 --> 00:01:25,710
+go down to Cloud Storage.
+
+27
+00:01:25,710 --> 00:01:27,860
+Okay. We already have a bucket you created with
+
+28
+00:01:27,860 --> 00:01:30,160
+our project name, I'm going to click through there.
+
+29
+00:01:30,160 --> 00:01:33,050
+Then what I'm going to do is I'm going to upload a file,
+
+30
+00:01:33,050 --> 00:01:37,910
+and the file is going to be the image that I want to use Vision API on.
+
+31
+00:01:37,910 --> 00:01:42,670
+So, I'm going to go ahead and click Upload and I have my image on the cloud here.
+
+32
+00:01:42,670 --> 00:01:46,275
+So, I'm going to go ahead and upload that file with the dialog,
+
+33
+00:01:46,275 --> 00:01:51,300
+I'll finish, and we had to make sure that this is a public file.
+
+34
+00:01:51,300 --> 00:01:54,070
+So, what I'm going to do is I'm going to click this Settings menu,
+
+35
+00:01:54,070 --> 00:01:57,490
+I'm going to scroll down to edit permissions,
+
+36
+00:01:57,500 --> 00:02:00,400
+and then I'm going to click Add item,
+
+37
+00:02:00,400 --> 00:02:04,050
+select user, and for name,
+
+38
+00:02:04,050 --> 00:02:05,310
+I'm going to type all,
+
+39
+00:02:05,310 --> 00:02:09,465
+and then Users with the U capital and camel case,
+
+40
+00:02:09,465 --> 00:02:12,080
+and then for a reader that's the accessible.
+
+41
+00:02:12,080 --> 00:02:14,515
+I'll save this, and now,
+
+42
+00:02:14,515 --> 00:02:16,280
+they'll show that this image is pumped.
+
+43
+00:02:16,280 --> 00:02:20,000
+I'm going to click this image over here.
+
+44
+00:02:21,270 --> 00:02:23,910
+So, we can see what that image is.
+
+45
+00:02:23,910 --> 00:02:26,685
+It's a picture of cirrus clouds,
+
+46
+00:02:26,685 --> 00:02:31,080
+wispy, as distinct from other types of clouds.
+
+47
+00:02:31,080 --> 00:02:33,410
+We'll get into that in a second.
+
+48
+00:02:33,410 --> 00:02:40,910
+Next from there, we're going to go ahead and we're going to create a Vision API requests.
+
+49
+00:02:40,910 --> 00:02:48,115
+The way we do that, is by creating a request.json file and in that,
+
+50
+00:02:48,115 --> 00:02:51,620
+we're going to indicate where the image is located.
+
+51
+00:02:51,620 --> 00:02:56,470
+Also, what part of the Vision API we're going to use.
+
+52
+00:02:56,470 --> 00:02:59,230
+We're going to go ahead and click this pencil,
+
+53
+00:02:59,230 --> 00:03:01,930
+and that's going to bring up the Cloud Editor.
+
+54
+00:03:01,930 --> 00:03:05,860
+Okay. In the Cloud at Cloud Shell Editor,
+
+55
+00:03:05,860 --> 00:03:08,480
+we already have of how we're going to use in a second.
+
+56
+00:03:08,480 --> 00:03:10,965
+We're going to click on this request.json file,
+
+57
+00:03:10,965 --> 00:03:14,865
+and here, we have our request.json file.
+
+58
+00:03:14,865 --> 00:03:18,395
+You'll see as json files are structured,
+
+59
+00:03:18,395 --> 00:03:23,635
+this is a dictionary Nesson with multiple Items and here we have requests.
+
+60
+00:03:23,635 --> 00:03:27,430
+Within requests, we have image then source,
+
+61
+00:03:27,430 --> 00:03:29,920
+then where our image's located?
+
+62
+00:03:29,920 --> 00:03:32,905
+So, in this case, the bucket and then the file name.
+
+63
+00:03:32,905 --> 00:03:34,800
+We also have our features.
+
+64
+00:03:34,800 --> 00:03:37,125
+In this case, we want to do label detection,
+
+65
+00:03:37,125 --> 00:03:42,745
+we want to detect which items are in the particular image,
+
+66
+00:03:42,745 --> 00:03:44,935
+and we're going to say maxResults 10.
+
+67
+00:03:44,935 --> 00:03:48,655
+Okay. From there, we're going to go back to our Cloud Shell,
+
+68
+00:03:48,655 --> 00:03:52,535
+and we're going to use the crop command to make that request.
+
+69
+00:03:52,535 --> 00:03:54,135
+Okay, this is an API.
+
+70
+00:03:54,135 --> 00:03:59,125
+So, we can make that request with our API key,
+
+71
+00:03:59,125 --> 00:04:01,460
+and then we'll paste that.
+
+72
+00:04:01,460 --> 00:04:04,330
+I'm going to make this Cloud Shell bit bigger,
+
+73
+00:04:04,330 --> 00:04:05,970
+so we can see what's happening here.
+
+74
+00:04:05,970 --> 00:04:10,145
+So, label and annotations have four items, the MID.
+
+75
+00:04:10,145 --> 00:04:12,705
+This is the ID and the Google knowledge graph.
+
+76
+00:04:12,705 --> 00:04:17,360
+There's also a description of what the image contains,
+
+77
+00:04:17,360 --> 00:04:22,680
+in this case sky, and a score and topicality which indicates some accuracy metric.
+
+78
+00:04:22,680 --> 00:04:25,625
+So, we have the sky here, blue,
+
+79
+00:04:25,625 --> 00:04:31,565
+daytime, center number four and this's the list that we use to cloud,
+
+80
+00:04:31,565 --> 00:04:33,275
+we also got atmosphere,
+
+81
+00:04:33,275 --> 00:04:35,240
+Cumulus, which is curious,
+
+82
+00:04:35,240 --> 00:04:36,625
+we'll come back to that in a second,
+
+83
+00:04:36,625 --> 00:04:43,735
+Azure, calm, meteorological phenomenon and computer wallpaper, which is funny.
+
+84
+00:04:43,735 --> 00:04:46,930
+So, focusing on cumulus,
+
+85
+00:04:46,930 --> 00:04:50,190
+this actually funny that this is labelled as stimulus,
+
+86
+00:04:50,190 --> 00:04:54,125
+because if you're familiar with meteorology at all,
+
+87
+00:04:54,125 --> 00:04:56,450
+this is actually a cirrus cloud.
+
+88
+00:04:56,450 --> 00:04:59,780
+If we look at what cumulus clouds look like in Google image search,
+
+89
+00:04:59,780 --> 00:05:01,840
+they come up as those big fluffy clouds,
+
+90
+00:05:01,840 --> 00:05:04,040
+clouds that look like there may be a storm on the horizon,
+
+91
+00:05:04,040 --> 00:05:06,190
+but also clouds that look peaceful.
+
+92
+00:05:06,190 --> 00:05:11,480
+But that's not we're getting here. So, this seems to
+
+93
+00:05:11,480 --> 00:05:14,020
+indicate that we need some finer granularity and
+
+94
+00:05:14,020 --> 00:05:17,240
+finer control for our cloud classification.
+
+95
+00:05:17,240 --> 00:05:21,690
+There's other cool things that we can do in Vision API including our Web Detection,
+
+96
+00:05:21,690 --> 00:05:24,775
+and once you do that on your own, play with that.
+
+97
+00:05:24,775 --> 00:05:27,920
+That references what you see if you search,
+
+98
+00:05:27,920 --> 00:05:31,665
+it's like a Google reverse image search which is pretty cool.
+
+99
+00:05:31,665 --> 00:05:34,295
+Right now, what we're going to do is focus on
+
+100
+00:05:34,295 --> 00:05:37,695
+the power we can leverage using our auto-Elmo framework.
+
+101
+00:05:37,695 --> 00:05:44,410
+Okay. So, what we're going to do first is we're going to go back to our shell,
+
+102
+00:05:46,630 --> 00:05:55,630
+we're going to go back to our home screen over here on the Google Cloud Platform console,
+
+103
+00:05:55,930 --> 00:05:59,060
+and we're going to go ahead and click this link,
+
+104
+00:05:59,060 --> 00:06:03,190
+you should have this link that's going to set up, our AutoML UI.
+
+105
+00:06:03,190 --> 00:06:05,610
+So, when you click go to this link,
+
+106
+00:06:05,610 --> 00:06:08,240
+what you will probably get is
+
+107
+00:06:08,240 --> 00:06:11,520
+something that tells you to go to billing or set up the API,
+
+108
+00:06:11,520 --> 00:06:12,990
+you want to click setup now,
+
+109
+00:06:12,990 --> 00:06:14,760
+the big blue button there,
+
+110
+00:06:14,760 --> 00:06:19,550
+and then after you click this,
+
+111
+00:06:19,550 --> 00:06:27,350
+if you navigate over to your Google Cloud Platform dashboard and go to storage,
+
+112
+00:06:27,350 --> 00:06:30,860
+you will notice there's a new bucket that is created.
+
+113
+00:06:31,270 --> 00:06:36,890
+What you'll see is you'll see a new bucket with name and it ends with VCM.
+
+114
+00:06:36,890 --> 00:06:38,175
+Okay. This is your new bucket,
+
+115
+00:06:38,175 --> 00:06:42,480
+and this is where the Vision API is going to work from.
+
+116
+00:06:42,480 --> 00:06:44,885
+Okay. You want to copy that bucket name.
+
+117
+00:06:44,885 --> 00:06:46,895
+We're going to go back to our Cloud Shell.
+
+118
+00:06:46,895 --> 00:06:49,400
+We're going to go ahead and we are going to
+
+119
+00:06:49,400 --> 00:06:53,240
+export that bucket name as an environment variable.
+
+120
+00:06:53,240 --> 00:07:00,135
+Okay. So, we have that bucket name Environment variable.
+
+121
+00:07:00,135 --> 00:07:03,050
+The next thing I'm going to do is you're going to go ahead and use
+
+122
+00:07:03,050 --> 00:07:07,805
+the gsutil command and you're going to copy the training images into your bucket.
+
+123
+00:07:07,805 --> 00:07:09,550
+So, we're going to copy this,
+
+124
+00:07:09,550 --> 00:07:11,720
+we're not going to run it because we've already copied
+
+125
+00:07:11,720 --> 00:07:15,545
+the images beforehand for time's sake.
+
+126
+00:07:15,545 --> 00:07:19,155
+I'll take about a minute or two to run that.
+
+127
+00:07:19,155 --> 00:07:23,550
+Once you've done that, you can click refresh on your browser.
+
+128
+00:07:23,550 --> 00:07:25,290
+Once you go into this bucket,
+
+129
+00:07:25,290 --> 00:07:27,985
+you should see three folders.
+
+130
+00:07:27,985 --> 00:07:34,525
+In this case, we have four folders but there's three.
+
+131
+00:07:34,525 --> 00:07:38,100
+So, it's cirrus, cumulonimbus and cumulus.
+
+132
+00:07:38,100 --> 00:07:42,285
+This clouds folder is our model which we'll talk about in a second.
+
+133
+00:07:42,285 --> 00:07:46,605
+Okay. So, after that we're going to go ahead and create our dataset.
+
+134
+00:07:46,605 --> 00:07:53,200
+The way we are going to create our dataset is by copying over our data file
+
+135
+00:07:53,200 --> 00:08:00,405
+which indicates where each image is located as well as the label for it.
+
+136
+00:08:00,405 --> 00:08:06,830
+We'll go ahead and use gsutil which will copy over a data.csv file.
+
+137
+00:08:06,830 --> 00:08:11,340
+So, I'm going to go ahead and run this.
+
+138
+00:08:11,340 --> 00:08:15,340
+What I'll do is we can use less to look at this file.
+
+139
+00:08:15,340 --> 00:08:19,685
+What that contains a Google Cloud Storage URL
+
+140
+00:08:19,685 --> 00:08:22,750
+with placeholder and then the name of the file and then the labels.
+
+141
+00:08:22,750 --> 00:08:24,535
+So, in this case we have cirrus,
+
+142
+00:08:24,535 --> 00:08:29,285
+then going down more we have cumulonimbus and lastly cumulus.
+
+143
+00:08:29,285 --> 00:08:32,560
+I will go ahead and use the send command to replace
+
+144
+00:08:32,560 --> 00:08:37,800
+all instances of the word placeholder with the name of the bucket,
+
+145
+00:08:38,370 --> 00:08:42,470
+and then we'll look at that file again with less and we see
+
+146
+00:08:42,470 --> 00:08:46,030
+that place holder has been replaced with the name of
+
+147
+00:08:46,030 --> 00:08:50,110
+our Auto ML bucket and then what we'll do is we'll upload
+
+148
+00:08:50,110 --> 00:08:56,600
+that file using gsutil up to our Cloud Storage Bucket.
+
+149
+00:08:57,990 --> 00:09:04,270
+So, then when we go back if we click refresh on this bucket and we scroll down,
+
+150
+00:09:04,270 --> 00:09:08,470
+we'll see that we have a data.csv file.
+
+151
+00:09:08,470 --> 00:09:12,595
+So, we'll go ahead and we scroll down we see that there's a data file.
+
+152
+00:09:12,595 --> 00:09:14,765
+Cool. All right.
+
+153
+00:09:14,765 --> 00:09:18,125
+So, now we can actually go ahead and get started and train this model.
+
+154
+00:09:18,125 --> 00:09:24,020
+So, I'm going to navigate back to my Auto ML UI and what you should see,
+
+155
+00:09:24,020 --> 00:09:27,275
+you'll use our blue boxes as critical as a model,
+
+156
+00:09:27,275 --> 00:09:30,105
+but you also see a button that says new dataset.
+
+157
+00:09:30,105 --> 00:09:34,230
+So, you're going to want to click New Dataset and what that's going to give you,
+
+158
+00:09:34,230 --> 00:09:36,690
+is this kind of prompt you for a data set name,
+
+159
+00:09:36,690 --> 00:09:38,300
+we'll call it clouds we're not going to actually
+
+160
+00:09:38,300 --> 00:09:40,470
+create this dataset since we already have one.
+
+161
+00:09:40,470 --> 00:09:42,960
+I'll give you some options for import.
+
+162
+00:09:42,960 --> 00:09:45,850
+So I'll say import, and upload images from your computer,
+
+163
+00:09:45,850 --> 00:09:48,470
+you can also select a CSV file from
+
+164
+00:09:48,470 --> 00:09:51,720
+Cloud Storage that points to your paths and also has labels.
+
+165
+00:09:51,720 --> 00:09:54,090
+In this case this is what we'd want to do,
+
+166
+00:09:54,090 --> 00:09:56,005
+so we type data.csv.
+
+167
+00:09:56,005 --> 00:09:58,375
+You can also import your images later.
+
+168
+00:09:58,375 --> 00:10:02,325
+Lastly, you have the option to use multi-label classification.
+
+169
+00:10:02,325 --> 00:10:04,170
+That's a case where if we want to put
+
+170
+00:10:04,170 --> 00:10:08,220
+multiple labels on a single image that's what we want to do,
+
+171
+00:10:08,220 --> 00:10:10,210
+we're just looking at one label per image in
+
+172
+00:10:10,210 --> 00:10:13,230
+this case and after that you click Create Dataset.
+
+173
+00:10:13,230 --> 00:10:14,820
+We've already created a data set.
+
+174
+00:10:14,820 --> 00:10:20,685
+So, I'm going to click cancel here and then we have our dataset we've already created.
+
+175
+00:10:20,685 --> 00:10:22,930
+So I'm going to go ahead and click into that.
+
+176
+00:10:22,930 --> 00:10:28,895
+From there, we're going to get a really cool interface which gives us all our images.
+
+177
+00:10:28,895 --> 00:10:30,610
+Under each of these images,
+
+178
+00:10:30,610 --> 00:10:32,950
+is a label in this case are cumulus clouds.
+
+179
+00:10:32,950 --> 00:10:34,860
+When you scroll down, you'll also see
+
+180
+00:10:34,860 --> 00:10:39,100
+our cumulus nimbus clouds and then we can also see our cirrus clouds.
+
+181
+00:10:39,100 --> 00:10:41,660
+You can also filter here by clicking the labels on
+
+182
+00:10:41,660 --> 00:10:44,490
+the side and we'll see only our cumulus clouds,
+
+183
+00:10:44,490 --> 00:10:48,560
+only our cirrus clouds et cetera okay.
+
+184
+00:10:48,630 --> 00:10:53,295
+Lastly, to train the model we're going to go ahead and click Train.
+
+185
+00:10:53,295 --> 00:10:58,370
+When you click train, that's going to give you an option to train a new model.
+
+186
+00:10:58,370 --> 00:11:03,615
+So, I'm going to click train new model and what that'll give me is a model name.
+
+187
+00:11:03,615 --> 00:11:08,145
+Usually this has a timestamp here, our training budget.
+
+188
+00:11:08,145 --> 00:11:12,400
+In this case on a real GSB instance,
+
+189
+00:11:12,400 --> 00:11:16,180
+it will give you a option to do one compute
+
+190
+00:11:16,180 --> 00:11:20,205
+error or to charge it to an account and also a data summary.
+
+191
+00:11:20,205 --> 00:11:23,540
+Okay. Then you click start training to create a new model.
+
+192
+00:11:23,540 --> 00:11:25,690
+That takes about 15 minutes to do, so no,
+
+193
+00:11:25,690 --> 00:11:28,170
+we're not going to do it here, so I'm going to cancel out this,
+
+194
+00:11:28,170 --> 00:11:30,495
+but I'm going to look into the model that we actually got.
+
+195
+00:11:30,495 --> 00:11:32,820
+I'm going to see our full evaluation.
+
+196
+00:11:32,820 --> 00:11:38,395
+Okay. So I look into this model and see how our training did,
+
+197
+00:11:38,395 --> 00:11:39,790
+we have 60 images,
+
+198
+00:11:39,790 --> 00:11:42,300
+our average position is perfect and there's
+
+199
+00:11:42,300 --> 00:11:45,380
+actually perfect precision here and it's pretty amazing.
+
+200
+00:11:45,380 --> 00:11:53,885
+So in this case, our recall and our precision is quite good at this point.
+
+201
+00:11:53,885 --> 00:11:57,025
+In this case our threshold is set at 50,
+
+202
+00:11:57,025 --> 00:11:58,660
+but you can also change this.
+
+203
+00:11:58,660 --> 00:12:01,710
+So for instance if I move my score threshold to 0.75,
+
+204
+00:12:01,710 --> 00:12:04,275
+our recall goes down, I move it over here,
+
+205
+00:12:04,275 --> 00:12:05,530
+our precision goes down.
+
+206
+00:12:05,530 --> 00:12:07,560
+Typically, we want to balance both precision
+
+207
+00:12:07,560 --> 00:12:10,720
+and recall but it depends on what your task is.
+
+208
+00:12:10,750 --> 00:12:13,945
+From there, we can also scroll all the way down,
+
+209
+00:12:13,945 --> 00:12:16,825
+we can see a confusion matrix and so there was absolutely no confusion,
+
+210
+00:12:16,825 --> 00:12:18,820
+we have 100% on the diurnal.
+
+211
+00:12:18,820 --> 00:12:21,625
+Good job. So it looks like we did pretty good job here.
+
+212
+00:12:21,625 --> 00:12:29,200
+Lastly, what we can do is that we can test our Auto ML on some new images.
+
+213
+00:12:29,200 --> 00:12:33,735
+Okay. So, let's go ahead and go to predict.
+
+214
+00:12:33,735 --> 00:12:36,845
+So, let's go ahead and upload an image.
+
+215
+00:12:36,845 --> 00:12:39,375
+In this case we're going to upload that image that we tried before,
+
+216
+00:12:39,375 --> 00:12:42,685
+that cirrus cloud that we tried to classify before.
+
+217
+00:12:42,685 --> 00:12:47,020
+We're going to upload that and then we're going to go ahead and lo and behold,
+
+218
+00:12:47,020 --> 00:12:51,780
+we get perfect prediction for this cirrus cloud which is pretty amazing.
+
+219
+00:12:51,780 --> 00:12:56,250
+You can try going ahead and classifying another cloud.
+
+220
+00:12:56,250 --> 00:12:59,320
+I'm going to go ahead and click "Upload Images" and
+
+221
+00:12:59,320 --> 00:13:03,445
+I created this new file test2 it's a cumulonimbus.
+
+222
+00:13:03,445 --> 00:13:07,500
+So, I'm going to upload that and we have
+
+223
+00:13:07,500 --> 00:13:12,750
+this big cloud big fluffy cloud and [inaudible] we have a cumulonimbus cloud. That's pretty cool.
+
+224
+00:13:12,750 --> 00:13:16,760
+So, the difference between the Auto ML model
+
+225
+00:13:16,760 --> 00:13:22,735
+and the Vision API you are not supplying any data or any labels,
+
+226
+00:13:22,735 --> 00:13:28,935
+Vision API is using the models that is trained itself within Google,
+
+227
+00:13:28,935 --> 00:13:33,980
+and within Auto ML you bring your own data and you bring your own labels,
+
+228
+00:13:33,980 --> 00:13:37,950
+and from there you can create a model from there.
+
+229
+00:13:37,950 --> 00:13:41,260
+Pretty cool. Using both this tool inside of
+
+230
+00:13:41,260 --> 00:13:44,260
+Vision API where you didn't have to bring any data or
+
+231
+00:13:44,260 --> 00:13:50,625
+any labels and the API was able to do multiple classifications on a single image,
+
+232
+00:13:50,625 --> 00:13:55,500
+and also using Auto ML where you brought your own data and you brought own labels and
+
+233
+00:13:55,500 --> 00:14:00,955
+using Google's classifiers and deep learning models,
+
+234
+00:14:00,955 --> 00:14:05,610
+it was able to develop a model and do prediction on that model.
+
+235
+00:14:05,610 --> 00:14:07,275
+So, hope you enjoyed this lab,
+
+236
+00:14:07,275 --> 00:14:09,840
+you can do this lab as many times if you want.
+
+237
+00:14:09,840 --> 00:14:14,695
+If you want to collect your own images and play around with the Auto ML models or
+
+238
+00:14:14,695 --> 00:14:17,200
+go ahead and try to throw
+
+239
+00:14:17,200 --> 00:14:21,255
+all kinds of different models at Vision API, we encourages you to.
+
+240
+00:14:21,255 --> 00:14:23,265
+Sky's the limit here.
+
+241
+00:14:23,265 --> 00:14:27,730
+No pun intended that we're using clouds but, I hope you had fun.

@@ -1,0 +1,131 @@
+All right, as I mentioned,
+here is our first lab. We're going to build a linear model to
+classify those handwritten digits from the MNIST dataset inside of TensorFlow. Let's go ahead and get started. So here I am in my IPython Notebook
+inside of Cloud Datalab. The first thing that I've done,
+I've already cloned the repo and I've navigated to the lab's folder and
+I've got my mnist_linear IPython Notebook. And the first thing that you scroll
+through you see that some of the code is per-written for you, but
+we didn't do everything for you. So in order to define the model
+you're going to see, well, you going to create your linear_model. We provided the train_input_fn and the
+serving_input_fn but not the evaluation input function which again is very
+similar to the train_input_fn except for a few key differentiating points. We've got the custom estimator here. That's going to take all those inputs and
+get you ready for the actual train_and_evaluate function. Which is then going to be called and
+what you're actually going to get when you are running the model, you can get
+your final accuracy for a linear model. So let's start off from
+all the way at the top. So first off, we actually need to import
+some helper functions which in this particular case we've got numpy as
+we're working with numpy arrays. Those are expected inputs later on for
+our training eval specs. And we're working with output directories. So we're going to use shutil and tensorflow of course you
+want to bring that in there. And also get the latest
+version of TensorFlow. And then we actually need
+to bring in our data. So we're going to do,
+grab the data from the tutorials.mnist. We're going to import it,
+we're going to use read_data_sets. In the future, you're going to
+be using the data sets API. So you might get a warning actually
+that this might be deprecated. But for
+now this is what we're going to be doing. And you'll notice that we're not going to
+reshape the data or do any of that here, we're just bringing it in. And then we're going to print out what
+the current shape of the images are, as well as associated labels width. So let's go ahead and do that. So we're going to run,
+We're running 1.8 for TensorFlow. And we've got 55,000 images
+in our training dataset. They're of the shape 28 by 28, of course
+that means they're 28 pixels by 28 pixels. What do you think this 1 means? Yeah, it's the channel depth, maybe 1. 55,000, and then we have the 10. What do you think the 10 means? Number of classes. 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 are the possible classes that
+we're actually going to output. We define those variables here as well. So we have the HEIGHT that's expected is
+28 pixels, WIDTH=28 pixels, NCLASSES=10. Nothing you haven't sen before. Now we want to plot these images, so
+we can take a look at one particular one. So I'm just saying, all right,
+well, give me number 12. Sure, so let's go ahead and
+run this, we've got our variables. Now show me this image, show me number 12. Again, it's going to be 12 from the array,
+so this is going to be whatever this is. And we just know just because we're
+interpreting it with our brains that this is a 9 here. But you also have the label for
+it in your training [UNKOWN]. Okay, now for the fun part. You've got your training data. Now you actually need to build the
+linear_model that's going to classify it. So first things first,
+you can have your linear_model defined and you can ultimately return your logits and
+your classes that you have. For linear_models,
+what are the components? Well, you've got your X,
+you've got your weights, and you've got a bias
+term associated with it. So in this particular case, this is where
+we're actually going to do the reshaping. Let me just get these. So x is going to be tf. We're going to reshape. What we're going to pass in? Well, it's going to be an image. And then we're actually going to
+reshape it from a 2D, two dimensions, HEIGHT and WIDTH, we're actually
+going to flatten that all out. You got to remember, this is trying
+to bring it into just one dimension, this is going to be our flatten operation. And then for our weights,
+we're going to get the variable associated with the weights, and
+we'll just specify that as W. Get the HEIGHT and WIDTH,
+and the total NCLASSES. Which again, in this particular
+case is just going to be the 10. After that,
+we're going to initialize the weights. And initialize,
+Your own weights and initial value. And specify a bias term. B, again, NCLASSES. And then we'll initialize
+the bias term to be zero. And then, we actually have to get
+our logits, which is just going to be the matrix multiplication of
+the the weights and our X here. It's going to be matmul,
+X and our weights. And then the last thing you do for
+a linear_model of course, add in your bias term. Great, so now we don't get any output and that's just because you
+defined your linear_model. All right, now we actually need
+to write the input functions. They're three different pieces. The training, the actual evaluation
+that happens, and then the prediction. So we've got your training
+input functions here. You've already done the reshaping where
+you specify things like batch size, the number of epochs and
+the shuffling is going to be True for your training input dataset. Now what about for evaluation? Now for the sake of going through this,
+it's largely going to be the same. Are you going to be using the same data
+for training as you are for evaluation? If you said yes,
+[LAUGH] you're scaring me. Don't forget you have a different data
+set to actually do the evaluation set on. This is going to be your
+test batch of images. And of course, with your test batch of images you
+also have your test batch of labels. Let's do a specified batch_size, then we have epochs 1 is fine,
+because we only need to kind of go through the entirety of it once
+since we're not doing training. We also don't need to shuffle it so
+we're going to set shuffle=False. And same queue_capacity is fine. Great, we've got our eval_input_fn and
+we have our serving_input_fn. Custom estimator is written for
+you as well. And essentially in here, this is just for each of the different logits that we
+pass in, that we defined earlier for our linear_model, that's where
+you're actually going to get that. And then you get the probabilities by
+applying that softmax that you saw in the lecture notes. And then each of the different classes. And associated probabilities with them,
+you're actually going to get here. And here is the fun part. It's a little bit of a logic flow. Based on a logic flow, what we're actually going to be doing
+is governed of course by the mode. If it's training mode or evaluation mode, then we actually
+need to compute the loss function. Which in this particular case,since
+it's classification of course is that cross_entropy. We're doing a little bit of numerical
+stabilization here with a reduced mean, it's just everything that you see here. And then for our classification models,
+you need a performance metric which in this particular case we're just
+going to go with just accuracy. And if we're in the training mode,
+you're going to need a training operation, which is going to take those learning
+parameters like your learning_rate. Those hyper parameters
+that you're going to see, we're going to define later on when
+we call the train and evaluate. And if you're not in training mode,
+you don't need a training operation. And just saving time you should not end
+training or evaluation, AKA you are in testing, you don't need three of
+those things either, or prediction. And then last but not least, you actually
+return the estimators back which is where what we're going to be
+using a little bit later. And to our favorite friend,
+defining the actual, what's actually going to be running your
+model which is the train_and_evaluate function that you see here. So it actually needs to output
+your results to a directory. So we're actually going to
+specify it a little bit later. In the hyper parameters
+that you're passing in, things like your learning_rate, and
+you can actually see those down here. Your learning_rate and
+the number of train_steps that you want. In this particular case, we're just saying
+1,000 with a learning_rate of 0.01. And then you pass in the estimator. Your training_spec. Where you're actually exporting this to? The eval_spec. And then last but not least, this is the estimator that we're
+going to be actually being able to call. And last but not least, we're specifying
+when we're actually getting ready to run this, we need to give a place
+to actually store the results. So your OUTDIR is, in this particular
+case, you call it whatever you want. We're just going to say mnist/learned. And this is where you're using
+shutil to basically say, hey, if you're rerunning this multiple times
+just blow out the entire directory and then pass in these hyper parameters before
+we finally get to call the last line in the notebook, which is train_and_evaluate. So let's go ahead and
+get back to where we were here. We've defined the model. Let's run code that's going to
+create our input functions. We've got our custom estimator that's
+going to do the heavy lifting. And we're going to make it distributed
+with our specs that we're going to passing in. And last but not least, we're going to
+actually specify the directory, pass in our hyper parameters and
+train_and_evaluate. So ultimately, at the end of the day,
+we want to get just a single number for how accurately this linear model
+can classify these images. As you can see, the first over on this,
+I get an error, Likely a typo that I made. get_variable not defined
+all the way at the top. Let's see if I had a simple typo. Where's our model code? tf,get_variable, tf,get_variable,
+there we go. [LAUGH] Let's run it all again. All right, we're calling the function and
+we're stepping through the training. We can see the loss, we can see the loss
+2.4 going down to optimized that loss through gradient descent. Loss for the final step. And what you're looking for ultimately
+is your the dictionary for final step. 1000, again that's where we stop it. In my particular case, this might vary for
+you may be between 85 and, this is probably the best I've seen so
+far. We've got a 92% accurate linear_model for
+class final images. You might be happy with 92, maybe that's
+good enough for your business application, but for the rest of this course you'll be
+working with other different models like neural networks. And particularly convolution neural
+networks that can really interpret images really, really well. All right, we'll see you in the next lab.

@@ -1,0 +1,75 @@
+1
+00:00:00,260 --> 00:00:04,485
+Welcome to the last module of the image classification course.
+
+2
+00:00:04,485 --> 00:00:08,675
+Now that you have built your own image classifiers using linear,
+
+3
+00:00:08,675 --> 00:00:11,335
+DNN and CNN models with TensorFlow,
+
+4
+00:00:11,335 --> 00:00:14,470
+it's time to experiment with pre-built image models.
+
+5
+00:00:14,470 --> 00:00:17,805
+In most cases, you will want to try these before
+
+6
+00:00:17,805 --> 00:00:21,950
+investing your time in developing custom TensorFlow code for a model.
+
+7
+00:00:21,950 --> 00:00:24,900
+This module, we'll start with a brief overview of
+
+8
+00:00:24,900 --> 00:00:28,045
+the different pre-built models available from Google.
+
+9
+00:00:28,045 --> 00:00:32,385
+You will also see examples of popular business applications of each.
+
+10
+00:00:32,385 --> 00:00:37,920
+You'll start by reviewing the spectrum of ML options on Google Cloud platform,
+
+11
+00:00:37,920 --> 00:00:42,880
+with a focus on the pre-built and pre-trained models for image classification.
+
+12
+00:00:42,880 --> 00:00:45,320
+With Cloud ML Vision API,
+
+13
+00:00:45,320 --> 00:00:50,135
+you will classify images without even having to provide a training images dataset.
+
+14
+00:00:50,135 --> 00:00:55,775
+The API relies on Google's pre-trained model you can use directly from browser.
+
+15
+00:00:55,775 --> 00:00:59,555
+Next, you will move on to AutoML service,
+
+16
+00:00:59,555 --> 00:01:02,635
+which allows you to get state of the art image classification results from
+
+17
+00:01:02,635 --> 00:01:07,355
+models trained with your own custom labels and your own image dataset.
+
+18
+00:01:07,355 --> 00:01:09,740
+You will see a demo of the service and then
+
+19
+00:01:09,740 --> 00:01:13,970
+compare AutoML and the Vision API in the upcoming lab.

@@ -1,0 +1,131 @@
+1
+00:00:00,000 --> 00:00:04,490
+Let's illustrate this principle of "try the easiest solution first,
+
+2
+00:00:04,490 --> 00:00:07,510
+add complexity as necessary" with an example.
+
+3
+00:00:07,510 --> 00:00:09,570
+This part of the module uses
+
+4
+00:00:09,570 --> 00:00:13,560
+an image classification problem in part because it makes for a cool demo,
+
+5
+00:00:13,560 --> 00:00:17,220
+but this principle also works with other problem domains.
+
+6
+00:00:17,220 --> 00:00:20,130
+Let's start with an easy version of a problem
+
+7
+00:00:20,130 --> 00:00:23,255
+which can be solved out of the box with an ML API.
+
+8
+00:00:23,255 --> 00:00:26,160
+Then as it gets increasingly harder,
+
+9
+00:00:26,160 --> 00:00:30,940
+you'll need to use Auto ML and then eventually an ML framework.
+
+10
+00:00:30,940 --> 00:00:34,835
+Seeing that Google Cloud is a cloud computing provider,
+
+11
+00:00:34,835 --> 00:00:38,950
+let's choose detecting clouds as an image as our problem.
+
+12
+00:00:38,950 --> 00:00:41,090
+Here's the problem statement;
+
+13
+00:00:41,090 --> 00:00:46,085
+given an image, we simply want to identify if there's a cloud in it.
+
+14
+00:00:46,085 --> 00:00:48,290
+As an ML practitioner,
+
+15
+00:00:48,290 --> 00:00:53,870
+your first instinct should be to see how well a pre-trained model does in this problem,
+
+16
+00:00:53,870 --> 00:00:59,400
+because if that works, then you've solved it was minimal additional engineering effort.
+
+17
+00:00:59,800 --> 00:01:05,710
+You can experiment with each of the ML APIs in your browser and see what they return.
+
+18
+00:01:05,710 --> 00:01:08,180
+When you are ready to build a production model,
+
+19
+00:01:08,180 --> 00:01:14,570
+you simply will pass a Json object request to the API and parse wooded returns.
+
+20
+00:01:14,570 --> 00:01:17,405
+Let's take a look at the pieces of the Vision API
+
+21
+00:01:17,405 --> 00:01:21,210
+which will be the initial focus for image classification.
+
+22
+00:01:21,620 --> 00:01:27,550
+There are three major components that all roll up into Cloud Vision ML API.
+
+23
+00:01:27,550 --> 00:01:33,385
+Behind the scenes, each of these are powered by many ML models and years of research.
+
+24
+00:01:33,385 --> 00:01:38,310
+The first is detecting what the image is and classifying it.
+
+25
+00:01:38,310 --> 00:01:41,065
+For example, if you show the model a cat,
+
+26
+00:01:41,065 --> 00:01:44,150
+it will classify it correctly as a cat.
+
+27
+00:01:44,160 --> 00:01:49,540
+Next, what about images with text or scanned documents?
+
+28
+00:01:49,540 --> 00:01:55,195
+Cloud vision will extract the text into a selectable searchable format.
+
+29
+00:01:55,195 --> 00:01:59,525
+Lastly, it is a bit of intuition from the web.
+
+30
+00:01:59,525 --> 00:02:04,630
+Does the image contain entities we know like the Eiffel Tower or a famous person?
+
+31
+00:02:04,630 --> 00:02:06,525
+Identify them for us.
+
+32
+00:02:06,525 --> 00:02:11,965
+Let's test limits of each of these in a web demo and then in the lab later.
+
+33
+00:02:11,965 --> 00:02:15,300
+We'll access them via Cloud Shell in your lab.

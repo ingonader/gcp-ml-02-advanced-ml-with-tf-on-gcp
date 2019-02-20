@@ -1,0 +1,583 @@
+1
+00:00:00,000 --> 00:00:02,610
+So, what is a convolution?
+
+2
+00:00:02,610 --> 00:00:06,345
+You can think of it as an operation that processes a collection
+
+3
+00:00:06,345 --> 00:00:10,070
+of neighboring input elements and in case of image recognition,
+
+4
+00:00:10,070 --> 00:00:14,395
+this means processing a group of pixels that are located close to each other.
+
+5
+00:00:14,395 --> 00:00:16,880
+In the animated diagram on the screen,
+
+6
+00:00:16,880 --> 00:00:19,350
+you can see an example of a convolution operation,
+
+7
+00:00:19,350 --> 00:00:21,600
+shown as the yellow square window that
+
+8
+00:00:21,600 --> 00:00:25,205
+overlays in slides across parts of the green input image.
+
+9
+00:00:25,205 --> 00:00:27,760
+As you take a closer look at the animation,
+
+10
+00:00:27,760 --> 00:00:30,840
+notice that there are also a set of nine weights shown as
+
+11
+00:00:30,840 --> 00:00:36,075
+binary numbers in red on the bottom right of each of these smaller yellow squares.
+
+12
+00:00:36,075 --> 00:00:38,590
+These weights arranged as grid,
+
+13
+00:00:38,590 --> 00:00:42,030
+make up what's known as a convolutional kernel.
+
+14
+00:00:42,030 --> 00:00:45,620
+At every frame of the animation you saw earlier as
+
+15
+00:00:45,620 --> 00:00:49,490
+the convolutional kernel slides across the training dataset image,
+
+16
+00:00:49,490 --> 00:00:52,895
+the values of the weights stay the same or in other words
+
+17
+00:00:52,895 --> 00:00:56,910
+the convolutional weights are shared across different parts of the input.
+
+18
+00:00:56,910 --> 00:01:00,950
+You will learn more about weight-sharing later in this module.
+
+19
+00:01:00,950 --> 00:01:04,850
+After nine pixel values from the training data set image are
+
+20
+00:01:04,850 --> 00:01:08,390
+multiplied by corresponding nine weights of the convolution.
+
+21
+00:01:08,390 --> 00:01:12,460
+The sum of the products is stored as the output of the convolution,
+
+22
+00:01:12,460 --> 00:01:15,510
+which is shown as the numbers in the pink square on the right.
+
+23
+00:01:15,510 --> 00:01:17,960
+You should also take note: that when you apply
+
+24
+00:01:17,960 --> 00:01:22,700
+a convolution kernel to an input as is the output of the convolution,
+
+25
+00:01:22,700 --> 00:01:25,820
+will have a smaller shape compared to the original input.
+
+26
+00:01:25,820 --> 00:01:29,225
+The right side of the animation shows an example,
+
+27
+00:01:29,225 --> 00:01:31,370
+the size of the input is five,
+
+28
+00:01:31,370 --> 00:01:33,580
+the size of the kernel is three.
+
+29
+00:01:33,580 --> 00:01:38,615
+So, the output shape is reduced by kernel size minus one, which means by two.
+
+30
+00:01:38,615 --> 00:01:42,620
+In general, if you use square kernels you should expect that
+
+31
+00:01:42,620 --> 00:01:44,690
+the output shape will be smaller by
+
+32
+00:01:44,690 --> 00:01:48,930
+kernel size minus one along each dimension of the input.
+
+33
+00:01:49,160 --> 00:01:51,680
+To confirm your understanding.
+
+34
+00:01:51,680 --> 00:01:55,455
+Here's a more detailed walk-through of a single convolutional operation,
+
+35
+00:01:55,455 --> 00:01:58,730
+that results in a value of three shown on the right.
+
+36
+00:01:58,730 --> 00:02:01,475
+If you count just the waste that have the value
+
+37
+00:02:01,475 --> 00:02:04,060
+one in the free by free convolutional kernel,
+
+38
+00:02:04,060 --> 00:02:07,070
+you'll find that there are five of them and they're arranged in
+
+39
+00:02:07,070 --> 00:02:10,425
+an X-like shape or other ways of the kernel,
+
+40
+00:02:10,425 --> 00:02:12,070
+have a value of zero.
+
+41
+00:02:12,070 --> 00:02:14,835
+The free ones when added together,
+
+42
+00:02:14,835 --> 00:02:17,380
+they produce the three shown on the right.
+
+43
+00:02:17,380 --> 00:02:20,890
+Most convolutional neural networks use multiple kernels,
+
+44
+00:02:20,890 --> 00:02:22,575
+each having its own weights.
+
+45
+00:02:22,575 --> 00:02:28,580
+For example; The early AlexNet use kernel sizes from three by three to 11 by 11.
+
+46
+00:02:28,580 --> 00:02:33,920
+However, more recent CNN architectures rely primarily on three by three kernels.
+
+47
+00:02:33,920 --> 00:02:37,190
+You've probably heard of processors like TPUs,
+
+48
+00:02:37,190 --> 00:02:41,185
+TensorFlow processing units or GPUs, graphical processing units.
+
+49
+00:02:41,185 --> 00:02:47,290
+These types of processors can be much faster than traditional CPUs at working with CNNs,
+
+50
+00:02:47,290 --> 00:02:50,150
+because they can compute the values of the convolution operation
+
+51
+00:02:50,150 --> 00:02:53,710
+for all the different positions of the convolution kernel in parallel.
+
+52
+00:02:53,710 --> 00:02:57,665
+You will see examples of how that works later in the module.
+
+53
+00:02:57,665 --> 00:03:00,920
+Now, it's time for a quick quiz.
+
+54
+00:03:00,920 --> 00:03:02,400
+Suppose I tell you,
+
+55
+00:03:02,400 --> 00:03:03,750
+that the first kernel,
+
+56
+00:03:03,750 --> 00:03:06,200
+the tax horizontal edges because its
+
+57
+00:03:06,200 --> 00:03:09,680
+maximum at locations where the top row is much higher in
+
+58
+00:03:09,680 --> 00:03:12,680
+value than the bottom row and zero where
+
+59
+00:03:12,680 --> 00:03:16,320
+the top row and the bottom row are about equal in value.
+
+60
+00:03:16,320 --> 00:03:20,000
+The first kernel, finds areas of the image that exhibit
+
+61
+00:03:20,000 --> 00:03:23,850
+sharp changes in intensity between nearby rows.
+
+62
+00:03:23,850 --> 00:03:26,170
+What about the kernel in the bottom?
+
+63
+00:03:26,170 --> 00:03:29,075
+What kind of patterns does it match?
+
+64
+00:03:29,075 --> 00:03:31,760
+If you said it would find pixels that are
+
+65
+00:03:31,760 --> 00:03:34,560
+brighter than their neighboring pixels, you're right.
+
+66
+00:03:34,560 --> 00:03:37,340
+The filter on the bottom will match bright spots,
+
+67
+00:03:37,340 --> 00:03:39,770
+that are exactly one pixel in size.
+
+68
+00:03:39,770 --> 00:03:44,280
+So, at this point you have seen how convolutional kernels enable
+
+69
+00:03:44,280 --> 00:03:46,520
+neural nets to process those parts of
+
+70
+00:03:46,520 --> 00:03:49,435
+the input that are in close proximity to each other.
+
+71
+00:03:49,435 --> 00:03:54,280
+But why are convolutions useful? The images here.
+
+72
+00:03:54,280 --> 00:03:57,260
+Illustrate a practical example from the last quiz of
+
+73
+00:03:57,260 --> 00:04:00,910
+the convolutional kernel designed to detect horizontal edges.
+
+74
+00:04:00,910 --> 00:04:03,890
+This photograph is of Grace Murray Hopper,
+
+75
+00:04:03,890 --> 00:04:07,205
+one of the most famous pioneers in the field of computing.
+
+76
+00:04:07,205 --> 00:04:11,015
+She left the Lessing legacy for computer professionals worldwide,
+
+77
+00:04:11,015 --> 00:04:14,390
+after she made popular the term "debugging" to describe
+
+78
+00:04:14,390 --> 00:04:18,440
+effects to a problem caused by math in a computer relay.
+
+79
+00:04:18,440 --> 00:04:21,270
+Anyway. Her photograph is on black and white.
+
+80
+00:04:21,270 --> 00:04:24,620
+So, it consists of pixels that represent grayscale values.
+
+81
+00:04:24,620 --> 00:04:26,835
+Zero is completely black,
+
+82
+00:04:26,835 --> 00:04:30,050
+255 is completely white and
+
+83
+00:04:30,050 --> 00:04:35,435
+the larger the numbers in the range from zero to 255, the wider they are.
+
+84
+00:04:35,435 --> 00:04:37,745
+Try thinking about what happens,
+
+85
+00:04:37,745 --> 00:04:42,345
+when you apply the convolution kernel shown on the screen to the image matrix.
+
+86
+00:04:42,345 --> 00:04:48,055
+The kernel will produce a high positive value only in the places of the image matrix,
+
+87
+00:04:48,055 --> 00:04:49,610
+where they're bright pixels.
+
+88
+00:04:49,610 --> 00:04:54,930
+In other words, pixel values that are closer to 255 than to zero.
+
+89
+00:04:54,930 --> 00:04:57,880
+Below the white pixels, they're darker pixels.
+
+90
+00:04:57,880 --> 00:05:01,350
+Well, this precisely describes the horizontal edge.
+
+91
+00:05:01,350 --> 00:05:04,370
+Take a look at the top of the computer in the upper left of
+
+92
+00:05:04,370 --> 00:05:09,410
+the original image and notice how the horizontal lines that run along the top,
+
+93
+00:05:09,410 --> 00:05:14,330
+match the horizontal edges in the image processed by this convolutional kernel.
+
+94
+00:05:14,330 --> 00:05:19,610
+If you rotate the convolutional kernel from the previous example by 90 degrees,
+
+95
+00:05:19,610 --> 00:05:22,300
+you can create a vertical edge detector.
+
+96
+00:05:22,300 --> 00:05:26,555
+Notice that this kernel outputs a high value whenever,
+
+97
+00:05:26,555 --> 00:05:29,210
+they're brighter pixels stacked on top of one
+
+98
+00:05:29,210 --> 00:05:33,100
+another and the values to the right of them are darker pixels.
+
+99
+00:05:33,100 --> 00:05:35,780
+In this case, the horizontal edges in
+
+100
+00:05:35,780 --> 00:05:39,335
+the upper left are missing entirely from the processed image.
+
+101
+00:05:39,335 --> 00:05:42,650
+However, the vertical space in between the parts of
+
+102
+00:05:42,650 --> 00:05:46,530
+the computer are clearly visible on the processed image.
+
+103
+00:05:46,860 --> 00:05:50,470
+In practice CNNs use many kernels,
+
+104
+00:05:50,470 --> 00:05:52,825
+each having a distinct set of weights.
+
+105
+00:05:52,825 --> 00:05:57,900
+A filter is an application of a convolution kernel to the entire input.
+
+106
+00:05:57,900 --> 00:05:59,990
+In the two example on the screen,
+
+107
+00:05:59,990 --> 00:06:03,940
+there just a horizontal edge filter or a vertical edge filter.
+
+108
+00:06:03,940 --> 00:06:07,370
+What happens if you add these two filter outputs?
+
+109
+00:06:07,370 --> 00:06:09,680
+Well, you will get bright pixels,
+
+110
+00:06:09,680 --> 00:06:12,300
+where either of these filters had to match.
+
+111
+00:06:12,300 --> 00:06:16,555
+Of course you would get very bright pixels where both filters are activated.
+
+112
+00:06:16,555 --> 00:06:20,840
+A CNN can be trained to learn a variety of different filters,
+
+113
+00:06:20,840 --> 00:06:23,075
+by finding kernel weights that improve
+
+114
+00:06:23,075 --> 00:06:26,610
+the CNN performance on tasks like image recognition.
+
+115
+00:06:26,810 --> 00:06:31,460
+Later in this module, you will see how sequences of filters in a CNN,
+
+116
+00:06:31,460 --> 00:06:35,420
+can be trained to combine lower-level filters like edge detectors into
+
+117
+00:06:35,420 --> 00:06:40,700
+higher level filters that can detect meaningful features like cats, whiskers or ears.
+
+118
+00:06:40,700 --> 00:06:46,300
+Here's a quiz. What does the process of sliding a kernel across an image called?
+
+119
+00:06:46,300 --> 00:06:48,840
+Is it a convolution?
+
+120
+00:06:48,840 --> 00:06:50,650
+A Confusion matrix?
+
+121
+00:06:50,650 --> 00:06:52,105
+A contortion?
+
+122
+00:06:52,105 --> 00:06:55,125
+A curve detection?
+
+123
+00:06:55,125 --> 00:06:57,820
+The correct answer is convolution,
+
+124
+00:06:57,820 --> 00:07:00,210
+which is where CNNs get their name.
+
+125
+00:07:00,210 --> 00:07:04,310
+So, a convolutional layer in a neural network,
+
+126
+00:07:04,310 --> 00:07:06,225
+is defined as a collection of filters,
+
+127
+00:07:06,225 --> 00:07:11,125
+each having a distinct set of kernel weights that are adjusted by the training process.
+
+128
+00:07:11,125 --> 00:07:13,715
+Okay. Up until this point,
+
+129
+00:07:13,715 --> 00:07:18,495
+I have been making an important assumption about the input to the convolutional layer.
+
+130
+00:07:18,495 --> 00:07:22,465
+The images you have seen previously in the module we're in grayscale,
+
+131
+00:07:22,465 --> 00:07:24,800
+meaning you can easily represent them using
+
+132
+00:07:24,800 --> 00:07:27,975
+a tensor of rank two, which is just the matrix.
+
+133
+00:07:27,975 --> 00:07:30,470
+To represent color images,
+
+134
+00:07:30,470 --> 00:07:32,275
+a single matrix is not enough.
+
+135
+00:07:32,275 --> 00:07:34,455
+You need a tensor of rank three,
+
+136
+00:07:34,455 --> 00:07:38,150
+that can represent multiple matrices stacked on top of one another.
+
+137
+00:07:38,150 --> 00:07:44,835
+With color images, these matrices are usually the ones for the red, green, blue channels.
+
+138
+00:07:44,835 --> 00:07:47,005
+The kernel depth, the cube you see
+
+139
+00:07:47,005 --> 00:07:50,450
+convolving is always equal to the number of input channels,
+
+140
+00:07:50,450 --> 00:07:52,700
+three in this case for RGB.
+
+141
+00:07:52,700 --> 00:07:55,850
+Now as output from the convolutional layer,
+
+142
+00:07:55,850 --> 00:08:00,005
+the output layer has depth equal to the number of kernels applied.
+
+143
+00:08:00,005 --> 00:08:04,370
+Let's say two kernels were applied here on this RGB image of a flower,
+
+144
+00:08:04,370 --> 00:08:10,465
+which gives us a new image of size 296 by 296 by 2.
+
+145
+00:08:10,465 --> 00:08:17,235
+We'll talk about that reduce dimensionality from 300 down to 296 in height and width,
+
+146
+00:08:17,235 --> 00:08:19,710
+in the next section on padding.

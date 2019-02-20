@@ -1,0 +1,147 @@
+1
+00:00:00,000 --> 00:00:04,465
+Let's do a recap of the entire architecture before the next lab.
+
+2
+00:00:04,465 --> 00:00:08,190
+Recall, this you are given an image as input,
+
+3
+00:00:08,190 --> 00:00:11,520
+and then you have kernels acting as feature detector filters
+
+4
+00:00:11,520 --> 00:00:16,025
+convolve over the image and create outputs for the first layer.
+
+5
+00:00:16,025 --> 00:00:18,070
+If you use same padding,
+
+6
+00:00:18,070 --> 00:00:21,340
+the size of the output will be the same size as your image.
+
+7
+00:00:21,340 --> 00:00:26,005
+Otherwise, the output will be smaller for kernels larger than one by one.
+
+8
+00:00:26,005 --> 00:00:29,015
+You can down sample between convolutional layers
+
+9
+00:00:29,015 --> 00:00:31,920
+using max-pooling to reduce the data size.
+
+10
+00:00:31,920 --> 00:00:35,900
+Recall that these pooling layers reduce computational load,
+
+11
+00:00:35,900 --> 00:00:39,165
+memory usage and total number of weights.
+
+12
+00:00:39,165 --> 00:00:41,825
+As you keep adding kernels,
+
+13
+00:00:41,825 --> 00:00:43,355
+the key point point remember,
+
+14
+00:00:43,355 --> 00:00:46,145
+that you are gaining channel depth while
+
+15
+00:00:46,145 --> 00:00:49,275
+you're shrinking the height and width dimensionality of the image.
+
+16
+00:00:49,275 --> 00:00:55,100
+This process continues until you have a very deep album that you can then
+
+17
+00:00:55,100 --> 00:00:57,620
+pass into a dense deep neural network layer for
+
+18
+00:00:57,620 --> 00:01:01,480
+classification and for output as a final step.
+
+19
+00:01:01,480 --> 00:01:06,895
+Now, it's time for you to build a convolution neural your network on a MNIST dataset,
+
+20
+00:01:06,895 --> 00:01:09,830
+to see if we can get better accuracy and performance than
+
+21
+00:01:09,830 --> 00:01:13,360
+the linear and DNN models you created previously.
+
+22
+00:01:13,360 --> 00:01:16,805
+The steps will be similar to what you did before,
+
+23
+00:01:16,805 --> 00:01:19,615
+except was a CNN the sign.
+
+24
+00:01:19,615 --> 00:01:25,455
+In this lab, you will import the training dataset of MNIST handwritten images,
+
+25
+00:01:25,455 --> 00:01:28,825
+reshape and preprocess the image data,
+
+26
+00:01:28,825 --> 00:01:31,740
+setup you CNN with 10 classes,
+
+27
+00:01:31,740 --> 00:01:35,065
+one for each possible digit zero to nine,
+
+28
+00:01:35,065 --> 00:01:38,060
+create your architecture whose convolutional and pooling
+
+29
+00:01:38,060 --> 00:01:41,230
+layers as well as softmax function,
+
+30
+00:01:41,230 --> 00:01:47,415
+define and create your EstimatorSpec in TensorFlow to create your custom estimator,
+
+31
+00:01:47,415 --> 00:01:51,680
+define and run your train and evaluate function to train against
+
+32
+00:01:51,680 --> 00:01:57,290
+the input dataset of 60 thousand images and evaluate your model's performance.
+
+33
+00:01:57,290 --> 00:02:01,490
+Don't forget, you have multiple attempts to start and stop each lab,
+
+34
+00:02:01,490 --> 00:02:04,665
+so don't worry if you don't make it on the first time.
+
+35
+00:02:04,665 --> 00:02:06,270
+Also, as a tip,
+
+36
+00:02:06,270 --> 00:02:09,500
+you can take a second attempt at a lab even if you just
+
+37
+00:02:09,500 --> 00:02:13,450
+wanted to experiment with the code before watching the solution video later.

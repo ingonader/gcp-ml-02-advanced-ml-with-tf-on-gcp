@@ -1,0 +1,339 @@
+1
+00:00:00,000 --> 00:00:04,680
+It takes so much work to keep up with advances in machine learning and AI,
+
+2
+00:00:04,680 --> 00:00:08,230
+because both are rapidly evolving fields of study and practice.
+
+3
+00:00:08,230 --> 00:00:10,120
+By the time you watch this recording,
+
+4
+00:00:10,120 --> 00:00:14,085
+chances are there is a new ML model available for training out there in the world.
+
+5
+00:00:14,085 --> 00:00:18,060
+So, it's worthwhile to understand the entire spectrum of
+
+6
+00:00:18,060 --> 00:00:22,080
+a ML tools available on Google Cloud platform at the time of this recording,
+
+7
+00:00:22,080 --> 00:00:25,840
+and better understand who should use which tools.
+
+8
+00:00:26,060 --> 00:00:31,665
+Here's, the spectrum of a ML tools on GCP that you as a data scientist,
+
+9
+00:00:31,665 --> 00:00:33,710
+or as a data practitioner should know.
+
+10
+00:00:33,710 --> 00:00:35,340
+On the left-side, are
+
+11
+00:00:35,340 --> 00:00:38,920
+the TensorFlow models that you have been building so far in this course.
+
+12
+00:00:38,920 --> 00:00:43,250
+You've already got experience building custom CNN's in your last lab.
+
+13
+00:00:43,250 --> 00:00:45,915
+On the far right-side of the diagram,
+
+14
+00:00:45,915 --> 00:00:48,150
+is machine learning with AutoML.
+
+15
+00:00:48,150 --> 00:00:50,135
+Remember that with AutoML,
+
+16
+00:00:50,135 --> 00:00:52,070
+there's zero code for you to write.
+
+17
+00:00:52,070 --> 00:00:55,550
+Let's walk through each of these options in more detail.
+
+18
+00:00:55,550 --> 00:00:59,420
+You've already got plenty of experience building TensorFlow models,
+
+19
+00:00:59,420 --> 00:01:03,550
+like the one in the end-to-end lab you did at the start of the specialization.
+
+20
+00:01:03,550 --> 00:01:08,185
+The code from the lab should be a go-to library for customer ML models.
+
+21
+00:01:08,185 --> 00:01:12,830
+But it's not the only tool you should keep in mind for yourself, or for your team.
+
+22
+00:01:12,830 --> 00:01:18,635
+BigQuery is a fast serverless data warehousing platform on GCP.
+
+23
+00:01:18,635 --> 00:01:23,795
+Did you know that it has a machine learning feature aimed at data analysts?
+
+24
+00:01:23,795 --> 00:01:27,680
+BigQuery ML models can be built using regular SQL,
+
+25
+00:01:27,680 --> 00:01:32,225
+and are created and stored right where your data already lives, in BigQuery.
+
+26
+00:01:32,225 --> 00:01:36,350
+It's a great starting place for building quick, batch prediction linear,
+
+27
+00:01:36,350 --> 00:01:41,245
+and logistic regression models to check if your data is a good fit for ML.
+
+28
+00:01:41,245 --> 00:01:45,525
+BigQuery machine learning models are built on structured data sets.
+
+29
+00:01:45,525 --> 00:01:48,885
+So, don't count on them to help with image classification.
+
+30
+00:01:48,885 --> 00:01:53,770
+But if you, or data analysts on your team work with structured data,
+
+31
+00:01:53,770 --> 00:01:56,845
+you should give BigQuery ML a closer look.
+
+32
+00:01:56,845 --> 00:02:01,275
+Next is a suite of pre-trained ML APIs.
+
+33
+00:02:01,275 --> 00:02:06,840
+Here, pre-trained means you don't even need to have a label training dataset to use them.
+
+34
+00:02:06,840 --> 00:02:09,655
+These APIs like the Vision API,
+
+35
+00:02:09,655 --> 00:02:11,520
+or the natural language processing,
+
+36
+00:02:11,520 --> 00:02:17,000
+translation, already trained for common ML use cases like image classification.
+
+37
+00:02:17,000 --> 00:02:19,650
+They save you the time and effort of building,
+
+38
+00:02:19,650 --> 00:02:21,965
+curating and training a new dataset,
+
+39
+00:02:21,965 --> 00:02:25,275
+so you can just jump ahead right to predictions.
+
+40
+00:02:25,275 --> 00:02:30,665
+For pre-trained models, Google has already figured out a lot of the hard problems.
+
+41
+00:02:30,665 --> 00:02:34,190
+Vision API is based on Google's image datasets.
+
+42
+00:02:34,190 --> 00:02:37,545
+Speech API is trained on YouTube captions.
+
+43
+00:02:37,545 --> 00:02:43,084
+Machine Translation API is built on parallel texts for language translations.
+
+44
+00:02:43,084 --> 00:02:46,780
+Recall that how well your model is strained,
+
+45
+00:02:46,780 --> 00:02:49,265
+depends on how much data you have.
+
+46
+00:02:49,265 --> 00:02:52,765
+As you would expect, Google has a lot of images,
+
+47
+00:02:52,765 --> 00:02:55,970
+text, and ML researchers to train its pre-built bottles.
+
+48
+00:02:55,970 --> 00:02:59,910
+So, you can use those instead of reinventing the wheel.
+
+49
+00:02:59,990 --> 00:03:03,530
+For example, if you're looking to have captions
+
+50
+00:03:03,530 --> 00:03:06,555
+included in a recent webinar hosted by accompany,
+
+51
+00:03:06,555 --> 00:03:09,350
+consider using the translate a speech APIs
+
+52
+00:03:09,350 --> 00:03:13,500
+instead of trying to build a language recognition ML model yourself.
+
+53
+00:03:13,500 --> 00:03:17,425
+Another example, if you have text documents
+
+54
+00:03:17,425 --> 00:03:21,320
+like expense receipts that you need classified by expense type,
+
+55
+00:03:21,320 --> 00:03:24,890
+consider using the Cloud Vision APIs for OCR,
+
+56
+00:03:24,890 --> 00:03:30,715
+so we can mine the text from the receipts and drop the data into something like BigQuery.
+
+57
+00:03:30,715 --> 00:03:36,230
+In your next lab, you will be invoking these APIs for the Cloud Shell console.
+
+58
+00:03:36,230 --> 00:03:40,445
+It should be no surprise that these APIs make ML look easy.
+
+59
+00:03:40,445 --> 00:03:44,245
+The AutoML platform you saw earlier is all about
+
+60
+00:03:44,245 --> 00:03:47,590
+cordless transfer learning was AutoML vision,
+
+61
+00:03:47,590 --> 00:03:50,710
+you upload or link your images training dataset,
+
+62
+00:03:50,710 --> 00:03:52,170
+and with a click of a button,
+
+63
+00:03:52,170 --> 00:03:56,180
+AutoML trains a high-performance custom image classification model,
+
+64
+00:03:56,180 --> 00:03:58,915
+that's ready for evaluation and prediction.
+
+65
+00:03:58,915 --> 00:04:04,105
+The platform also provides direct integration with Google's human labeling program.
+
+66
+00:04:04,105 --> 00:04:07,595
+So, in cases where you have images with no labels,
+
+67
+00:04:07,595 --> 00:04:10,910
+Google will provide you with access to an in-house team of
+
+68
+00:04:10,910 --> 00:04:15,500
+human labelers that will classify your images based on your instructions.
+
+69
+00:04:15,500 --> 00:04:22,490
+These are the same teams as Google uses for its own ML APIs and other ML products.
+
+70
+00:04:22,490 --> 00:04:26,210
+Here are just a few customer examples of companies who have used
+
+71
+00:04:26,210 --> 00:04:29,780
+the ML tools on Google Cloud Platform on their datasets.
+
+72
+00:04:29,780 --> 00:04:32,315
+As you review them from left to right,
+
+73
+00:04:32,315 --> 00:04:35,330
+note that the examples tell about the journey from
+
+74
+00:04:35,330 --> 00:04:40,370
+low-level programming to more abstraction and UI based ML training.
+
+75
+00:04:40,370 --> 00:04:43,880
+AUCNET built their own custom model to
+
+76
+00:04:43,880 --> 00:04:47,640
+classify images of car parts and estimate their price.
+
+77
+00:04:47,640 --> 00:04:50,840
+Ocado used passed results from
+
+78
+00:04:50,840 --> 00:04:57,295
+the ML APIs to route customer emails to the appropriate customer service representatives.
+
+79
+00:04:57,295 --> 00:05:03,465
+GIPHY uses the out-of-the-box vision APIs to find the text and memes,
+
+80
+00:05:03,465 --> 00:05:05,935
+using optical character recognition.
+
+81
+00:05:05,935 --> 00:05:11,850
+It then can reject inappropriate uploads based on sentiment or keywords.
+
+82
+00:05:11,850 --> 00:05:17,760
+UNIQLO designed a shopping chatbot using dialogue flow UI.
+
+83
+00:05:17,760 --> 00:05:21,050
+Dialogflow, is a Google owned company which
+
+84
+00:05:21,050 --> 00:05:25,890
+specializes in building ML based interfaces like intelligent chatbots.
+
+85
+00:05:25,890 --> 00:05:30,790
+I'll provide a link to where you can watch more customer stories as well.

@@ -1,0 +1,231 @@
+1
+00:00:00,000 --> 00:00:03,870
+Hi, I'm Evan, my Big Data curriculum developer for Google Cloud.
+
+2
+00:00:03,870 --> 00:00:05,870
+We're excited to share with you today the history,
+
+3
+00:00:05,870 --> 00:00:08,680
+the methods, and the latest in theory and hardware advances,
+
+4
+00:00:08,680 --> 00:00:11,280
+that'll help us tackle the difficult domain of extracting
+
+5
+00:00:11,280 --> 00:00:15,075
+features from and ultimately classifying image data.
+
+6
+00:00:15,075 --> 00:00:17,460
+This is the third course in the Advanced Machine Learning with
+
+7
+00:00:17,460 --> 00:00:19,770
+TensorFlow on GCP specialization.
+
+8
+00:00:19,770 --> 00:00:21,420
+In this course, we'll look at
+
+9
+00:00:21,420 --> 00:00:24,450
+the different strategies for building image classifier using methods
+
+10
+00:00:24,450 --> 00:00:26,270
+that you've seen before as well as
+
+11
+00:00:26,270 --> 00:00:29,365
+a new model type called the Convolutional Neural Network.
+
+12
+00:00:29,365 --> 00:00:33,740
+We'll improve the model's accuracy with augmentation, feature extraction,
+
+13
+00:00:33,740 --> 00:00:35,600
+and fine tuning hyper parameters,
+
+14
+00:00:35,600 --> 00:00:39,710
+all the while trying to avoid over fitting or memorizing our training dataset.
+
+15
+00:00:39,710 --> 00:00:41,750
+We'll also look at some practical issues that
+
+16
+00:00:41,750 --> 00:00:44,295
+arise like not having enough image data to even train
+
+17
+00:00:44,295 --> 00:00:45,620
+on and how to incorporate
+
+18
+00:00:45,620 --> 00:00:49,515
+the latest research findings into our models to overcome these challenges.
+
+19
+00:00:49,515 --> 00:00:52,040
+You get hands-on practice building and optimizing
+
+20
+00:00:52,040 --> 00:00:54,620
+your own image classification models and a variety of
+
+21
+00:00:54,620 --> 00:00:58,235
+public datasets in the Qwiklabs that we're going work on together.
+
+22
+00:00:58,235 --> 00:01:02,450
+In this course, you'll learn about the rapid growth and the high resolution image data
+
+23
+00:01:02,450 --> 00:01:05,090
+available in the types of business applications
+
+24
+00:01:05,090 --> 00:01:08,055
+that image classification models can be applied to.
+
+25
+00:01:08,055 --> 00:01:10,225
+Then we'll cover how unstructured data like
+
+26
+00:01:10,225 --> 00:01:13,340
+images is very different than that we've seen before.
+
+27
+00:01:13,340 --> 00:01:17,410
+Now, you can actually pre-process and feed that into your models.
+
+28
+00:01:17,410 --> 00:01:20,420
+After learning how to harness image data as input,
+
+29
+00:01:20,420 --> 00:01:23,830
+you'll then classify images using traditional machine learning techniques.
+
+30
+00:01:23,830 --> 00:01:25,595
+First, you'll use a linear model,
+
+31
+00:01:25,595 --> 00:01:26,990
+then a neural network,
+
+32
+00:01:26,990 --> 00:01:30,760
+both using the popular MNIST handwritten digits dataset.
+
+33
+00:01:30,760 --> 00:01:34,239
+Then after you discover the limitations of these traditional methods,
+
+34
+00:01:34,239 --> 00:01:38,035
+you'll follow the rise of convolutional neural networks or CNNs.
+
+35
+00:01:38,035 --> 00:01:42,125
+The major leap forward being that CNN allow a model to share weights,
+
+36
+00:01:42,125 --> 00:01:45,190
+thus reducing the total number of weights and allowing the machine learning model to be
+
+37
+00:01:45,190 --> 00:01:48,430
+slightly more tolerant of variations in images.
+
+38
+00:01:48,430 --> 00:01:50,495
+When you practice it, it's pretty cool you'll see.
+
+39
+00:01:50,495 --> 00:01:53,780
+Then we'll move on to a variety of tips and tricks that have been discovered
+
+40
+00:01:53,780 --> 00:01:56,970
+over time that work really well on image classification problems.
+
+41
+00:01:56,970 --> 00:01:58,775
+Here, you'll learn how to deal with things like
+
+42
+00:01:58,775 --> 00:02:02,165
+data scarcity and improving the model performance through augmentation,
+
+43
+00:02:02,165 --> 00:02:06,445
+batch normalization, and even leveraging some fun pre-built models.
+
+44
+00:02:06,445 --> 00:02:09,265
+Now, one common problem you'll face out there in the wild,
+
+45
+00:02:09,265 --> 00:02:11,930
+is that modern image classification models require
+
+46
+00:02:11,930 --> 00:02:14,840
+hundreds of thousands of images in order to work really well.
+
+47
+00:02:14,840 --> 00:02:18,890
+Now, one way to overcome this challenge is to leverage transfer learning.
+
+48
+00:02:18,890 --> 00:02:21,285
+You'll learn about that in a different module.
+
+49
+00:02:21,285 --> 00:02:23,450
+Then you'll learn how to implement state of
+
+50
+00:02:23,450 --> 00:02:27,320
+the art image models and discover that they're really slow in standard hardware.
+
+51
+00:02:27,320 --> 00:02:31,800
+You'll then learn how to implement these models of your image data using TPUs or
+
+52
+00:02:31,800 --> 00:02:33,320
+Tensor Processing Units that's
+
+53
+00:02:33,320 --> 00:02:36,645
+specialized hardware and you can monitor your performance gain.
+
+54
+00:02:36,645 --> 00:02:43,310
+Lastly, you can use pre-built models like Google Cloud Vision API or AutoML platforms.
+
+55
+00:02:43,310 --> 00:02:47,030
+Often these tools will be the first thing that you'll go to in your toolbox,
+
+56
+00:02:47,030 --> 00:02:49,180
+when you're faced with an image classification problem.
+
+57
+00:02:49,180 --> 00:02:52,190
+After all, in practice you don't want to reinvent the wheel,
+
+58
+00:02:52,190 --> 00:02:57,190
+if there's already a high-quality pre-trained model out there that you can use first.

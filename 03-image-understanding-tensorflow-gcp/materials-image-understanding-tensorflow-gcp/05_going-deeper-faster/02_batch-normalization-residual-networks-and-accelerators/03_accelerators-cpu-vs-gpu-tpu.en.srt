@@ -1,0 +1,267 @@
+1
+00:00:00,000 --> 00:00:05,365
+The innovation of AlexNet was not just in the structure of the network,
+
+2
+00:00:05,365 --> 00:00:13,025
+it was also in the choice of the researchers to use GPUs to do the network training.
+
+3
+00:00:13,025 --> 00:00:15,820
+AlexNet was written with CUDA,
+
+4
+00:00:15,820 --> 00:00:19,950
+a parallel computing API that was created by NVDA to run
+
+5
+00:00:19,950 --> 00:00:24,645
+on special hardware called Graphics Processing Units or GPUs.
+
+6
+00:00:24,645 --> 00:00:30,570
+One reason that deep neural networks were not used until then on
+
+7
+00:00:30,570 --> 00:00:33,210
+the ImageNet competition was that training
+
+8
+00:00:33,210 --> 00:00:37,530
+deep neural networks on a CPU would take way too long.
+
+9
+00:00:37,530 --> 00:00:42,080
+Being able to train them on GPUs addressed that speed issue,
+
+10
+00:00:42,080 --> 00:00:46,645
+because it greatly sped up the training if you did it using CUDA.
+
+11
+00:00:46,645 --> 00:00:51,905
+Now, GPUs are typically used for graphics rendering such as in games.
+
+12
+00:00:51,905 --> 00:00:55,460
+However, the availability of CUDA as
+
+13
+00:00:55,460 --> 00:00:59,570
+a more general purpose software layer led to the use of
+
+14
+00:00:59,570 --> 00:01:04,215
+GPUs to accelerate non-graphical applications also,
+
+15
+00:01:04,215 --> 00:01:07,085
+in fields such as genomics,
+
+16
+00:01:07,085 --> 00:01:10,840
+cryptography and deep learning.
+
+17
+00:01:10,840 --> 00:01:13,915
+CUDA presents a unified memory,
+
+18
+00:01:13,915 --> 00:01:17,105
+allowing for reads from arbitrary addresses
+
+19
+00:01:17,105 --> 00:01:21,030
+and supports a wide variety of mathematical operations.
+
+20
+00:01:21,030 --> 00:01:25,825
+This makes GPUs quite conducive to machine learning.
+
+21
+00:01:25,825 --> 00:01:32,025
+This graphic shows the relative performance of different types of hardware devices,
+
+22
+00:01:32,025 --> 00:01:36,615
+taking into account state of the art devices in each case.
+
+23
+00:01:36,615 --> 00:01:39,205
+The first number, three,
+
+24
+00:01:39,205 --> 00:01:44,155
+refers to the relative performance of a GPU to a CPU.
+
+25
+00:01:44,155 --> 00:01:48,200
+Training on a Graphics Processing Unit is about three times
+
+26
+00:01:48,200 --> 00:01:52,760
+faster than training on a plane Villainlar CPU.
+
+27
+00:01:52,760 --> 00:01:58,205
+The remaining bars refer to a tensor processing unit or TPU,
+
+28
+00:01:58,205 --> 00:02:01,745
+which is a custom ASIC developed by Google.
+
+29
+00:02:01,745 --> 00:02:05,745
+We introduced you to TPUs in the previous course of this specialization.
+
+30
+00:02:05,745 --> 00:02:09,950
+Now, let's explore TPUs some more.
+
+31
+00:02:10,720 --> 00:02:14,600
+Tensor Processing Units or TPUs are
+
+32
+00:02:14,600 --> 00:02:20,314
+hardware accelerators that greatly speed up the training of deep learning models.
+
+33
+00:02:20,314 --> 00:02:24,470
+Unlike GPUs which are general purpose chips,
+
+34
+00:02:24,470 --> 00:02:29,260
+TPUs are application-specific chips or ASICs.
+
+35
+00:02:29,260 --> 00:02:33,545
+TPUs are custom built for machine learning.
+
+36
+00:02:33,545 --> 00:02:37,325
+An independent test conducted by Stanford University,
+
+37
+00:02:37,325 --> 00:02:42,590
+the ResNet 50 model trained on a TPU was the fastest in
+
+38
+00:02:42,590 --> 00:02:48,790
+about 30 minutes to reach the desired accuracy on the ImageNet dataset.
+
+39
+00:02:48,790 --> 00:02:52,985
+From AlexNet two AlphaGo Zero,
+
+40
+00:02:52,985 --> 00:02:56,620
+there has been a 300,000 times
+
+41
+00:02:56,620 --> 00:03:01,160
+increase in the compute power necessary to train the models.
+
+42
+00:03:01,160 --> 00:03:04,385
+Note that the y-axis is logarithmic,
+
+43
+00:03:04,385 --> 00:03:09,590
+and each tick is 10 times that of the previous tick.
+
+44
+00:03:09,590 --> 00:03:14,870
+This graph is another way to look at the progress of deep learning,
+
+45
+00:03:14,870 --> 00:03:19,080
+by plotting the increase in accuracy with the compute.
+
+46
+00:03:19,080 --> 00:03:23,060
+Indeed, it's widely recognized that
+
+47
+00:03:23,060 --> 00:03:30,440
+as much as 80% of recent AI advances can be attributed to more available compute power.
+
+48
+00:03:30,440 --> 00:03:34,110
+So, where's this increase compute power going to come from?
+
+49
+00:03:34,110 --> 00:03:39,080
+At Google, we did the back of the envelope calculation and
+
+50
+00:03:39,080 --> 00:03:44,300
+realized that if everyone spoke into their phone for three minutes a day,
+
+51
+00:03:44,300 --> 00:03:47,074
+and we needed to do speech to text,
+
+52
+00:03:47,074 --> 00:03:51,304
+the compute power necessary to understand that speech
+
+53
+00:03:51,304 --> 00:03:56,520
+would it be more than all the currently available compute power in the world today.
+
+54
+00:03:56,520 --> 00:04:02,045
+So, this back of the envelope calculation was the impetus
+
+55
+00:04:02,045 --> 00:04:08,345
+behind developing a custom ASICs from machine learning to greatly speed things up.
+
+56
+00:04:08,345 --> 00:04:14,600
+As such, our first concern in TPU Version 1 was inference because we're talking
+
+57
+00:04:14,600 --> 00:04:17,600
+about people speaking into phones and being
+
+58
+00:04:17,600 --> 00:04:21,140
+able to understand what's being spoken to their Android phone.
+
+59
+00:04:21,140 --> 00:04:29,000
+Only later in TPU Version 2 would we also focus on neural network training.
+
+60
+00:04:29,000 --> 00:04:33,750
+We've continued to improve the TPU making it more and more powerful.
+
+61
+00:04:33,750 --> 00:04:35,660
+Starting with Version 2,
+
+62
+00:04:35,660 --> 00:04:40,710
+we've offered the TPU to everyone else via Google Cloud.
+
+63
+00:04:40,710 --> 00:04:44,300
+Stanford University publishes a benchmark and
+
+64
+00:04:44,300 --> 00:04:47,855
+a competition on different hardware accelerators.
+
+65
+00:04:47,855 --> 00:04:54,860
+They tried ResNet 50 on a TPU version 2.5 pod on the ImageNet dataset,
+
+66
+00:04:54,860 --> 00:05:00,150
+and found that it reached 93% accuracy in less than 30 minutes.
+
+67
+00:05:00,150 --> 00:05:08,110
+The training speed worked out to processing 77,000 images per second.

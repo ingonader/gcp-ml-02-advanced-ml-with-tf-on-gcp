@@ -1,0 +1,507 @@
+1
+00:00:00,000 --> 00:00:03,450
+In this lab, we'll download a copy of the inception model that has been
+
+2
+00:00:03,450 --> 00:00:07,170
+trained on millions of images and then train it to work on our dataset.
+
+3
+00:00:07,170 --> 00:00:10,680
+This should be what you see within Qwiklabs after you've started your lab.
+
+4
+00:00:10,680 --> 00:00:13,230
+In this lab, what you need to do first is
+
+5
+00:00:13,230 --> 00:00:16,230
+login to your GCP console with your Qwiklabs generated account,
+
+6
+00:00:16,230 --> 00:00:20,470
+launch datalab, and clone the training data analyst Repo.
+
+7
+00:00:21,890 --> 00:00:25,110
+Recall that transfer learning basically means
+
+8
+00:00:25,110 --> 00:00:28,850
+re-purposing a network trained for another task for our task.
+
+9
+00:00:28,850 --> 00:00:33,960
+To do that, we need to keep in mind that parts of the network are task-dependent.
+
+10
+00:00:33,960 --> 00:00:36,945
+Specifically, as you go from the input to the output,
+
+11
+00:00:36,945 --> 00:00:40,795
+the closer you are to the outputs the more task-dependent the model becomes.
+
+12
+00:00:40,795 --> 00:00:43,480
+In this case, we're going to make use of inception,
+
+13
+00:00:43,480 --> 00:00:46,850
+which is a model that Google published in 2014,
+
+14
+00:00:46,850 --> 00:00:50,270
+that has been trained on millions and millions of input-output pairs,
+
+15
+00:00:50,270 --> 00:00:52,790
+and take the feature extraction part and
+
+16
+00:00:52,790 --> 00:00:55,955
+retain that and cut off the task-dependent classification part.
+
+17
+00:00:55,955 --> 00:00:58,430
+The task-dependent classification part in this case are
+
+18
+00:00:58,430 --> 00:01:01,190
+really only the final fully-connected layers of the network.
+
+19
+00:01:01,190 --> 00:01:05,470
+You can see that depicted within Qwiklabs.
+
+20
+00:01:05,950 --> 00:01:08,880
+In order to run the lab, we're going make use of both
+
+21
+00:01:08,880 --> 00:01:11,975
+the Cloud machine learning API as well as the Dataflow API.
+
+22
+00:01:11,975 --> 00:01:14,120
+We'll be using Dataflow in this case to run
+
+23
+00:01:14,120 --> 00:01:17,940
+a pre-processing pipeline and materialize our inputs as TF records,
+
+24
+00:01:17,940 --> 00:01:22,890
+and that the model can read from much more quickly and it can normal CSV files.
+
+25
+00:01:23,780 --> 00:01:27,570
+Once you're within the console, you need to launch the Cloud datashell,
+
+26
+00:01:27,570 --> 00:01:31,220
+and install the Cloud ML SDK,
+
+27
+00:01:31,220 --> 00:01:34,590
+and export some variables to your path.
+
+28
+00:01:34,590 --> 00:01:38,700
+After that, you need to clone the Cloud ML samples Repo,
+
+29
+00:01:38,700 --> 00:01:40,410
+which contains the code that will be running,
+
+30
+00:01:40,410 --> 00:01:44,565
+and CD into the Cloud ML samples flowers directory.
+
+31
+00:01:44,565 --> 00:01:46,320
+I've already cloned the Repo,
+
+32
+00:01:46,320 --> 00:01:49,230
+so I'm simply going to CD into that directory.
+
+33
+00:01:54,170 --> 00:01:57,530
+You have about 3,600 flower images across
+
+34
+00:01:57,530 --> 00:02:03,390
+five categories that are listed in the dictionary file dict.txt and it looks like this.
+
+35
+00:02:04,000 --> 00:02:08,085
+This file is used to translate labels into an internal ID,
+
+36
+00:02:08,085 --> 00:02:10,895
+internal number set that are simply discrete numbers.
+
+37
+00:02:10,895 --> 00:02:14,120
+So, daisy equals zero and dandelion equals one etc.
+
+38
+00:02:14,160 --> 00:02:18,435
+The two files will be pre-processing or train_set.csv and
+
+39
+00:02:18,435 --> 00:02:23,030
+eval_set.csv we'll be doing them in independent Dataflow pipelines.
+
+40
+00:02:23,030 --> 00:02:26,030
+Because each of these pipelines takes awhile to run,
+
+41
+00:02:26,030 --> 00:02:29,580
+it's best to actually open up a new Cloud shell,
+
+42
+00:02:29,580 --> 00:02:34,580
+and add the variables we've created and export them,
+
+43
+00:02:34,580 --> 00:02:37,010
+and then run a separate pipeline in the newly created shell.
+
+44
+00:02:37,010 --> 00:02:41,170
+So, that both your training pipeline and your ETL pipeline can run at the same time.
+
+45
+00:02:41,170 --> 00:02:43,060
+I'll demo what that looks like.
+
+46
+00:02:43,060 --> 00:02:45,875
+Let's start with the evaluation set.
+
+47
+00:02:45,875 --> 00:02:50,520
+First one I'm going to do is I'm going to export some variables inside the environment,
+
+48
+00:02:53,980 --> 00:02:56,100
+and now I'm going to make a bucket.
+
+49
+00:02:56,100 --> 00:02:58,820
+In this case I've already made my bucket.
+
+50
+00:02:59,560 --> 00:03:03,890
+Now I call the Python trainer pre-process py file.
+
+51
+00:03:03,890 --> 00:03:08,135
+You'll notice here that we're parsing in some parameters that are eval specific.
+
+52
+00:03:08,135 --> 00:03:10,010
+The input path corresponds to
+
+53
+00:03:10,010 --> 00:03:13,315
+the Google Cloud storage address where the eval_set.csv file lives,
+
+54
+00:03:13,315 --> 00:03:17,030
+and the output path is our GCS bucket/preprocress/eval.
+
+55
+00:03:17,910 --> 00:03:19,940
+If you run this, it will create
+
+56
+00:03:19,940 --> 00:03:23,540
+a Dataflow pipeline that will take about 30 minutes to run.
+
+57
+00:03:25,610 --> 00:03:30,130
+Once it run, you can look inside the cloud Dataflow menu,
+
+58
+00:03:30,130 --> 00:03:32,375
+and you should see a UI that looks like this.
+
+59
+00:03:32,375 --> 00:03:37,680
+Notice how we have both a read input file and parse the input which is our CSV.
+
+60
+00:03:37,680 --> 00:03:39,430
+We also have to read the dictionary file,
+
+61
+00:03:39,430 --> 00:03:42,125
+because the pipeline needs to know the mapping between
+
+62
+00:03:42,125 --> 00:03:47,440
+our label names and the number that the model will use internally.
+
+63
+00:03:47,440 --> 00:03:50,350
+Then the steps should be very similar to things we've done in
+
+64
+00:03:50,350 --> 00:03:53,445
+our redone preprocess function within the code before.
+
+65
+00:03:53,445 --> 00:03:56,435
+We read and convert it to a JPEG,
+
+66
+00:03:56,435 --> 00:03:59,700
+and then we embed and make a TF example,
+
+67
+00:03:59,700 --> 00:04:04,400
+we serialize it to string and then we save it to disk as a TF record.
+
+68
+00:04:07,890 --> 00:04:10,365
+After we pre-process the training set,
+
+69
+00:04:10,365 --> 00:04:11,790
+we do the same process,
+
+70
+00:04:11,790 --> 00:04:14,580
+but we parse in slightly different parameters.
+
+71
+00:04:17,260 --> 00:04:23,570
+In a new shell, you will once again have to CD into the appropriate directory.
+
+72
+00:04:27,590 --> 00:04:32,340
+You'll have to add some more variables to your environment.
+
+73
+00:04:41,420 --> 00:04:44,760
+Then finally, you run the pre-processed file again,
+
+74
+00:04:44,760 --> 00:04:46,655
+but with slightly different parameters.
+
+75
+00:04:46,655 --> 00:04:51,085
+In this case, we're going to parse the input path set to the train_set.csv file,
+
+76
+00:04:51,085 --> 00:04:52,820
+and our output path is going to be
+
+77
+00:04:52,820 --> 00:04:57,875
+the GCS bucket that we've just made slash preprocess slash train.
+
+78
+00:04:57,875 --> 00:04:59,570
+Notice too that we're passing in
+
+79
+00:04:59,570 --> 00:05:03,420
+the cloud parameter to tell the dataflow pipeline to run the cloud.
+
+80
+00:05:04,210 --> 00:05:06,720
+This pipeline because it's a little bit bigger,
+
+81
+00:05:06,720 --> 00:05:10,790
+can take between 10 and 45 minutes to run.
+
+82
+00:05:10,790 --> 00:05:14,480
+We can confirm that it's run in the Dataflow UI,
+
+83
+00:05:14,480 --> 00:05:18,455
+but also simply by addressing the bucket that we've just created.
+
+84
+00:05:18,455 --> 00:05:21,890
+So, if we run the LS command and search for files that begin with eval,
+
+85
+00:05:21,890 --> 00:05:23,715
+we'll see all of our eval files.
+
+86
+00:05:23,715 --> 00:05:27,940
+Notice that they are dot Tfrecorg dot gz because they're TF records.
+
+87
+00:05:27,940 --> 00:05:31,020
+We can do the same thing,
+
+88
+00:05:31,020 --> 00:05:36,300
+but with trained to see that our train files and I've also been materialized.
+
+89
+00:05:37,330 --> 00:05:40,530
+Notice that there are many more.
+
+90
+00:05:43,280 --> 00:05:47,640
+Once we've done that, the next step is to train an ML model.
+
+91
+00:05:47,700 --> 00:05:53,160
+Training ML model, we're going to submit a job to Cloud ML engine.
+
+92
+00:05:54,170 --> 00:05:57,445
+First, we need to create a job ID.
+
+93
+00:05:57,445 --> 00:06:01,830
+The next thing we need to do is parse in the code that's in our module name,
+
+94
+00:06:01,830 --> 00:06:05,415
+which in this case lives in trainers/test.py.
+
+95
+00:06:05,415 --> 00:06:08,985
+At staging bucket, we need to tell which region to run,
+
+96
+00:06:08,985 --> 00:06:10,920
+where we want the resulting output to go,
+
+97
+00:06:10,920 --> 00:06:14,810
+and the path to our input and eval on training datasets.
+
+98
+00:06:24,750 --> 00:06:31,910
+Submitting this job, it should show up within Cloud ML engine inside the jobs window.
+
+99
+00:06:35,960 --> 00:06:39,230
+It could easily take 10 minutes to run.
+
+100
+00:06:39,230 --> 00:06:41,485
+After 1,000 training steps,
+
+101
+00:06:41,485 --> 00:06:43,680
+you should see a message like below.
+
+102
+00:06:43,680 --> 00:06:46,740
+This means that the model has achieved 100% accuracy of
+
+103
+00:06:46,740 --> 00:06:50,515
+the training set and 93.7 accuracy for the eval set.
+
+104
+00:06:50,515 --> 00:06:55,890
+Once it has been trained, you can finally deploy the resulting model to Cloud ML engine.
+
+105
+00:06:57,620 --> 00:07:02,175
+Deploying the model, we make use of the gcloud ml-engine versions create command,
+
+106
+00:07:02,175 --> 00:07:04,500
+and parse in the origin parameter,
+
+107
+00:07:04,500 --> 00:07:07,505
+which points to the path where our trained model lives.
+
+108
+00:07:07,505 --> 00:07:10,575
+We provide a model name as well as a version name.
+
+109
+00:07:10,575 --> 00:07:12,290
+In this case, we also set
+
+110
+00:07:12,290 --> 00:07:16,890
+the model version name default to other model version name we've just created.
+
+111
+00:07:17,110 --> 00:07:22,695
+Then finally, we test out our model in production by using some command line Python.
+
+112
+00:07:22,695 --> 00:07:26,855
+In this case, all that we do is we encode a representation of
+
+113
+00:07:26,855 --> 00:07:31,755
+a particular image using the base 64 encode library.
+
+114
+00:07:31,755 --> 00:07:37,510
+Then we create a JSON file that maps a key to this particular image.
+
+115
+00:07:37,510 --> 00:07:41,450
+We then parse our request.json file to the model that we've
+
+116
+00:07:41,450 --> 00:07:44,930
+just deployed and what you'll get back is something that looks like this.
+
+117
+00:07:44,930 --> 00:07:48,915
+Where it tells you the key and the prediction for each one. That's it.
+
+118
+00:07:48,915 --> 00:07:52,050
+While implementing transfer learning in your code isn't too bad,
+
+119
+00:07:52,050 --> 00:07:54,215
+sometimes it's too much of an expense.
+
+120
+00:07:54,215 --> 00:07:56,880
+Thankfully, if you have some labeled training data,
+
+121
+00:07:56,880 --> 00:07:59,570
+there is now a code list solution that allows you to train and
+
+122
+00:07:59,570 --> 00:08:03,375
+deploy a vision model offer as part of Google's auto ML offering.
+
+123
+00:08:03,375 --> 00:08:06,530
+Auto ML uses a combination of transfer learning using some
+
+124
+00:08:06,530 --> 00:08:09,580
+of Google's best models and neural architecture search.
+
+125
+00:08:09,580 --> 00:08:12,770
+All you have to do is upload your images into Google Cloud storage,
+
+126
+00:08:12,770 --> 00:08:14,240
+and the product does the rest.
+
+127
+00:08:14,240 --> 00:08:19,020
+We'll talk more about auto ML and neural architecture search in a later module.

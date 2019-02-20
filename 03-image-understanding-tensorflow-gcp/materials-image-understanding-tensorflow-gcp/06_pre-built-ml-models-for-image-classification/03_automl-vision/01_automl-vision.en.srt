@@ -1,0 +1,91 @@
+1
+00:00:00,070 --> 00:00:05,610
+Hi. I'm Alex, a technical curriculum developer for Google Cloud.
+
+2
+00:00:05,610 --> 00:00:10,630
+You saw the demo earlier where we classified a simple cloud with the Vision API.
+
+3
+00:00:10,630 --> 00:00:14,270
+Now, let's make the problem harder by asking more of the model.
+
+4
+00:00:14,270 --> 00:00:17,120
+Now, let's say we want to predict weather patterns.
+
+5
+00:00:17,120 --> 00:00:20,665
+This means we need to identify not just that there's a cloud,
+
+6
+00:00:20,665 --> 00:00:23,095
+but also what type of cloud.
+
+7
+00:00:23,095 --> 00:00:26,990
+For example, a cirrus cloud is usually associated with
+
+8
+00:00:26,990 --> 00:00:32,205
+fair weather whereas a cumulonimbus cloud usually foreshadows rain.
+
+9
+00:00:32,205 --> 00:00:38,165
+So, let's revisit our Vision API and see how well it does on this new problem.
+
+10
+00:00:38,165 --> 00:00:41,749
+After I uploaded the image to the Vision API,
+
+11
+00:00:41,749 --> 00:00:44,615
+here are the results for the labels it inferred.
+
+12
+00:00:44,615 --> 00:00:49,970
+We see that it still knows that it's a cloud with 95 percent accuracy but it has
+
+13
+00:00:49,970 --> 00:00:52,550
+no concept that it's a cirrus cloud and
+
+14
+00:00:52,550 --> 00:00:57,170
+even incorrectly guesses that it's a cumulus at 85 percent.
+
+15
+00:00:57,170 --> 00:01:00,290
+The pre-trained model likely was never taught to
+
+16
+00:01:00,290 --> 00:01:02,915
+recognize cloud types to this granularity.
+
+17
+00:01:02,915 --> 00:01:07,545
+We need something a little more custom that we can train ourselves.
+
+18
+00:01:07,545 --> 00:01:10,530
+So now, as an ML practitioner,
+
+19
+00:01:10,530 --> 00:01:14,085
+you're next instinct would be to try AutoML vision.
+
+20
+00:01:14,085 --> 00:01:16,535
+Provided we have a training dataset,
+
+21
+00:01:16,535 --> 00:01:19,010
+which in this case would be pictures of different types
+
+22
+00:01:19,010 --> 00:01:21,680
+of clouds with the corresponding label,
+
+23
+00:01:21,680 --> 00:01:27,150
+we can upload that to Auto ML vision and let it build a custom model for us.

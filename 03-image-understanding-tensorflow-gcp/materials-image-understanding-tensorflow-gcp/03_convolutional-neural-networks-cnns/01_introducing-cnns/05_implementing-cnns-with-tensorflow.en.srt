@@ -1,0 +1,271 @@
+1
+00:00:00,000 --> 00:00:02,595
+Before concluding this part of the module,
+
+2
+00:00:02,595 --> 00:00:07,905
+take some time to compare what it means to use a convolutional instead of a dense layer
+
+3
+00:00:07,905 --> 00:00:09,600
+for the first hidden layer of
+
+4
+00:00:09,600 --> 00:00:13,650
+a deep neural net trained on the MNIST digit classification task.
+
+5
+00:00:13,650 --> 00:00:20,020
+Since the MNIST digits have 784 pixels with a single grayscale channel,
+
+6
+00:00:20,020 --> 00:00:22,845
+a dense hidden layer would require
+
+7
+00:00:22,845 --> 00:00:29,230
+784 weights for every neuron of the layer was the deep neural network,
+
+8
+00:00:29,230 --> 00:00:31,405
+the one we trained early in this module.
+
+9
+00:00:31,405 --> 00:00:34,440
+This means almost a quarter million weights,
+
+10
+00:00:34,440 --> 00:00:36,000
+just for the first layer.
+
+11
+00:00:36,000 --> 00:00:39,120
+In contrast, using five by five Kernels,
+
+12
+00:00:39,120 --> 00:00:41,540
+in the convolutional layer was four channels
+
+13
+00:00:41,540 --> 00:00:45,110
+means carying only one 100 weights for the corresponding layer.
+
+14
+00:00:45,110 --> 00:00:48,740
+Here's a visual diagram showing how the front part of
+
+15
+00:00:48,740 --> 00:00:52,440
+a convolutional neural network for the MNIST image data works.
+
+16
+00:00:52,440 --> 00:00:55,760
+As you can see, they're free convolutional layers.
+
+17
+00:00:55,760 --> 00:00:58,320
+If you look closely, you'll realize that
+
+18
+00:00:58,320 --> 00:01:02,335
+the first layer uses the same pattern which gives us output,
+
+19
+00:01:02,335 --> 00:01:06,920
+the same shape before it's squeezed down in subsequent pulling in
+
+20
+00:01:06,920 --> 00:01:12,250
+convolutional layers until it's finally flattened for a deep neural network to classify.
+
+21
+00:01:12,250 --> 00:01:14,600
+Let's see what it looks like in code.
+
+22
+00:01:14,600 --> 00:01:17,410
+When using the TensorFlow layers API,
+
+23
+00:01:17,410 --> 00:01:20,570
+it's easy to set up this type of a CNN architecture.
+
+24
+00:01:20,570 --> 00:01:25,875
+Notice that in the corresponding code implementation above, the original gray-scale,
+
+25
+00:01:25,875 --> 00:01:31,355
+28 by 28 input image is processed by three convolutional layers.
+
+26
+00:01:31,355 --> 00:01:34,760
+The outputs of the layers are shown in the comments to the right
+
+27
+00:01:34,760 --> 00:01:38,440
+of the calls to the tf.layers.conv2d function.
+
+28
+00:01:38,440 --> 00:01:42,125
+The horizontal and vertical dimensions are cut in half,
+
+29
+00:01:42,125 --> 00:01:46,475
+in the second and the third layer because they're using a stride of two.
+
+30
+00:01:46,475 --> 00:01:51,515
+Also, the convolutional layers are using an increasing number
+
+31
+00:01:51,515 --> 00:01:56,420
+of filters so that the original grayscale channel is converted to four,
+
+32
+00:01:56,420 --> 00:01:59,815
+then eight and finally 12 channels.
+
+33
+00:01:59,815 --> 00:02:04,540
+The remaining part of the code simply reshapes the seven by seven
+
+34
+00:02:04,540 --> 00:02:08,380
+by 12 output of the last convolutional layer as an array,
+
+35
+00:02:08,380 --> 00:02:10,390
+and uses the array as an input to
+
+36
+00:02:10,390 --> 00:02:13,950
+the remaining two dense layers that classify the digits.
+
+37
+00:02:13,950 --> 00:02:17,500
+That's it. This part of the module begin by describing
+
+38
+00:02:17,500 --> 00:02:19,990
+the challenges with processing images
+
+39
+00:02:19,990 --> 00:02:23,470
+using only the dense layers in a deep neural network.
+
+40
+00:02:23,470 --> 00:02:28,720
+You saw that using a dense layer as the first hidden layer of a deep neural network
+
+41
+00:02:28,720 --> 00:02:31,660
+meant that every pixel of the input image
+
+42
+00:02:31,660 --> 00:02:35,260
+had to be connected to every neuron on the first layer.
+
+43
+00:02:35,260 --> 00:02:40,340
+You also learned how kernels enable convolution layers to detect patterns,
+
+44
+00:02:40,340 --> 00:02:43,450
+and how pixels are placed next to each other so
+
+45
+00:02:43,450 --> 00:02:46,635
+that the convolution layer can be trained to find edges,
+
+46
+00:02:46,635 --> 00:02:49,520
+corners, textures and other visual patterns.
+
+47
+00:02:49,520 --> 00:02:52,480
+Lastly, you saw that convolutional layers are
+
+48
+00:02:52,480 --> 00:02:57,040
+just collections of these filters which are sometimes used together with pooling layers.
+
+49
+00:02:57,040 --> 00:03:00,250
+Remember that the goal of the convolutional and pooling
+
+50
+00:03:00,250 --> 00:03:03,400
+layers is to recognize patterns and reduce
+
+51
+00:03:03,400 --> 00:03:07,480
+the dimensionality of the image before ultimately passing it off as
+
+52
+00:03:07,480 --> 00:03:09,640
+a flattened feature vector into a fully
+
+53
+00:03:09,640 --> 00:03:13,140
+connected to deep neural network like the one you see here.
+
+54
+00:03:13,140 --> 00:03:15,420
+What is so remarkable about
+
+55
+00:03:15,420 --> 00:03:19,060
+convolutional layers is that they dramatically improve the accuracy of
+
+56
+00:03:19,060 --> 00:03:20,620
+deep neural networks across
+
+57
+00:03:20,620 --> 00:03:25,290
+many pattern recognition tasks while using orders of magnitude fewer weights.
+
+58
+00:03:25,290 --> 00:03:29,150
+This means shorter training times and better performance.
+
+59
+00:03:29,150 --> 00:03:31,850
+All right. Last quiz before your lab.
+
+60
+00:03:31,850 --> 00:03:35,900
+Choose the advantages of processing a small patch of the image at
+
+61
+00:03:35,900 --> 00:03:41,295
+a time using a convolution kernel instead of using a dense layer for the entire image.
+
+62
+00:03:41,295 --> 00:03:43,350
+Is it fewer weights?
+
+63
+00:03:43,350 --> 00:03:45,580
+Faster processing?
+
+64
+00:03:45,580 --> 00:03:48,705
+Weights are shared across the input?
+
+65
+00:03:48,705 --> 00:03:50,695
+Or all of the above?
+
+66
+00:03:50,695 --> 00:03:53,605
+The correct answer is all of the above,
+
+67
+00:03:53,605 --> 00:03:57,040
+which ties together everything you learned so far in this course.
+
+68
+00:03:57,040 --> 00:04:02,950
+Next up, is your quick lab where you will build a CNN for image classification.
