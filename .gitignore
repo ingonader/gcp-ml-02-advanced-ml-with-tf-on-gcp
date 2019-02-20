@@ -26,6 +26,9 @@ training-data-analyst-cloned/*
 certificate-of-specializations/*
 
 
+## ignore specific stuff:
+02-gcp-production-ml-systems/kubeflow-examples/
+
 # Created by https://www.gitignore.io/api/video,macos,python,jupyternotebook
 # Edit at https://www.gitignore.io/?templates=video,macos,python,jupyternotebook
 
