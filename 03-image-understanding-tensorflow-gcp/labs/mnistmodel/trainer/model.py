@@ -49,8 +49,34 @@ def dnn_model(img, mode, hparams):
   return ylogits, NCLASSES
 
 def dnn_dropout_model(img, mode, hparams):
-  #TODO: Implement DNN model and apply dropout to the last hidden layer
-  pass
+  #TODO (done): Implement DNN model and apply dropout to the last hidden layer
+
+  ## get dropout hyperparameter:
+  dprob = hparams.get('dprob', 0.1)
+
+  ## neural net:
+  X = tf.reshape(img, [-1, HEIGHT * WIDTH])
+  ## first hidden layer:
+  X = tf.layers.dense(inputs = X, 
+                       units = 300, 
+                       activation = tf.nn.relu)
+  ## second hidden layer:
+  X = tf.layers.dense(inputs = X,
+                       units = 100,
+                       activation = tf.nn.relu)
+  ## third hidden layer:
+  X = tf.layers.dense(inputs = X,
+                       units = 30,
+                       activation = tf.nn.relu)
+  ## dropout for this layer:
+  X = tf.layers.dropout(inputs = X,
+                        rate = dprob,
+                        training = (mode == tf.estimator.ModeKeys.TRAIN))
+  ## calculate logits:
+  ylogits = tf.layers.dense(inputs = X,
+                            units = NCLASSES, 
+                            activation = None)
+  return ylogits, NCLASSES
 
 def cnn_model(img, mode, hparams):
   ksize1 = hparams.get('ksize1', 5)
@@ -162,4 +188,4 @@ def train_and_evaluate(output_dir, hparams):
                                   exporters = exporter,
                                   throttle_secs = EVAL_INTERVAL)
   tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
-  #estimator.export_savedmodel('saved_model', serving_input_fn)
+  estimator.export_savedmodel('saved_model', serving_input_fn)
