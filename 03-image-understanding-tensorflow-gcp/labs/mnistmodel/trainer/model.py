@@ -32,8 +32,21 @@ def linear_model(img, mode, hparams):
   return ylogits, NCLASSES
 
 def dnn_model(img, mode, hparams):
-  #TODO: Implement DNN model with three hiddenlayers
-  pass
+  #TODO (done): Implement DNN model with three hidden layers
+  X = tf.reshape(img, [-1, HEIGHT * WIDTH])
+  h1 = tf.layers.dense(inputs = X, 
+                       units = 300, 
+                       activation = tf.nn.relu)
+  h2 = tf.layers.dense(inputs = h1,
+                       units = 100,
+                       activation = tf.nn.relu)
+  h3 = tf.layers.dense(inputs = h2,
+                       units = 30,
+                       activation = tf.nn.relu)
+  ylogits = tf.layers.dense(inputs = h3,
+                            units = NCLASSES, 
+                            activation = None)
+  return ylogits, NCLASSES
 
 def dnn_dropout_model(img, mode, hparams):
   #TODO: Implement DNN model and apply dropout to the last hidden layer
@@ -149,3 +162,4 @@ def train_and_evaluate(output_dir, hparams):
                                   exporters = exporter,
                                   throttle_secs = EVAL_INTERVAL)
   tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
+  #estimator.export_savedmodel('saved_model', serving_input_fn)
