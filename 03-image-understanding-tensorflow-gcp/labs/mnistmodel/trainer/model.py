@@ -85,20 +85,37 @@ def cnn_model(img, mode, hparams):
   nfil2 = hparams.get('nfil2', 20)
   dprob = hparams.get('dprob', 0.25)
   
-  c1 = tf.layers.conv2d(img, filters=nfil1,
-                          kernel_size=ksize1, strides=1, # ?x28x28x10
-                          padding='same', activation=tf.nn.relu)
-  p1 = tf.layers.max_pooling2d(c1,pool_size=2, strides=2) # ?x14x14x10
-  c2 = None #TODO: apply a second convolution to the output of p1
-  p2 = None #TODO: apply a pooling layer with pool_size=2 and strides=2
-  
-  outlen = p2.shape[1]*p2.shape[2]*p2.shape[3] #980
+  c1 = tf.layers.conv2d(img, 
+                        filters = nfil1,      # 10
+                        kernel_size = ksize1, #  5
+                        strides = 1,          # batch x 28 x 28 x 10 (nfil1)
+                        padding = 'same', 
+                        activation = tf.nn.relu)
+  p1 = tf.layers.max_pooling2d(c1, 
+                               pool_size = 2, 
+                               strides = 2) # batch x 14 x 14 x 10
+  #TODO (done): apply a second convolution to the output of p1
+  c2 = tf.layers.conv2d(p1, 
+                        filters = nfil2,      # 20
+                        kernel_size = ksize2, #  5
+                        strides = 1,
+                        padding = 'same',     # batch x 14 x 14 x 20 (nfil2) 
+                        activation = tf.nn.relu)
+  #TODO (done): apply a pooling layer with pool_size=2 and strides=2
+  p2 = tf.layers.max_pooling2d(c2,
+                               pool_size = 2,
+                               strides = 2)  # batch x 7 x 7 x 20
+    
+  ## calculate output length and flatten:
+  outlen = p2.shape[1] * p2.shape[2] * p2.shape[3] #980
   p2flat = tf.reshape(p2, [-1, outlen]) # flattened
 
+  ## add dense layer to process flattened inputs, with dropout:
   h3 = tf.layers.dense(p2flat, 300, activation=tf.nn.relu) 
   h3d = tf.layers.dropout(
       h3, rate=dprob, training=(mode == tf.estimator.ModeKeys.TRAIN))
 
+  ## calculate logits and return:
   ylogits = tf.layers.dense(h3d, NCLASSES, activation=None)
   return ylogits, NCLASSES
 
