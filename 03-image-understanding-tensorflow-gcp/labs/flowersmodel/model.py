@@ -100,12 +100,25 @@ def read_and_preprocess(image_bytes, label=None, augment=False):
     # decode the image
     # end up with pixel values that are in the -1, 1 range
     
-    image = #TODO: decode contents into JPEG
-    image = #TODO: convert JPEG tensor to floats between 0 and 1
+    #TODO (done): decode contents into JPEG:
+    ## (decode_jpeg returns values from 0-255)
+    image = tf.image.decode_jpeg(contents = image_bytes,
+                              channels = NUM_CHANNELS,
+                              ratio = 1)
+    #TODO (done): convert JPEG tensor to floats between 0 and 1
+    image = tf.image.convert_image_dtype(image, dtype = tf.float32) ## 0-1
     image = tf.expand_dims(image, 0) # resize_bilinear needs batches
     
     if augment:
-       #TODO: add image augmentation functions
+      #TODO (done): add image augmentation functions
+      image = tf.image.resize_bilinear(image,
+                                       size = [HEIGHT + 10, WIDTH + 10],
+                                       align_corners = False)
+      image = tf.squeeze(image) ## remove batch dimension
+      image = tf.random_crop(image, [HEIGHT, WIDTH, NUM_CHANNELS])
+      image = tf.image.random_flip_left_right(image)
+      image = tf.image.random_brightness(image, max_delta = 63.0 / 255.0)
+      image = tf.image.random_contrast(image, lower = 0.2, upper = 1.8)
     else:
        image = tf.image.resize_bilinear(image, [HEIGHT, WIDTH], align_corners=False)
        image = tf.squeeze(image) #remove batch dimension
@@ -113,6 +126,8 @@ def read_and_preprocess(image_bytes, label=None, augment=False):
     #pixel values are in range [0,1], convert to [-1,1]
     image = tf.subtract(image, 0.5)
     image = tf.multiply(image, 2.0)
+    
+    ## package image up in dictionary and return:
     return {'image':image}, label
 
 def serving_input_fn():
@@ -136,9 +151,11 @@ def make_input_fn(csv_of_filenames, batch_size, mode, augment=False):
         dataset = tf.data.TextLineDataset(csv_of_filenames).map(decode_csv)     
         
         if augment: 
-            dataset = #TODO: map read_and_preprocess_with_augment
+            #TODO: map read_and_preprocess_with_augment
+            dataset = dataset.map(read_and_preprocess_with_augment)
         else:
-            dataset = #TODO: map read_and_preprocess
+            #TODO: map read_and_preprocess
+            dataset = dataset.map(read_and_preprocess)
 
         if mode == tf.estimator.ModeKeys.TRAIN:
             num_epochs = None # indefinitely
