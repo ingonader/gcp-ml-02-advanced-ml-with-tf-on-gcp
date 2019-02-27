@@ -83,6 +83,21 @@ parser.add_argument(
 args = parser.parse_args()
 arguments = args.__dict__
 
+## -------------------------------------------------------------- ##
+## making pandas data frames
+## -------------------------------------------------------------- ##
+
+## make pandas dataframe from numpy array:
+n = 10
+npa = np.zeros(n)
+npa.shape  # (n,)
+
+dat_tmp = pd.DataFrame(npa, npa)
+dat_tmp.shape  # (n, 1)
+
+dat_tmp = pd.DataFrame({'col1' : npa, 'col2' : npa})
+dat_tmp.head
+dat_tmp.shape # (n, 2)
 
 
 ## ========================================================================= ## 

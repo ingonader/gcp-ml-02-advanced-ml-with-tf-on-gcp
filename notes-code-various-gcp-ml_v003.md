@@ -54,6 +54,11 @@ gsutil cp gs://my-bucket/my-file .
 
 ## in cloud shell:
 
+## create a bucket (if necessary):
+export REGION=europe-west-1c
+export BUCKET=$(gcloud config get-value project)
+gsutil mb -l ${REGION} gs://${BUCKET}
+
 ## create datalab vm:
 export PROJECT=$(gcloud config get-value project)
 export ZONE=europe-west1-c
@@ -93,7 +98,7 @@ project_name = output[0][:-1]
 # change these to try this notebook out
 PROJECT = project_name
 BUCKET = project_name
-BUCKET = BUCKET.replace("qwiklabs-gcp-", "inna-bckt-")
+#BUCKET = BUCKET.replace("qwiklabs-gcp-", "inna-bckt-")
 REGION = 'europe-west1'  ## note: Cloud ML Engine not availabe in europe-west3!
 
 # set environment variables:
@@ -206,10 +211,10 @@ git config user.email "ingo.nader@gmail.com"
 Find large files to be committed (when staged):
 
 ```bash
-git ls-files -t `find . -type f -size +100k |xargs`
-git ls-files -t `find . -type f -size +100k -exec ls -lh|xargs`
+#git ls-files -t `find . -type f -size +100k |xargs`
+#git ls-files -t `find . -type f -size +100k -exec ls -lh|xargs`
 
-find . -type f -size +30000k -exec ls -lh {} \; | awk '{ print $9 ": " $5 }' 
+#find . -type f -size +30000k -exec ls -lh {} \; | awk '{ print $9 ": " $5 }' 
 
 ```
 
