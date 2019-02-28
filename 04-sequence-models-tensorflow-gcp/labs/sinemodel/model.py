@@ -19,6 +19,7 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
+import os
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
@@ -45,9 +46,32 @@ def linear_model(features, mode, params):
     return X
 
 def dnn_model(features, mode, params):
+  #TODO (done): finish DNN model
   X = features[TIMESERIES_COL]
-  #TODO: finish DNN model
-  pass
+
+  # ## creating layer using name_scope and adding tensorboard summaries: 
+  # ## (https://bitfusion.io/2017/03/30/intro-to-tensorboard/)
+  # with tf.name_scope('dense01'):
+  #   X = tf.layers.dense(X, units = 20, activation = tf.nn.relu, name = 'dense01')
+  #   X_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'dense01')
+  #   tf.summary.histogram('kernel', X_vars[0])
+  #   tf.summary.histogram('bias', X_vars[1])
+  #   tf.summary.histogram('act', X)
+  # ## above doesn't work, so do it without that kind of tensorboard summary logging code.
+  
+  X = tf.layers.dense(X, units = 20, activation = tf.nn.relu, name = 'dense01')
+  ## try adding tensorboard information:
+  tf.summary.histogram('dense01', X)
+    
+  X = tf.layers.dense(X, units = 3, activation = tf.nn.relu)
+  # ## add weights to tensorboard: (doesn't work)
+  # weights = tf.get_default_graph().get_tensor_by_name(
+  #     os.path.split(X.name)[0] + '/kernel:0'
+  # )
+  #tf.summary.histogram("Layer_2_weights", weights)
+  X = tf.layers.dense(X, units = 1, activation = None)
+
+  return X
 
 def cnn_model(features, mode, params):
   X = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1]) # as a 1D "sequence" with only one time-series observation (height)
@@ -137,6 +161,11 @@ def compute_errors(features, labels, predictions):
     if predictions.shape[1] == 1:
         loss = tf.losses.mean_squared_error(labels, predictions)
         rmse = tf.metrics.root_mean_squared_error(labels, predictions)
+        ## note: 
+        ## tf.metric.* return two values: the metric, and an update_op
+        ## rmse, update_op = tf.metrics.*
+        ## rmse is the current value, the update_op is a running tally
+        ## (https://stackoverflow.com/questions/50120073/tensorflow-metrics-with-custom-estimator)
         return loss, rmse
     else:
         # one prediction for every input in sequence
@@ -187,14 +216,18 @@ def sequence_regressor(features, labels, mode, params):
                     tf.train.get_global_step(),
                     learning_rate=params['learning_rate'],
                     optimizer="Adam")
+            ## record metrics for training:
+            tf.summary.scalar("RMSE_summary", rmse[1])
+
 
         # 2c. eval metric
+        ## record metrics for evaluation:
         eval_metric_ops = {
             #"Loss": loss,
             "RMSE": rmse,
             "RMSE_same_as_last": same_as_last_benchmark(features, labels),
         }
-
+   
     # 3. Create predictions
     if predictions.shape[1] != 1:
         predictions = predictions[:, -1]  # last predicted value
@@ -228,7 +261,7 @@ def train_and_evaluate(output_dir, hparams):
     estimator = tf.estimator.Estimator(model_fn=sequence_regressor,
                                        params=hparams,
                                        config=tf.estimator.RunConfig(
-                                           save_checkpoints_secs=hparams['min_eval_frequency'],
+                                           save_checkpoints_secs=10, #hparams['min_eval_frequency'], ## [[here]]--currently hard-coded
                                            save_summary_steps=100
                                        ),
                                        model_dir=output_dir)
@@ -238,6 +271,7 @@ def train_and_evaluate(output_dir, hparams):
     eval_spec = tf.estimator.EvalSpec(input_fn=get_valid,
                                       steps=None,
                                       exporters=exporter,
-                                      start_delay_secs=hparams['eval_delay_secs'],
-                                      throttle_secs=hparams['min_eval_frequency'])
+                                      start_delay_secs=10, #hparams['eval_delay_secs'],   ## [[here]]--currently hard-coded
+                                      throttle_secs=10     #hparams['min_eval_frequency'] ## [[here]]--currently hard-coded
+                                     )
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
