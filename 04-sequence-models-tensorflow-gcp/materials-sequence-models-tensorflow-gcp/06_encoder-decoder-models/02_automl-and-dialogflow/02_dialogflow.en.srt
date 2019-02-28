@@ -1,0 +1,243 @@
+1
+00:00:00,500 --> 00:00:08,100
+We have look at the tensor2tensor and language translation.
+
+2
+00:00:08,100 --> 00:00:13,730
+This is fine if we need to simply do one thing.
+
+3
+00:00:13,730 --> 00:00:23,210
+What about having an automatic way of training for conversational system such as Chatbot?
+
+4
+00:00:23,340 --> 00:00:29,840
+Training separate models using tensor2tensor or
+
+5
+00:00:29,840 --> 00:00:38,530
+AutoML for each question answer pair is very cumbersome.
+
+6
+00:00:38,530 --> 00:00:44,150
+It is much better if we could take advantage of
+
+7
+00:00:44,150 --> 00:00:52,690
+preexisting natural language technologies that let us build conversations.
+
+8
+00:00:52,690 --> 00:01:00,400
+Not one question to one answer but the entire conversations.
+
+9
+00:01:00,400 --> 00:01:07,855
+Dialogflow is an end to end developer platform for building
+
+10
+00:01:07,855 --> 00:01:12,290
+rich conversational experiences that people
+
+11
+00:01:12,290 --> 00:01:18,005
+can communicate with naturally and efficiently.
+
+12
+00:01:18,005 --> 00:01:22,990
+It picks up the best answer among
+
+13
+00:01:22,990 --> 00:01:30,920
+all possible answers through intent and entity classifications.
+
+14
+00:01:31,450 --> 00:01:38,320
+There are three components in Dialogflow,
+
+15
+00:01:38,420 --> 00:01:44,710
+intents, entity and contexts.
+
+16
+00:01:44,870 --> 00:01:52,120
+Intents are the action a user wants to execute.
+
+17
+00:01:52,120 --> 00:01:58,010
+They represent a mapping between what the user says
+
+18
+00:01:58,010 --> 00:02:04,935
+and what action should be taken by a chatbot.
+
+19
+00:02:04,935 --> 00:02:10,650
+In communication, intents can be sort of as
+
+20
+00:02:10,650 --> 00:02:19,410
+the root verbs in the dialogue such as the verb order in the sentence,
+
+21
+00:02:19,410 --> 00:02:22,495
+"I will like to order to two coffees."
+
+22
+00:02:22,495 --> 00:02:28,445
+Sometimes the intents are not explicit but
+
+23
+00:02:28,445 --> 00:02:35,815
+instead are inferred from the entire composition of a phrase.
+
+24
+00:02:35,815 --> 00:02:40,930
+For example, in two coffees please,
+
+25
+00:02:40,930 --> 00:02:49,890
+the intent is the verb order even though it has not been explicitly said.
+
+26
+00:02:50,710 --> 00:02:59,150
+We also want to map out intents to the goal of our application.
+
+27
+00:02:59,150 --> 00:03:04,190
+If we are building a helpdesk application then
+
+28
+00:03:04,190 --> 00:03:11,530
+our intents might include the obvious intent of opening a ticket,
+
+29
+00:03:11,530 --> 00:03:16,570
+updating a ticket, and closing a ticket.
+
+30
+00:03:16,570 --> 00:03:25,595
+Our application may also need to access and update a user's account information,
+
+31
+00:03:25,595 --> 00:03:35,140
+branch out to a live technician or even pass along a quality assurance survey.
+
+32
+00:03:36,550 --> 00:03:43,480
+Entities are the objects that we want to act upon.
+
+33
+00:03:43,480 --> 00:03:50,950
+They help us get to the specifies of an interaction.
+
+34
+00:03:50,950 --> 00:03:56,555
+In the dialogue, the entities are the nouns
+
+35
+00:03:56,555 --> 00:04:02,920
+found through the conversation such as a person's name,
+
+36
+00:04:02,920 --> 00:04:06,600
+dates and et cetera.
+
+37
+00:04:06,600 --> 00:04:10,480
+In the case of ordering coffee,
+
+38
+00:04:10,480 --> 00:04:18,100
+coffee is an entity but it can also be a grouping.
+
+39
+00:04:18,230 --> 00:04:28,320
+There are many types of coffee such as Americanos, Cappuccinos and Lattes.
+
+40
+00:04:28,320 --> 00:04:33,090
+When we are designing our entity groupings,
+
+41
+00:04:33,090 --> 00:04:38,755
+we need to know how granular the entity should get.
+
+42
+00:04:38,755 --> 00:04:49,580
+Sometimes, a coffee entity is sufficient but sometimes we need to know finer details.
+
+43
+00:04:49,670 --> 00:04:59,645
+Entity help our chatbot decide what details it needs to know and how it should react.
+
+44
+00:04:59,645 --> 00:05:07,895
+Entities are also a great way to add personalizations to a chatbot.
+
+45
+00:05:07,895 --> 00:05:14,720
+We can use an entity and data stored in a database to remember
+
+46
+00:05:14,720 --> 00:05:22,600
+details about a user such as their name or favorite drink.
+
+47
+00:05:22,600 --> 00:05:33,480
+We can then echo those details back turning a rigid conversation into a casual dialogue.
+
+48
+00:05:33,480 --> 00:05:41,630
+Of course, there is a list of building entities to help us start it.
+
+49
+00:05:41,630 --> 00:05:49,555
+Lastly, contacts keeps the continuities in the conversation.
+
+50
+00:05:49,555 --> 00:05:54,799
+It helps the chatbot keep track of where the user
+
+51
+00:05:54,799 --> 00:06:00,410
+is at during the course of the conversation.
+
+52
+00:06:00,410 --> 00:06:06,920
+This is helpful for differentiating phrases which may be
+
+53
+00:06:06,920 --> 00:06:14,460
+weak or have different meanings depending on the user's preferences,
+
+54
+00:06:14,460 --> 00:06:21,635
+geographic locations or the topic of the conversation.
+
+55
+00:06:21,635 --> 00:06:25,440
+For the question of what about tomorrow?
+
+56
+00:06:25,440 --> 00:06:29,930
+The chatbot needs to pick up the context of
+
+57
+00:06:29,930 --> 00:06:35,745
+the previous question in order to give an appropriate answer.
+
+58
+00:06:35,745 --> 00:06:40,475
+If the previous question was about weather,
+
+59
+00:06:40,475 --> 00:06:44,135
+the answer should be about weather.
+
+60
+00:06:44,135 --> 00:06:49,295
+But if the previous question was about the level of traffic,
+
+61
+00:06:49,295 --> 00:06:53,680
+then the answer should be about traffic as well.

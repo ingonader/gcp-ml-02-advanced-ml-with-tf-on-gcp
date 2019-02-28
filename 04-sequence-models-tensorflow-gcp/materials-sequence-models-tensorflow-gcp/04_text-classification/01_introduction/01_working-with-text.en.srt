@@ -1,0 +1,87 @@
+1
+00:00:00,000 --> 00:00:03,120
+Hi there. Vijay here again.
+
+2
+00:00:03,120 --> 00:00:08,515
+One of the most common questions we find in machine learning is how to classify text.
+
+3
+00:00:08,515 --> 00:00:12,210
+In this module, we'll look at different ways of working with text,
+
+4
+00:00:12,210 --> 00:00:15,245
+and how to create your own text classification models.
+
+5
+00:00:15,245 --> 00:00:18,390
+We'll start with discussing how to work with text,
+
+6
+00:00:18,390 --> 00:00:22,255
+then we'll talk about how we can classify text using machine learning.
+
+7
+00:00:22,255 --> 00:00:26,990
+We'll close with a discussion about Python versus native Tensorflow functions for
+
+8
+00:00:26,990 --> 00:00:32,820
+pre-processing text and some tips for productionizing your text classification model.
+
+9
+00:00:32,910 --> 00:00:37,025
+Up until now, we've been working directly with numbers.
+
+10
+00:00:37,025 --> 00:00:39,420
+In our first labs using sequences,
+
+11
+00:00:39,420 --> 00:00:43,190
+those numbers represented the height of water from a sprinkler.
+
+12
+00:00:43,190 --> 00:00:45,010
+Our most recent lab,
+
+13
+00:00:45,010 --> 00:00:47,094
+they represented temperature readings.
+
+14
+00:00:47,094 --> 00:00:50,255
+However, not all sequences are numeric.
+
+15
+00:00:50,255 --> 00:00:52,660
+Take natural language for example.
+
+16
+00:00:52,660 --> 00:00:55,495
+The words in a sentence are a sequence.
+
+17
+00:00:55,495 --> 00:00:59,670
+Why? Because the order of the words matter.
+
+18
+00:00:59,670 --> 00:01:02,400
+If you change the order of words in a sentence,
+
+19
+00:01:02,400 --> 00:01:04,190
+it no longer makes sense.
+
+20
+00:01:04,190 --> 00:01:06,650
+So, sequential models allow us to capture
+
+21
+00:01:06,650 --> 00:01:10,500
+the meaning of sentences better than non-sequential models.
+
+22
+00:01:10,500 --> 00:01:15,470
+So, what practical use cases can we tackle with natural language?

@@ -1,0 +1,40 @@
+So as we said previously,
+sequence data typically can be represented as observations of a certain number of
+characteristics of an event over time. How would you convert this into
+a vector for input or output? How would you take our sequence data,
+which looks like this table or this graph, and arrange it so
+that it's a single row of your dataset? The simplest method is to take a window of
+fixed size and slide it over our dataset, and then to concatenate the observations
+within the window to create a vector. Let's say that we only have one
+characteristic that we're observing over time, the price of oil, and we'd like to predict the future price
+at some single later time point. First, we determine a size for our window,
+and then slide the window over the data. Assuming we have observations
+at t different time points, and our sliding window is n time units wide,
+and we have a stride of 1, how many rows will there
+be in our training set? The answer is t minus n. And this expression reveals the tension
+between the width of our sliding window and the amount of data that
+it will ultimately have. The wider our window,
+the fewer examples our model will see. But generally, this only makes a
+difference when you don't have much data. Assuming our window size is ten minutes,
+after sliding our window over our data, we will have a table with 11 columns. And a number of rows equal to
+the length of our sequence minus ten. So what's the good size for
+our sliding window? Unfortunately, there's no
+simple answer to that. It will depend on what you're modeling. And this means you'll need to
+consult with domain experts. Sometimes the most important
+effects are short-term, like predicting the next
+day's temperature. Here, for instance, I've graphed
+the daily temperature for 2017 for Seattle, Washington. Notice how if you look
+at any one data point, its neighbors are generally
+relatively close. Sometimes the most important effects are
+quite separated in time, such as if you're using rainfall to predict crop
+yield at the end of the season. One method that you can use to
+determine an appropriate amount of lag is to look at the correlation
+between an observation at time t and the observations that preceded it. Then you pick a threshold, say, seven days based on how much each
+previous observation correlates. Let's pretend we're
+talking about a sprinkler. Assuming that you knew the data were
+periodic, and that the rotation speed and water pressure of the sprinkler
+tube was constant, and that the sprinkler made one
+full rotation in one minute. What would be a good choice for
+our sliding window length? The answer in this case is that
+after including one minute of prior observations, prior time points
+provide no additional information.

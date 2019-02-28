@@ -1,0 +1,1 @@
+In this lab, you will implement a two-layer RNN. First, complete rnn2_model function in the model.py file. Then, test the model locally to make sure the code works. In this lab, I'd also like you to run the cell in the notebook, which runs all model types in parallel. This will allow you to compare the performance of the different models head-to-head using tensorboard.

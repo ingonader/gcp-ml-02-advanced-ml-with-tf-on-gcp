@@ -1,0 +1,53 @@
+Welcome back,
+I hope you were able to train and deploy an article classification model
+with reasonably good performance. While our model performs well, our model's
+rest API leaves something to be desired. Currently, in order to classify articles, we put the burden of integerizing
+the text on the client. This was necessary, because we were
+using Python level functions for this preprocessing. Python functions can't be embedded
+into a TensorFlow graph and therefore can't be called from
+our serving input function. This means all of our clients need to know how to preprocess the text exactly
+the same way we did during training. They need to ignore the same punctuation, and they need a copy of the same word
+to integer mapping that we used. This also means that every time we
+update our word to integer mapping, we need to provide this new
+mapping to all the clients. This is messy, and invites training
+serving skew, which is when the preprocessing of data during serving
+deviates from how it was preprocessed during training, which confuses
+the model and yields poor results. To solve this, we need to refacture our preprocessing
+code to use native Tensorflow functions. Once we do this, we can make
+the preprocessing functions part of the serving input function, which
+becomes part of the serving graph, and part of TensorFlow model itself,
+thus eliminating training serving skew. We also make using our
+API much simpler for clients, because they can
+pass us article directly, instead of worrying about how to
+preprocess them properly first. So why didn't we use native
+TensorFlow functions to begin with? Well, TensorFlow is still
+a growing framework, and there are still many tasks that
+are easier to do in native Python. As of now, natural language
+preprocessing is one of them. Doing it in Python is easier, and if we're not planning to deploy our model
+to production, we can get away with it. However, if we want to make
+a robust production ready model, we should do things with the native
+TensorFlow whenever possible. This trade off between doing things
+the easier way in Python and doing things the more
+robust way in TensorFlow is a trade off you'll likely
+face in your own work. Many times the best way is to start with
+Python for rapid prototyping, then convert it to TensorFlow later, if and
+when you need to productionize your code. You may be thinking, what about just adding the Python
+preprocessing to the server-side? Just because the preprocessing
+isn't done inside the model, doesn't mean I have to
+burden the client with it. That's a valid point. Your architecture would be a bit more
+clunky, but that's not a deal breaker. However, what if you don't
+want to have a server at all. Maybe you want to run your model
+directly on a mobile phone. Now, you would have to find a way to
+reimplement that logic for mobile. The real payoff for sticking to native
+TensorFlow is that you can write your code once and deploy it on mobile, on a server,
+or even on an embedded device without having to worry about
+platform-specific dependencies. The actual process of converting
+a program to native TensorFlow consists of identifying
+the functions that are native Python then identifying
+the TensorFlow equivalent. Now this table is an over simplification,
+because the TensorFlow functions usually aren't drop and
+replacements for the Python functions. They usually have slightly different APIs,
+and may require some supporting code around
+them to accomplish the same behavior. To fully appreciate the differences,
+let's walk through a version of our text classification code, which implements
+native TensorFlow preprocessing.

@@ -1,0 +1,53 @@
+1
+00:00:00,250 --> 00:00:04,280
+In this lab, we'll build a model to
+solve the text classification problem
+
+2
+00:00:04,280 --> 00:00:05,260
+we've been talking about.
+
+3
+00:00:06,720 --> 00:00:11,601
+All of the lab TODOs are in
+the model.py file, in particular,
+
+4
+00:00:11,601 --> 00:00:15,760
+you will transform text into
+a sequence of integers.
+
+5
+00:00:15,760 --> 00:00:20,930
+Pad sequences to a constant length,
+convert a karas model
+
+6
+00:00:20,930 --> 00:00:26,030
+into a tf estimator, and
+instantiate a tf.Estimator.
+
+7
+00:00:26,030 --> 00:00:31,560
+Finally, you will train and deploy your
+model using Cloud Machine Learning Engine.
+
+8
+00:00:31,560 --> 00:00:35,526
+And feed in new article titles to
+the deployed model for prediction,
+
+9
+00:00:37,286 --> 00:00:41,076
+keep in mind, you have multiple
+attempts to start and stop each lab.
+
+10
+00:00:41,076 --> 00:00:44,206
+So don't worry if you don't
+make it through the first time,
+
+11
+00:00:44,206 --> 00:00:46,926
+we'll review the solution
+together in the following video.

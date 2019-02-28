@@ -1,0 +1,67 @@
+1
+00:00:00,410 --> 00:00:04,150
+That concludes our module on text classification.
+
+2
+00:00:04,150 --> 00:00:07,425
+We started by talking about how working with text data
+
+3
+00:00:07,425 --> 00:00:11,315
+requires finding a meaningful numeric representation.
+
+4
+00:00:11,315 --> 00:00:16,140
+One hot encoding isn't ideal because it doesn't capture anything about the meaning of
+
+5
+00:00:16,140 --> 00:00:21,390
+words and because its sparsity would kill the gradients in our neural network.
+
+6
+00:00:21,390 --> 00:00:25,580
+Learning an embedded representations solves both these problems.
+
+7
+00:00:25,580 --> 00:00:29,810
+We then apply this representation to solve a text classification problem.
+
+8
+00:00:29,810 --> 00:00:34,975
+We used a sequential model so that we could learn patterns between adjacent words,
+
+9
+00:00:34,975 --> 00:00:37,235
+and not just words in isolation.
+
+10
+00:00:37,235 --> 00:00:42,770
+In particular, we used a CNN because it's easier to tune than an RNN,
+
+11
+00:00:42,770 --> 00:00:46,990
+and is known to produce good results on sequential classification problems.
+
+12
+00:00:46,990 --> 00:00:50,480
+Finally, we talked about the difference between implementing
+
+13
+00:00:50,480 --> 00:00:55,300
+pre-processing in native Python functions versus native TensorFlow functions.
+
+14
+00:00:55,300 --> 00:00:58,685
+Things are often of less lines of code in native Python,
+
+15
+00:00:58,685 --> 00:01:02,865
+but we give up flexibility when it comes to production deployment.
+
+16
+00:01:02,865 --> 00:01:05,840
+I hope this module has given you the tools to
+
+17
+00:01:05,840 --> 00:01:09,060
+go forth and build your own text classifier.

@@ -1,0 +1,7 @@
+Let's practice using TensorFlow Hub
+to create reusable embeddings in this next lab. In this lab, we'll instantiate
+a TensorFlow Hub module and take a closer look at
+the embeddings it produces. We'll start by looking to see if basic
+semantic relationships are preserved, and then use a more formal analysis. Your tasks will be to modify
+the notebook to instantiate the module, choose some words to test, and
+then examine those embeddings.

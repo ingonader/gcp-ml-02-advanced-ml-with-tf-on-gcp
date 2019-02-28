@@ -1,0 +1,10 @@
+In this lab, we will continue
+with the sprinkler problem. This time implementing an RNN
+to predict the sprinkler height. You may use any RNN cell type you like,
+but I recommend using a GRU cell. Specifically in this lab, you will complete the rnn_model
+function in the model.py file. Then you'll run the RNN model locally
+to make sure your code works. Be sure to specify the --model argument as RNN before you kick off
+the local training job. Keep in mind, you have multiple
+attempts to start and stop each lab. So don't worry if you don't
+make it through the first time. We'll review the solution
+together in the following video.

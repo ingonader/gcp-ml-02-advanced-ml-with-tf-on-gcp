@@ -1,0 +1,9 @@
+Now it's time for you to get some
+experience with the tensor2tensor. In this lab, you will define
+a problem with tensor2tensor. Generate training and evaluation datasets. Customize the sequence to sequence model. Train the model locally and
+on Cloud Machine Learning Engine. Fine-tune hyperparameters. Decode lines of poetry. And deploy the model. Don't forget,
+you have many attempts to start and stop each lab, so don't worry if you
+don't make it through on the first time. Also, as a tip,
+you can take a second attempt at the lab even if you just
+wanted to experiment with a code before watching
+the solution video later.

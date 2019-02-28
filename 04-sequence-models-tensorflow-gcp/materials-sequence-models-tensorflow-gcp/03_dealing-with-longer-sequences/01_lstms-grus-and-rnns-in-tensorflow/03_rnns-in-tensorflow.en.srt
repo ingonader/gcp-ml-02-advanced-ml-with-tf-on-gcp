@@ -1,0 +1,151 @@
+1
+00:00:00,383 --> 00:00:02,958
+Let's take a break from the theory, and
+
+2
+00:00:02,958 --> 00:00:06,918
+look at how to build RNN models
+in practice using TensorFlow.
+
+3
+00:00:06,918 --> 00:00:10,665
+There are two TensorFlow APIs
+that support RNNs.
+
+4
+00:00:10,665 --> 00:00:15,716
+One is ts.keras, and the other is tf.nn.
+
+5
+00:00:15,716 --> 00:00:19,493
+In the labs in this
+module we will use tf.nn.
+
+6
+00:00:19,493 --> 00:00:22,753
+But you'll get exposure to tf.keras and
+
+7
+00:00:22,753 --> 00:00:27,140
+the text classification ad
+which is in the next module.
+
+8
+00:00:27,140 --> 00:00:31,958
+First we choose our cell type,
+basic rnn cell,
+
+9
+00:00:31,958 --> 00:00:34,971
+basicLSTM cell and GRUCell,
+
+10
+00:00:34,971 --> 00:00:40,644
+correspond to simple RNN,
+LSTM and Gru respectively.
+
+11
+00:00:40,644 --> 00:00:45,425
+We initialize the cell with the cell
+size which is a hyperparameter that
+
+12
+00:00:45,425 --> 00:00:49,337
+specifies the vector size of
+the cell's internal state.
+
+13
+00:00:49,337 --> 00:00:53,550
+We tune this in the same way we
+would choose the number of units in
+
+14
+00:00:53,550 --> 00:00:54,593
+a dense layer.
+
+15
+00:00:54,593 --> 00:00:57,689
+Too large and the model will be too slow.
+
+16
+00:00:57,689 --> 00:01:01,722
+Too small and the model may not
+have enough learning capacity.
+
+17
+00:01:01,722 --> 00:01:06,001
+Once we initialize our cell,
+we actually unroll our RNN.
+
+18
+00:01:06,001 --> 00:01:11,106
+The operation for
+this is tf.nn.dynamic_rnn and
+
+19
+00:01:11,106 --> 00:01:13,778
+it takes three arguments.
+
+20
+00:01:13,778 --> 00:01:21,155
+The RNN cell, which we just instantiated,
+a Tensor of features, and a data type.
+
+21
+00:01:21,155 --> 00:01:25,389
+The feature Tensor state contains
+our inputs for all time steps, and
+
+22
+00:01:25,389 --> 00:01:30,512
+must have the shape, batch size, time
+sequence length, times input dimension.
+
+23
+00:01:32,127 --> 00:01:36,449
+Input dimension determines how many
+features we input in a given time step.
+
+24
+00:01:38,174 --> 00:01:41,558
+The dynamic rnn operation
+returns a two pool.
+
+25
+00:01:41,558 --> 00:01:45,125
+The first object in the two
+pool is called output, and
+
+26
+00:01:45,125 --> 00:01:48,939
+it contains the activations for
+every single time step.
+
+27
+00:01:48,939 --> 00:01:51,510
+We'll see why that might
+be useful later on.
+
+28
+00:01:51,510 --> 00:01:56,194
+For now, we only care about
+the activation for the last time step.
+
+29
+00:01:56,194 --> 00:01:59,519
+This is what the second
+object state contains.
+
+30
+00:01:59,519 --> 00:02:01,558
+Finally, we take state and
+
+31
+00:02:01,558 --> 00:02:05,822
+pass it as the input to a DNN
+to generate our predictions.
+
+32
+00:02:05,822 --> 00:02:09,566
+From this point forward, our code
+is no different from any other DNN.

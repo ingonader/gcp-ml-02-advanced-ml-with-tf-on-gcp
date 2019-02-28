@@ -1,0 +1,230 @@
+1
+00:00:00,845 --> 00:00:06,023
+That was great we were able
+to use the tensor2tensor
+
+2
+00:00:06,023 --> 00:00:11,208
+to train a sequence to
+sequence model quite easily.
+
+3
+00:00:11,208 --> 00:00:16,530
+But if you noticed,
+we have gone through all of the steps
+
+4
+00:00:16,530 --> 00:00:21,740
+of data processing,
+machine learning model design,
+
+5
+00:00:21,740 --> 00:00:26,514
+hyper parameter tuning,
+evaluation, and etc.
+
+6
+00:00:26,514 --> 00:00:32,352
+This process is very complex and
+time intensive,
+
+7
+00:00:32,352 --> 00:00:36,663
+is there an automated way to do this?
+
+8
+00:00:36,663 --> 00:00:40,687
+The answer is yes, for example,
+
+9
+00:00:40,687 --> 00:00:47,442
+if we wanted to do translation,
+we have the input text,
+
+10
+00:00:47,442 --> 00:00:53,071
+the output text, and
+we want to train a model.
+
+11
+00:00:53,071 --> 00:01:00,501
+We can do it with tensor2tensor,
+we can write the problem,
+
+12
+00:01:00,501 --> 00:01:05,165
+the data generation code ourselves or
+
+13
+00:01:05,165 --> 00:01:10,412
+we can just use
+AutoML Translation which is
+
+14
+00:01:10,412 --> 00:01:16,697
+a completely GUI driven
+technology to do it for us.
+
+15
+00:01:16,697 --> 00:01:24,710
+AutoML Translation makes building
+the translation model easier,
+
+16
+00:01:24,710 --> 00:01:28,926
+we just need to follow three steps,
+
+17
+00:01:28,926 --> 00:01:33,282
+prepare training and the test data,
+
+18
+00:01:33,282 --> 00:01:37,514
+build model and evaluate results.
+
+19
+00:01:37,514 --> 00:01:45,699
+For the model building step we can
+either leverage the pre-built model or
+
+20
+00:01:45,699 --> 00:01:50,726
+build custom model for
+our specific domain.
+
+21
+00:01:50,726 --> 00:01:56,564
+That is the key differentiation for
+AutoML Translation.
+
+22
+00:01:59,376 --> 00:02:04,681
+Why is the domain specific
+translation important?
+
+23
+00:02:04,681 --> 00:02:07,532
+Let see an example.
+
+24
+00:02:07,532 --> 00:02:14,867
+Let see, we want to translate
+that the driver is not working.
+
+25
+00:02:14,867 --> 00:02:18,228
+Which is the correct translation?
+
+26
+00:02:18,228 --> 00:02:25,681
+Is it the golf driver,
+the driver of the taxi or
+
+27
+00:02:25,681 --> 00:02:30,855
+device driver from a software?
+
+28
+00:02:30,855 --> 00:02:37,202
+This depends on the context,
+it depends on what came before.
+
+29
+00:02:40,483 --> 00:02:47,244
+As we saw the translation may
+vary a lot in different domains.
+
+30
+00:02:47,244 --> 00:02:52,836
+So how could we solve this
+with AutoML Translation?
+
+31
+00:02:52,836 --> 00:02:58,229
+Firstly we can upload translated
+
+32
+00:02:58,229 --> 00:03:04,968
+language pairs such as, [FOREIGN] a door,
+
+33
+00:03:04,968 --> 00:03:11,142
+[FOREIGN] two table lamps and so forth.
+
+34
+00:03:11,142 --> 00:03:18,025
+Then we use AutoML Translation to
+train a language translation model.
+
+35
+00:03:20,654 --> 00:03:26,795
+At the end we evaluate the translations,
+just that simple.
+
+36
+00:03:28,823 --> 00:03:35,659
+Let's see some example in action
+from the education domain.
+
+37
+00:03:35,659 --> 00:03:40,316
+Here we uploaded over 127,000
+
+38
+00:03:40,316 --> 00:03:45,851
+Blackboard Spanish English sentence pair.
+
+39
+00:03:45,851 --> 00:03:53,355
+A custom model is trained and
+evaluated by using the blue scores.
+
+40
+00:03:53,355 --> 00:03:59,177
+Now for a new sentence in the same
+domain we can predict the translation
+
+41
+00:03:59,177 --> 00:04:05,689
+using both the custom model and the
+Google Nueral Machine Translation model,
+
+42
+00:04:05,689 --> 00:04:09,260
+which predicts the generic translation.
+
+43
+00:04:11,800 --> 00:04:18,134
+Let's take a closer look at some
+education related translation.
+
+44
+00:04:18,134 --> 00:04:22,526
+We have a Spanish
+
+45
+00:04:22,526 --> 00:04:28,492
+sentence, [FOREIGN].
+
+46
+00:04:28,492 --> 00:04:32,169
+Without the domain custom model,
+
+47
+00:04:32,169 --> 00:04:36,480
+the Spanish sentence is translated to,
+
+48
+00:04:36,480 --> 00:04:43,982
+frequently asked questions by
+the moderator, which is pretty good.
+
+49
+00:04:43,982 --> 00:04:49,744
+But with the custom model we got,
+moderator FAQs,
+
+50
+00:04:49,744 --> 00:04:57,655
+which is a much closer translation
+that fits in the education domain.

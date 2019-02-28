@@ -1,0 +1,222 @@
+1
+00:00:01,032 --> 00:00:04,718
+So as we said previously,
+sequence data typically can be represented
+
+2
+00:00:04,718 --> 00:00:08,850
+as observations of a certain number of
+characteristics of an event over time.
+
+3
+00:00:09,980 --> 00:00:12,310
+How would you convert this into
+a vector for input or output?
+
+4
+00:00:13,410 --> 00:00:16,080
+How would you take our sequence data,
+which looks like this table or
+
+5
+00:00:16,080 --> 00:00:19,190
+this graph, and arrange it so
+that it's a single row of your dataset?
+
+6
+00:00:20,550 --> 00:00:24,779
+The simplest method is to take a window of
+fixed size and slide it over our dataset,
+
+7
+00:00:24,779 --> 00:00:28,910
+and then to concatenate the observations
+within the window to create a vector.
+
+8
+00:00:30,210 --> 00:00:32,800
+Let's say that we only have one
+characteristic that we're observing over
+
+9
+00:00:32,800 --> 00:00:34,790
+time, the price of oil, and
+
+10
+00:00:34,790 --> 00:00:38,890
+we'd like to predict the future price
+at some single later time point.
+
+11
+00:00:38,890 --> 00:00:42,940
+First, we determine a size for our window,
+and then slide the window over the data.
+
+12
+00:00:44,710 --> 00:00:47,990
+Assuming we have observations
+at t different time points, and
+
+13
+00:00:47,990 --> 00:00:51,800
+our sliding window is n time units wide,
+and we have a stride of 1,
+
+14
+00:00:51,800 --> 00:00:54,470
+how many rows will there
+be in our training set?
+
+15
+00:00:56,400 --> 00:00:58,236
+The answer is t minus n.
+
+16
+00:00:58,236 --> 00:01:01,678
+And this expression reveals the tension
+between the width of our sliding window
+
+17
+00:01:01,678 --> 00:01:04,540
+and the amount of data that
+it will ultimately have.
+
+18
+00:01:04,540 --> 00:01:08,000
+The wider our window,
+the fewer examples our model will see.
+
+19
+00:01:08,000 --> 00:01:10,650
+But generally, this only makes a
+difference when you don't have much data.
+
+20
+00:01:12,440 --> 00:01:16,790
+Assuming our window size is ten minutes,
+after sliding our window over our data,
+
+21
+00:01:16,790 --> 00:01:19,080
+we will have a table with 11 columns.
+
+22
+00:01:19,080 --> 00:01:22,130
+And a number of rows equal to
+the length of our sequence minus ten.
+
+23
+00:01:23,680 --> 00:01:25,450
+So what's the good size for
+our sliding window?
+
+24
+00:01:26,480 --> 00:01:28,917
+Unfortunately, there's no
+simple answer to that.
+
+25
+00:01:28,917 --> 00:01:30,983
+It will depend on what you're modeling.
+
+26
+00:01:30,983 --> 00:01:34,750
+And this means you'll need to
+consult with domain experts.
+
+27
+00:01:34,750 --> 00:01:37,060
+Sometimes the most important
+effects are short-term,
+
+28
+00:01:37,060 --> 00:01:39,600
+like predicting the next
+day's temperature.
+
+29
+00:01:39,600 --> 00:01:43,160
+Here, for instance, I've graphed
+the daily temperature for 2017 for
+
+30
+00:01:43,160 --> 00:01:44,120
+Seattle, Washington.
+
+31
+00:01:45,280 --> 00:01:47,762
+Notice how if you look
+at any one data point,
+
+32
+00:01:47,762 --> 00:01:50,260
+its neighbors are generally
+relatively close.
+
+33
+00:01:51,480 --> 00:01:55,500
+Sometimes the most important effects are
+quite separated in time, such as if you're
+
+34
+00:01:55,500 --> 00:01:58,470
+using rainfall to predict crop
+yield at the end of the season.
+
+35
+00:02:00,350 --> 00:02:03,820
+One method that you can use to
+determine an appropriate amount of lag
+
+36
+00:02:03,820 --> 00:02:07,450
+is to look at the correlation
+between an observation at time t and
+
+37
+00:02:07,450 --> 00:02:08,770
+the observations that preceded it.
+
+38
+00:02:10,490 --> 00:02:11,910
+Then you pick a threshold, say,
+
+39
+00:02:11,910 --> 00:02:15,750
+seven days based on how much each
+previous observation correlates.
+
+40
+00:02:17,295 --> 00:02:19,930
+Let's pretend we're
+talking about a sprinkler.
+
+41
+00:02:19,930 --> 00:02:24,410
+Assuming that you knew the data were
+periodic, and that the rotation speed and
+
+42
+00:02:24,410 --> 00:02:27,650
+water pressure of the sprinkler
+tube was constant, and
+
+43
+00:02:27,650 --> 00:02:31,280
+that the sprinkler made one
+full rotation in one minute.
+
+44
+00:02:31,280 --> 00:02:33,647
+What would be a good choice for
+our sliding window length?
+
+45
+00:02:35,556 --> 00:02:38,598
+The answer in this case is that
+after including one minute of prior
+
+46
+00:02:38,598 --> 00:02:41,990
+observations, prior time points
+provide no additional information.

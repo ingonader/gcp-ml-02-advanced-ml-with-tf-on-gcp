@@ -1,0 +1,37 @@
+1
+00:00:00,890 --> 00:00:03,940
+Let's practice using TensorFlow Hub
+to create reusable embeddings in
+
+2
+00:00:03,940 --> 00:00:04,470
+this next lab.
+
+3
+00:00:06,020 --> 00:00:09,070
+In this lab, we'll instantiate
+a TensorFlow Hub module and
+
+4
+00:00:09,070 --> 00:00:12,010
+take a closer look at
+the embeddings it produces.
+
+5
+00:00:12,010 --> 00:00:15,550
+We'll start by looking to see if basic
+semantic relationships are preserved, and
+
+6
+00:00:15,550 --> 00:00:17,920
+then use a more formal analysis.
+
+7
+00:00:17,920 --> 00:00:21,690
+Your tasks will be to modify
+the notebook to instantiate the module,
+
+8
+00:00:21,690 --> 00:00:24,420
+choose some words to test, and
+then examine those embeddings.

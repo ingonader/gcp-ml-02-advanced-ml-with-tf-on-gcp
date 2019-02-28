@@ -1,0 +1,567 @@
+1
+00:00:00,000 --> 00:00:03,805
+I hope you enjoyed working on a text classification lab.
+
+2
+00:00:03,805 --> 00:00:06,955
+Now, let's go over the solution together.
+
+3
+00:00:06,955 --> 00:00:09,765
+First, I'll create my data set.
+
+4
+00:00:09,765 --> 00:00:12,930
+We'll take advantage of a publicly available data set from
+
+5
+00:00:12,930 --> 00:00:16,475
+BigQuery which contains headlines posted on Hacker News,
+
+6
+00:00:16,475 --> 00:00:20,090
+between 2006 and 2015.
+
+7
+00:00:20,090 --> 00:00:26,620
+Hacker News is a message board where technology enthusiasts share and up vote articles.
+
+8
+00:00:26,870 --> 00:00:30,460
+Let's look at the first query so.
+
+9
+00:00:33,190 --> 00:00:38,480
+Here, we have a query that simply selects the URL, title,
+
+10
+00:00:38,480 --> 00:00:40,960
+and score column from our table,
+
+11
+00:00:40,960 --> 00:00:43,670
+and filters to titles that are at least ten
+
+12
+00:00:43,670 --> 00:00:47,715
+characters long and have received at least ten up votes.
+
+13
+00:00:47,715 --> 00:00:53,955
+The URL gives us the source publication of the article, which is our label.
+
+14
+00:00:53,955 --> 00:00:58,200
+However, in its current state, it's unusable.
+
+15
+00:00:58,200 --> 00:01:01,810
+The next query, addresses that.
+
+16
+00:01:06,520 --> 00:01:10,430
+This query uses regular expression parsing
+
+17
+00:01:10,430 --> 00:01:13,370
+to extract just the publisher name out of a URL.
+
+18
+00:01:13,370 --> 00:01:23,225
+For example, http://mobile.nytimes.com will simply become NY times.
+
+19
+00:01:23,225 --> 00:01:30,510
+Then, groups articles by source and shows us the most common ones.
+
+20
+00:01:34,440 --> 00:01:37,539
+Now, that we have a way to generate labels,
+
+21
+00:01:37,539 --> 00:01:41,670
+let's create our training and evaluation data sets.
+
+22
+00:01:43,890 --> 00:01:48,500
+For this model, we'll train a three-way classifier that distinguishes
+
+23
+00:01:48,500 --> 00:01:52,505
+between the publishers NY Times, GitHub, and TechCrunch.
+
+24
+00:01:52,505 --> 00:01:55,640
+Notice the filter in the where clause.
+
+25
+00:01:59,850 --> 00:02:04,030
+To create a reproducible and evenly distributed split,
+
+26
+00:02:04,030 --> 00:02:09,160
+we'll use the modulo function on the hash of the title column.
+
+27
+00:02:10,680 --> 00:02:13,435
+If we look at the value count,
+
+28
+00:02:13,435 --> 00:02:15,730
+we can see our training data set as roughly
+
+29
+00:02:15,730 --> 00:02:18,755
+three times as large as our evaluation data set.
+
+30
+00:02:18,755 --> 00:02:22,835
+Furthermore, we can see that our classes are roughly evenly distributed.
+
+31
+00:02:22,835 --> 00:02:27,680
+So, we can use accuracy as an evaluation metric later on.
+
+32
+00:02:30,310 --> 00:02:34,710
+Our data sets are currently in memory in pandas data frames.
+
+33
+00:02:34,710 --> 00:02:40,200
+So, our final step will be to write them to disk as tab-separated files.
+
+34
+00:02:42,330 --> 00:02:47,645
+We use bash commands to verify that the data was properly written to disk.
+
+35
+00:02:47,645 --> 00:02:53,360
+First, we use the head command to print out the first three lines of the train file.
+
+36
+00:02:53,690 --> 00:02:58,360
+Then, we verify the line counts of the train in eval files.
+
+37
+00:02:58,360 --> 00:03:04,590
+We have 24,000 evaluation records and 72,000 training records.
+
+38
+00:03:07,910 --> 00:03:11,155
+Great. We now have our data set.
+
+39
+00:03:11,155 --> 00:03:15,185
+Let's move on to the model and try to understand the code.
+
+40
+00:03:15,185 --> 00:03:20,940
+There's a hyperlink to the model.py directory in the markdown which I'll open now.
+
+41
+00:03:27,160 --> 00:03:30,705
+We'll start with the train and evaluate function.
+
+42
+00:03:30,705 --> 00:03:36,060
+You can think of this function as the conductor that calls all other functions.
+
+43
+00:03:36,090 --> 00:03:40,625
+First, we invoke the load Hacker News data utility,
+
+44
+00:03:40,625 --> 00:03:45,150
+which reads our training and test data from disk into memory.
+
+45
+00:03:45,940 --> 00:03:49,100
+Then, we create a vocabulary mapping
+
+46
+00:03:49,100 --> 00:03:54,000
+the top-k words to integers using the keras tokenizer function.
+
+47
+00:03:55,630 --> 00:03:58,670
+Then, we create a vocabulary mapping
+
+48
+00:03:58,670 --> 00:04:02,900
+the top_k words to integers using the carriers tokenizer function.
+
+49
+00:04:04,470 --> 00:04:10,540
+We then save that vocabulary mapping to disk for our clients to use later.
+
+50
+00:04:13,240 --> 00:04:16,505
+Next, we initialize our estimator
+
+51
+00:04:16,505 --> 00:04:20,230
+using our carriers estimator function which we'll look at later.
+
+52
+00:04:20,230 --> 00:04:23,520
+Finally, we create our train spec,
+
+53
+00:04:23,520 --> 00:04:26,955
+our eval spec, and then start training.
+
+54
+00:04:26,955 --> 00:04:30,420
+This part of the code is familiar.
+
+55
+00:04:31,420 --> 00:04:34,735
+Let's investigate our input function next,
+
+56
+00:04:34,735 --> 00:04:36,470
+which transforms our data from
+
+57
+00:04:36,470 --> 00:04:38,630
+its current Natural Language state into
+
+58
+00:04:38,630 --> 00:04:42,165
+a vectorized representation that our model can use.
+
+59
+00:04:42,165 --> 00:04:45,545
+Our first step in the input function is to convert
+
+60
+00:04:45,545 --> 00:04:49,530
+our sentences and from a list of words into a list of integers.
+
+61
+00:04:49,530 --> 00:04:52,280
+We do this using the text to sequences
+
+62
+00:04:52,280 --> 00:04:56,760
+function from the keras tokenizer object we created earlier.
+
+63
+00:04:59,310 --> 00:05:02,540
+Next, we pad the list of integers to
+
+64
+00:05:02,540 --> 00:05:06,600
+a constant length using the keras paths sequences function.
+
+65
+00:05:06,600 --> 00:05:10,159
+This allows us to feed data into our model in batches,
+
+66
+00:05:10,159 --> 00:05:13,650
+since all records will now have the same dimensions.
+
+67
+00:05:18,290 --> 00:05:22,820
+The remainder of the function is standard shuffling and batching.
+
+68
+00:05:22,820 --> 00:05:26,910
+Now, let's look at our actual model function.
+
+69
+00:05:29,800 --> 00:05:36,220
+We use the carrier sequential API to build a CNN to process our text.
+
+70
+00:05:40,990 --> 00:05:43,610
+The first layer in our model is
+
+71
+00:05:43,610 --> 00:05:47,510
+the embedding layer which takes our simple integer representation as
+
+72
+00:05:47,510 --> 00:05:54,050
+input and converts each integer into a richer representation using a vector of floats.
+
+73
+00:05:54,050 --> 00:05:56,690
+This allows our model to learn which words have
+
+74
+00:05:56,690 --> 00:06:00,990
+similar properties instead of treating each word as independent.
+
+75
+00:06:03,790 --> 00:06:07,130
+Note that there is an option here to load weights from
+
+76
+00:06:07,130 --> 00:06:11,020
+a pre-trained embedding or to learn the embedding from scratch.
+
+77
+00:06:11,020 --> 00:06:14,330
+For now, we'll learn the embedding from scratch,
+
+78
+00:06:14,330 --> 00:06:18,720
+which is to say the embedding weights will be randomly initialized.
+
+79
+00:06:23,660 --> 00:06:27,300
+From here on, we have a standard CNN.
+
+80
+00:06:27,300 --> 00:06:32,850
+It has two convolution layers, here and here,
+
+81
+00:06:32,850 --> 00:06:38,455
+two pooling layers here and here,
+
+82
+00:06:38,455 --> 00:06:43,270
+and add dropout layers to combat over-fitting.
+
+83
+00:06:46,120 --> 00:06:49,530
+The global average pooling layer is simply
+
+84
+00:06:49,530 --> 00:06:54,375
+an average pooling layer whose pool size is equal to the size of the input.
+
+85
+00:06:54,375 --> 00:06:59,120
+This results in an output of size one times the number of channels.
+
+86
+00:06:59,120 --> 00:07:03,750
+It's an intelligent way of flattening the output of our CNN in order to feed
+
+87
+00:07:03,750 --> 00:07:08,920
+it into our softmax layer for classification.
+
+88
+00:07:10,440 --> 00:07:13,745
+Next, we compile Archerius model,
+
+89
+00:07:13,745 --> 00:07:15,810
+bypass and get an optimizer,
+
+90
+00:07:15,810 --> 00:07:19,660
+a loss function, and an evaluation metric.
+
+91
+00:07:19,660 --> 00:07:22,900
+The global average pooling layer is simply
+
+92
+00:07:22,900 --> 00:07:27,630
+an average pooling layer whose pool size is equal to the size of the input.
+
+93
+00:07:27,630 --> 00:07:32,595
+This results in an output of size one times the number of channels.
+
+94
+00:07:32,595 --> 00:07:35,850
+It's an intelligent way of flattening the output of
+
+95
+00:07:35,850 --> 00:07:41,930
+our CNN in order to feed it into our softmax layer for classification.
+
+96
+00:07:42,440 --> 00:07:45,870
+Next, we compile our keras model,
+
+97
+00:07:45,870 --> 00:07:48,325
+bypass and get an optimizer,
+
+98
+00:07:48,325 --> 00:07:53,670
+a loss function, and an evaluation metric.
+
+99
+00:07:54,120 --> 00:07:57,920
+Finally, we convert the keras model to
+
+100
+00:07:57,920 --> 00:08:01,880
+an estimator using the model to estimate a function.
+
+101
+00:08:02,320 --> 00:08:05,650
+Now, that we have an understanding of our code,
+
+102
+00:08:05,650 --> 00:08:08,065
+let's switch back to our Data Lab Notebook,
+
+103
+00:08:08,065 --> 00:08:10,550
+and test the code locally.
+
+104
+00:08:20,990 --> 00:08:24,050
+Great, our code works.
+
+105
+00:08:24,050 --> 00:08:26,495
+We've only trained for 57 steps.
+
+106
+00:08:26,495 --> 00:08:28,970
+So, our accuracy is still quite bad.
+
+107
+00:08:28,970 --> 00:08:31,880
+Let's copy our trained data into the Cloud and run
+
+108
+00:08:31,880 --> 00:08:35,055
+a longer training job using Cloud Machine Learning Engine.
+
+109
+00:08:35,055 --> 00:08:38,480
+The job will take about ten minutes to complete.
+
+110
+00:08:47,700 --> 00:08:52,555
+Here, I have the results of the training job I ran earlier.
+
+111
+00:08:52,555 --> 00:08:56,980
+We can see that our accuracy starts at 37 percent,
+
+112
+00:08:56,980 --> 00:09:02,250
+which is pretty much equivalent to random guessing given we have three classes.
+
+113
+00:09:03,730 --> 00:09:09,955
+We can also see that it increases to over 80 percent over time.
+
+114
+00:09:09,955 --> 00:09:12,445
+Those are really encouraging results.
+
+115
+00:09:12,445 --> 00:09:18,370
+Let's deploy this model to Cloud Machine Learning Engine and make some predictions.
+
+116
+00:09:29,100 --> 00:09:31,395
+To test our predictions,
+
+117
+00:09:31,395 --> 00:09:34,210
+I've selected some recent headlines from Hacker News that
+
+118
+00:09:34,210 --> 00:09:38,130
+were not part of our training or evaluation data sets.
+
+119
+00:09:47,800 --> 00:09:51,310
+My first three headlines are from TechCrunch.
+
+120
+00:09:51,310 --> 00:09:53,350
+Our model classified them all correctly.
+
+121
+00:09:53,350 --> 00:09:57,830
+Although, it was more confident on some headlines than others.
+
+122
+00:10:00,080 --> 00:10:04,255
+The next three headlines are from the New York Times,
+
+123
+00:10:04,255 --> 00:10:07,015
+and our model gets two of the three correct.
+
+124
+00:10:07,015 --> 00:10:10,505
+It's encouraging though that for the headline at misclassified,
+
+125
+00:10:10,505 --> 00:10:14,400
+New York Times was second place in terms of probability.
+
+126
+00:10:17,250 --> 00:10:20,220
+Our last three headlines or from GitHub,
+
+127
+00:10:20,220 --> 00:10:24,530
+and our model classifies them all correctly with high confidence.
+
+128
+00:10:29,570 --> 00:10:34,490
+Optionally, we can rerun our model using a pre-trained embedding.
+
+129
+00:10:34,490 --> 00:10:37,535
+We won't go into the details of this now as
+
+130
+00:10:37,535 --> 00:10:40,730
+reusible embeddings are the focus of the next module,
+
+131
+00:10:40,730 --> 00:10:44,160
+but I will show you the difference in the training results.
+
+132
+00:10:49,290 --> 00:10:55,955
+Here, the results from the training run using a pre-trained embedding are shown in red,
+
+133
+00:10:55,955 --> 00:10:59,930
+and training embedding from scratch is shown in blue.
+
+134
+00:10:59,930 --> 00:11:02,435
+You can see that, ultimately,
+
+135
+00:11:02,435 --> 00:11:04,250
+it achieves the same accuracy.
+
+136
+00:11:04,250 --> 00:11:08,640
+However, it converges to that accuracy much more quickly.
+
+137
+00:11:11,070 --> 00:11:14,040
+You can see that ultimately,
+
+138
+00:11:14,040 --> 00:11:15,400
+it achieves the same accuracy.
+
+139
+00:11:15,400 --> 00:11:21,100
+However, it converges to that accuracy much more quickly after only 500 steps.
+
+140
+00:11:21,100 --> 00:11:23,315
+This means we can train less,
+
+141
+00:11:23,315 --> 00:11:25,515
+which saves time and money.
+
+142
+00:11:25,515 --> 00:11:29,660
+You'll find out why this works in the next section.

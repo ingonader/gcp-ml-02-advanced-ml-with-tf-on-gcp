@@ -1,0 +1,287 @@
+1
+00:00:00,000 --> 00:00:03,510
+Okay, welcome to the third lab where we're going to
+
+2
+00:00:03,510 --> 00:00:08,100
+use our CNN model to model the same synthetic dataset that we've been looking at so far.
+
+3
+00:00:08,100 --> 00:00:12,570
+In the previous labs, we've been using some synthetic data that
+
+4
+00:00:12,570 --> 00:00:17,200
+was generated from randomly varying some parameters inside some sine waves.
+
+5
+00:00:17,200 --> 00:00:19,785
+So if you recall, we have a great time series function
+
+6
+00:00:19,785 --> 00:00:21,935
+that randomly generates a frequency,
+
+7
+00:00:21,935 --> 00:00:25,435
+and amplitude and some noise, and as a result,
+
+8
+00:00:25,435 --> 00:00:27,560
+you're going to have data that looks like this,
+
+9
+00:00:27,560 --> 00:00:32,720
+where each sine wave consists of 50 observations with a randomly generated frequency,
+
+10
+00:00:32,720 --> 00:00:36,890
+randomly generated amplitude, and a little bit of noise injected there as well.
+
+11
+00:00:37,130 --> 00:00:41,780
+Then after that, what we've done is modified the model.py file in
+
+12
+00:00:41,780 --> 00:00:46,245
+order to train models locally using G Cloud ML Engine local train.
+
+13
+00:00:46,245 --> 00:00:51,380
+In order to ensure that the proper model function executes within our code,
+
+14
+00:00:51,380 --> 00:00:55,660
+we've been varying this model parameter inside this code block.
+
+15
+00:00:55,660 --> 00:00:58,190
+We started with a set of linear in order to train
+
+16
+00:00:58,190 --> 00:01:00,700
+linear models and we changed it later on DNN.
+
+17
+00:01:00,700 --> 00:01:02,630
+In this case, what we're going to do is we're going to after we
+
+18
+00:01:02,630 --> 00:01:04,845
+make modifications to the model.py file,
+
+19
+00:01:04,845 --> 00:01:07,505
+we'll change this to CNN in order to run it.
+
+20
+00:01:07,505 --> 00:01:10,900
+Let's take a look now inside model.py.
+
+21
+00:01:11,450 --> 00:01:14,180
+As we've done in previous labs,
+
+22
+00:01:14,180 --> 00:01:16,495
+we're going to take a model function
+
+23
+00:01:16,495 --> 00:01:18,970
+that we get features as
+
+24
+00:01:18,970 --> 00:01:22,265
+input and we're going to need to map those features to our predictions.
+
+25
+00:01:22,265 --> 00:01:26,035
+Now, the CNN models a little bit different from the other ones.
+
+26
+00:01:26,035 --> 00:01:28,855
+We should have ultimately something that looks like this.
+
+27
+00:01:28,855 --> 00:01:31,210
+The reason the CNN models
+
+28
+00:01:31,210 --> 00:01:34,300
+a little bit different is that we have to reshape our inputs initially.
+
+29
+00:01:34,300 --> 00:01:37,150
+So instead of simply using a dense layer here,
+
+30
+00:01:37,150 --> 00:01:39,295
+we need to add this third dimension,
+
+31
+00:01:39,295 --> 00:01:41,920
+because the convolutional function is expected.
+
+32
+00:01:41,920 --> 00:01:44,650
+So, we take our features dictionary,
+
+33
+00:01:44,650 --> 00:01:46,000
+we retrieve our data,
+
+34
+00:01:46,000 --> 00:01:49,835
+and then we reshape it to be batch size by N inputs by one.
+
+35
+00:01:49,835 --> 00:01:53,825
+After that, we can pass x to the convId one d function,
+
+36
+00:01:53,825 --> 00:01:56,090
+and just as we've seen in the previous course,
+
+37
+00:01:56,090 --> 00:01:57,610
+we have to set the number of filters,
+
+38
+00:01:57,610 --> 00:01:58,670
+the size of those filters,
+
+39
+00:01:58,670 --> 00:02:01,190
+the set of the stride value, the padding,
+
+40
+00:02:01,190 --> 00:02:04,815
+and the activation function for this kernel one d function.
+
+41
+00:02:04,815 --> 00:02:08,870
+In this case, rather than piper parameterizing the number of filters,
+
+42
+00:02:08,870 --> 00:02:10,730
+and the size of those filters and so forth,
+
+43
+00:02:10,730 --> 00:02:12,890
+I've just set some constants here that are based on
+
+44
+00:02:12,890 --> 00:02:15,150
+some general intuitions about network structure.
+
+45
+00:02:15,150 --> 00:02:17,180
+But if you wanted to code up a model for real,
+
+46
+00:02:17,180 --> 00:02:20,220
+this is where you'd pass in your hyperparameters.
+
+47
+00:02:20,480 --> 00:02:23,120
+After we've called the kernel one d function,
+
+48
+00:02:23,120 --> 00:02:26,090
+we pass it into the max pooling function which we know add
+
+49
+00:02:26,090 --> 00:02:30,595
+some spatial invariance as well as reduces the size of the intermediate results,
+
+50
+00:02:30,595 --> 00:02:33,120
+and then we repeat this whole process one more time.
+
+51
+00:02:33,120 --> 00:02:35,270
+We pass the results of the max pooling function to
+
+52
+00:02:35,270 --> 00:02:38,000
+another convolutional layer with the same parameters,
+
+53
+00:02:38,000 --> 00:02:40,880
+same filter is equal to the number of inputs divided by two,
+
+54
+00:02:40,880 --> 00:02:42,210
+same kernel size etc,
+
+55
+00:02:42,210 --> 00:02:45,365
+and then finally call max pooling one more time.
+
+56
+00:02:45,365 --> 00:02:47,565
+Then after having done this,
+
+57
+00:02:47,565 --> 00:02:52,905
+we then reshape that final layer's outputs in order to pass it through a dense layer,
+
+58
+00:02:52,905 --> 00:02:56,345
+and then finally pass that to a predictions layer which is
+
+59
+00:02:56,345 --> 00:03:00,510
+the same thing as a dense layer except as no non-linear activation.
+
+60
+00:03:02,390 --> 00:03:04,640
+After we've done that, we should be able to run
+
+61
+00:03:04,640 --> 00:03:06,875
+this code block and train a model locally.
+
+62
+00:03:06,875 --> 00:03:09,830
+If you've got a model that's trends locally,
+
+63
+00:03:09,830 --> 00:03:12,420
+then you're ready to trade in the Cloud on much more data,
+
+64
+00:03:12,420 --> 00:03:15,980
+and if you modify this final block over
+
+65
+00:03:15,980 --> 00:03:19,625
+here so that the iteration includes not just linear DNN and CNN,
+
+66
+00:03:19,625 --> 00:03:22,580
+then you will initiate three different cloud ML Engine training jobs
+
+67
+00:03:22,580 --> 00:03:24,820
+for each of those model types.
+
+68
+00:03:27,620 --> 00:03:30,645
+Here are the results that I got when I train my model,
+
+69
+00:03:30,645 --> 00:03:33,800
+and you'll notice that the CNN model didn't seem to perform that much better,
+
+70
+00:03:33,800 --> 00:03:38,620
+and in fact in my case they performed a little worse on the DNN we trained previously.
+
+71
+00:03:38,620 --> 00:03:41,545
+Why do you think that's the case?
+
+72
+00:03:41,545 --> 00:03:45,620
+Stay tuned for our lecture we will talk about this more.

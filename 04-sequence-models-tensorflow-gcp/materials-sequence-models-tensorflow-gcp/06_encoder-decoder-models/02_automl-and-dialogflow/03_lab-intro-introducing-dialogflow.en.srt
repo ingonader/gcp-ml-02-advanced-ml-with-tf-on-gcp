@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:07,635
+Now, it's time for you to create your first chatbot using Dialogflow.
+
+2
+00:00:07,635 --> 00:00:14,105
+In this lab, you will familiarize yourself with Dialogflow console,
+
+3
+00:00:14,105 --> 00:00:17,400
+learn to create intents,
+
+4
+00:00:17,400 --> 00:00:20,880
+extract data with entities,
+
+5
+00:00:20,880 --> 00:00:24,435
+manage state with contexts,
+
+6
+00:00:24,435 --> 00:00:27,735
+and tests the chatbot.
+
+7
+00:00:27,735 --> 00:00:34,045
+Don't forget, you have multiple attempt to start and stop each lab.
+
+8
+00:00:34,045 --> 00:00:39,650
+So, don't worry, if you don't make it through on the first time.
+
+9
+00:00:39,650 --> 00:00:41,860
+Also, as a tip,
+
+10
+00:00:41,860 --> 00:00:45,470
+you can take a second attempt at the lab,
+
+11
+00:00:45,470 --> 00:00:54,080
+if you just wanted to experiment with a code before watching the solution video later.

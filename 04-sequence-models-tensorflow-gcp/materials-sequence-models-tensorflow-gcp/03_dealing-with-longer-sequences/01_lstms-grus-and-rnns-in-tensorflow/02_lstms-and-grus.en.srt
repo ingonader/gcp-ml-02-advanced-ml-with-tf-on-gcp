@@ -1,0 +1,407 @@
+1
+00:00:00,000 --> 00:00:02,450
+Before we look at an LSTM cell,
+
+2
+00:00:02,450 --> 00:00:05,950
+here's a reminder of what a basic RNN cell looks like.
+
+3
+00:00:05,950 --> 00:00:08,075
+It has two inputs,
+
+4
+00:00:08,075 --> 00:00:10,140
+X_t which contains the features for
+
+5
+00:00:10,140 --> 00:00:12,825
+the current time step and H_t
+
+6
+00:00:12,825 --> 00:00:16,665
+minus one which is the hidden state from the previous time step.
+
+7
+00:00:16,665 --> 00:00:21,075
+This represents the context of all features seen before.
+
+8
+00:00:21,075 --> 00:00:25,370
+We concatenate X_t and H_t minus one,
+
+9
+00:00:25,370 --> 00:00:27,845
+multiplied by our weight matrix,
+
+10
+00:00:27,845 --> 00:00:31,720
+add our bias vector and finally squash
+
+11
+00:00:31,720 --> 00:00:36,530
+the resulting vector to between negative one and one using the tanh function.
+
+12
+00:00:36,530 --> 00:00:41,230
+This gives us our state to pass to the next time step, H_t.
+
+13
+00:00:41,360 --> 00:00:45,860
+You may also hear H_t be referred to as the activation
+
+14
+00:00:45,860 --> 00:00:50,200
+because it is the result after applying the activation function, tanh.
+
+15
+00:00:50,200 --> 00:00:55,655
+Some people also refer to H_t as the output of the RNN.
+
+16
+00:00:55,655 --> 00:00:59,010
+So, that was a simple RNN cell,
+
+17
+00:00:59,010 --> 00:01:02,190
+let's contrast that with an LSTM cell.
+
+18
+00:01:02,190 --> 00:01:05,715
+First observe that an unrolled LSTM network,
+
+19
+00:01:05,715 --> 00:01:07,310
+pictured in the lower left,
+
+20
+00:01:07,310 --> 00:01:12,000
+looks exactly the same as a simple RNN network from the outside.
+
+21
+00:01:12,000 --> 00:01:16,375
+It's only when we zoom into the cell that we see the differences.
+
+22
+00:01:16,375 --> 00:01:21,535
+The first thing you may notice is that instead of having two inputs and one output,
+
+23
+00:01:21,535 --> 00:01:25,070
+our cell now has three inputs and two outputs.
+
+24
+00:01:25,070 --> 00:01:31,370
+Namely, we've added a second state vector called C. By convention,
+
+25
+00:01:31,370 --> 00:01:32,990
+we call this new state vector
+
+26
+00:01:32,990 --> 00:01:37,430
+the cell state and the original state vector, our hidden state.
+
+27
+00:01:37,430 --> 00:01:43,300
+You may also hear the cell state referred to as the LSTM's memory.
+
+28
+00:01:43,300 --> 00:01:49,030
+Now, another thing you may notice is that the line along the bottom of the cell,
+
+29
+00:01:49,030 --> 00:01:50,994
+which represents the cell state,
+
+30
+00:01:50,994 --> 00:01:52,850
+allows information to pass through in
+
+31
+00:01:52,850 --> 00:01:56,120
+a much more straightforward path than the hidden state.
+
+32
+00:01:56,120 --> 00:01:59,570
+One intuition is to think of this added cell state as
+
+33
+00:01:59,570 --> 00:02:04,190
+a conveyor belt that makes it easy for state to pass through unchanged.
+
+34
+00:02:04,190 --> 00:02:08,000
+It's actually the same principle as a shortcut connection like
+
+35
+00:02:08,000 --> 00:02:12,050
+the ones used in resonance which we talked about in the course on image models.
+
+36
+00:02:12,050 --> 00:02:14,480
+Isn't it cool to see a similar solution to
+
+37
+00:02:14,480 --> 00:02:17,890
+the same problem just applied in different context?
+
+38
+00:02:17,890 --> 00:02:20,510
+If the intuition isn't clicking yet,
+
+39
+00:02:20,510 --> 00:02:25,435
+maybe it'll make more sense when you look at this cell from a mathematical point of view.
+
+40
+00:02:25,435 --> 00:02:32,130
+Now, fair warning, there will be a lot of equations on the next slide but don't panic.
+
+41
+00:02:32,130 --> 00:02:36,080
+The ideas are far more simple than the equations make them look.
+
+42
+00:02:36,080 --> 00:02:39,980
+Here, we'll use an abbreviated notation that X
+
+43
+00:02:39,980 --> 00:02:44,095
+equals the concatenation of X_t and H_t minus one.
+
+44
+00:02:44,095 --> 00:02:46,940
+This is just to make the remaining equations more compact.
+
+45
+00:02:46,940 --> 00:02:48,425
+In an LSTM cell,
+
+46
+00:02:48,425 --> 00:02:50,215
+we compute three gates.
+
+47
+00:02:50,215 --> 00:02:52,945
+We call these forget,
+
+48
+00:02:52,945 --> 00:02:55,875
+update and output gates.
+
+49
+00:02:55,875 --> 00:02:59,285
+The gates correspond to the lowercase sigmas on the diagram.
+
+50
+00:02:59,285 --> 00:03:02,390
+Each gate has its own weight matrix which allows the cell to
+
+51
+00:03:02,390 --> 00:03:06,800
+independently learn what is important to remember and what can be forgotten.
+
+52
+00:03:06,800 --> 00:03:09,980
+So, while simple RNNs have only one weight matrix
+
+53
+00:03:09,980 --> 00:03:14,185
+that is shared across time, LSTMs have four.
+
+54
+00:03:14,185 --> 00:03:18,740
+After multiplying each gate by its respective weight matrix,
+
+55
+00:03:18,740 --> 00:03:21,470
+each gate squashes the resulting vector to numbers
+
+56
+00:03:21,470 --> 00:03:25,000
+between zero and one using the sigmoid function.
+
+57
+00:03:25,000 --> 00:03:30,270
+Now, if you think about multiplying the squash vector by some other signal,
+
+58
+00:03:30,270 --> 00:03:32,635
+you can see how it acts as a gate.
+
+59
+00:03:32,635 --> 00:03:36,765
+Values close to zero will kill most of the input signal,
+
+60
+00:03:36,765 --> 00:03:41,050
+values close to one will let the signal pass through nearly unchanged.
+
+61
+00:03:41,050 --> 00:03:43,035
+Next, we have our input layer.
+
+62
+00:03:43,035 --> 00:03:47,285
+You may recognize this as the equation we had in our simple RNN cell.
+
+63
+00:03:47,285 --> 00:03:49,340
+In the LSTM cell, however,
+
+64
+00:03:49,340 --> 00:03:51,170
+is just one of six equations.
+
+65
+00:03:51,170 --> 00:03:54,250
+The next equation is where things start coming together.
+
+66
+00:03:54,250 --> 00:03:56,585
+Remember that C is our cell state,
+
+67
+00:03:56,585 --> 00:03:58,385
+our conveyor belt of sorts.
+
+68
+00:03:58,385 --> 00:04:00,590
+The cell state for the next time step is
+
+69
+00:04:00,590 --> 00:04:03,605
+calculated as the cell state from the previous time step
+
+70
+00:04:03,605 --> 00:04:07,110
+multiplied by what we learn to forget plus
+
+71
+00:04:07,110 --> 00:04:10,645
+our new input layer multiplied by what we choose to remember.
+
+72
+00:04:10,645 --> 00:04:13,820
+Finally, our hidden state is calculated
+
+73
+00:04:13,820 --> 00:04:17,300
+as the cell state squashed to between one and negative
+
+74
+00:04:17,300 --> 00:04:20,960
+one by tanh then multiplied by our output gate
+
+75
+00:04:20,960 --> 00:04:24,780
+which determines what part of the cell state to expose to the hidden state.
+
+76
+00:04:24,780 --> 00:04:28,995
+Our final hidden state is what we'd expose as our cell output.
+
+77
+00:04:28,995 --> 00:04:33,775
+So, perhaps it's a bit of a misnomer that this is called the hidden state.
+
+78
+00:04:33,775 --> 00:04:38,175
+In summary, we're giving our cell the ability to control,
+
+79
+00:04:38,175 --> 00:04:40,635
+what to forget from the cell state,
+
+80
+00:04:40,635 --> 00:04:42,560
+what new data to store into
+
+81
+00:04:42,560 --> 00:04:48,600
+the cell state and what data from the cell state to expose to the hidden state.
+
+82
+00:04:48,600 --> 00:04:51,890
+Now, if that particular collection of equations
+
+83
+00:04:51,890 --> 00:04:55,460
+seemed somewhat arbitrary to you, you're onto something.
+
+84
+00:04:55,460 --> 00:04:58,820
+In fact, there are many variants of
+
+85
+00:04:58,820 --> 00:05:03,315
+those equations that all works similarly well with long sequences.
+
+86
+00:05:03,315 --> 00:05:06,830
+You may have heard of one of such variants of
+
+87
+00:05:06,830 --> 00:05:11,290
+LSTM called GRU which stands for Gated Recurrent Unit.
+
+88
+00:05:11,290 --> 00:05:13,775
+GRU cells, like LSTMs,
+
+89
+00:05:13,775 --> 00:05:18,085
+use sigmoid gates to control what to remember and what to forget.
+
+90
+00:05:18,085 --> 00:05:22,385
+But GRU cells do it in a simpler and more efficient manner requiring
+
+91
+00:05:22,385 --> 00:05:28,530
+only one state vector instead of two and only two sigmoid gates instead of three.
+
+92
+00:05:28,530 --> 00:05:33,240
+Many people prefer to use GRU as their default over
+
+93
+00:05:33,240 --> 00:05:38,715
+LSTM because it yields similar performance while requiring less compute power.
+
+94
+00:05:38,715 --> 00:05:43,190
+We'll use GRU as our cell of choice in the upcoming labs.
+
+95
+00:05:43,190 --> 00:05:46,455
+How many weight matrices do a simple RNN,
+
+96
+00:05:46,455 --> 00:05:50,470
+LSTM, and GRU cell have respectively?
+
+97
+00:05:50,470 --> 00:05:55,700
+The correct answer is one, four, and three.
+
+98
+00:05:55,700 --> 00:06:01,690
+A simple RNN has just one weight matrix which is used to calculate its hidden state.
+
+99
+00:06:01,690 --> 00:06:07,525
+LSTMs and GRUs add one weight matrix for each sigmoid gate they calculate.
+
+100
+00:06:07,525 --> 00:06:12,225
+An LSTM has three gates but a GRU only has two.
+
+101
+00:06:12,225 --> 00:06:15,710
+The number of weight matrices does not depend on the number of
+
+102
+00:06:15,710 --> 00:06:19,720
+time steps because the same weights are shared across time.

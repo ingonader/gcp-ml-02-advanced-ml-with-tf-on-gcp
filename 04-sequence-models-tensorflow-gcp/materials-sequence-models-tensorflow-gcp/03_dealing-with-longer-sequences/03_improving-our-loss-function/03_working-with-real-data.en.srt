@@ -1,0 +1,699 @@
+1
+00:00:00,290 --> 00:00:03,075
+I hope you enjoyed that last demo,
+
+2
+00:00:03,075 --> 00:00:05,290
+and got a sense for how, with RNNs,
+
+3
+00:00:05,290 --> 00:00:08,190
+we can build a more robust loss function by
+
+4
+00:00:08,190 --> 00:00:12,030
+taking into account multiple predictions instead of just one.
+
+5
+00:00:12,030 --> 00:00:18,135
+Now, let's shift gears away from the model for a moment and focus on the data.
+
+6
+00:00:18,135 --> 00:00:21,495
+Up until now, we've been using synthetic data.
+
+7
+00:00:21,495 --> 00:00:23,930
+This was great for getting our feet wet,
+
+8
+00:00:23,930 --> 00:00:25,590
+but it protected you from many of
+
+9
+00:00:25,590 --> 00:00:29,700
+the logistical details of modeling a real-world sequential data-set.
+
+10
+00:00:29,700 --> 00:00:33,230
+Now, it's time to take the training wheels off.
+
+11
+00:00:33,230 --> 00:00:37,950
+We're going to build a model to predict temperature at a given location,
+
+12
+00:00:37,950 --> 00:00:40,055
+given previous daily temperatures,
+
+13
+00:00:40,055 --> 00:00:41,910
+at that same location.
+
+14
+00:00:41,910 --> 00:00:48,340
+Luckily, there's a publicly available data set that gives us daily temperature readings.
+
+15
+00:00:48,340 --> 00:00:52,780
+It's called the Global Historical Climate Network daily,
+
+16
+00:00:52,780 --> 00:00:56,650
+and it consists of daily temperature and precipitation records from over
+
+17
+00:00:56,650 --> 00:01:01,210
+100,000 weather stations across over 180 countries.
+
+18
+00:01:01,210 --> 00:01:03,645
+To allow for fast iteration,
+
+19
+00:01:03,645 --> 00:01:08,870
+we've selected data from 36 of these weather stations to use in our model.
+
+20
+00:01:09,190 --> 00:01:14,105
+The first issue we'll tackle is how to split up our sequences.
+
+21
+00:01:14,105 --> 00:01:16,075
+In our sprinkler lab,
+
+22
+00:01:16,075 --> 00:01:20,110
+we limited our generated sequences to a length of 50.
+
+23
+00:01:20,110 --> 00:01:24,445
+This was short enough that we didn't have to split up our sequences further.
+
+24
+00:01:24,445 --> 00:01:26,615
+In our new data set,
+
+25
+00:01:26,615 --> 00:01:28,460
+instead of 50 time steps,
+
+26
+00:01:28,460 --> 00:01:32,595
+each weather station has 50 years of daily temperature readings.
+
+27
+00:01:32,595 --> 00:01:37,095
+That gives us a sequence length of over 18,000.
+
+28
+00:01:37,095 --> 00:01:40,520
+Now, while it's true that LTMs are better than
+
+29
+00:01:40,520 --> 00:01:43,370
+simple RNNs at dealing with long sequences,
+
+30
+00:01:43,370 --> 00:01:45,045
+even they have their limit.
+
+31
+00:01:45,045 --> 00:01:50,480
+Clearly, we're no longer going to be able to feed in the whole sequence at once.
+
+32
+00:01:50,480 --> 00:01:53,700
+Instead, we'll chop the sequence,
+
+33
+00:01:53,700 --> 00:01:55,930
+and feed it in bit by bit.
+
+34
+00:01:55,930 --> 00:01:58,280
+This gives us two advantages.
+
+35
+00:01:58,280 --> 00:02:01,880
+First, shorter sequences are easier to train,
+
+36
+00:02:01,880 --> 00:02:05,795
+and second, it's the kind of data augmentation.
+
+37
+00:02:05,795 --> 00:02:09,860
+Instead of having just 36 really long sequences,
+
+38
+00:02:09,860 --> 00:02:11,660
+one for each weather station,
+
+39
+00:02:11,660 --> 00:02:13,340
+we get more training records,
+
+40
+00:02:13,340 --> 00:02:19,210
+because we're creating several smaller sequences from each larger real-world sequence.
+
+41
+00:02:19,290 --> 00:02:23,175
+Now, that we know why we need to split up our sequences,
+
+42
+00:02:23,175 --> 00:02:25,220
+let's talk about how.
+
+43
+00:02:25,220 --> 00:02:30,320
+The blessing and the curse of RNNs is that they're incredibly flexible.
+
+44
+00:02:30,320 --> 00:02:35,285
+There are several ways we can feed the same source data into an RNN,
+
+45
+00:02:35,285 --> 00:02:38,620
+and it's not always obvious what the best way is.
+
+46
+00:02:38,620 --> 00:02:42,375
+Ultimately, empirical evidence will be our guide.
+
+47
+00:02:42,375 --> 00:02:46,185
+We try something, observe some objective metric,
+
+48
+00:02:46,185 --> 00:02:49,680
+then try something else to see if we can improve that metric.
+
+49
+00:02:49,680 --> 00:02:54,220
+Two hyper-parameters to experiment with are, number one,
+
+50
+00:02:54,220 --> 00:02:56,390
+how long should each sub-sequence be,
+
+51
+00:02:56,390 --> 00:03:02,500
+and number two, how much should each sub-sequence overlap.
+
+52
+00:03:02,500 --> 00:03:06,180
+For the first consideration, sequence length,
+
+53
+00:03:06,180 --> 00:03:10,175
+we want a sequence long enough to capture any relevant context,
+
+54
+00:03:10,175 --> 00:03:15,275
+but no longer, because at that point we're just making it harder to train.
+
+55
+00:03:15,275 --> 00:03:18,410
+If I'm trying to predict tomorrow's weather,
+
+56
+00:03:18,410 --> 00:03:22,740
+maybe knowing the weather patterns for the last ten days is enough context.
+
+57
+00:03:22,740 --> 00:03:26,224
+But then again, since temperature cycles are annual,
+
+58
+00:03:26,224 --> 00:03:30,530
+maybe I'll get better performance if I unroll for a full year,
+
+59
+00:03:30,530 --> 00:03:33,945
+which would be a sequence length of 365.
+
+60
+00:03:33,945 --> 00:03:39,020
+It's good to form such hypotheses by reasoning about the problem,
+
+61
+00:03:39,020 --> 00:03:42,810
+but ultimately, we have to test to see what works best.
+
+62
+00:03:43,010 --> 00:03:46,125
+Once we have our sequence length determined,
+
+63
+00:03:46,125 --> 00:03:52,005
+we also need to determine if we want overlapping or non-overlapping sequences.
+
+64
+00:03:52,005 --> 00:03:56,195
+Here's an example of non-overlapping sequences.
+
+65
+00:03:56,195 --> 00:04:01,195
+Our original sequence is split into two mutually exclusive sequences,
+
+66
+00:04:01,195 --> 00:04:06,635
+and you can see sequence two picks up where sequence one left off.
+
+67
+00:04:06,635 --> 00:04:10,260
+Here, we overlap our sequences.
+
+68
+00:04:10,260 --> 00:04:13,280
+We still have the same sub-sequence length,
+
+69
+00:04:13,280 --> 00:04:19,160
+but overlapping enables us to get more training examples from the same source sequence.
+
+70
+00:04:19,160 --> 00:04:21,055
+This is why, most commonly,
+
+71
+00:04:21,055 --> 00:04:24,280
+you'll see overlapping sub-sequences.
+
+72
+00:04:24,280 --> 00:04:27,185
+However, if we don't overlap,
+
+73
+00:04:27,185 --> 00:04:29,780
+we can take advantage of a clever trick which
+
+74
+00:04:29,780 --> 00:04:33,015
+indirectly allows us to train our longer sequences,
+
+75
+00:04:33,015 --> 00:04:37,845
+while still applying weight updates over a smaller sequence length.
+
+76
+00:04:37,845 --> 00:04:41,810
+The trick is to use the final state vector from
+
+77
+00:04:41,810 --> 00:04:46,114
+a previous sequence to initialize the state of the next sequence.
+
+78
+00:04:46,114 --> 00:04:49,215
+We'll use this trick in our upcoming lab.
+
+79
+00:04:49,215 --> 00:04:51,890
+Of course, this will only work if
+
+80
+00:04:51,890 --> 00:04:56,010
+the next sequence actually picks up where the last sequence left off.
+
+81
+00:04:56,010 --> 00:05:01,985
+In other words, successive sequences need to be continuous and non-overlapping.
+
+82
+00:05:01,985 --> 00:05:04,215
+If you take this approach,
+
+83
+00:05:04,215 --> 00:05:06,590
+you need to take care in your input function,
+
+84
+00:05:06,590 --> 00:05:09,560
+to make sure each row and each batch picks
+
+85
+00:05:09,560 --> 00:05:13,665
+up where the respective row and the last batch left off.
+
+86
+00:05:13,665 --> 00:05:17,030
+Note, in the diagram how the first row of
+
+87
+00:05:17,030 --> 00:05:20,895
+the batch is always a continuation of weather station one,
+
+88
+00:05:20,895 --> 00:05:25,345
+and the second row is always a continuation of weather station two.
+
+89
+00:05:25,345 --> 00:05:30,545
+To summarize, you can split your source sequence into smaller sub-sequences,
+
+90
+00:05:30,545 --> 00:05:34,890
+and those sub-sequences can be overlapping or non-overlapping.
+
+91
+00:05:34,890 --> 00:05:37,669
+However, you decide to split up your sequence,
+
+92
+00:05:37,669 --> 00:05:41,565
+you'll need to write code to implement it in your input function.
+
+93
+00:05:41,565 --> 00:05:44,800
+We'll provide this code for you in the lab,
+
+94
+00:05:44,800 --> 00:05:48,970
+but I encourage you to look over it and try to understand it.
+
+95
+00:05:49,430 --> 00:05:52,070
+Another issue you may need to handle,
+
+96
+00:05:52,070 --> 00:05:53,995
+is predicting not just one,
+
+97
+00:05:53,995 --> 00:05:56,270
+but multiple time steps ahead.
+
+98
+00:05:56,270 --> 00:05:59,290
+For example, let's say I want to be able to
+
+99
+00:05:59,290 --> 00:06:01,915
+forecast the temperatures for the next ten days,
+
+100
+00:06:01,915 --> 00:06:03,865
+instead of just tomorrow.
+
+101
+00:06:03,865 --> 00:06:05,855
+One way to approach this,
+
+102
+00:06:05,855 --> 00:06:10,515
+is to use a different model architecture called an encoder decoder model.
+
+103
+00:06:10,515 --> 00:06:14,630
+We'll cover encoder decoder models later on in this course.
+
+104
+00:06:14,630 --> 00:06:19,590
+However, there's another way to do this without changing our model at all.
+
+105
+00:06:19,590 --> 00:06:24,310
+The idea is to train a model to predict just the next time step,
+
+106
+00:06:24,310 --> 00:06:26,935
+but then take that prediction and feed it
+
+107
+00:06:26,935 --> 00:06:30,445
+back into the model to generate the next prediction.
+
+108
+00:06:30,445 --> 00:06:34,780
+That prediction would now represent two time steps ahead.
+
+109
+00:06:34,780 --> 00:06:37,195
+If we continue in this manner,
+
+110
+00:06:37,195 --> 00:06:40,080
+we can generate sequences as long as we'd like.
+
+111
+00:06:40,080 --> 00:06:42,710
+Of course, the further out we go,
+
+112
+00:06:42,710 --> 00:06:46,570
+the more we can expect our prediction quality to decline.
+
+113
+00:06:46,570 --> 00:06:51,995
+It's important here, that we need to pass both the output
+
+114
+00:06:51,995 --> 00:06:58,510
+'y' and output state 'h' as the next input and input state respectively.
+
+115
+00:06:58,510 --> 00:07:01,280
+If we forget to pass the state,
+
+116
+00:07:01,280 --> 00:07:05,850
+then the next prediction would be based on just one time step of information,
+
+117
+00:07:05,850 --> 00:07:09,670
+instead of the contexts from all previous time steps.
+
+118
+00:07:09,910 --> 00:07:15,285
+Here are some other things to consider when working with real world data.
+
+119
+00:07:15,285 --> 00:07:17,705
+Do we need to re-sample our data?
+
+120
+00:07:17,705 --> 00:07:20,975
+Should I build one model or multiple models,
+
+121
+00:07:20,975 --> 00:07:24,565
+and should I incorporate non-sequential data?
+
+122
+00:07:24,565 --> 00:07:28,380
+Let's briefly consider each of these.
+
+123
+00:07:29,290 --> 00:07:33,100
+First, we'll consider re-sampling data.
+
+124
+00:07:33,100 --> 00:07:36,860
+Let's say that we wanted to predict daily average temperature,
+
+125
+00:07:36,860 --> 00:07:40,610
+but our source data provided temperature reading every minute.
+
+126
+00:07:40,610 --> 00:07:43,760
+That's far more granularity than we need,
+
+127
+00:07:43,760 --> 00:07:47,290
+and would result in unnecessarily long sequences.
+
+128
+00:07:47,290 --> 00:07:54,020
+One reading per minute means 1,440 readings per day.
+
+129
+00:07:54,020 --> 00:07:57,470
+Since we only care about daily granularity,
+
+130
+00:07:57,470 --> 00:08:01,880
+we'd be better off using a pre-processing step that takes all 1,000
+
+131
+00:08:01,880 --> 00:08:07,215
+plus readings from each day and averages them into a single value.
+
+132
+00:08:07,215 --> 00:08:11,720
+The creation of a daily average temperature data-set from
+
+133
+00:08:11,720 --> 00:08:16,680
+a source set that had temperature by minute, is called re-sampling.
+
+134
+00:08:16,740 --> 00:08:21,880
+Now, let's consider the one model versus multiple models issue.
+
+135
+00:08:21,880 --> 00:08:25,940
+We have data from 36 different weather stations.
+
+136
+00:08:25,940 --> 00:08:30,840
+Does this mean we need to train multiple models, one per-station?
+
+137
+00:08:30,840 --> 00:08:34,070
+It depends on whether we want to assume
+
+138
+00:08:34,070 --> 00:08:37,125
+that weather patterns learn from one group of stations,
+
+139
+00:08:37,125 --> 00:08:39,965
+generalize to another group of stations.
+
+140
+00:08:39,965 --> 00:08:42,630
+In our lab, we will make that assumption,
+
+141
+00:08:42,630 --> 00:08:47,035
+and so we can feed in all station data into a single model.
+
+142
+00:08:47,035 --> 00:08:50,870
+If we didn't want to make that assumption and believed that
+
+143
+00:08:50,870 --> 00:08:55,390
+weather patterns from different weather stations were fundamentally different,
+
+144
+00:08:55,390 --> 00:08:59,525
+we could then build a separate model for each station.
+
+145
+00:08:59,525 --> 00:09:02,659
+However, if we have thousands of stations,
+
+146
+00:09:02,659 --> 00:09:05,570
+training a model for every station would be inefficient.
+
+147
+00:09:05,570 --> 00:09:07,790
+Also, we're unlikely to have
+
+148
+00:09:07,790 --> 00:09:12,350
+enough training data for all weather stations we want to make forecasts for.
+
+149
+00:09:12,350 --> 00:09:14,480
+A better approach would be to pick
+
+150
+00:09:14,480 --> 00:09:17,910
+some descriptive variables that we know about all stations.
+
+151
+00:09:17,910 --> 00:09:20,635
+For example, latitude and longitude,
+
+152
+00:09:20,635 --> 00:09:24,270
+and combine those variables into our model.
+
+153
+00:09:24,270 --> 00:09:27,980
+This approach would generalize to new stations,
+
+154
+00:09:27,980 --> 00:09:30,785
+yet still take into account characteristics about
+
+155
+00:09:30,785 --> 00:09:34,750
+each station that make it different from other stations.
+
+156
+00:09:34,750 --> 00:09:37,865
+This brings us to our last consideration.
+
+157
+00:09:37,865 --> 00:09:40,670
+Let's say we did want to take the approach of feeding
+
+158
+00:09:40,670 --> 00:09:44,285
+in latitude and longitude into our model.
+
+159
+00:09:44,285 --> 00:09:46,685
+How would we do that?
+
+160
+00:09:46,685 --> 00:09:53,715
+A naive approach would be to simply add these as inputs to our RNN during each time step.
+
+161
+00:09:53,715 --> 00:09:57,165
+However, since these variables are constant,
+
+162
+00:09:57,165 --> 00:10:00,235
+which is to say, they don't change over-time,
+
+163
+00:10:00,235 --> 00:10:06,200
+feeding them into an RNN which is designed for time series data, is at best,
+
+164
+00:10:06,200 --> 00:10:08,590
+wasted computation, and at worst,
+
+165
+00:10:08,590 --> 00:10:12,735
+adding noise to the signal of the true time series features.
+
+166
+00:10:12,735 --> 00:10:16,880
+A better approach would be to add the non-sequential features
+
+167
+00:10:16,880 --> 00:10:21,230
+as inputs to the DNN layer that sits after the RNN.
+
+168
+00:10:21,230 --> 00:10:24,185
+In other words, instead of just passing
+
+169
+00:10:24,185 --> 00:10:27,955
+our hidden state from the RNN as the input to the DNN,
+
+170
+00:10:27,955 --> 00:10:32,105
+we would pass the concatenation of our non-sequential features,
+
+171
+00:10:32,105 --> 00:10:35,845
+and our RNN hidden state to the DNN.
+
+172
+00:10:35,845 --> 00:10:38,410
+In our daily temperature model,
+
+173
+00:10:38,410 --> 00:10:41,480
+we could even use this approach to pass the temperature
+
+174
+00:10:41,480 --> 00:10:45,230
+on a given day from a previous year, as a feature.
+
+175
+00:10:45,230 --> 00:10:47,910
+That would really give our model a head-start.

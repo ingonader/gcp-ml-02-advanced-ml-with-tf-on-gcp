@@ -1,0 +1,691 @@
+1
+00:00:00,060 --> 00:00:03,720
+In the last section, we introduced matrix factorization
+
+2
+00:00:03,720 --> 00:00:06,570
+as a way to construct embeddings directly from statistics.
+
+3
+00:00:06,570 --> 00:00:08,520
+However, the problem with this approach,
+
+4
+00:00:08,520 --> 00:00:10,190
+is that it's too complex.
+
+5
+00:00:10,190 --> 00:00:14,050
+The time complexity for matrix factorization is approximately quadratic,
+
+6
+00:00:14,050 --> 00:00:15,920
+with respect to the smaller of the two sets,
+
+7
+00:00:15,920 --> 00:00:18,220
+the set of terms or the set of documents,
+
+8
+00:00:18,220 --> 00:00:22,050
+and there are hundreds of thousands of words in English and the more documents we have,
+
+9
+00:00:22,050 --> 00:00:23,775
+the better our representations will be.
+
+10
+00:00:23,775 --> 00:00:26,125
+So, quadratic is not good.
+
+11
+00:00:26,125 --> 00:00:30,830
+More recently, researchers have begun to approach the process of creating embeddings,
+
+12
+00:00:30,830 --> 00:00:33,980
+not by deciding how the objects being modeled to be compared,
+
+13
+00:00:33,980 --> 00:00:36,240
+which is what the psychologists did or through
+
+14
+00:00:36,240 --> 00:00:39,260
+matrix factorization techniques that minimize reconstruction error,
+
+15
+00:00:39,260 --> 00:00:40,825
+like latent semantic analysis,
+
+16
+00:00:40,825 --> 00:00:44,840
+but instead by using methods similar to what we've used in this course.
+
+17
+00:00:44,840 --> 00:00:46,880
+What they did was to train a model on
+
+18
+00:00:46,880 --> 00:00:49,340
+a task that required an understanding of the domain,
+
+19
+00:00:49,340 --> 00:00:52,130
+and then treated the first layer of the model as the embedding,
+
+20
+00:00:52,130 --> 00:00:54,960
+in effect, using transfer learning.
+
+21
+00:00:54,980 --> 00:00:59,780
+One recent and influential example of this approach is called Word2Vec.
+
+22
+00:00:59,780 --> 00:01:03,170
+It belongs to a family of shallow window-based approaches that
+
+23
+00:01:03,170 --> 00:01:06,410
+borrow the idea of a context window to define co-occurrence,
+
+24
+00:01:06,410 --> 00:01:10,180
+but don't actually construct a full matrix of co-occurrence statistics.
+
+25
+00:01:10,180 --> 00:01:13,850
+Instead, these approaches used the contents of the sliding window to
+
+26
+00:01:13,850 --> 00:01:16,115
+transform the sequence of words in the corpus
+
+27
+00:01:16,115 --> 00:01:18,770
+into features and labels for their machine learning task,
+
+28
+00:01:18,770 --> 00:01:22,045
+and it's like the same thing we did in the first module.
+
+29
+00:01:22,045 --> 00:01:24,940
+However, unlike what we did in module one,
+
+30
+00:01:24,940 --> 00:01:28,235
+where we where we use the final event in the window as the label,
+
+31
+00:01:28,235 --> 00:01:31,550
+these researchers use the word at the center of the window as the feature,
+
+32
+00:01:31,550 --> 00:01:34,170
+and its surrounding context as the label.
+
+33
+00:01:34,170 --> 00:01:36,880
+We call these words that surround the central word,
+
+34
+00:01:36,880 --> 00:01:39,050
+the positive words for a particular example,
+
+35
+00:01:39,050 --> 00:01:42,605
+and the remaining words in the corpus as negative words.
+
+36
+00:01:42,605 --> 00:01:45,625
+The model's task is to maximize the likelihood of
+
+37
+00:01:45,625 --> 00:01:49,820
+positive words and minimize the likelihood of negative words.
+
+38
+00:01:49,820 --> 00:01:53,830
+The architecture of the neural network in Word2Vec was actually very simple,
+
+39
+00:01:53,830 --> 00:01:55,380
+it contained an input layer,
+
+40
+00:01:55,380 --> 00:01:57,925
+a dense hidden layer and output layer.
+
+41
+00:01:57,925 --> 00:02:00,310
+The input layer had one node for every word in
+
+42
+00:02:00,310 --> 00:02:04,455
+the vocabulary plus one additional one for out of vocabulary words.
+
+43
+00:02:04,455 --> 00:02:08,000
+The hidden layer contains a non-linear activation function and
+
+44
+00:02:08,000 --> 00:02:09,710
+the researchers trained different versions of
+
+45
+00:02:09,710 --> 00:02:12,555
+the model with different numbers of hidden layer nodes.
+
+46
+00:02:12,555 --> 00:02:16,635
+The output layer had a node for every word in the vocabulary.
+
+47
+00:02:16,635 --> 00:02:19,910
+But researchers found that it was not practical to use
+
+48
+00:02:19,910 --> 00:02:22,745
+our normal full cross entropy for this architecture.
+
+49
+00:02:22,745 --> 00:02:27,040
+Why was normal cross-entropy impractical in this case?
+
+50
+00:02:28,820 --> 00:02:32,240
+The answer has to do with the number of classes.
+
+51
+00:02:32,240 --> 00:02:34,490
+If you think about the soft max equation,
+
+52
+00:02:34,490 --> 00:02:38,660
+its denominator requires summering over the entire set of output nodes,
+
+53
+00:02:38,660 --> 00:02:42,110
+and this calculation gets expensive when you have a large number of classes,
+
+54
+00:02:42,110 --> 00:02:45,920
+as you do when your set of labels is the size of the vocabulary.
+
+55
+00:02:45,920 --> 00:02:48,645
+Instead of computing normal cross entropy,
+
+56
+00:02:48,645 --> 00:02:51,260
+the authors of Word2Vec used negative sampling to make
+
+57
+00:02:51,260 --> 00:02:55,550
+cross-entropy less expensive without negatively impacting performance.
+
+58
+00:02:55,550 --> 00:02:59,600
+Negative sampling works by shrinking the denominator in softmax.
+
+59
+00:02:59,600 --> 00:03:01,690
+Instead of summing over all classes,
+
+60
+00:03:01,690 --> 00:03:03,580
+which is in this case is our vocabulary,
+
+61
+00:03:03,580 --> 00:03:05,380
+it sums over a smaller subset.
+
+62
+00:03:05,380 --> 00:03:08,040
+To understand how to arrive at the subset,
+
+63
+00:03:08,040 --> 00:03:10,420
+think back to the original Word2Vec task.
+
+64
+00:03:10,420 --> 00:03:12,920
+It trains the model to maximize the likelihood of
+
+65
+00:03:12,920 --> 00:03:16,350
+positive words and minimize the likelihood of negative words.
+
+66
+00:03:16,350 --> 00:03:18,270
+What the authors of Word2Vec realize,
+
+67
+00:03:18,270 --> 00:03:22,555
+is that because of the size of the context window relative to the size of the vocabulary,
+
+68
+00:03:22,555 --> 00:03:26,405
+the vast majority of words will be negative for a given training example.
+
+69
+00:03:26,405 --> 00:03:28,910
+Their idea was to compute the softmax using
+
+70
+00:03:28,910 --> 00:03:32,330
+all the positive words and a random sample of the negative ones,
+
+71
+00:03:32,330 --> 00:03:34,635
+and that's where this technique got its name.
+
+72
+00:03:34,635 --> 00:03:37,045
+Using a subset of words in softmax,
+
+73
+00:03:37,045 --> 00:03:39,835
+cut down the number of weight updates needed,
+
+74
+00:03:39,835 --> 00:03:42,890
+but the resulting network still performed well.
+
+75
+00:03:42,890 --> 00:03:45,350
+For example, if the original sentence was "A
+
+76
+00:03:45,350 --> 00:03:47,800
+little red fluffy dog wanders down the road,"
+
+77
+00:03:47,800 --> 00:03:52,685
+assuming our input word is dog and our context window extends four words to either side,
+
+78
+00:03:52,685 --> 00:03:57,155
+we would have eight total positive words and a few 100,000 negative ones.
+
+79
+00:03:57,155 --> 00:04:00,590
+Negative sampling would only use a portion of those though.
+
+80
+00:04:00,590 --> 00:04:02,760
+Even with negative sampling,
+
+81
+00:04:02,760 --> 00:04:06,625
+constructing word representations can be a computationally expensive task.
+
+82
+00:04:06,625 --> 00:04:08,780
+One way of reducing its costs further,
+
+83
+00:04:08,780 --> 00:04:11,225
+is to use fewer examples of common words.
+
+84
+00:04:11,225 --> 00:04:13,360
+Consider our previous example sentence.
+
+85
+00:04:13,360 --> 00:04:16,040
+In addition to positive words like little and road,
+
+86
+00:04:16,040 --> 00:04:18,110
+which provides some semantic information,
+
+87
+00:04:18,110 --> 00:04:21,515
+there are also words that don't really help understand the idea of dog,
+
+88
+00:04:21,515 --> 00:04:23,590
+like a and the.
+
+89
+00:04:23,590 --> 00:04:28,030
+Using fewer of these sorts of positive words cut down the size of the dataset,
+
+90
+00:04:28,030 --> 00:04:29,540
+and further improved accuracy.
+
+91
+00:04:29,540 --> 00:04:33,560
+Part of the reason that Word2Vec is become so widely known,
+
+92
+00:04:33,560 --> 00:04:37,385
+is because the embeddings that produced exhibited semantic compositionality.
+
+93
+00:04:37,385 --> 00:04:40,250
+That is, you could take to embeddings and combine them using
+
+94
+00:04:40,250 --> 00:04:44,320
+mathematical operations and get results that were semantically plausible.
+
+95
+00:04:44,320 --> 00:04:48,675
+For example, the add operation seems to work just like an end.
+
+96
+00:04:48,675 --> 00:04:51,050
+In this table, I've put the embeddings that were
+
+97
+00:04:51,050 --> 00:04:53,900
+added in the four closest resulting embeddings.
+
+98
+00:04:53,900 --> 00:04:57,035
+For example, when you add Vietnam and capital,
+
+99
+00:04:57,035 --> 00:04:58,390
+the first result is Hanoi,
+
+100
+00:04:58,390 --> 00:05:00,160
+which is indeed the capital.
+
+101
+00:05:00,160 --> 00:05:04,250
+However, performance window-based methods like Word2Vec may be,
+
+102
+00:05:04,250 --> 00:05:06,970
+they are still optimizing using a noisy signal,
+
+103
+00:05:06,970 --> 00:05:09,855
+the individual sequences of words in a corpus.
+
+104
+00:05:09,855 --> 00:05:13,760
+Recently, some researchers set out with an idea to try and produce
+
+105
+00:05:13,760 --> 00:05:17,620
+embeddings with the same powerful semantic properties as Word2Vec, but which,
+
+106
+00:05:17,620 --> 00:05:19,700
+like the matrix factorization methods,
+
+107
+00:05:19,700 --> 00:05:22,674
+optimized using the entire co-occurrence set of statistics,
+
+108
+00:05:22,674 --> 00:05:25,580
+rather than just individual co-occurrence events.
+
+109
+00:05:25,580 --> 00:05:26,990
+Wouldn't it be great, they thought,
+
+110
+00:05:26,990 --> 00:05:31,250
+to use all that information instead of just noisy slices of it?
+
+111
+00:05:31,250 --> 00:05:32,955
+Their approach is called glove,
+
+112
+00:05:32,955 --> 00:05:36,090
+and it's sort of like a hybrid between the matrix factorization methods,
+
+113
+00:05:36,090 --> 00:05:37,685
+like Latent Semantic Analysis,
+
+114
+00:05:37,685 --> 00:05:40,410
+and the window based methods like Word2Vec.
+
+115
+00:05:40,410 --> 00:05:42,530
+Like latent semantic analysis,
+
+116
+00:05:42,530 --> 00:05:45,480
+it begins with a full co-occurrence matrix.
+
+117
+00:05:45,480 --> 00:05:48,525
+However, unlike latent semantic analysis,
+
+118
+00:05:48,525 --> 00:05:51,285
+it doesn't use matrix factorization to produce embeddings,
+
+119
+00:05:51,285 --> 00:05:54,350
+instead like Word2Vec, it uses a machine learning
+
+120
+00:05:54,350 --> 00:05:57,900
+model which is optimized using gradient descent and a loss function.
+
+121
+00:05:57,900 --> 00:06:02,250
+But unlike Word2Vec, instead of predicting the context around a word,
+
+122
+00:06:02,250 --> 00:06:05,225
+glove uses a novel loss function.
+
+123
+00:06:05,225 --> 00:06:09,000
+The loss function they use is derived from a simple observation.
+
+124
+00:06:09,000 --> 00:06:13,540
+The co-occurrence ratios of two words seems to be semantically important.
+
+125
+00:06:13,540 --> 00:06:17,795
+Here, you can see that the likelihood of encountering solid in the context of ice
+
+126
+00:06:17,795 --> 00:06:21,800
+is 8.9 times higher than encountering solid in the context of steam,
+
+127
+00:06:21,800 --> 00:06:24,870
+which makes sense, because ice is a solid.
+
+128
+00:06:24,870 --> 00:06:28,535
+Similarly, the likelihood of encountering gas in the context of
+
+129
+00:06:28,535 --> 00:06:33,340
+ice is far less than the likelihood of encountering gas in the context of steam.
+
+130
+00:06:33,340 --> 00:06:36,979
+If you considered less related terms like water and fashion,
+
+131
+00:06:36,979 --> 00:06:40,610
+the ratio of their probabilities between ice and steam is close to one,
+
+132
+00:06:40,610 --> 00:06:42,500
+indicating that they're just as likely to be found
+
+133
+00:06:42,500 --> 00:06:45,375
+in the contexts of ice as they are in steam.
+
+134
+00:06:45,375 --> 00:06:47,845
+What the glove researchers did,
+
+135
+00:06:47,845 --> 00:06:50,434
+is they essentially do some reverse engineering.
+
+136
+00:06:50,434 --> 00:06:52,310
+They knew that they wanted embeddings that could be
+
+137
+00:06:52,310 --> 00:06:55,100
+composed like the Word2Vec embeddings, and so, they said,
+
+138
+00:06:55,100 --> 00:06:56,650
+"if I had such embeddings,
+
+139
+00:06:56,650 --> 00:07:00,565
+how would I combine them to get something equivalent to the ratio of probabilities? "
+
+140
+00:07:00,565 --> 00:07:02,570
+Once they have such an expression,
+
+141
+00:07:02,570 --> 00:07:05,395
+they use basic algebra to form their loss function.
+
+142
+00:07:05,395 --> 00:07:09,920
+Here I've depicted the outputs of the model as a function of some word vectors, wi,
+
+143
+00:07:09,920 --> 00:07:15,190
+wj and W tilde k. And I've set that equal to the ratio of probabilities P, I,
+
+144
+00:07:15,190 --> 00:07:18,640
+J and P j k. To get the loss function,
+
+145
+00:07:18,640 --> 00:07:20,810
+they simply subtracted this fraction,
+
+146
+00:07:20,810 --> 00:07:23,795
+and you can tell it's a loss because it's supposed to be zero.
+
+147
+00:07:23,795 --> 00:07:28,010
+The actual definition of what's inside the function is not something we'll cover here,
+
+148
+00:07:28,010 --> 00:07:31,215
+but I encourage you to read the glove paper to find out more.
+
+149
+00:07:31,215 --> 00:07:36,035
+In practice, both glove and Word2Vec are good ways of creating word embeddings.
+
+150
+00:07:36,035 --> 00:07:38,545
+There are some task where glove seems to perform better,
+
+151
+00:07:38,545 --> 00:07:40,725
+and others were Word2Vec does better.
+
+152
+00:07:40,725 --> 00:07:44,600
+What's more important than choosing between glove and Word2Vec embeddings,
+
+153
+00:07:44,600 --> 00:07:48,275
+is whether you choose to use pre-trained embeddings or train your own.
+
+154
+00:07:48,275 --> 00:07:50,025
+Remember from the last course,
+
+155
+00:07:50,025 --> 00:07:52,555
+that transfer learning works best when the source task,
+
+156
+00:07:52,555 --> 00:07:54,395
+where the model was originally trained,
+
+157
+00:07:54,395 --> 00:07:56,210
+is similar to the target task,
+
+158
+00:07:56,210 --> 00:07:58,815
+which is what you want to use the model for.
+
+159
+00:07:58,815 --> 00:08:03,740
+When the words you're modeling have specialized meanings or rarely occur in common usage,
+
+160
+00:08:03,740 --> 00:08:06,380
+then the pre-trained embeddings aren't likely to be helpful,
+
+161
+00:08:06,380 --> 00:08:09,290
+and it may be better to train your own from scratch.
+
+162
+00:08:09,290 --> 00:08:11,480
+That's because the versions of glove and
+
+163
+00:08:11,480 --> 00:08:13,990
+Word2Vec embeddings that are most widely available,
+
+164
+00:08:13,990 --> 00:08:16,935
+are typically trained on things like Wikipedia.
+
+165
+00:08:16,935 --> 00:08:21,530
+If however, the words you want a model are similar to those that occur in common usage,
+
+166
+00:08:21,530 --> 00:08:25,429
+then pre-trained glove and Word2Vec embeddings can be very beneficial.
+
+167
+00:08:25,429 --> 00:08:29,500
+Once you've done so, you then have to decide as we saw in the last lab,
+
+168
+00:08:29,500 --> 00:08:32,735
+whether to make the pre-trained embeddings trainable or not.
+
+169
+00:08:32,735 --> 00:08:34,310
+Recall from the last course,
+
+170
+00:08:34,310 --> 00:08:38,745
+that the primary factor to consider when making this decision, is dataset size.
+
+171
+00:08:38,745 --> 00:08:40,670
+The larger your dataset is,
+
+172
+00:08:40,670 --> 00:08:43,085
+the less likely that letting the embeddings be trainable,
+
+173
+00:08:43,085 --> 00:08:45,050
+will result in over-fitting.

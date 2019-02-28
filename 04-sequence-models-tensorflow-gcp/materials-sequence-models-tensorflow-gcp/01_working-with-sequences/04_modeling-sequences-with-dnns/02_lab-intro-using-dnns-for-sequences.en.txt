@@ -1,0 +1,1 @@
+Let's do our second lab, where we'll apply a DNN to our synthetic time series data. In this lab, like in the first one, you'll create a DNN model by completing the TODOs steps in model.py file. Keep in mind you have multiple times to start and stop each lab. So, don't worry if you don't make it through the first time. We'll review the solution together in the following video.

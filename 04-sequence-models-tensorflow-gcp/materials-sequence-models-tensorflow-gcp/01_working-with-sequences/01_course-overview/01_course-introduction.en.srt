@@ -1,0 +1,149 @@
+1
+00:00:00,480 --> 00:00:03,440
+Hi, welcome to the fourth course
+of the Advanced Machine Learning
+
+2
+00:00:03,440 --> 00:00:05,580
+on GCP Specialization.
+
+3
+00:00:05,580 --> 00:00:08,510
+I'm Max, a machine learning curriculum
+developer for Google Cloud.
+
+4
+00:00:09,580 --> 00:00:13,490
+In this course, we'll learn how to
+make predictions on sequences of data.
+
+5
+00:00:13,490 --> 00:00:16,940
+We'll cover common business use cases
+like, time series prediction and
+
+6
+00:00:16,940 --> 00:00:20,050
+how to deal with more recent data
+points getting more relevance.
+
+7
+00:00:20,050 --> 00:00:23,600
+And translating entire sequences
+also known as sequences of words
+
+8
+00:00:23,600 --> 00:00:25,460
+into other languages.
+
+9
+00:00:25,460 --> 00:00:29,150
+You'll get hands on practice training your
+very own sequence models on a variety of
+
+10
+00:00:29,150 --> 00:00:31,010
+public datasets.
+
+11
+00:00:31,010 --> 00:00:33,840
+Let's review why modules
+are part of this course.
+
+12
+00:00:33,840 --> 00:00:35,790
+First, you'll learn what a sequence is.
+
+13
+00:00:35,790 --> 00:00:39,375
+See how you can prepare a sequence data
+for modeling and introduce some classical
+
+14
+00:00:39,375 --> 00:00:42,290
+approaches to sequence modeling,
+and practice applying them.
+
+15
+00:00:43,520 --> 00:00:46,570
+In the next module,
+we'll introduce Recurrent Neural Nets,
+
+16
+00:00:46,570 --> 00:00:49,670
+explain how they address the variable
+length sequence problem,
+
+17
+00:00:49,670 --> 00:00:53,640
+explain how our traditional optimization
+procedure applies to RNNs, and
+
+18
+00:00:53,640 --> 00:00:56,760
+review the limits of what RNNs can and
+can't represent.
+
+19
+00:00:58,060 --> 00:01:01,510
+Then, we'll dive deeper into
+different models beyond RNNs.
+
+20
+00:01:01,510 --> 00:01:04,299
+We'll talk about LSTMs,
+deep RNNs, and more.
+
+21
+00:01:05,600 --> 00:01:09,200
+Next we'll talk about how transfer
+learning applies to natural language.
+
+22
+00:01:09,200 --> 00:01:12,480
+You'll learn how researchers in other
+disciplines have historically constructed
+
+23
+00:01:12,480 --> 00:01:16,350
+embeddings of words without
+training on a supervised task.
+
+24
+00:01:16,350 --> 00:01:18,400
+You'll learn about recent
+techniques called GloVe and
+
+25
+00:01:18,400 --> 00:01:21,280
+word2vec that are inspired
+by those techniques.
+
+26
+00:01:21,280 --> 00:01:25,770
+How you can easily make use of pre-trained
+word2vec embeddings using TensorFlow Hub.
+
+27
+00:01:25,770 --> 00:01:30,095
+And how your task and the amount of data
+that you have determine how you should use
+
+28
+00:01:30,095 --> 00:01:31,420
+word2vec and GloVe in your model.
+
+29
+00:01:32,580 --> 00:01:35,290
+Lastly, we'll focus on a sequence
+to sequence model called
+
+30
+00:01:35,290 --> 00:01:39,250
+the Encoder-Decoder Network to solve
+tasks such as machine translation,
+
+31
+00:01:39,250 --> 00:01:41,210
+text summarization, and
+question answering.

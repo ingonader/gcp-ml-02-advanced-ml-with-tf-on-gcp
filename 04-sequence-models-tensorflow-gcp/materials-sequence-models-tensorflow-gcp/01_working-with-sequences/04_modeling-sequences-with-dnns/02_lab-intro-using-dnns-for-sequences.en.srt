@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:02,055
+Let's do our second lab,
+
+2
+00:00:02,055 --> 00:00:05,410
+where we'll apply a DNN to our synthetic time series data.
+
+3
+00:00:05,410 --> 00:00:07,250
+In this lab, like in the first one,
+
+4
+00:00:07,250 --> 00:00:11,680
+you'll create a DNN model by completing the TODOs steps in model.py file.
+
+5
+00:00:11,680 --> 00:00:14,770
+Keep in mind you have multiple times to start and stop each lab.
+
+6
+00:00:14,770 --> 00:00:16,885
+So, don't worry if you don't make it through the first time.
+
+7
+00:00:16,885 --> 00:00:19,830
+We'll review the solution together in the following video.

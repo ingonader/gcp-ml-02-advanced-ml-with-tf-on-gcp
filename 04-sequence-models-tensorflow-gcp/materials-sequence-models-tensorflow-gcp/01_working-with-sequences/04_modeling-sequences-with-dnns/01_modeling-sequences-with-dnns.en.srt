@@ -1,0 +1,211 @@
+1
+00:00:00,000 --> 00:00:03,930
+At this point, you've now trained a linear model on our sprinkler data,
+
+2
+00:00:03,930 --> 00:00:06,440
+and surprisingly, it did a pretty good job.
+
+3
+00:00:06,440 --> 00:00:08,810
+It was better than our benchmark model.
+
+4
+00:00:08,810 --> 00:00:12,055
+If this level of performance were sufficient for our business needs,
+
+5
+00:00:12,055 --> 00:00:14,860
+we would consider stopping there and deploying our linear model.
+
+6
+00:00:14,860 --> 00:00:18,060
+But sometimes it's important that models agree with how we think
+
+7
+00:00:18,060 --> 00:00:21,755
+the underlying relationship between the features and the labels works.
+
+8
+00:00:21,755 --> 00:00:25,980
+For example, previously, we use regularization to penalize model weights.
+
+9
+00:00:25,980 --> 00:00:27,750
+In part because of our belief that
+
+10
+00:00:27,750 --> 00:00:30,210
+the true relationship between the features and the labels,
+
+11
+00:00:30,210 --> 00:00:32,865
+was likely to be a simple, and sparse one.
+
+12
+00:00:32,865 --> 00:00:34,555
+In a sequence context,
+
+13
+00:00:34,555 --> 00:00:36,530
+we might also have another constraint.
+
+14
+00:00:36,530 --> 00:00:41,735
+We might believe that more recent observations are more important than less recent ones.
+
+15
+00:00:41,735 --> 00:00:46,030
+How might we force our model to learn ways that meet this constraint?
+
+16
+00:00:46,030 --> 00:00:48,410
+One method of constraining the weights so that
+
+17
+00:00:48,410 --> 00:00:50,539
+more recent observations weigh more heavily,
+
+18
+00:00:50,539 --> 00:00:52,820
+is to use exponential smoothing.
+
+19
+00:00:52,820 --> 00:00:58,195
+Exponential smoothing assumes that the contribution of some prior observation, t minus x,
+
+20
+00:00:58,195 --> 00:01:02,839
+to some future observation at time t is determined by the exponential function,
+
+21
+00:01:02,839 --> 00:01:06,845
+p to the x, where p is a number between 0 and 1.
+
+22
+00:01:06,845 --> 00:01:10,135
+If you graphed p to the x for different values of p,
+
+23
+00:01:10,135 --> 00:01:12,150
+you can see that the bigger P is,
+
+24
+00:01:12,150 --> 00:01:13,895
+the fatter the tail becomes,
+
+25
+00:01:13,895 --> 00:01:17,230
+and the more important less recent observations become.
+
+26
+00:01:17,230 --> 00:01:21,200
+For p equals 0.9, observations ten units of time in
+
+27
+00:01:21,200 --> 00:01:25,745
+the past still contribute about 35% of their original value.
+
+28
+00:01:25,745 --> 00:01:29,510
+Model fitting for such a model consists of estimating the values
+
+29
+00:01:29,510 --> 00:01:33,430
+for two terms: the bias term, and the p term.
+
+30
+00:01:33,430 --> 00:01:36,975
+Another related model is an autoregressive model.
+
+31
+00:01:36,975 --> 00:01:39,755
+An ARMA model in machine learning terms,
+
+32
+00:01:39,755 --> 00:01:42,395
+consists of doing a bit of feature engineering.
+
+33
+00:01:42,395 --> 00:01:45,140
+Instead of doing a straightforward linear regression of
+
+34
+00:01:45,140 --> 00:01:48,740
+the future values of the time series as a weighted sum of the past values,
+
+35
+00:01:48,740 --> 00:01:51,590
+we model the difference between the future values,
+
+36
+00:01:51,590 --> 00:01:55,420
+and the moving average or the exponential moving average.
+
+37
+00:01:55,420 --> 00:02:00,445
+We do this as a linear combination of the past values of the time series.
+
+38
+00:02:00,445 --> 00:02:04,250
+In your head though, you should think of exponential smoothing models,
+
+39
+00:02:04,250 --> 00:02:07,400
+and ARMA models as a special case of linear models.
+
+40
+00:02:07,400 --> 00:02:09,620
+So, in the lab that you're about to do,
+
+41
+00:02:09,620 --> 00:02:10,940
+when you train a linear model,
+
+42
+00:02:10,940 --> 00:02:14,495
+you're essentially considering the class of traditional time-series techniques.
+
+43
+00:02:14,495 --> 00:02:17,650
+As we've seen, oftentimes,
+
+44
+00:02:17,650 --> 00:02:18,790
+the relationship between features,
+
+45
+00:02:18,790 --> 00:02:20,675
+and labels is non-linear.
+
+46
+00:02:20,675 --> 00:02:23,380
+Thankfully, using our sliding window approach,
+
+47
+00:02:23,380 --> 00:02:26,090
+it's very easy to model non-linear relationships.
+
+48
+00:02:26,090 --> 00:02:29,420
+All we need to do is pass are input into a DNN.
+
+49
+00:02:29,420 --> 00:02:32,900
+Our DNN model looks very similar to our linear model,
+
+50
+00:02:32,900 --> 00:02:34,695
+but we have multiple layers,
+
+51
+00:02:34,695 --> 00:02:37,490
+and we use a non-linear activation function.
+
+52
+00:02:37,490 --> 00:02:41,240
+Let's practice implementing a DNN model of our sprinkler dataset,
+
+53
+00:02:41,240 --> 00:02:44,210
+and see if it does any better than our linear model.

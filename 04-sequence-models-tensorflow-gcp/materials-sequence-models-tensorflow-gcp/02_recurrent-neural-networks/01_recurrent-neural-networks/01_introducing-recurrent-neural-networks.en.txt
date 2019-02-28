@@ -1,0 +1,52 @@
+As we discussed in the last module, variable length sequences are common
+placed in many sequence use cases, but cannot be elegantly handled by the
+types of models we looked at previously. Our options, which include cutting and
+padding as well as bagging, either throw away information or
+else are inefficient. What we need is a model that is designed
+to handle variable-length sequences. Thankfully such a model exists and
+it's called a recurrent neural net. In this module,
+we'll introduce recurrent neural networks, explain how they address the variable
+length sequence problem. Explain how our traditional optimization
+procedure applies RNNs, and review the limits of what RNNs can and
+can't represent. Recurrent neural networks, or
+RNNs, handle variable-length sequences by recasting the problem of
+representing an entire variable-length sequence to representing a single
+event given what has come before. To gain some intuition for
+why this is not just reasonable but actually consistent with what you do
+every day, let's take a little detour. Think about when someone's speaking
+to you and gets interrupted. For example, if I were to say,
+dogs are my favorite animals, I love how they wag their, and then I stopped, you'd probably have a
+good idea of what I was going to say next. The fact that you do, that you aren't
+incapacitated by an incomplete sentence, suggests that you've built up
+a representation of what I've said so far. And in this case, you can use that representation
+to predict what might come next. RNNs are designed to
+function in a similar way. Instead of accepting a fixed size input
+representing an entire sequence like DNNs do, they accept a fixed size
+representation of a particular event along with a fixed size representation
+of what they've seen previously. By a particular event, I'm referring
+to a day, in a sequence of days, or a word in a sequence of words. So for example, in order to pass in
+the sequence, dogs wag their to a DNN, we'd probably either concatenate our
+representations for each word or else bag those representations
+to get the fixed size input. Of course, saying that we have
+a representation of the important parts of what we've seen previously,
+which is what RNNs require, trivializes the most interesting and
+complicated part of RNNs. Because if we knew how to represent what
+we've seen previously regardless of how long it was, we wouldn't have
+this problem in the first place. We could try to tackle this
+problem using feature engineering. But in deep learning,
+we have another option, letting the model engineer its
+own features during optimization. And that's exactly what RNNs do. In that sense, much the way that
+CNNs learn filters as they train and can evolve those filters across images and ultimately learn how to be
+good feature image extractors. RNNs scan their input
+layer across sequences and learn how to extract information from
+a given event in order to make use of it at a later point in the sequence. And ultimately become good
+sequence feature extractors. There are two key ideas
+in the RNN architecture. First, RNNs learn to
+predict the output but they also learn how to compact
+all of the previous inputs. And secondly,
+the input to an RNN is a concatenation of the original stateless input and
+this new hidden state. This idea of a persistent hidden state
+that is learned from ordered inputs is what distinguishes an RNN from linear and
+deep neural networks. In a DNN, the hidden state is
+not updated during prediction. In RNN, it is. In the next section we'll talk about
+how these aspects of RNNs allow them to remember what they've seen previously.

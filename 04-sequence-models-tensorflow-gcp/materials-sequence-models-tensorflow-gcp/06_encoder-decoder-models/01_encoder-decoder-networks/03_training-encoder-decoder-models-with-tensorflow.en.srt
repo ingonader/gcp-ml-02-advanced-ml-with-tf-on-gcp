@@ -1,0 +1,235 @@
+1
+00:00:00,440 --> 00:00:04,700
+To tune an encoder-decoder model,
+
+2
+00:00:04,700 --> 00:00:10,950
+we have four machine learning step in the pipeline: embed,
+
+3
+00:00:10,950 --> 00:00:15,880
+encode, attend, and predict.
+
+4
+00:00:15,920 --> 00:00:19,995
+Before turning the encoder network,
+
+5
+00:00:19,995 --> 00:00:26,215
+we need to turn words into some numerical tensors.
+
+6
+00:00:26,215 --> 00:00:29,080
+We can train the embeddings,
+
+7
+00:00:29,080 --> 00:00:33,150
+as learned in earlier modules of this course,
+
+8
+00:00:33,150 --> 00:00:38,015
+or we can use pre-trained embeddings as
+
+9
+00:00:38,015 --> 00:00:46,365
+the starting point of our saved the vocabularies and embeddings for the predictions.
+
+10
+00:00:46,365 --> 00:00:48,530
+In the later example,
+
+11
+00:00:48,530 --> 00:00:55,210
+we were trained the multi-layer GRUs to save memory and state.
+
+12
+00:00:55,210 --> 00:01:01,385
+The latter will be similar if we used LSDMs.
+
+13
+00:01:01,385 --> 00:01:06,725
+Well, tune the GRUs carefully to make sure that
+
+14
+00:01:06,725 --> 00:01:14,495
+the input sequences are rich enough for the model to learn long-term dependencies.
+
+15
+00:01:14,495 --> 00:01:21,755
+We will dynamically weigh the outputs based on the current input words.
+
+16
+00:01:21,755 --> 00:01:26,660
+Also, we need to keep in mind that the number of
+
+17
+00:01:26,660 --> 00:01:34,319
+attention heads is an important hyperparameter for our model training.
+
+18
+00:01:34,460 --> 00:01:37,890
+Once we have the model trained,
+
+19
+00:01:37,890 --> 00:01:40,925
+we're ready for the predictions.
+
+20
+00:01:40,925 --> 00:01:48,570
+These several lines of codes implements a translation model without attention.
+
+21
+00:01:48,570 --> 00:01:53,060
+We will add annotation network later.
+
+22
+00:01:53,480 --> 00:01:57,365
+Using the embedding look-up method,
+
+23
+00:01:57,365 --> 00:02:05,360
+the English words are transformed into vectors or embeddings.
+
+24
+00:02:05,360 --> 00:02:11,785
+We instantiates a GRU cell for the encoder.
+
+25
+00:02:11,785 --> 00:02:18,400
+A dropout wrapper can be used for regularizations.
+
+26
+00:02:18,650 --> 00:02:28,690
+Then, the GRU cell is enrolled as needed by using the dynamic RE method.
+
+27
+00:02:29,330 --> 00:02:38,950
+A second and the separate GRU cell is instantiated for the decoder.
+
+28
+00:02:39,100 --> 00:02:49,550
+Here, we specify that we want the decoder to use Bing search algorithm for decoding.
+
+29
+00:02:49,640 --> 00:02:58,840
+The beam width parameter is a trade-off between speed and accuracy.
+
+30
+00:02:58,860 --> 00:03:06,229
+Beam width equals to one is equivalent to greedy search
+
+31
+00:03:06,229 --> 00:03:15,120
+where the most approbable words is choosing at each time stamp of the decoding process.
+
+32
+00:03:15,230 --> 00:03:20,985
+Beam width equals to two or more means that
+
+33
+00:03:20,985 --> 00:03:26,600
+two or more most approbable words will be retained
+
+34
+00:03:26,600 --> 00:03:33,440
+and the decoding will proceed from them in a branching tree fashion.
+
+35
+00:03:33,440 --> 00:03:40,110
+The most approbable sequence is retained in the end.
+
+36
+00:03:40,110 --> 00:03:48,455
+Finally, dynamic decode enrolls the decoding process across
+
+37
+00:03:48,455 --> 00:03:59,060
+as many time steps as necessary to reach the end of sentence token or maximum iterations.
+
+38
+00:03:59,060 --> 00:04:06,005
+This is how we add the attention network into our model.
+
+39
+00:04:06,005 --> 00:04:13,390
+Take the GRU cell that we instantiate it for the decoder.
+
+40
+00:04:13,410 --> 00:04:17,770
+To add attention network, here,
+
+41
+00:04:17,770 --> 00:04:21,185
+we use Louong attention,
+
+42
+00:04:21,185 --> 00:04:27,275
+inspired by Minh-Thang Luong, as an example.
+
+43
+00:04:27,275 --> 00:04:35,860
+There are other attention networks available such as Bento attention.
+
+44
+00:04:35,860 --> 00:04:39,430
+Those attention networks have
+
+45
+00:04:39,430 --> 00:04:46,020
+their implementations in TensorFlow and their corresponding names.
+
+46
+00:04:46,020 --> 00:04:52,785
+The encoders sentences is the output of the encoder.
+
+47
+00:04:52,785 --> 00:04:59,870
+The goal of the attention network is to compute a weighted sum of
+
+48
+00:04:59,870 --> 00:05:07,830
+those outputs to obtain a single output representing the input sentence.
+
+49
+00:05:07,890 --> 00:05:15,165
+Lastly, we add the attention network to decoder cell.
+
+50
+00:05:15,165 --> 00:05:23,210
+This will automatically pipe the outputs of the decoder cell into the attention network,
+
+51
+00:05:23,210 --> 00:05:31,450
+and also pipe the output of the attention network back to the decoder cell,
+
+52
+00:05:31,450 --> 00:05:39,630
+so that the output of the decoder cell can take attention vector into accounts.
+
+53
+00:05:40,780 --> 00:05:46,255
+Now, we can use attention Rob decoder cell
+
+54
+00:05:46,255 --> 00:05:52,480
+to replace the original decoder cell in the predict stop.
+
+55
+00:05:53,270 --> 00:05:59,494
+If we have multiple layer of GRU cells,
+
+56
+00:05:59,494 --> 00:06:07,620
+we typically do the dropouts on output nodes instead of the states.
+
+57
+00:06:07,620 --> 00:06:11,230
+To do so, for each cell,
+
+58
+00:06:11,230 --> 00:06:18,215
+we need to specify the output keep probability in the dropout wrapper
+
+59
+00:06:18,215 --> 00:06:27,540
+before composing the GRU cells sequentially using multi RE cell method.

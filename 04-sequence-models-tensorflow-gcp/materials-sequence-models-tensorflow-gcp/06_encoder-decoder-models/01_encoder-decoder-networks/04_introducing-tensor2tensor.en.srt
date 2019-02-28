@@ -1,0 +1,439 @@
+1
+00:00:00,320 --> 00:00:06,300
+So, we started with encoder and decoder,
+
+2
+00:00:06,300 --> 00:00:10,280
+which are both recurrent neural networks.
+
+3
+00:00:10,280 --> 00:00:16,955
+Then we added attention, dropout, and etcetera.
+
+4
+00:00:16,955 --> 00:00:22,795
+By that time, the code becomes extremely complex.
+
+5
+00:00:22,795 --> 00:00:29,640
+But we still don't know whether it's going to work properly or not.
+
+6
+00:00:29,640 --> 00:00:37,475
+Just writing LSTM or TRU model and getting it to work,
+
+7
+00:00:37,475 --> 00:00:39,525
+can be very hard.
+
+8
+00:00:39,525 --> 00:00:44,075
+With language, it becomes even harder
+
+9
+00:00:44,075 --> 00:00:50,285
+because we have different sentence length in the natural language.
+
+10
+00:00:50,285 --> 00:00:53,420
+We don't know whether we need to go back for
+
+11
+00:00:53,420 --> 00:00:59,615
+five words or 10 words to find the property contacts.
+
+12
+00:00:59,615 --> 00:01:05,644
+So, it is super helpful that we have a easy to reuse
+
+13
+00:01:05,644 --> 00:01:14,210
+open source library that has already implemented for various tasks.
+
+14
+00:01:14,410 --> 00:01:20,480
+That is why tensor2tensor are laboratory of passing
+
+15
+00:01:20,480 --> 00:01:28,625
+class machine-learning models developed by the Google Brain team, a super exciting.
+
+16
+00:01:28,625 --> 00:01:33,560
+We now have a standard interface that ties
+
+17
+00:01:33,560 --> 00:01:39,255
+together all the pieces needed in a deep learning system.
+
+18
+00:01:39,255 --> 00:01:46,160
+The dataset, the model, the architecture, optimizers,
+
+19
+00:01:46,160 --> 00:01:54,530
+and hyperparameter in a coherent and standardized way that enables us to
+
+20
+00:01:54,530 --> 00:02:03,565
+try many models on the same dataset or apply the same model to many datasets.
+
+21
+00:02:03,565 --> 00:02:08,960
+But we still need to parameterize the tensor2tensor,
+
+22
+00:02:08,960 --> 00:02:13,395
+so that we can apply it to our problem.
+
+23
+00:02:13,395 --> 00:02:16,890
+So, in the rest of the module,
+
+24
+00:02:16,890 --> 00:02:20,690
+we will talk about how we could use
+
+25
+00:02:20,690 --> 00:02:29,340
+this high level library tensor2tensor to solve a sequence to sequence problem.
+
+26
+00:02:29,440 --> 00:02:39,480
+Let's learn the tensor2tensor by going through a lab to complete lines of poetry.
+
+27
+00:02:39,590 --> 00:02:46,940
+Let's see. We want to train a machine learning model to write poetry.
+
+28
+00:02:46,940 --> 00:02:51,825
+Essentially, giving one line of the verse,
+
+29
+00:02:51,825 --> 00:02:55,770
+the model should predict the next line.
+
+30
+00:02:55,770 --> 00:02:58,160
+This is a hard problem.
+
+31
+00:02:58,160 --> 00:03:05,140
+Poetry is probably the highest form of the word play and sophistication.
+
+32
+00:03:05,140 --> 00:03:08,645
+It seems harder than translation,
+
+33
+00:03:08,645 --> 00:03:17,515
+because there is no one-to-one relationship between the input and the output.
+
+34
+00:03:17,515 --> 00:03:24,985
+It is sound was similar to a model that provides answers to questions,
+
+35
+00:03:24,985 --> 00:03:31,550
+except the answers are quite creative because we never repeat.
+
+36
+00:03:31,550 --> 00:03:36,210
+A key concept in the tensor2tensor library,
+
+37
+00:03:36,210 --> 00:03:40,565
+is called problem, which ties
+
+38
+00:03:40,565 --> 00:03:46,585
+together all the pieces needed to train a machine learning model.
+
+39
+00:03:46,585 --> 00:03:55,490
+The easiest way is to inherit from a property base class in the tensor2tensor,
+
+40
+00:03:55,490 --> 00:04:02,755
+and then change only the pieces that are different for our own model.
+
+41
+00:04:02,755 --> 00:04:08,195
+Writing the poetry, is essentially taking
+
+42
+00:04:08,195 --> 00:04:15,775
+text sequence as inputs and producing text sequence as output.
+
+43
+00:04:15,775 --> 00:04:26,930
+This type of problem can be inherit from a base class called text2text problem.
+
+44
+00:04:26,930 --> 00:04:30,100
+The first part of our problem,
+
+45
+00:04:30,100 --> 00:04:32,925
+is the embed step,
+
+46
+00:04:32,925 --> 00:04:42,585
+which defines how we break up the text and represent them as numbers.
+
+47
+00:04:42,585 --> 00:04:52,460
+Here, we specify 4,096 as the vocabulary size.
+
+48
+00:04:52,460 --> 00:04:59,425
+Essentially, tensor2tensor will find and create embeddings
+
+49
+00:04:59,425 --> 00:05:07,155
+from the most frequent 4,096 words in the training dataset.
+
+50
+00:05:07,155 --> 00:05:09,855
+In the prediction step,
+
+51
+00:05:09,855 --> 00:05:16,450
+we will return one of those values to represent a word.
+
+52
+00:05:17,200 --> 00:05:23,810
+The final part of the problem is that we have to define how
+
+53
+00:05:23,810 --> 00:05:30,315
+to generate the actual TF train example files,
+
+54
+00:05:30,315 --> 00:05:33,765
+consisting of the tokens.
+
+55
+00:05:33,765 --> 00:05:39,015
+This is done in the generate samples method,
+
+56
+00:05:39,015 --> 00:05:46,545
+which simply yields a dictionary of the input-output pairs.
+
+57
+00:05:46,545 --> 00:05:50,715
+Recall that the input in our case,
+
+58
+00:05:50,715 --> 00:05:57,055
+is attack sequence and the output is also attack sequence.
+
+59
+00:05:57,055 --> 00:06:01,150
+Once the problem has been defined,
+
+60
+00:06:01,150 --> 00:06:08,405
+we will put it into a Python package called Poetry Trainer,
+
+61
+00:06:08,405 --> 00:06:19,280
+and then invoke a utility called t2t datagen on the input-output pairs.
+
+62
+00:06:19,340 --> 00:06:24,515
+This generates the actual training and
+
+63
+00:06:24,515 --> 00:06:31,560
+evaluation files that will be used for training the language model.
+
+64
+00:06:32,450 --> 00:06:39,530
+The base model that we inherited from text2text problem,
+
+65
+00:06:39,530 --> 00:06:45,910
+is meant for a dataset of 400 million records.
+
+66
+00:06:45,910 --> 00:06:53,155
+But we have only about 22,000 records in this lab.
+
+67
+00:06:53,155 --> 00:06:59,210
+How to customize the model to fit our own dataset.
+
+68
+00:06:59,380 --> 00:07:09,430
+To do so, we will make the model smaller by adjusting the number of hidden layers,
+
+69
+00:07:09,430 --> 00:07:13,550
+the hidden size, and etcetera.
+
+70
+00:07:13,760 --> 00:07:21,280
+We can also add more regularizations using dropout.
+
+71
+00:07:21,300 --> 00:07:26,720
+Regularization helps reduce overfitting,
+
+72
+00:07:26,720 --> 00:07:32,385
+which often is a great concern in smaller datasets.
+
+73
+00:07:32,385 --> 00:07:42,470
+Lastly, getting a lower learning rate could also be a good idea for smaller datasets.
+
+74
+00:07:43,580 --> 00:07:47,685
+Now, we're ready to train the model.
+
+75
+00:07:47,685 --> 00:07:51,109
+We can train the model locally,
+
+76
+00:07:51,109 --> 00:07:56,474
+such as running the training job on Promise,
+
+77
+00:07:56,474 --> 00:07:59,940
+a cloud Datalab instance,
+
+78
+00:07:59,940 --> 00:08:03,985
+with a GPU or on
+
+79
+00:08:03,985 --> 00:08:11,680
+Compute Engine instance with an attached GPU or TPU.
+
+80
+00:08:12,420 --> 00:08:19,345
+We can also train the model on Cloud Machine Learning Engine,
+
+81
+00:08:19,345 --> 00:08:26,470
+to then the t2t trainer job to cloud machine learning engine.
+
+82
+00:08:26,470 --> 00:08:28,775
+All that we have to do,
+
+83
+00:08:28,775 --> 00:08:38,145
+is to add Cloud ML Engine to the parameters of the t2t trainer.
+
+84
+00:08:38,145 --> 00:08:44,215
+Note that, we specified the number of GPUs here.
+
+85
+00:08:44,215 --> 00:08:49,000
+Cloud ML Engine can also acquire
+
+86
+00:08:49,000 --> 00:08:56,440
+GPU or TPU resources for just the duration of the job.
+
+87
+00:08:57,010 --> 00:09:03,920
+When we run the training job and monitoring its tensor boards,
+
+88
+00:09:03,920 --> 00:09:11,345
+we notice that a clear signs of overfitting the training loss,
+
+89
+00:09:11,345 --> 00:09:16,040
+the orange curve here, keep decreasing.
+
+90
+00:09:16,040 --> 00:09:18,400
+But the evaluation loss,
+
+91
+00:09:18,400 --> 00:09:25,560
+the blue curve started going in the wrong direction.
+
+92
+00:09:25,560 --> 00:09:30,020
+Our initial choice of the hyper-parameters,
+
+93
+00:09:30,020 --> 00:09:32,785
+was a wild gas.
+
+94
+00:09:32,785 --> 00:09:37,985
+Next step is to tune those hyperparameters,
+
+95
+00:09:37,985 --> 00:09:41,980
+to hopefully obtain better accuracy.
+
+96
+00:09:41,980 --> 00:09:45,675
+To carry out hyperparameter tuning,
+
+97
+00:09:45,675 --> 00:09:50,915
+we need to register a hyperparameter range.
+
+98
+00:09:50,915 --> 00:09:59,385
+Here, we will like to tune four parameters, the learning rates,
+
+99
+00:09:59,385 --> 00:10:02,730
+the number of hidden layers,
+
+100
+00:10:02,730 --> 00:10:08,115
+the number of nodes in each of the hidden layers,
+
+101
+00:10:08,115 --> 00:10:13,900
+and the dropout probability for the attention network.
+
+102
+00:10:15,320 --> 00:10:18,625
+Having defined those ranges,
+
+103
+00:10:18,625 --> 00:10:25,070
+we added a few more flags to the t2t trainer to
+
+104
+00:10:25,070 --> 00:10:32,960
+submit a hyperparameter tuning job at Cloud Machine Learning Engine.
+
+105
+00:10:33,200 --> 00:10:40,040
+We can specify the hyperparameter ranges that we register
+
+106
+00:10:40,040 --> 00:10:47,560
+and clarified that we wish to maximize the accuracy per sequence.
+
+107
+00:10:47,680 --> 00:10:54,160
+There are other metrics such as perplexity,
+
+108
+00:10:54,160 --> 00:10:58,200
+that are reported by tensor2tensor.
+
+109
+00:10:58,200 --> 00:11:05,085
+But the accuracy per sequence is a better fit for this problem.
+
+110
+00:11:05,085 --> 00:11:10,130
+This job can also be run on TPU.

@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:01,940
+Let's do our third lab,
+
+2
+00:00:01,940 --> 00:00:05,485
+where we'll apply a CNN to our synthetic time series data.
+
+3
+00:00:05,485 --> 00:00:07,830
+In this lab, you'll create a CNN model by
+
+4
+00:00:07,830 --> 00:00:10,830
+completing the TODOs steps in the model.py file.
+
+5
+00:00:10,830 --> 00:00:14,040
+Keep in mind, you have multiple attempts to start and stop each lab,
+
+6
+00:00:14,040 --> 00:00:16,340
+so don't worry if you don't make it through the first time.
+
+7
+00:00:16,340 --> 00:00:19,370
+We'll review the solution together in the following video.

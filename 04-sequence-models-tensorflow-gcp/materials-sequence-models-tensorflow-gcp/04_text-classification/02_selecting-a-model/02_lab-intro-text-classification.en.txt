@@ -1,0 +1,11 @@
+In this lab, we'll build a model to
+solve the text classification problem we've been talking about. All of the lab TODOs are in
+the model.py file, in particular, you will transform text into
+a sequence of integers. Pad sequences to a constant length,
+convert a karas model into a tf estimator, and
+instantiate a tf.Estimator. Finally, you will train and deploy your
+model using Cloud Machine Learning Engine. And feed in new article titles to
+the deployed model for prediction, keep in mind, you have multiple
+attempts to start and stop each lab. So don't worry if you don't
+make it through the first time, we'll review the solution
+together in the following video.

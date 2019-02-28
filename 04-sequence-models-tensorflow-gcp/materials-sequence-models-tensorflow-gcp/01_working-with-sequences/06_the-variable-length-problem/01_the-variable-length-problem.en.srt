@@ -1,0 +1,331 @@
+1
+00:00:00,000 --> 00:00:01,800
+In the last section in lab,
+
+2
+00:00:01,800 --> 00:00:04,825
+we learned how CNN's can be applied to the sequence domain.
+
+3
+00:00:04,825 --> 00:00:08,170
+Then practiced applying them to our synthetic time series data.
+
+4
+00:00:08,170 --> 00:00:11,280
+But you may have noticed that our CNN didn't improve much on
+
+5
+00:00:11,280 --> 00:00:15,035
+the RMSE that our DNN achieved. To understand why?
+
+6
+00:00:15,035 --> 00:00:17,809
+Think back to our original observations about the limitations
+
+7
+00:00:17,809 --> 00:00:21,100
+of DNNs and linear models in the image domain.
+
+8
+00:00:21,100 --> 00:00:23,540
+These model types are capable of learning
+
+9
+00:00:23,540 --> 00:00:26,960
+the contributions of specific regions and feature space.
+
+10
+00:00:26,960 --> 00:00:30,230
+Thus, they are well-suited to images because in images,
+
+11
+00:00:30,230 --> 00:00:34,835
+objects are often the same under special transformations like rotation.
+
+12
+00:00:34,835 --> 00:00:39,250
+Our solution was to decouple filters from specific locations in the image,
+
+13
+00:00:39,250 --> 00:00:41,315
+and that's what CNNs are.
+
+14
+00:00:41,315 --> 00:00:45,275
+However, powerful this approach may be, it is still limited.
+
+15
+00:00:45,275 --> 00:00:48,560
+To understand why? Consider these two equivalent sounds
+
+16
+00:00:48,560 --> 00:00:51,085
+and what their representations would look like.
+
+17
+00:00:51,085 --> 00:00:56,690
+Here's the first one. Here's the second.
+
+18
+00:00:56,690 --> 00:00:58,980
+Just like in the image domain,
+
+19
+00:00:58,980 --> 00:01:02,090
+where we expect models that understand the domain to be
+
+20
+00:01:02,090 --> 00:01:05,880
+robust against certain transformations like rotation and translation,
+
+21
+00:01:05,880 --> 00:01:07,320
+in the sequence domain,
+
+22
+00:01:07,320 --> 00:01:11,350
+it's important then models be robust to changes in the length of the pattern.
+
+23
+00:01:11,350 --> 00:01:13,730
+That's precisely what we tested in
+
+24
+00:01:13,730 --> 00:01:16,820
+our sprinkler dataset when we randomly set the frequency.
+
+25
+00:01:16,820 --> 00:01:20,150
+Your ear recognizes the fact that they're the same sound,
+
+26
+00:01:20,150 --> 00:01:23,000
+but think about what it would take for a model to recognise this.
+
+27
+00:01:23,000 --> 00:01:26,170
+To the model, one appears to have a very different frequency,
+
+28
+00:01:26,170 --> 00:01:28,260
+just like the orange line here.
+
+29
+00:01:28,260 --> 00:01:31,370
+In addition to being able to handle variable length patterns,
+
+30
+00:01:31,370 --> 00:01:34,400
+another important criterion for sequence models is that they be
+
+31
+00:01:34,400 --> 00:01:37,785
+able to handle variable length inputs and outputs.
+
+32
+00:01:37,785 --> 00:01:40,670
+This is important in a variety of contexts.
+
+33
+00:01:40,670 --> 00:01:42,680
+For example, imagine you're trying to predict
+
+34
+00:01:42,680 --> 00:01:46,580
+customer lifetime value given the previous purchases of that customer.
+
+35
+00:01:46,580 --> 00:01:49,825
+Not all customers will have the same number of purchases.
+
+36
+00:01:49,825 --> 00:01:51,555
+In a natural language models,
+
+37
+00:01:51,555 --> 00:01:55,820
+you might have to ingest or output variable length sequences of words.
+
+38
+00:01:55,820 --> 00:01:59,895
+There are two techniques that we can use to handle variable length sequences,
+
+39
+00:01:59,895 --> 00:02:02,265
+cutting and padding, and bagging.
+
+40
+00:02:02,265 --> 00:02:06,154
+But as we'll see, both of these approaches have their problems.
+
+41
+00:02:06,154 --> 00:02:09,330
+Let's say we're learning to predict the future of price of oil,
+
+42
+00:02:09,330 --> 00:02:12,510
+and we've been told the prices at various points in time.
+
+43
+00:02:12,510 --> 00:02:16,725
+If we reshape this data so that our model accepted four events at a time,
+
+44
+00:02:16,725 --> 00:02:20,605
+our linear model could learn a weight value for every time point.
+
+45
+00:02:20,605 --> 00:02:23,855
+In this case, it might learn these four weights.
+
+46
+00:02:23,855 --> 00:02:27,270
+In production, we might not get all four events though.
+
+47
+00:02:27,270 --> 00:02:30,245
+So, what would happen if you gave our model six, nine and 12?
+
+48
+00:02:30,245 --> 00:02:33,739
+Which has three events instead of the four that the model expects.
+
+49
+00:02:33,739 --> 00:02:37,730
+Well, linear models and DNNs are essentially matrix multiplications.
+
+50
+00:02:37,730 --> 00:02:40,480
+So, it's imperative that the inputs match what is expected.
+
+51
+00:02:40,480 --> 00:02:44,040
+So, you could pad the input to be the right size.
+
+52
+00:02:44,040 --> 00:02:46,150
+If you put the zero at the front,
+
+53
+00:02:46,150 --> 00:02:49,035
+the first weight that the model learn doesn't contribute.
+
+54
+00:02:49,035 --> 00:02:50,980
+If you put the zero at the back,
+
+55
+00:02:50,980 --> 00:02:53,785
+the last weight of the model learn doesn't contribute.
+
+56
+00:02:53,785 --> 00:02:55,920
+Neither of these is a good outcome.
+
+57
+00:02:55,920 --> 00:02:58,750
+Perhaps, you want to avoid padding by simply picking
+
+58
+00:02:58,750 --> 00:03:03,255
+a smaller fixed input size and cutting all sequences down to that size.
+
+59
+00:03:03,255 --> 00:03:05,000
+The smallest size we pick,
+
+60
+00:03:05,000 --> 00:03:07,285
+the less information that the model gets to work with,
+
+61
+00:03:07,285 --> 00:03:10,185
+and ultimately, this might hamper performance.
+
+62
+00:03:10,185 --> 00:03:14,195
+But, if you do the opposite and pick a really a large size,
+
+63
+00:03:14,195 --> 00:03:17,605
+then you have to figure out how to pad shorter sequences at run-time.
+
+64
+00:03:17,605 --> 00:03:20,735
+Consequently, no matter whether we cut or we pad,
+
+65
+00:03:20,735 --> 00:03:25,595
+we still have problems concatenating events together to form a fixed length sequence.
+
+66
+00:03:25,595 --> 00:03:30,005
+Another thing we could do is abandon our concatenation approach entirely,
+
+67
+00:03:30,005 --> 00:03:32,595
+and instead of concatenating time points together,
+
+68
+00:03:32,595 --> 00:03:36,485
+take the average value for each characteristic that we're measuring.
+
+69
+00:03:36,485 --> 00:03:40,200
+So, if we add three-dimensional representations of words,
+
+70
+00:03:40,200 --> 00:03:43,010
+we could say that the representation of a sequence
+
+71
+00:03:43,010 --> 00:03:46,715
+is just the average value for each of those three-dimensions.
+
+72
+00:03:46,715 --> 00:03:48,870
+This approach is known as bagging,
+
+73
+00:03:48,870 --> 00:03:53,290
+and when used in the context of natural language is called the bag of words model.
+
+74
+00:03:53,290 --> 00:03:55,845
+Surprisingly, it's effective, assuming
+
+75
+00:03:55,845 --> 00:03:58,470
+you have a good way of representing every unit of time.
+
+76
+00:03:58,470 --> 00:04:01,624
+We'll come back to this point when we talk about embeddings.
+
+77
+00:04:01,624 --> 00:04:06,225
+But regardless of how good our representations of individual points of time are,
+
+78
+00:04:06,225 --> 00:04:08,705
+this approach still throws away order.
+
+79
+00:04:08,705 --> 00:04:13,060
+It means that the cat sat on the mat is equal to the mat sat on the cat.
+
+80
+00:04:13,060 --> 00:04:15,155
+Order can be extremely important.
+
+81
+00:04:15,155 --> 00:04:17,780
+Fortunately, there are model types that are
+
+82
+00:04:17,780 --> 00:04:20,885
+designed specifically to handle variable length sequences.
+
+83
+00:04:20,885 --> 00:04:24,710
+Let's take a look at recurrent neural networks in the next module.

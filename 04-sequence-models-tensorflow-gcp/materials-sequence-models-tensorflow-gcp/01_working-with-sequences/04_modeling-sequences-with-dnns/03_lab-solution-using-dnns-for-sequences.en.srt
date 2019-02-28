@@ -1,0 +1,159 @@
+1
+00:00:00,140 --> 00:00:02,760
+Welcome to the second lab, where we're going to train
+
+2
+00:00:02,760 --> 00:00:06,845
+a DNN to learn our sinusoidal data from the previous lab.
+
+3
+00:00:06,845 --> 00:00:09,110
+In the previous lab, we went over how
+
+4
+00:00:09,110 --> 00:00:12,150
+the create time series function randomly generates a frequency and
+
+5
+00:00:12,150 --> 00:00:17,675
+amplitude and a noise to return 50 observations from random sine function.
+
+6
+00:00:17,675 --> 00:00:23,530
+We then wrote those files to disk and we trained the model using G-Cloud local ML Engine.
+
+7
+00:00:23,530 --> 00:00:26,330
+Critically, we passed in a model parameter
+
+8
+00:00:26,330 --> 00:00:29,085
+that determine which model function was called.
+
+9
+00:00:29,085 --> 00:00:31,470
+In this lab, instead of the linear value here,
+
+10
+00:00:31,470 --> 00:00:34,660
+we're going to change this to DNN and this will ensure that when
+
+11
+00:00:34,660 --> 00:00:39,500
+the code actually executes it it's using our DNN model and not our linear model function.
+
+12
+00:00:39,500 --> 00:00:42,905
+The tasks that you have to complete are all inside the model.py.
+
+13
+00:00:42,905 --> 00:00:44,945
+So let's take a look there next.
+
+14
+00:00:44,945 --> 00:00:49,400
+Your model.py should look like this and remember each of these model functions will get
+
+15
+00:00:49,400 --> 00:00:51,230
+a bunch of features and its responsibility will
+
+16
+00:00:51,230 --> 00:00:53,865
+be to return the predictions using those features.
+
+17
+00:00:53,865 --> 00:00:57,845
+In the case of a DNN, our DNN looks very similar to
+
+18
+00:00:57,845 --> 00:01:01,550
+the way our linear model looks but instead of a linear combination of its inputs,
+
+19
+00:01:01,550 --> 00:01:05,220
+we're now going to do a non-linear combination of those inputs.
+
+20
+00:01:05,220 --> 00:01:08,265
+What that looks like in code is something like this.
+
+21
+00:01:08,265 --> 00:01:11,670
+So here for example I've taken our input X,
+
+22
+00:01:11,670 --> 00:01:14,270
+that's the result of calling our features dictionary retrieving
+
+23
+00:01:14,270 --> 00:01:18,115
+the time series column and then I've added two hidden layers.
+
+24
+00:01:18,115 --> 00:01:22,030
+The first one gets X as input and then maps to
+
+25
+00:01:22,030 --> 00:01:26,830
+10 nodes and calls the relu activation function.
+
+26
+00:01:26,830 --> 00:01:30,615
+The second one gets h1 as input and maps to three nodes.
+
+27
+00:01:30,615 --> 00:01:33,530
+It's also dense and also uses the relu function
+
+28
+00:01:33,530 --> 00:01:36,410
+and then finally we have the prediction layer and the prediction layer has
+
+29
+00:01:36,410 --> 00:01:39,140
+only one output and it only uses
+
+30
+00:01:39,140 --> 00:01:43,560
+the linear combination of its inputs and we return that predictions.
+
+31
+00:01:44,560 --> 00:01:46,970
+After you've done that, you should be able to run
+
+32
+00:01:46,970 --> 00:01:50,385
+this particular code block without any errors.
+
+33
+00:01:50,385 --> 00:01:55,545
+Of course if you want to, you're going to initialize a Cloud ML Engine training job.
+
+34
+00:01:55,545 --> 00:02:00,050
+In order to do that, you would once again have to change what we're iterating
+
+35
+00:02:00,050 --> 00:02:02,210
+over in this final block over here and since
+
+36
+00:02:02,210 --> 00:02:04,795
+theoretically you've also already implemented linear model,
+
+37
+00:02:04,795 --> 00:02:08,000
+you can have it iterated over linear and DNN.
+
+38
+00:02:08,140 --> 00:02:11,210
+When I train this model,
+
+39
+00:02:11,210 --> 00:02:14,975
+I got slightly better performance on my DNN that I do by linear.
+
+40
+00:02:14,975 --> 00:02:18,530
+The RMSE dropped from 0.15 to 0.101.

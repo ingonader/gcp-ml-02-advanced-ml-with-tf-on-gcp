@@ -1,0 +1,147 @@
+1
+00:00:00,000 --> 00:00:03,270
+Despite the limits of their representational power,
+
+2
+00:00:03,270 --> 00:00:05,970
+it would be easy to conclude that the RNNs we've seen so
+
+3
+00:00:05,970 --> 00:00:09,210
+far are the perfect tools for modelling variable length input,
+
+4
+00:00:09,210 --> 00:00:11,485
+but in fact there are a few major caveats.
+
+5
+00:00:11,485 --> 00:00:14,190
+Firstly, RNNs are sequence models and so,
+
+6
+00:00:14,190 --> 00:00:16,260
+are only appropriate when earlier observations
+
+7
+00:00:16,260 --> 00:00:19,115
+provide an information about later observations.
+
+8
+00:00:19,115 --> 00:00:22,140
+Secondly, it turns out that the RNNs we've seen still
+
+9
+00:00:22,140 --> 00:00:24,805
+struggle on some common sequence modeling tasks.
+
+10
+00:00:24,805 --> 00:00:28,095
+For example, consider this passage, as a human,
+
+11
+00:00:28,095 --> 00:00:32,555
+it's easy to refer back earlier in the paragraph to infer the language at the end.
+
+12
+00:00:32,555 --> 00:00:34,320
+But think about how much state and
+
+13
+00:00:34,320 --> 00:00:38,160
+how many iteration's the model will have to go through in order to capture this.
+
+14
+00:00:38,160 --> 00:00:41,575
+This sort of relationship is called a long-term dependency.
+
+15
+00:00:41,575 --> 00:00:43,580
+In order to model longer passages,
+
+16
+00:00:43,580 --> 00:00:46,050
+it's critical that our model be able to handle them.
+
+17
+00:00:46,050 --> 00:00:49,340
+Unfortunately, the RNNs we've seen cannot do this,
+
+18
+00:00:49,340 --> 00:00:51,350
+and it's because of a problem we discussed earlier in
+
+19
+00:00:51,350 --> 00:00:54,465
+this course called the vanishing or exploding gradient problem.
+
+20
+00:00:54,465 --> 00:00:57,680
+However, with RNNs, the problem is slightly more nuanced.
+
+21
+00:00:57,680 --> 00:01:01,730
+Because of the way the hidden state from the previous iteration is carried along,
+
+22
+00:01:01,730 --> 00:01:05,225
+the weights in an RNN are particularly susceptible to become uncorrelated.
+
+23
+00:01:05,225 --> 00:01:07,945
+Uncorrelated weights reduce the power of the model.
+
+24
+00:01:07,945 --> 00:01:10,459
+In the extreme if weights were perfectly correlated,
+
+25
+00:01:10,459 --> 00:01:12,960
+it would be as if the model had a single parameter.
+
+26
+00:01:12,960 --> 00:01:18,255
+Correlated weights are also problematic because they're more likely to explode or vanish.
+
+27
+00:01:18,255 --> 00:01:20,150
+In the first specialization,
+
+28
+00:01:20,150 --> 00:01:21,890
+we introduced a method for mitigating
+
+29
+00:01:21,890 --> 00:01:25,540
+the vanishing gradient problem which was to use the ReLU activation function,
+
+30
+00:01:25,540 --> 00:01:29,290
+and this technique can't still help but doesn't get us all the way there.
+
+31
+00:01:29,290 --> 00:01:31,500
+Other techniques have been developed as well.
+
+32
+00:01:31,500 --> 00:01:35,495
+For example, weight initialization like he- or xavier initializations,
+
+33
+00:01:35,495 --> 00:01:39,685
+L1 or L2 weight regularization to control the size of the weights,
+
+34
+00:01:39,685 --> 00:01:41,930
+gradient clipping by monitoring the norm of
+
+35
+00:01:41,930 --> 00:01:45,220
+the gradient and taking the max against some pre-determined bound.
+
+36
+00:01:45,220 --> 00:01:49,070
+But for RNNs, the major advance was actually architectural.
+
+37
+00:01:49,070 --> 00:01:52,970
+This new architecture is what we'll talk about in the next module.

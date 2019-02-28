@@ -1,0 +1,291 @@
+1
+00:00:01,030 --> 00:00:03,593
+Welcome back,
+I hope you were able to train and
+
+2
+00:00:03,593 --> 00:00:07,890
+deploy an article classification model
+with reasonably good performance.
+
+3
+00:00:09,466 --> 00:00:14,790
+While our model performs well, our model's
+rest API leaves something to be desired.
+
+4
+00:00:16,260 --> 00:00:18,685
+Currently, in order to classify articles,
+
+5
+00:00:18,685 --> 00:00:22,260
+we put the burden of integerizing
+the text on the client.
+
+6
+00:00:23,340 --> 00:00:27,100
+This was necessary, because we were
+using Python level functions for
+
+7
+00:00:27,100 --> 00:00:29,330
+this preprocessing.
+
+8
+00:00:29,330 --> 00:00:33,240
+Python functions can't be embedded
+into a TensorFlow graph and
+
+9
+00:00:33,240 --> 00:00:35,600
+therefore can't be called from
+our serving input function.
+
+10
+00:00:37,080 --> 00:00:39,540
+This means all of our clients need to know
+
+11
+00:00:39,540 --> 00:00:43,099
+how to preprocess the text exactly
+the same way we did during training.
+
+12
+00:00:44,150 --> 00:00:46,301
+They need to ignore the same punctuation,
+
+13
+00:00:46,301 --> 00:00:50,690
+and they need a copy of the same word
+to integer mapping that we used.
+
+14
+00:00:50,690 --> 00:00:55,571
+This also means that every time we
+update our word to integer mapping,
+
+15
+00:00:55,571 --> 00:00:59,389
+we need to provide this new
+mapping to all the clients.
+
+16
+00:00:59,389 --> 00:01:02,924
+This is messy, and invites training
+serving skew, which is when
+
+17
+00:01:02,924 --> 00:01:07,234
+the preprocessing of data during serving
+deviates from how it was preprocessed
+
+18
+00:01:07,234 --> 00:01:11,050
+during training, which confuses
+the model and yields poor results.
+
+19
+00:01:12,980 --> 00:01:13,840
+To solve this,
+
+20
+00:01:13,840 --> 00:01:18,421
+we need to refacture our preprocessing
+code to use native Tensorflow functions.
+
+21
+00:01:18,421 --> 00:01:22,240
+Once we do this, we can make
+the preprocessing functions part of
+
+22
+00:01:22,240 --> 00:01:26,698
+the serving input function, which
+becomes part of the serving graph, and
+
+23
+00:01:26,698 --> 00:01:31,320
+part of TensorFlow model itself,
+thus eliminating training serving skew.
+
+24
+00:01:32,810 --> 00:01:35,110
+We also make using our
+API much simpler for
+
+25
+00:01:35,110 --> 00:01:38,920
+clients, because they can
+pass us article directly,
+
+26
+00:01:38,920 --> 00:01:42,130
+instead of worrying about how to
+preprocess them properly first.
+
+27
+00:01:43,750 --> 00:01:47,200
+So why didn't we use native
+TensorFlow functions to begin with?
+
+28
+00:01:48,310 --> 00:01:51,620
+Well, TensorFlow is still
+a growing framework, and
+
+29
+00:01:51,620 --> 00:01:55,410
+there are still many tasks that
+are easier to do in native Python.
+
+30
+00:01:55,410 --> 00:01:58,590
+As of now, natural language
+preprocessing is one of them.
+
+31
+00:01:59,910 --> 00:02:02,190
+Doing it in Python is easier, and
+
+32
+00:02:02,190 --> 00:02:06,040
+if we're not planning to deploy our model
+to production, we can get away with it.
+
+33
+00:02:07,190 --> 00:02:11,160
+However, if we want to make
+a robust production ready model,
+
+34
+00:02:11,160 --> 00:02:14,070
+we should do things with the native
+TensorFlow whenever possible.
+
+35
+00:02:15,310 --> 00:02:18,890
+This trade off between doing things
+the easier way in Python and
+
+36
+00:02:18,890 --> 00:02:21,540
+doing things the more
+robust way in TensorFlow
+
+37
+00:02:21,540 --> 00:02:23,590
+is a trade off you'll likely
+face in your own work.
+
+38
+00:02:24,890 --> 00:02:29,593
+Many times the best way is to start with
+Python for rapid prototyping, then convert
+
+39
+00:02:29,593 --> 00:02:33,776
+it to TensorFlow later, if and
+when you need to productionize your code.
+
+40
+00:02:36,061 --> 00:02:37,172
+You may be thinking,
+
+41
+00:02:37,172 --> 00:02:40,895
+what about just adding the Python
+preprocessing to the server-side?
+
+42
+00:02:42,050 --> 00:02:44,930
+Just because the preprocessing
+isn't done inside the model,
+
+43
+00:02:44,930 --> 00:02:46,810
+doesn't mean I have to
+burden the client with it.
+
+44
+00:02:48,340 --> 00:02:49,920
+That's a valid point.
+
+45
+00:02:49,920 --> 00:02:53,320
+Your architecture would be a bit more
+clunky, but that's not a deal breaker.
+
+46
+00:02:54,740 --> 00:02:57,400
+However, what if you don't
+want to have a server at all.
+
+47
+00:02:58,420 --> 00:03:01,100
+Maybe you want to run your model
+directly on a mobile phone.
+
+48
+00:03:02,840 --> 00:03:06,010
+Now, you would have to find a way to
+reimplement that logic for mobile.
+
+49
+00:03:07,820 --> 00:03:11,920
+The real payoff for sticking to native
+TensorFlow is that you can write your code
+
+50
+00:03:11,920 --> 00:03:18,680
+once and deploy it on mobile, on a server,
+or even on an embedded device without
+
+51
+00:03:18,680 --> 00:03:24,457
+having to worry about
+platform-specific dependencies.
+
+52
+00:03:25,760 --> 00:03:30,400
+The actual process of converting
+a program to native TensorFlow
+
+53
+00:03:30,400 --> 00:03:34,020
+consists of identifying
+the functions that are native Python
+
+54
+00:03:34,020 --> 00:03:36,060
+then identifying
+the TensorFlow equivalent.
+
+55
+00:03:37,710 --> 00:03:42,120
+Now this table is an over simplification,
+because the TensorFlow functions
+
+56
+00:03:42,120 --> 00:03:46,020
+usually aren't drop and
+replacements for the Python functions.
+
+57
+00:03:46,020 --> 00:03:48,770
+They usually have slightly different APIs,
+and
+
+58
+00:03:48,770 --> 00:03:52,810
+may require some supporting code around
+them to accomplish the same behavior.
+
+59
+00:03:54,370 --> 00:03:58,120
+To fully appreciate the differences,
+let's walk through a version of our text
+
+60
+00:03:58,120 --> 00:04:03,363
+classification code, which implements
+native TensorFlow preprocessing.

@@ -1,0 +1,755 @@
+1
+00:00:00,000 --> 00:00:02,715
+Congratulations on finishing the lab.
+
+2
+00:00:02,715 --> 00:00:06,100
+Let's quickly go through the lab solutions here.
+
+3
+00:00:06,100 --> 00:00:11,220
+This notebook shows how to train a sequence to sequence model
+
+4
+00:00:11,220 --> 00:00:17,200
+using the Tensor2Tensor library to complete new lines of poetry.
+
+5
+00:00:17,240 --> 00:00:23,375
+To get started, I need to install some necessary packages here.
+
+6
+00:00:23,375 --> 00:00:30,430
+First, I want to see whether the environment has the packages that I need.
+
+7
+00:00:41,480 --> 00:00:48,615
+As shown here, the environment only installed TensorBoard and TensorFlow.
+
+8
+00:00:48,615 --> 00:00:53,730
+So, I need to install Tensor2Tensor and Project
+
+9
+00:00:53,730 --> 00:00:59,580
+Gutenberg that will give me the access to the historical poems.
+
+10
+00:01:35,420 --> 00:01:38,730
+After finishing the pip install,
+
+11
+00:01:38,730 --> 00:01:41,285
+I am going to reset the session,
+
+12
+00:01:41,285 --> 00:01:46,080
+so that the Python environment can pick up the new packages.
+
+13
+00:01:59,400 --> 00:02:03,760
+Now, let me do a quick check again.
+
+14
+00:02:06,830 --> 00:02:13,260
+See, Tensor2Tensor has successfully installed in my environment.
+
+15
+00:02:13,260 --> 00:02:18,260
+I also need to define some environment variables,
+
+16
+00:02:18,260 --> 00:02:24,690
+such as project, bucket, region and problem.
+
+17
+00:02:36,220 --> 00:02:44,790
+The following gcloud command can update the properties in the configurations.
+
+18
+00:02:49,860 --> 00:02:57,990
+Next, I am going to get some poetry anthologies from the Project Gutenberg.
+
+19
+00:03:04,070 --> 00:03:15,550
+Here, I save the data into a text file called raw.txt.
+
+20
+00:03:22,610 --> 00:03:26,650
+Let's quickly do a word count.
+
+21
+00:03:29,300 --> 00:03:31,680
+As we can see here,
+
+22
+00:03:31,680 --> 00:03:40,530
+there are 22,544 lines of poetry in the raw.txt file.
+
+23
+00:03:42,890 --> 00:03:46,685
+The machine learning problem here is to train
+
+24
+00:03:46,685 --> 00:03:51,100
+a model to write poetry giving a starting point.
+
+25
+00:03:51,100 --> 00:03:56,315
+To do so, I will train the model on the odd-numbered lines,
+
+26
+00:03:56,315 --> 00:03:59,625
+such as the first, second,
+
+27
+00:03:59,625 --> 00:04:04,250
+fifth lines, and predict on the even number of lines,
+
+28
+00:04:04,250 --> 00:04:06,485
+such as the second,
+
+29
+00:04:06,485 --> 00:04:10,345
+fourth, sixth lines and so forth.
+
+30
+00:04:10,345 --> 00:04:19,265
+Therefore, the raw data needs to be split into two files, input and output.
+
+31
+00:04:19,265 --> 00:04:25,155
+The input file will consists of the input lines of poetry.
+
+32
+00:04:25,155 --> 00:04:33,359
+The output file will consists of the corresponding output lines or the true labels.
+
+33
+00:04:38,260 --> 00:04:44,880
+Let's take a look how the inputs and output file look like.
+
+34
+00:04:53,360 --> 00:04:55,740
+As we can see here,
+
+35
+00:04:55,740 --> 00:05:02,495
+the first line of the raw file becomes the first line of the input file.
+
+36
+00:05:02,495 --> 00:05:09,330
+The second line of the raw file becomes the first line of the output file.
+
+37
+00:05:10,880 --> 00:05:13,915
+To productionize the model,
+
+38
+00:05:13,915 --> 00:05:19,135
+I don't need to generate those training data files beforehand,
+
+39
+00:05:19,135 --> 00:05:24,575
+instead Tensor2Tensor can create them on the fly.
+
+40
+00:05:24,575 --> 00:05:27,940
+That's what I'm going to do later.
+
+41
+00:05:33,170 --> 00:05:36,360
+In the next field code chunks,
+
+42
+00:05:36,360 --> 00:05:41,730
+I am going to set up the problem in Tensor2Tensor.
+
+43
+00:05:45,110 --> 00:05:52,550
+Here, I defined a new problem called PoetryLineProblem,
+
+44
+00:05:52,550 --> 00:05:59,360
+which is inherited from a base problem called Text2TextProblem.
+
+45
+00:05:59,360 --> 00:06:02,950
+I also define the vocabulary size,
+
+46
+00:06:02,950 --> 00:06:09,870
+dataset splitting ratio, hyper-parameters, and et cetera.
+
+47
+00:06:11,150 --> 00:06:15,370
+Let's take a look what I get here.
+
+48
+00:06:18,370 --> 00:06:26,180
+I have defined a trainer with innate and set up Python scripts.
+
+49
+00:06:31,550 --> 00:06:38,480
+T2t-datagen creates text sequence from the training datasets.
+
+50
+00:06:38,480 --> 00:06:42,540
+Here, I specify the trainer,
+
+51
+00:06:42,540 --> 00:06:48,940
+problem, data directory and a temporary directory.
+
+52
+00:07:04,550 --> 00:07:11,710
+Now, the data is generated as a list of files here.
+
+53
+00:07:16,350 --> 00:07:25,495
+Previously, all generated data is stored locally by using the GSUT commands.
+
+54
+00:07:25,495 --> 00:07:31,950
+I can copy the data to a bucket in the Google Cloud Storage.
+
+55
+00:07:50,940 --> 00:07:53,530
+Then I will authorize
+
+56
+00:07:53,530 --> 00:08:00,640
+the Cloud ML Service account to access the data in the storage buckets.
+
+57
+00:08:28,320 --> 00:08:36,880
+Let me firstly run the model locally on a subset of the data to make sure it works.
+
+58
+00:08:49,460 --> 00:08:52,205
+Great, it worked.
+
+59
+00:08:52,205 --> 00:08:57,790
+Now, I'm ready to train the model on the entire dataset.
+
+60
+00:09:15,900 --> 00:09:22,210
+The training job has completed locally.
+
+61
+00:09:26,570 --> 00:09:30,160
+Except to training the model locally,
+
+62
+00:09:30,160 --> 00:09:35,460
+I can also train it on the Cloud Machine Learning Engine.
+
+63
+00:09:35,460 --> 00:09:43,520
+Tensor2Tensor has a convenient Cloud ML Engine option to kick off the training job.
+
+64
+00:09:43,520 --> 00:09:49,840
+I also increase the training staff here to 7,500.
+
+65
+00:09:49,840 --> 00:09:55,705
+This training job were executed on one GPU.
+
+66
+00:09:55,705 --> 00:09:59,500
+Notice that the echo here is because
+
+67
+00:09:59,500 --> 00:10:06,890
+the t2t-trainer will ask me to confirm before submitting the job to the Cloud.
+
+68
+00:10:36,620 --> 00:10:45,420
+I can also monitor the training progress at GCP Console through this link here.
+
+69
+00:10:46,350 --> 00:10:53,530
+This job took about 20 to 25 minutes and finished successfully.
+
+70
+00:10:53,530 --> 00:10:58,490
+Let's go back to the notebook again.
+
+71
+00:11:01,980 --> 00:11:09,395
+The training job reported some evaluation metrics such as accuracy,
+
+72
+00:11:09,395 --> 00:11:15,970
+accuracy per sequence, approximate Blue score and etc.
+
+73
+00:11:15,970 --> 00:11:18,745
+To evaluate my model,
+
+74
+00:11:18,745 --> 00:11:23,330
+I am more interested in accuracy per sequence.
+
+75
+00:11:23,330 --> 00:11:28,665
+Notice that the accuracy per sequence equals to zero here.
+
+76
+00:11:28,665 --> 00:11:36,920
+That is not too surprising as I asked the neural network to be rather creative.
+
+77
+00:11:47,250 --> 00:11:54,930
+Here shows me a list of the model files that we just created.
+
+78
+00:11:54,930 --> 00:12:02,785
+What if I have more GPUs that allow me to train the model for a longer period of time?
+
+79
+00:12:02,785 --> 00:12:06,680
+Y gets a better accuracy per sequence.
+
+80
+00:12:06,680 --> 00:12:09,075
+Let's try out.
+
+81
+00:12:09,075 --> 00:12:12,720
+I'm not going to ask you the following code in
+
+82
+00:12:12,720 --> 00:12:17,975
+this solution as it takes a few hours to complete.
+
+83
+00:12:17,975 --> 00:12:28,900
+Instead, I have previously trained the model using four GPUs for 75,000 steps.
+
+84
+00:12:35,300 --> 00:12:44,240
+That training job took me about 12 hours and ended up with this matrix.
+
+85
+00:12:44,240 --> 00:12:52,660
+I listed the accuracy per sequence is no longer zero, is now 0.019.
+
+86
+00:12:52,660 --> 00:12:58,975
+This is because I am using a relatively small dataset,
+
+87
+00:12:58,975 --> 00:13:03,035
+only 12,000 lines of poetry.
+
+88
+00:13:03,035 --> 00:13:08,545
+This is tiny in the world of natural language problems.
+
+89
+00:13:08,545 --> 00:13:11,835
+To set the correct expectation,
+
+90
+00:13:11,835 --> 00:13:17,995
+a high-performing translation model needs 400 million lines of
+
+91
+00:13:17,995 --> 00:13:25,540
+inputs and takes one entire day to train on a TPU machine.
+
+92
+00:13:26,580 --> 00:13:36,560
+So, how well my poetry model do when faced with Rumi's spiritual couplets?
+
+93
+00:13:36,560 --> 00:13:39,420
+Let's try out.
+
+94
+00:13:44,190 --> 00:13:54,380
+Here on writing Rumi's couplets into a text file called rumi.txt.
+
+95
+00:13:59,670 --> 00:14:06,620
+Let me print out the odd number lines and see how they look.
+
+96
+00:14:10,470 --> 00:14:18,695
+So, I get where did the handsome bluff go as the first output line?
+
+97
+00:14:18,695 --> 00:14:22,905
+He spread his lights among us like a candle,
+
+98
+00:14:22,905 --> 00:14:27,145
+as the second output line, and so forth.
+
+99
+00:14:27,145 --> 00:14:32,790
+Let's see how my model predicts for those lines.
+
+100
+00:14:38,530 --> 00:14:44,960
+Some of the predictions are still phrases, not complete sentences.
+
+101
+00:14:44,960 --> 00:14:49,725
+This indicate that I might need to train the model for
+
+102
+00:14:49,725 --> 00:14:55,960
+a longer period of time or adjust some hyperparameters.
+
+103
+00:14:58,920 --> 00:15:01,930
+To diagnose the model,
+
+104
+00:15:01,930 --> 00:15:05,800
+I can look at the evaluation metrics on
+
+105
+00:15:05,800 --> 00:15:11,930
+the TensorBoard and see what I can improve in the next iteration.
+
+106
+00:15:46,380 --> 00:15:48,925
+As we can see here,
+
+107
+00:15:48,925 --> 00:15:53,060
+the loss of this model is pretty bad.
+
+108
+00:15:59,410 --> 00:16:04,105
+We can also look at the accuracy per sequence.
+
+109
+00:16:04,105 --> 00:16:11,570
+Similarly, it is not as good as we expected,
+
+110
+00:16:12,630 --> 00:16:22,600
+that is because the TensorBoard shows the evaluation on 7,500 training steps.
+
+111
+00:16:23,840 --> 00:16:27,580
+To stop the TensorBoard,
+
+112
+00:16:27,780 --> 00:16:33,350
+I just need to insert the process ID
+
+113
+00:16:33,350 --> 00:16:44,350
+8562 into this line here and run.
+
+114
+00:16:44,350 --> 00:16:51,780
+So now, the TensorBoard is stopped Remember,
+
+115
+00:16:51,780 --> 00:16:59,345
+I also ran the model for 75,000 steps on four GPUs.
+
+116
+00:16:59,345 --> 00:17:03,710
+Let's look at the loss curve for that model.
+
+117
+00:17:03,710 --> 00:17:08,210
+It is clear that my model is overfitting.
+
+118
+00:17:08,210 --> 00:17:15,145
+Note that the orange training curve is well below the blue evaluation curve.
+
+119
+00:17:15,145 --> 00:17:24,470
+Both loss curve and accuracy per sequence curve plateaus after 40,000 steps.
+
+120
+00:17:24,470 --> 00:17:29,065
+So, how can I improve my model even further?
+
+121
+00:17:29,065 --> 00:17:34,460
+Well, I need to reduce the overfitting and make sure
+
+122
+00:17:34,460 --> 00:17:41,930
+the evaluation metrics keeps going down as well as loss is also going down.
+
+123
+00:17:41,930 --> 00:17:46,660
+Well, I need to reduce overfitting and make sure
+
+124
+00:17:46,660 --> 00:17:53,425
+the evaluation metrics keep going down as long as the loss is also going down.
+
+125
+00:17:53,425 --> 00:17:57,730
+What I really need to do is to get more data,
+
+126
+00:17:57,730 --> 00:18:00,885
+but if that's not an option here,
+
+127
+00:18:00,885 --> 00:18:05,010
+I could try to reduce the size of the neural network
+
+128
+00:18:05,010 --> 00:18:09,770
+and increase the dropout regorization.
+
+129
+00:18:09,770 --> 00:18:17,900
+I could also do hyperparameter tuning on the dropout and network sizes.
+
+130
+00:18:19,920 --> 00:18:30,650
+Tensor to tensor also supports hyperparameter tuning on Cloud Machine Learning Engine.
+
+131
+00:18:30,650 --> 00:18:34,175
+So, in the next section here,
+
+132
+00:18:34,175 --> 00:18:38,960
+I am going to add some auto-tune flags.
+
+133
+00:18:42,840 --> 00:18:49,220
+While I ran this job it took about 15 hours,
+
+134
+00:18:53,010 --> 00:19:00,055
+and found the trials 37 has the best model performance.
+
+135
+00:19:00,055 --> 00:19:05,100
+It also found the best set of hyperparameters for me.
+
+136
+00:19:05,100 --> 00:19:07,875
+So, as we can see here,
+
+137
+00:19:07,875 --> 00:19:12,120
+the best number of hidden layers is four.
+
+138
+00:19:12,120 --> 00:19:17,495
+The best learning rate is 0.0267.
+
+139
+00:19:17,495 --> 00:19:21,955
+The best hidden size is 512,
+
+140
+00:19:21,955 --> 00:19:28,820
+and the best attention dropout is 0.6058.
+
+141
+00:19:30,070 --> 00:19:32,355
+As we can see here,
+
+142
+00:19:32,355 --> 00:19:36,410
+the accuracy per sequence has increased to
+
+143
+00:19:36,410 --> 00:19:44,935
+0.027 comparing to 0.019 that I got without hyperparameter tuning.
+
+144
+00:19:44,935 --> 00:19:48,580
+This is 40 percent of improvement.
+
+145
+00:19:48,580 --> 00:19:56,245
+This is only 7,500 steps instead of 75,000 steps.
+
+146
+00:19:56,245 --> 00:19:59,630
+This result is pretty good.
+
+147
+00:19:59,760 --> 00:20:07,310
+Now, let's predict the Rumi's couplets again was this optimized model.
+
+148
+00:20:09,990 --> 00:20:13,565
+Let's look at some example here.
+
+149
+00:20:13,565 --> 00:20:17,920
+The first line of the training is,
+
+150
+00:20:17,920 --> 00:20:21,230
+where did the handsome beloved go?
+
+151
+00:20:21,230 --> 00:20:25,385
+My model predicted the second line as,
+
+152
+00:20:25,385 --> 00:20:29,320
+where art thou worse to me than dead?
+
+153
+00:20:29,320 --> 00:20:31,655
+And the actual second line,
+
+154
+00:20:31,655 --> 00:20:33,460
+the Rumi had is,
+
+155
+00:20:33,460 --> 00:20:36,795
+I wonder where did that tall,
+
+156
+00:20:36,795 --> 00:20:40,040
+shapely cypress tree go?
+
+157
+00:20:40,040 --> 00:20:45,155
+Wow. The predicted couplets are quite decent
+
+158
+00:20:45,155 --> 00:20:50,525
+considering I only trained the model on American Poetry.
+
+159
+00:20:50,525 --> 00:20:54,475
+Rumi of course has a contacts and
+
+160
+00:20:54,475 --> 00:21:00,060
+thread running through his lines while my model doesn't.
+
+161
+00:21:01,230 --> 00:21:04,555
+Now, I have my model ready.
+
+162
+00:21:04,555 --> 00:21:08,420
+How do I serve those predictions?
+
+163
+00:21:09,450 --> 00:21:12,715
+There are two ways to do so.
+
+164
+00:21:12,715 --> 00:21:17,695
+Firstly, I can use Cloud Machine Learning Engine.
+
+165
+00:21:17,695 --> 00:21:23,889
+This is serverless and I don't have to manage any infrastructure.
+
+166
+00:21:23,889 --> 00:21:31,665
+Secondly, I can also use Kuberflow on Google Kubernetes Engine.
+
+167
+00:21:31,665 --> 00:21:39,410
+This uses cluster but will also work on-prem on my own Kubernetes cluster.
+
+168
+00:21:39,410 --> 00:21:49,420
+In either way, I need to export the model first and let TensorFlow serve the model.
+
+169
+00:21:56,040 --> 00:22:01,090
+To serve the models on Cloud ML Engine,
+
+170
+00:22:01,090 --> 00:22:04,850
+I need to set up some configurations.
+
+171
+00:22:45,670 --> 00:22:52,890
+I also need to delete a model version if it has already existed.
+
+172
+00:22:57,330 --> 00:23:03,940
+Updating the G Cloud components is a good practice here.
+
+173
+00:23:03,940 --> 00:23:10,430
+It makes sure the Google Cloud SDKs are up to date.
+
+174
+00:23:14,120 --> 00:23:18,850
+This might take a few minutes for us.
+
+175
+00:23:43,050 --> 00:23:46,360
+All the components are updated.
+
+176
+00:23:46,360 --> 00:23:50,030
+Now is time to deploy our model.
+
+177
+00:24:04,500 --> 00:24:08,120
+My model is deployed.
+
+178
+00:24:08,120 --> 00:24:12,650
+I'm now going to deploy the model on Kuberflows here,
+
+179
+00:24:12,650 --> 00:24:19,250
+but you can try it out yourself by following the instruction in this notebook.
+
+180
+00:24:20,270 --> 00:24:29,480
+What I have deployed in Cloud ML Engine or Kuberflow is only the TensorFlow model.
+
+181
+00:24:29,480 --> 00:24:37,510
+I still need a preprocessing service that could be down by using AppEngine.
+
+182
+00:24:38,850 --> 00:24:48,565
+I need to add it the application yaml file and create the application with AppEngine.
+
+183
+00:24:48,565 --> 00:24:56,960
+I previously had an application built here and feel free to check it out.
+
+184
+00:24:58,990 --> 00:25:06,170
+Inside this app, I typed "I wandered lonely as a cloud",
+
+185
+00:25:06,170 --> 00:25:08,030
+as the first line,
+
+186
+00:25:08,030 --> 00:25:14,000
+and got the prediction shown as the next line of the poetry.
+
+187
+00:25:14,040 --> 00:25:16,450
+As you can see,
+
+188
+00:25:16,450 --> 00:25:18,745
+that is not bad at all.
+
+189
+00:25:18,745 --> 00:25:24,020
+Now, I have my model trained and served.

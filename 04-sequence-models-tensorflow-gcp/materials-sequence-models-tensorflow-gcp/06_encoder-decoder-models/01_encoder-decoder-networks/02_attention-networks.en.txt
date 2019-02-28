@@ -1,0 +1,25 @@
+Example here shows that sometimes,
+the original sentence may not perfectly align with
+the translation at each time step. In this example,
+the first English word is black. Well, the first French word is chat. That means cat in English. How could we train the model to
+pay more attention to the word cat instead of the word black
+at the first time step? In the translation model,
+the intuition behind attention network is that it allows
+the new network to pay attention to only part of the input sentence
+while generating a translation. Much like a human translator would do. Now, let's formalize
+the intuition into the exact details of how we could
+implement an attention network. The attention network
+could be something similar to the blue mini neural
+network on the left. Before moving on,
+let's define some notations. Alpha represents the tension
+weight at each time step. H represents the hidden state of encoder RN at each time step. H subscript d represents the hidden state of the decoder RN at each time step. To train the attention network,
+we will follow three steps. First, we want the tension weights. Alpha to depend on the current word
+being translated in both languages. So the mini network that
+produces the tension weights will taking into account both the hidden states of the encoder RN and the hidden state of the decoder
+RN at times step heat. This gives us our attention weight for a given words of the input
+English sentence for each words of the output,
+French sentences. Then the tension vector, alpha 1 times H1 plus alpha 2 times H2 plus, etc. Gets combined with the hidden state of the decoder RN at time step P to fine tune the translation for current output word. Lastly, the combined factor is also used as an additional input in the decoder RN at time step t plus 1. We keep moving on by following these three steps until reaching
+the end of sentence token. The inversion of the black
+cat translation is clearly visible in the attention diagram. So is the fact that eight translates as two words in French. We can see the tension network staying focused on the word eight for
+two time steps. It sounds like a lot of work, right? But don't panic, there are high level APIs
+available in TensorFlow that we can use.

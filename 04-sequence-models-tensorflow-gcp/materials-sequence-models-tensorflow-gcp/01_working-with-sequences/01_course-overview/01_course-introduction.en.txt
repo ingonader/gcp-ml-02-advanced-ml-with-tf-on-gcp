@@ -1,0 +1,27 @@
+Hi, welcome to the fourth course
+of the Advanced Machine Learning on GCP Specialization. I'm Max, a machine learning curriculum
+developer for Google Cloud. In this course, we'll learn how to
+make predictions on sequences of data. We'll cover common business use cases
+like, time series prediction and how to deal with more recent data
+points getting more relevance. And translating entire sequences
+also known as sequences of words into other languages. You'll get hands on practice training your
+very own sequence models on a variety of public datasets. Let's review why modules
+are part of this course. First, you'll learn what a sequence is. See how you can prepare a sequence data
+for modeling and introduce some classical approaches to sequence modeling,
+and practice applying them. In the next module,
+we'll introduce Recurrent Neural Nets, explain how they address the variable
+length sequence problem, explain how our traditional optimization
+procedure applies to RNNs, and review the limits of what RNNs can and
+can't represent. Then, we'll dive deeper into
+different models beyond RNNs. We'll talk about LSTMs,
+deep RNNs, and more. Next we'll talk about how transfer
+learning applies to natural language. You'll learn how researchers in other
+disciplines have historically constructed embeddings of words without
+training on a supervised task. You'll learn about recent
+techniques called GloVe and word2vec that are inspired
+by those techniques. How you can easily make use of pre-trained
+word2vec embeddings using TensorFlow Hub. And how your task and the amount of data
+that you have determine how you should use word2vec and GloVe in your model. Lastly, we'll focus on a sequence
+to sequence model called the Encoder-Decoder Network to solve
+tasks such as machine translation, text summarization, and
+question answering.

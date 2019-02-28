@@ -1,0 +1,491 @@
+1
+00:00:00,000 --> 00:00:07,020
+In this lab, you will define a RNN2_model to find the next value of a time series.
+
+2
+00:00:07,020 --> 00:00:11,280
+In this lab, we get to implement our first recurrent neural network.
+
+3
+00:00:11,280 --> 00:00:14,250
+Will do it on the same data set we've been working with,
+
+4
+00:00:14,250 --> 00:00:17,315
+which represents the height of a sprinkler over time.
+
+5
+00:00:17,315 --> 00:00:21,090
+You should already have your data generated from the previous lab.
+
+6
+00:00:21,090 --> 00:00:25,290
+To confirm, we'll run the bash command head which prints out
+
+7
+00:00:25,290 --> 00:00:30,480
+the first five sequences from our training and evaluation data sets.
+
+8
+00:00:39,730 --> 00:00:43,080
+You should see an output that looks like this.
+
+9
+00:00:43,080 --> 00:00:45,260
+If you don't see any data output,
+
+10
+00:00:45,260 --> 00:00:50,290
+please go back and run the cells from the top of this notebook to generate the data.
+
+11
+00:00:52,730 --> 00:00:56,660
+Now, since we're implementing the RNN model,
+
+12
+00:00:56,660 --> 00:00:58,495
+make sure to change
+
+13
+00:00:58,495 --> 00:01:05,220
+your dash dash model parameter and the G Cloud ML Engine local trends cell to equal RNN.
+
+14
+00:01:09,440 --> 00:01:14,860
+Once I do that, if I run this cell to execute a local training job,
+
+15
+00:01:14,860 --> 00:01:17,430
+you'll see I get an error.
+
+16
+00:01:17,430 --> 00:01:22,055
+That's because I haven't actually implemented the RNN model yet.
+
+17
+00:01:22,055 --> 00:01:28,850
+To do that, I'll need to edit the model that PY file located in the sine model directory.
+
+18
+00:01:28,850 --> 00:01:32,530
+There's a hyperlink to that directory and the markdown.
+
+19
+00:01:32,530 --> 00:01:37,900
+So, I'll click on that and then open the model.py.
+
+20
+00:01:40,460 --> 00:01:45,655
+If I scroll down to the function rnn_model,
+
+21
+00:01:45,655 --> 00:01:48,790
+I'll see where I need to implement my code.
+
+22
+00:01:48,790 --> 00:01:52,930
+Note that our first line of code has already been given to us.
+
+23
+00:01:52,930 --> 00:01:56,020
+It takes our time series feature,
+
+24
+00:01:56,490 --> 00:02:02,455
+reshapes it and stores it as variable x.
+
+25
+00:02:02,455 --> 00:02:06,570
+Now, why is this reshape necessary?
+
+26
+00:02:06,570 --> 00:02:12,625
+Well, our features tensor is passed from our input function as a rank two tensor.
+
+27
+00:02:12,625 --> 00:02:15,255
+Specifically, it has the shape,
+
+28
+00:02:15,255 --> 00:02:18,305
+batch size by number of inputs.
+
+29
+00:02:18,305 --> 00:02:22,910
+Number of inputs is also referred to as sequence length or unroll length.
+
+30
+00:02:22,910 --> 00:02:27,090
+However, RNNs require a rank three tensor.
+
+31
+00:02:27,090 --> 00:02:32,250
+The third dimension represents how many features we have for each input.
+
+32
+00:02:32,250 --> 00:02:35,335
+In this case, it's just one,
+
+33
+00:02:35,335 --> 00:02:36,860
+the height of a sprinkler,
+
+34
+00:02:36,860 --> 00:02:40,570
+which is why we can easily represent this as a 2D tensor to begin with.
+
+35
+00:02:40,570 --> 00:02:44,085
+The third dimension represents how many features we have for each input.
+
+36
+00:02:44,085 --> 00:02:46,045
+In this case it's just one,
+
+37
+00:02:46,045 --> 00:02:47,760
+the height of the sprinkler,
+
+38
+00:02:47,760 --> 00:02:51,825
+which is why we could easily represent this as a 2D tensor to begin with.
+
+39
+00:02:51,825 --> 00:02:57,230
+But you can imagine, if we had additional time series measurements like wind speed,
+
+40
+00:02:57,230 --> 00:03:00,710
+then we would need that third dimension to be something greater than
+
+41
+00:03:00,710 --> 00:03:04,370
+one to represent the total number of features input at each time step.
+
+42
+00:03:04,370 --> 00:03:06,900
+Now, to build our RNN model,
+
+43
+00:03:06,900 --> 00:03:08,970
+we need three things.
+
+44
+00:03:08,970 --> 00:03:12,565
+We need to define our RNN cell type,
+
+45
+00:03:12,565 --> 00:03:14,405
+we need to instantiate
+
+46
+00:03:14,405 --> 00:03:21,500
+our dynamic RNN and we need to extract or final state to feed it into a DNN.
+
+47
+00:03:21,500 --> 00:03:25,430
+I'll paste in some place holders for that code now,
+
+48
+00:03:25,430 --> 00:03:29,225
+starting with define our RNN cell type.
+
+49
+00:03:29,225 --> 00:03:35,490
+To do that, I'll type cell equals tf.nn.rnn_cell.GRUCell
+
+50
+00:03:39,930 --> 00:03:43,930
+and pass in a cell size.
+
+51
+00:03:43,930 --> 00:03:49,180
+Cell size is a hyperparameter that defines the size of your hidden state.
+
+52
+00:03:49,180 --> 00:03:53,675
+You tune it the same way you would tune the number of units in a given dense layer.
+
+53
+00:03:53,675 --> 00:03:59,080
+Too few and your network may not have enough capacity to capture the patterns.
+
+54
+00:03:59,080 --> 00:04:04,469
+Too many and your network will be unnecessarily slow and may struggle to converge.
+
+55
+00:04:04,469 --> 00:04:11,390
+Usually, the capacity of our rnn cell needs to scale with the number of inputs.
+
+56
+00:04:11,390 --> 00:04:16,080
+So here, we'll express it as a function of that.
+
+57
+00:04:18,640 --> 00:04:26,460
+Cell size is going to equal the number of inputs integer division by three.
+
+58
+00:04:27,850 --> 00:04:32,730
+Next, we'll instantiate our dynamic RNN.
+
+59
+00:04:37,820 --> 00:04:41,765
+The dynamic RNN operation returns a tuple.
+
+60
+00:04:41,765 --> 00:04:45,025
+The first object in the tuple is called
+
+61
+00:04:45,025 --> 00:04:49,764
+outputs and it contains the activations for every single timestamp.
+
+62
+00:04:49,764 --> 00:04:52,615
+We'll see why that may be useful later on.
+
+63
+00:04:52,615 --> 00:04:57,715
+For now, we just care about the activation for the last time step.
+
+64
+00:04:57,715 --> 00:05:02,780
+This is what the second object in the tuple called state, contains.
+
+65
+00:05:03,670 --> 00:05:10,820
+We take our state and pass it as the input to a DNN to generate our predictions.
+
+66
+00:05:11,580 --> 00:05:15,105
+Since we've already implemented our DNN model code,
+
+67
+00:05:15,105 --> 00:05:21,650
+we can just copy that here and make sure to change the input to be the state tensor.
+
+68
+00:05:38,460 --> 00:05:43,730
+Now we'll save my changes and switch back to the notebook.
+
+69
+00:05:52,030 --> 00:05:58,229
+Now let's run our local training job again to make sure our code compiles.
+
+70
+00:06:09,340 --> 00:06:12,540
+Awesome. We can now see it's training.
+
+71
+00:06:12,540 --> 00:06:15,380
+We'll save running on the cloud for the last lab.
+
+72
+00:06:15,380 --> 00:06:19,420
+That way we can compare the results of all model types at once.
+
+73
+00:06:19,420 --> 00:06:21,680
+But before we conclude this lab,
+
+74
+00:06:21,680 --> 00:06:24,045
+there's one more thing I'd like to do.
+
+75
+00:06:24,045 --> 00:06:31,860
+Let's go back to our model.py and add print statements for all of our tensors.
+
+76
+00:06:42,290 --> 00:06:46,325
+Here I use the convention, function name,
+
+77
+00:06:46,325 --> 00:06:48,080
+followed by tensor name,
+
+78
+00:06:48,080 --> 00:06:50,345
+followed by tensor value.
+
+79
+00:06:50,345 --> 00:06:54,165
+Remember, that since TensorFlow uses delayed execution,
+
+80
+00:06:54,165 --> 00:06:56,830
+this won't print the actual values of the tensor but
+
+81
+00:06:56,830 --> 00:07:00,189
+it will print the dimensions and types of our tensors.
+
+82
+00:07:00,189 --> 00:07:05,365
+I highly recommend this practice especially when you're first learning a new model type.
+
+83
+00:07:05,365 --> 00:07:07,840
+It both helps with debugging and also gives
+
+84
+00:07:07,840 --> 00:07:11,185
+you intuition into what your model is actually doing.
+
+85
+00:07:11,185 --> 00:07:13,910
+Now that we have our print statements,
+
+86
+00:07:13,910 --> 00:07:20,750
+I'll save my model.py and re-run our local training to analyze the shapes.
+
+87
+00:07:34,010 --> 00:07:39,810
+Now, I can see the shapes of my tensors as they flow through the RNN model.
+
+88
+00:07:39,810 --> 00:07:43,430
+I encourage you to pause the video now and see
+
+89
+00:07:43,430 --> 00:07:46,880
+if you can explain to yourself what each of these dimensions represents.
+
+90
+00:07:46,880 --> 00:07:50,030
+Then, we'll go over them together.
+
+91
+00:07:52,270 --> 00:07:55,340
+Okay, let's start at the top.
+
+92
+00:07:55,340 --> 00:08:02,205
+X represents our input features tensor and it has shape question mark by 49 by one.
+
+93
+00:08:02,205 --> 00:08:04,415
+The question mark represents
+
+94
+00:08:04,415 --> 00:08:09,320
+our batch size and the question mark means it's a placeholder dimension.
+
+95
+00:08:09,320 --> 00:08:12,230
+That is to say, TensorFlow doesn't yet know what
+
+96
+00:08:12,230 --> 00:08:15,500
+the batch size will be because this session hasn't been run yet,
+
+97
+00:08:15,500 --> 00:08:17,770
+but there will be some value there.
+
+98
+00:08:18,730 --> 00:08:22,725
+The 49 represents our number of inputs,
+
+99
+00:08:22,725 --> 00:08:25,665
+sometimes called sequence length or unroll length.
+
+100
+00:08:25,665 --> 00:08:28,910
+It's 49 because we generated sequences of size
+
+101
+00:08:28,910 --> 00:08:32,810
+50 but we saved the last value for the label.
+
+102
+00:08:32,810 --> 00:08:38,015
+Finally, the one is our input dimension, which is to say,
+
+103
+00:08:38,015 --> 00:08:40,075
+at each of the 49 time steps,
+
+104
+00:08:40,075 --> 00:08:44,790
+we only input one feature which in this case is height.
+
+105
+00:08:46,360 --> 00:08:49,645
+Next, we have our state tensor.
+
+106
+00:08:49,645 --> 00:08:54,420
+This represents the final hidden state in our unrolled RNN.
+
+107
+00:08:54,420 --> 00:08:58,625
+It has shape, question mark by 16.
+
+108
+00:08:58,625 --> 00:09:01,270
+Once again, the question mark is a placeholder for
+
+109
+00:09:01,270 --> 00:09:06,170
+batch size and 16 is what we defined our cell size to be.
+
+110
+00:09:06,270 --> 00:09:10,510
+We then take this size 16 vector representing
+
+111
+00:09:10,510 --> 00:09:14,750
+the output of the rnn and feed it through a RNN.
+
+112
+00:09:14,750 --> 00:09:17,985
+First condensing it to 10 units,
+
+113
+00:09:17,985 --> 00:09:24,055
+then to three and ultimately to one prediction.
+
+114
+00:09:24,055 --> 00:09:29,145
+You'll notice the first dimension for all these shapes is still a question mark
+
+115
+00:09:29,145 --> 00:09:31,370
+reminding us that all these operations are
+
+116
+00:09:31,370 --> 00:09:35,330
+happening on a batch of records and not just one.
+
+117
+00:09:36,350 --> 00:09:41,325
+You'll also notice that these same print statements repeat two more times.
+
+118
+00:09:41,325 --> 00:09:45,285
+One is for the evaluation loop and one is for the prediction loop.
+
+119
+00:09:45,285 --> 00:09:49,380
+You can ignore these values as they will be the same.
+
+120
+00:09:50,110 --> 00:09:53,390
+All right, that's it for now.
+
+121
+00:09:53,390 --> 00:09:58,430
+In future labs, we won't walk through all the tensor dimensions but I encourage you to
+
+122
+00:09:58,430 --> 00:10:00,200
+get into this habit and continue
+
+123
+00:10:00,200 --> 00:10:04,460
+the practice even if you don't see it in a solution video.

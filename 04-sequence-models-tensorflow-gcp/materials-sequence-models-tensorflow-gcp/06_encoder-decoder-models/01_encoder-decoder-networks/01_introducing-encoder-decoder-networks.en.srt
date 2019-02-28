@@ -1,0 +1,429 @@
+1
+00:00:00,727 --> 00:00:03,064
+My name is Katherine Zhao.
+
+2
+00:00:03,064 --> 00:00:07,120
+I am an AI engineer at Google Cloud.
+
+3
+00:00:08,580 --> 00:00:15,284
+You have learned many use cases,
+that can be solved using sequence models,
+
+4
+00:00:15,284 --> 00:00:20,220
+like time series prediction and
+text classification.
+
+5
+00:00:21,810 --> 00:00:26,950
+In both those cases, the label or
+
+6
+00:00:26,950 --> 00:00:31,600
+what has to be predicted,
+is just a single value.
+
+7
+00:00:33,380 --> 00:00:38,710
+What if you need the model
+to output not just
+
+8
+00:00:38,710 --> 00:00:44,570
+the temperature tomorrow, or
+the source of the newspaper article?
+
+9
+00:00:46,010 --> 00:00:52,810
+What if you need the model to
+output a full sequence as well?
+
+10
+00:00:54,530 --> 00:00:59,170
+This is the kind of problem
+you face if you want to
+
+11
+00:00:59,170 --> 00:01:03,760
+build a machine learning model
+to summarize an article.
+
+12
+00:01:05,150 --> 00:01:12,640
+Now the model has to generate
+an entire paragraph, how do you do it?
+
+13
+00:01:14,960 --> 00:01:20,790
+In this module,
+we will focus on a sequence to sequence
+
+14
+00:01:20,790 --> 00:01:25,991
+model called encoder-decoder
+network to solve
+
+15
+00:01:25,991 --> 00:01:30,935
+this use case,
+such as machine translation,
+
+16
+00:01:30,935 --> 00:01:36,160
+text summarization, and
+question answering.
+
+17
+00:01:38,810 --> 00:01:43,110
+Let's say we want to input
+an English sentence,
+
+18
+00:01:44,260 --> 00:01:50,000
+the cat ate the mouse,
+and translate it into
+
+19
+00:01:50,000 --> 00:01:55,205
+the French sentence [FOREIGN].
+
+20
+00:01:57,290 --> 00:02:02,870
+How can we train a neural
+network to input a sequence
+
+21
+00:02:02,870 --> 00:02:08,430
+of English sentence and
+output a sequence of French sentence.
+
+22
+00:02:09,940 --> 00:02:13,040
+Well, here's something that we could do.
+
+23
+00:02:15,290 --> 00:02:21,780
+First, let's have a network that
+we're going to call it the encoder.
+
+24
+00:02:23,390 --> 00:02:29,780
+It is built as an un-wrote
+recurrent neural network, or RNN.
+
+25
+00:02:31,840 --> 00:02:37,697
+This could also be LSDM or GRU.
+
+26
+00:02:37,697 --> 00:02:43,640
+Then we feed the English
+sentence one word at a time.
+
+27
+00:02:45,590 --> 00:02:49,760
+After ingesting the inputs into the RNN,
+
+28
+00:02:51,320 --> 00:02:56,330
+we all put a vector that
+represents the input sentence.
+
+29
+00:02:58,760 --> 00:03:03,220
+After that, we compute another network.
+
+30
+00:03:03,220 --> 00:03:05,890
+Now we're going to call it the decoder.
+
+31
+00:03:07,540 --> 00:03:14,070
+The decoder takes the outputs from
+the encoder network as its input.
+
+32
+00:03:16,321 --> 00:03:23,698
+Then it can be trained to output
+the translation one word at a time,
+
+33
+00:03:23,698 --> 00:03:30,310
+until eventually it reaches
+the end token of the sentence.
+
+34
+00:03:32,440 --> 00:03:34,240
+That is how the decoder stops.
+
+35
+00:03:36,980 --> 00:03:43,346
+One of the most remarkable result in deep
+learning shows that this model works,
+
+36
+00:03:43,346 --> 00:03:49,750
+given enough pairs of English and
+French sentences.
+
+37
+00:03:51,028 --> 00:03:55,605
+If we're trained a model to
+input an English sentence,
+
+38
+00:03:55,605 --> 00:04:00,730
+and output the corresponding
+French translation,
+
+39
+00:04:01,870 --> 00:04:05,210
+this model actually works decently well.
+
+40
+00:04:07,465 --> 00:04:15,130
+A problem that does not have an easy
+standard solution is the softmax layer.
+
+41
+00:04:17,396 --> 00:04:22,421
+If we want to compute
+word probabilities over
+
+42
+00:04:22,421 --> 00:04:27,717
+the entire English vocabulary, let's say,
+
+43
+00:04:27,717 --> 00:04:33,421
+100,000 English words, we need a softmax
+
+44
+00:04:33,421 --> 00:04:40,108
+layer that outputs a vector
+of 100,000 elements.
+
+45
+00:04:40,108 --> 00:04:44,455
+And then each element typically
+
+46
+00:04:44,455 --> 00:04:49,129
+comes with a range of 500 ways.
+
+47
+00:04:49,129 --> 00:04:56,801
+That's 50 million ways to
+predict one word, ouch!
+
+48
+00:04:56,801 --> 00:04:59,730
+For predictions, we don't have a choice.
+
+49
+00:05:01,070 --> 00:05:07,645
+But for training, the only thing that
+we're interested in is the gradients.
+
+50
+00:05:09,638 --> 00:05:13,258
+Many techniques have been devised to
+
+51
+00:05:13,258 --> 00:05:18,170
+compute gradients in a cheap,
+approximate way.
+
+52
+00:05:20,270 --> 00:05:27,640
+TensorFlow has implemented a couple of
+techniques to speed up this process.
+
+53
+00:05:28,720 --> 00:05:34,235
+For example,
+we can use sampled_softmax_loss
+
+54
+00:05:34,235 --> 00:05:38,660
+method to compute and
+return the training loss.
+
+55
+00:05:40,710 --> 00:05:45,030
+Now the translation model,
+a string, let's try out.
+
+56
+00:05:46,420 --> 00:05:49,940
+How does the model predict a translation?
+
+57
+00:05:51,160 --> 00:05:56,060
+We have that the English
+sentence into the encoder.
+
+58
+00:05:57,370 --> 00:06:02,710
+The outputs of the encoder
+becomes the inputs
+
+59
+00:06:02,710 --> 00:06:06,820
+of the first RN cell of the decoder.
+
+60
+00:06:08,230 --> 00:06:13,010
+The input of the cell is some arbitrary
+
+61
+00:06:13,010 --> 00:06:17,540
+go token that marks
+the beginning of the sentence.
+
+62
+00:06:19,530 --> 00:06:26,880
+For the predictions, we can simply
+call the embedding_lookup method
+
+63
+00:06:26,880 --> 00:06:32,390
+to look up IDs in a list
+of embedding tensors.
+
+64
+00:06:35,020 --> 00:06:40,150
+Then we enroll the RN inputs using
+
+65
+00:06:40,150 --> 00:06:46,632
+the method called dynamic_rnn.
+
+66
+00:06:46,632 --> 00:06:49,590
+Y is going to be a dense layer.
+
+67
+00:06:51,540 --> 00:06:54,950
+With the softmax, we can get
+
+68
+00:06:54,950 --> 00:06:59,850
+the conditional probability of
+each word in the vocabulary.
+
+69
+00:07:01,980 --> 00:07:07,920
+But how to get the actual predicted
+words from those probabilities?
+
+70
+00:07:09,950 --> 00:07:13,820
+The first idea is to do greedy search,
+
+71
+00:07:15,250 --> 00:07:20,420
+which generates the first
+word just by picking up
+
+72
+00:07:20,420 --> 00:07:26,100
+whatever is the most likely first word,
+according to its probability.
+
+73
+00:07:27,930 --> 00:07:32,990
+After picking the first word,
+we then pick whatever
+
+74
+00:07:32,990 --> 00:07:37,640
+is the second word that seems
+most likely and continue.
+
+75
+00:07:39,800 --> 00:07:44,250
+Problem of this approach is very obvious
+
+76
+00:07:44,250 --> 00:07:47,990
+as it does not produce
+the best translation.
+
+77
+00:07:47,990 --> 00:07:50,110
+So what should we do about it?
+
+78
+00:07:51,575 --> 00:07:58,410
+The neural network gives us at
+each time step of the decoding
+
+79
+00:07:58,410 --> 00:08:04,740
+the conditional probability of the next
+word by knowing what came before.
+
+80
+00:08:05,820 --> 00:08:11,480
+Now, given a model predicting
+conditional probability
+
+81
+00:08:11,480 --> 00:08:17,730
+of the next word, how can we
+compute the most probable sequence?
+
+82
+00:08:19,380 --> 00:08:23,890
+This is a very well researched
+problem in computer science.
+
+83
+00:08:25,430 --> 00:08:29,221
+It has applications in compression,
+
+84
+00:08:29,221 --> 00:08:33,372
+signal transmission, and here as well.
+
+85
+00:08:35,180 --> 00:08:39,680
+A few algorithms can be
+used to solve this problem,
+
+86
+00:08:40,710 --> 00:08:47,770
+and the most widely used
+one is called beam search.
+
+87
+00:08:47,770 --> 00:08:53,200
+Instead of picking only one
+most likely word at each
+
+88
+00:08:53,200 --> 00:08:58,369
+time step in the decoder network and
+then move on.
+
+89
+00:08:58,369 --> 00:09:03,444
+Like the greedy search does, beam search
+
+90
+00:09:03,444 --> 00:09:09,248
+can consider multiple
+alternatives at a time.
+
+91
+00:09:09,248 --> 00:09:15,353
+TensorFlow has an implementation
+called BeamSearchDecoder,
+
+92
+00:09:15,353 --> 00:09:19,880
+and we can simply use that for
+our predictions.

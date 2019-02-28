@@ -1,0 +1,555 @@
+1
+00:00:00,000 --> 00:00:02,910
+Welcome to the first lab in the sequence models course.
+
+2
+00:00:02,910 --> 00:00:07,085
+Our first lab is going to be using a linear model to predict time series data.
+
+3
+00:00:07,085 --> 00:00:08,500
+Over the next series of labs,
+
+4
+00:00:08,500 --> 00:00:09,930
+we're going to be continued to return in
+
+5
+00:00:09,930 --> 00:00:14,180
+this particular notebook because it refers to all the models we'll be creating.
+
+6
+00:00:14,180 --> 00:00:15,800
+You'll notice at the top, we have linear,
+
+7
+00:00:15,800 --> 00:00:17,425
+DNN, CNN, and RNN.
+
+8
+00:00:17,425 --> 00:00:19,950
+Eventually, we'll get to all of these and you'll have an easy way of
+
+9
+00:00:19,950 --> 00:00:23,805
+comparing how each of these model types does in the same set of data.
+
+10
+00:00:23,805 --> 00:00:27,530
+The first two cells allow the code to know what
+
+11
+00:00:27,530 --> 00:00:29,570
+our particular account and project are so that we can
+
+12
+00:00:29,570 --> 00:00:32,485
+actually run jobs on Cloud ML Engine.
+
+13
+00:00:32,485 --> 00:00:35,900
+The next bit of code is code that we've already seen in lecture,
+
+14
+00:00:35,900 --> 00:00:38,005
+it's used to create our synthetic data.
+
+15
+00:00:38,005 --> 00:00:41,899
+Our synthetic data is going to be a bunch of randomly generated sine waves,
+
+16
+00:00:41,899 --> 00:00:44,660
+and the random generation comes with respect to the frequency
+
+17
+00:00:44,660 --> 00:00:47,590
+which we're generating here to be between 0.1 and 0.6.
+
+18
+00:00:47,590 --> 00:00:51,099
+The amplitude which we're generating here to be between 0.5 and 1.5,
+
+19
+00:00:51,099 --> 00:00:53,560
+and then a little bit of noise.
+
+20
+00:00:53,560 --> 00:00:57,010
+What this function does is that it generates a certain number of observations.
+
+21
+00:00:57,010 --> 00:00:59,005
+In this case, from zero to sequence length,
+
+22
+00:00:59,005 --> 00:01:01,170
+where sequence length is set at the top to be 50.
+
+23
+00:01:01,170 --> 00:01:03,530
+So, 50 observations of
+
+24
+00:01:03,530 --> 00:01:05,420
+the sine wave that's parameterized by
+
+25
+00:01:05,420 --> 00:01:07,835
+the frequency and amplitude that we've randomly generated.
+
+26
+00:01:07,835 --> 00:01:11,675
+So, if we were to iterate over the number zero to five
+
+27
+00:01:11,675 --> 00:01:15,570
+and call this function five times and then plot the results,
+
+28
+00:01:15,570 --> 00:01:17,155
+we might have something like this.
+
+29
+00:01:17,155 --> 00:01:20,635
+We have five different sine waves each with their own different characteristics.
+
+30
+00:01:20,635 --> 00:01:24,190
+Some of them have a greater frequency and they oscillate more quickly,
+
+31
+00:01:24,190 --> 00:01:26,180
+some have bigger amplitude and they oscillate over
+
+32
+00:01:26,180 --> 00:01:30,340
+a greater range and all of them have little bits of random noise spiked in.
+
+33
+00:01:30,340 --> 00:01:33,830
+Then we're going to use the two CSV function to write
+
+34
+00:01:33,830 --> 00:01:36,630
+that data to disk in the form of two CSV files.
+
+35
+00:01:36,630 --> 00:01:39,530
+We're going to have a training CSV and a validation CSV.
+
+36
+00:01:39,530 --> 00:01:42,990
+With the training, CSV contains 1,000 lines,
+
+37
+00:01:42,990 --> 00:01:45,845
+and the validation CSV contains 250.
+
+38
+00:01:45,845 --> 00:01:50,060
+Each line in this file is going to be a comma delimited sets of
+
+39
+00:01:50,060 --> 00:01:55,750
+floats where the number of floats and unusual line is going to be 50.
+
+40
+00:01:55,750 --> 00:02:01,240
+So, if we take a peek at all the CSV files on disk and we print the first five lines,
+
+41
+00:02:01,240 --> 00:02:03,470
+you'll notice that they conform to that expectation.
+
+42
+00:02:03,470 --> 00:02:08,190
+So, each line is going to be a bunch of different floats and they're separated by commas.
+
+43
+00:02:08,660 --> 00:02:12,605
+So now, we're at the actual tasks for the things that you need to do,
+
+44
+00:02:12,605 --> 00:02:15,770
+and our task is going to be fill out model.py,
+
+45
+00:02:15,770 --> 00:02:18,765
+so that the linear model can make a prediction.
+
+46
+00:02:18,765 --> 00:02:21,670
+Once we've done that, we'll be able to execute this code block,
+
+47
+00:02:21,670 --> 00:02:25,525
+and you'll notice that this basically called the gcloud ml-engine the local train.
+
+48
+00:02:25,525 --> 00:02:27,310
+So, we're training a local model here.
+
+49
+00:02:27,310 --> 00:02:30,755
+We've passed in the model parameter as linear.
+
+50
+00:02:30,755 --> 00:02:34,495
+What we've done in task.py is to
+
+51
+00:02:34,495 --> 00:02:38,590
+write code that is repurposable to call any sort of model that you might want.
+
+52
+00:02:38,590 --> 00:02:40,430
+So by passing in the linear parameter,
+
+53
+00:02:40,430 --> 00:02:43,080
+we're telling it, we'd like it to invoke the linear model function.
+
+54
+00:02:43,080 --> 00:02:45,175
+Now, if you change this to something else,
+
+55
+00:02:45,175 --> 00:02:50,140
+let's say DNN, then your code will try to cut to invoke the DNN function.
+
+56
+00:02:50,140 --> 00:02:54,750
+That's fine if you've implemented DNN model but we haven't yet, so don't do that.
+
+57
+00:02:55,370 --> 00:02:58,440
+Let's take a peek inside model.py.
+
+58
+00:02:58,440 --> 00:03:00,620
+The first thing I want to call out is this constant at
+
+59
+00:03:00,620 --> 00:03:03,460
+the top which is called time series column.
+
+60
+00:03:03,460 --> 00:03:06,080
+Time series column is the key that we're going to be
+
+61
+00:03:06,080 --> 00:03:08,780
+using to retrieve from our features dictionary.
+
+62
+00:03:08,780 --> 00:03:12,050
+Because remember, our features dictionary is a set of key value pairs where
+
+63
+00:03:12,050 --> 00:03:15,975
+the keys are allow us to retrieve the values which are tensors.
+
+64
+00:03:15,975 --> 00:03:21,410
+The function that we're responsible for implementing is the linear model function.
+
+65
+00:03:21,410 --> 00:03:22,800
+Each of these functions;
+
+66
+00:03:22,800 --> 00:03:24,975
+linear model, DNN model, CNN model,
+
+67
+00:03:24,975 --> 00:03:27,950
+all of them are simply responsible for making
+
+68
+00:03:27,950 --> 00:03:31,385
+a prediction using the type of model that specified in their name.
+
+69
+00:03:31,385 --> 00:03:33,560
+So now, were inside model.py.
+
+70
+00:03:33,560 --> 00:03:35,780
+What I'd like to do is to give you a high-level sense of
+
+71
+00:03:35,780 --> 00:03:39,165
+the code before diving into the details of what you need to do.
+
+72
+00:03:39,165 --> 00:03:43,570
+The largest function at the top is the train_and_evaluate function.
+
+73
+00:03:43,570 --> 00:03:46,040
+This won't change regardless of whether we're going to be
+
+74
+00:03:46,040 --> 00:03:49,365
+calling a DNN or a CNN or an RNN later on.
+
+75
+00:03:49,365 --> 00:03:53,060
+Essentially, the way this function works is that it defines
+
+76
+00:03:53,060 --> 00:03:56,840
+a custom estimator using the sequence_regressor function.
+
+77
+00:03:56,840 --> 00:03:59,035
+So, let's take a look at what that function does.
+
+78
+00:03:59,035 --> 00:04:03,420
+The sequence_regressor function maintains a dictionary,
+
+79
+00:04:03,420 --> 00:04:08,370
+and the dictionary here maps a key to another function which is either linear model,
+
+80
+00:04:08,370 --> 00:04:09,890
+DNN model, et cetera.
+
+81
+00:04:09,890 --> 00:04:12,529
+What happens is that we have specified
+
+82
+00:04:12,529 --> 00:04:18,095
+the right key in our command line parameters which we showed you in the previous slide.
+
+83
+00:04:18,095 --> 00:04:19,400
+So what that does is it looks for
+
+84
+00:04:19,400 --> 00:04:22,995
+the command line parameter in order to retrieve the appropriate function to run.
+
+85
+00:04:22,995 --> 00:04:26,000
+The rest of the code here should be pretty familiar to you.
+
+86
+00:04:26,000 --> 00:04:29,030
+We've done it many times when we created estimators in the past.
+
+87
+00:04:29,030 --> 00:04:31,040
+The one thing it's different is that we've introduced
+
+88
+00:04:31,040 --> 00:04:34,595
+a new eval_metric_op called RMSE_same_as_last.
+
+89
+00:04:34,595 --> 00:04:37,220
+When you train your model, this RMSE_same_as_last
+
+90
+00:04:37,220 --> 00:04:39,500
+will allow you to compare the model you train against
+
+91
+00:04:39,500 --> 00:04:41,660
+a very simple benchmark that simply uses
+
+92
+00:04:41,660 --> 00:04:45,720
+the observation from the previous point in time to compare against.
+
+93
+00:04:45,720 --> 00:04:48,680
+In this case, you can expect that the key
+
+94
+00:04:48,680 --> 00:04:51,270
+here will be linear because we're trying to train a linear model.
+
+95
+00:04:51,270 --> 00:04:54,740
+So model function will retrieve the linear model function.
+
+96
+00:04:54,740 --> 00:04:58,420
+Model function here will retrieve the linear model function.
+
+97
+00:04:58,420 --> 00:05:01,860
+So let's take a look now at what linear model does.
+
+98
+00:05:03,490 --> 00:05:07,370
+Linear model as well as the other model functions like it,
+
+99
+00:05:07,370 --> 00:05:08,640
+all except features, mode,
+
+100
+00:05:08,640 --> 00:05:09,910
+and params because remember,
+
+101
+00:05:09,910 --> 00:05:12,035
+these are model functions.
+
+102
+00:05:12,035 --> 00:05:16,490
+Their responsibility is to take these features and then to return a prediction.
+
+103
+00:05:16,490 --> 00:05:18,550
+In the case of a linear model,
+
+104
+00:05:18,550 --> 00:05:21,860
+the implementation is really quite simple.
+
+105
+00:05:23,520 --> 00:05:29,240
+We get the prediction simply by calling tf.layers.dense which is a dense layer.
+
+106
+00:05:29,240 --> 00:05:32,840
+But unlike in a neural network where we would send an activation function, here,
+
+107
+00:05:32,840 --> 00:05:35,180
+we're not using an activation function at all because it's simply
+
+108
+00:05:35,180 --> 00:05:37,670
+a linear combination of our inputs,
+
+109
+00:05:37,670 --> 00:05:40,130
+and so we're going to return that prediction.
+
+110
+00:05:40,130 --> 00:05:43,500
+Once we've done that, we can then train
+
+111
+00:05:43,500 --> 00:05:46,580
+our model which we can do by
+
+112
+00:05:46,580 --> 00:05:50,730
+running the cell where we have the gcloud ml-engine local train,
+
+113
+00:05:50,730 --> 00:05:53,360
+and you should get output that looks like this.
+
+114
+00:05:53,360 --> 00:05:56,730
+Eventually, you'll have a saved model written to disk.
+
+115
+00:05:56,910 --> 00:05:59,640
+After we've done that, we can then click train in
+
+116
+00:05:59,640 --> 00:06:01,670
+Cloud ML Engine which I'm not going to do right now.
+
+117
+00:06:01,670 --> 00:06:04,190
+But I'll explain to you a little bit about how the code works.
+
+118
+00:06:04,190 --> 00:06:05,960
+Essentially, the only thing that's different is that we're going to
+
+119
+00:06:05,960 --> 00:06:08,180
+generate more data first and then we're going to push
+
+120
+00:06:08,180 --> 00:06:13,045
+that data to our Cloud storage bucket before initiating our Cloud ML Engine job.
+
+121
+00:06:13,045 --> 00:06:17,615
+So, this is simply an iterative loop over the number zero to 10,
+
+122
+00:06:17,615 --> 00:06:22,120
+each time we're creating a new slice of training and validation data.
+
+123
+00:06:22,120 --> 00:06:25,970
+Then finally, we're going to copy that data to the Cloud,
+
+124
+00:06:25,970 --> 00:06:30,130
+before finally initiating a Cloud ML Engine training job.
+
+125
+00:06:30,130 --> 00:06:34,330
+Now, notice here that this code for initiating a Cloud ML Engine training job,
+
+126
+00:06:34,330 --> 00:06:36,305
+iterates over all possible models;
+
+127
+00:06:36,305 --> 00:06:38,735
+linear, DNN, CNN, RNN, et cetera.
+
+128
+00:06:38,735 --> 00:06:41,500
+If you try to execute this before you've actually completed,
+
+129
+00:06:41,500 --> 00:06:44,195
+those other functions which by the way we'll be doing in later labs,
+
+130
+00:06:44,195 --> 00:06:46,105
+you'll get some errors. So, don't do that yet.
+
+131
+00:06:46,105 --> 00:06:49,475
+However, if you want to get a peek and soon start running a Cloud ML Engine job now,
+
+132
+00:06:49,475 --> 00:06:54,170
+you can, simply by removing these other values from this iteration.
+
+133
+00:06:54,710 --> 00:06:57,270
+After you train your model,
+
+134
+00:06:57,270 --> 00:06:59,260
+you can start up TensorBoard to see how it's
+
+135
+00:06:59,260 --> 00:07:01,940
+doing or I should say while your model is training you can do that.
+
+136
+00:07:01,940 --> 00:07:04,560
+Eventually, your model will stop training after
+
+137
+00:07:04,560 --> 00:07:07,225
+3,000 steps and you can see it's root mean square error.
+
+138
+00:07:07,225 --> 00:07:09,490
+In this case, this is the root mean square error I
+
+139
+00:07:09,490 --> 00:07:12,330
+got after training my linear model for 3,000 steps

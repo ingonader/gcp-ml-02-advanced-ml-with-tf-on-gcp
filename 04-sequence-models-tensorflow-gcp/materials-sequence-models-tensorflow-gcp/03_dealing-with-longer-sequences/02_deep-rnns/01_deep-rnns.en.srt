@@ -1,0 +1,95 @@
+1
+00:00:00,000 --> 00:00:01,860
+Congratulations.
+
+2
+00:00:01,860 --> 00:00:07,515
+You've built your first RNN and used it to predict the amplitude of a sprinkler.
+
+3
+00:00:07,515 --> 00:00:10,710
+Now that you've got the basic implementation down,
+
+4
+00:00:10,710 --> 00:00:14,025
+let's talk about some improvements we can make to our RNN model.
+
+5
+00:00:14,025 --> 00:00:17,550
+Up until now we've been using a single cell in our RNN,
+
+6
+00:00:17,550 --> 00:00:19,155
+but it doesn't have to be that way.
+
+7
+00:00:19,155 --> 00:00:23,645
+Just like we increased the capacity of a DNN by adding more layers,
+
+8
+00:00:23,645 --> 00:00:28,345
+we can increase the capacity of an RNN by adding more cells.
+
+9
+00:00:28,345 --> 00:00:31,145
+Here, we have a two-layer RNN.
+
+10
+00:00:31,145 --> 00:00:33,955
+The first layer is the same as before,
+
+11
+00:00:33,955 --> 00:00:39,200
+and the second layer takes as its input the output from the first layer.
+
+12
+00:00:39,200 --> 00:00:41,165
+Sound familiar?
+
+13
+00:00:41,165 --> 00:00:46,550
+It acts the same exact way as a DNN except with the state vector attached.
+
+14
+00:00:46,550 --> 00:00:48,645
+How does this look in code?
+
+15
+00:00:48,645 --> 00:00:55,070
+Instead of passing a single cell to a tf.nn.dynami_rnn as before,
+
+16
+00:00:55,070 --> 00:00:58,300
+we pass it a multi RNN cell object.
+
+17
+00:00:58,300 --> 00:01:03,155
+The multi RNN cell object is instantiated with a list of cells.
+
+18
+00:01:03,155 --> 00:01:04,900
+Simple as that.
+
+19
+00:01:04,900 --> 00:01:10,700
+Be careful though, because the state object returned by the dynamic RNN is no longer
+
+20
+00:01:10,700 --> 00:01:13,725
+just a single vector but a list of vectors
+
+21
+00:01:13,725 --> 00:01:17,215
+corresponding to the final state of each of the cells.
+
+22
+00:01:17,215 --> 00:01:23,140
+In this case, three. Normally, we'll take just the last state vector and
+
+23
+00:01:23,140 --> 00:01:25,880
+the list to pass on to our DNN because it
+
+24
+00:01:25,880 --> 00:01:29,400
+already takes into account these days from the previous layers.

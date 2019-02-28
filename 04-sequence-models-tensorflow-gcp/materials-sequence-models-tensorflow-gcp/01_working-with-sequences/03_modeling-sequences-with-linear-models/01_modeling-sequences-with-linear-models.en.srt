@@ -1,0 +1,207 @@
+1
+00:00:00,410 --> 00:00:05,510
+Once you've decided you're sliding window size and concatenated the data in the window,
+
+2
+00:00:05,510 --> 00:00:07,710
+the next step is putting it into your model.
+
+3
+00:00:07,710 --> 00:00:10,800
+The first thing you could try is to use a linear model.
+
+4
+00:00:10,800 --> 00:00:13,350
+In our example, the n columns on
+
+5
+00:00:13,350 --> 00:00:16,785
+the left hand side of our dataset comprise our feature matrix x,
+
+6
+00:00:16,785 --> 00:00:19,645
+and the rightmost column is our label, y.
+
+7
+00:00:19,645 --> 00:00:21,830
+To obtain the weights for our linear model,
+
+8
+00:00:21,830 --> 00:00:24,505
+we could either solve w analytically,
+
+9
+00:00:24,505 --> 00:00:26,395
+or when you have large amounts of data,
+
+10
+00:00:26,395 --> 00:00:28,485
+you could use gradient descent.
+
+11
+00:00:28,485 --> 00:00:32,770
+Let's practice training a linear model on a synthetic dataset.
+
+12
+00:00:32,770 --> 00:00:35,240
+Imagine that you want to predict the height of
+
+13
+00:00:35,240 --> 00:00:38,325
+water being sprayed from an oscillating sprinkler.
+
+14
+00:00:38,325 --> 00:00:42,300
+Oscillating sprinklers consist of a cylindrical metal tube that
+
+15
+00:00:42,300 --> 00:00:44,390
+rotates about its small axis and
+
+16
+00:00:44,390 --> 00:00:47,485
+sprays water through holes drilled down the length of the tube.
+
+17
+00:00:47,485 --> 00:00:49,435
+In our synthetic data set,
+
+18
+00:00:49,435 --> 00:00:52,699
+instead of a fixed rotation speed and a fixed water pressure,
+
+19
+00:00:52,699 --> 00:00:55,530
+we will actually randomly generate both.
+
+20
+00:00:55,530 --> 00:00:58,910
+This is the code that we'll use to generate our data.
+
+21
+00:00:58,910 --> 00:01:03,335
+Note how do we make use of NumPy's random function to randomly generate
+
+22
+00:01:03,335 --> 00:01:07,940
+both the frequency and an amplitude as well as to introduce a small bit of noise.
+
+23
+00:01:07,940 --> 00:01:10,550
+We're doing this because it's representative of what
+
+24
+00:01:10,550 --> 00:01:14,090
+the model would encounter in production for many use cases.
+
+25
+00:01:14,090 --> 00:01:16,230
+For example, in speech transcription,
+
+26
+00:01:16,230 --> 00:01:20,630
+everyone speaks at different cadences and has a slightly different pitch to their voice.
+
+27
+00:01:20,630 --> 00:01:24,260
+Production can introduce all sorts of challenges to modeling
+
+28
+00:01:24,260 --> 00:01:27,925
+sequences like the one that we've recreated in our sprinkler dataset.
+
+29
+00:01:27,925 --> 00:01:32,585
+For example, if you look at the data that Noah has collected on CO2 in the atmosphere,
+
+30
+00:01:32,585 --> 00:01:34,415
+in the years since 1984,
+
+31
+00:01:34,415 --> 00:01:40,200
+you'll notice both an upward trend as well as a cycle that corresponds with the seasons.
+
+32
+00:01:40,410 --> 00:01:43,300
+Using the create_time_series function,
+
+33
+00:01:43,300 --> 00:01:46,120
+we'll then write CSV files to disk.
+
+34
+00:01:46,120 --> 00:01:48,930
+We'll write them to disk such that each line in
+
+35
+00:01:48,930 --> 00:01:51,895
+each file consists of a comma-delimited string.
+
+36
+00:01:51,895 --> 00:01:56,510
+In this example, which columns are features and which are labels?
+
+37
+00:01:56,510 --> 00:02:00,440
+You probably said that everything but the last column is a feature,
+
+38
+00:02:00,440 --> 00:02:03,240
+and that's certainly one way to interpret these results.
+
+39
+00:02:03,240 --> 00:02:05,395
+But, as we'll see later on,
+
+40
+00:02:05,395 --> 00:02:06,775
+it's not the only way.
+
+41
+00:02:06,775 --> 00:02:10,110
+We'll return to this point later in module three.
+
+42
+00:02:10,120 --> 00:02:14,470
+Our input function is very similar to what we've used before.
+
+43
+00:02:15,140 --> 00:02:18,440
+As always, whenever you're building a null model,
+
+44
+00:02:18,440 --> 00:02:21,955
+it's best to have a benchmark to compare your model's performance against.
+
+45
+00:02:21,955 --> 00:02:25,850
+In our code, we've accomplished this by creating a benchmark model that
+
+46
+00:02:25,850 --> 00:02:30,190
+uses the observation from the prior time point as the prediction.
+
+47
+00:02:30,190 --> 00:02:34,070
+To see the performance of this benchmark alongside the models we'll train,
+
+48
+00:02:34,070 --> 00:02:39,510
+we've introduced a new evaluation metric called RMSE same as last.
+
+49
+00:02:39,520 --> 00:02:43,560
+Our linear model looks very similar to what we've seen previously.
+
+50
+00:02:43,560 --> 00:02:46,400
+Know how we're extracting the time series data from
+
+51
+00:02:46,400 --> 00:02:49,520
+our features dictionary using a key that is a constant,
+
+52
+00:02:49,520 --> 00:02:53,620
+and that the dense layer has no non-linear activation function.

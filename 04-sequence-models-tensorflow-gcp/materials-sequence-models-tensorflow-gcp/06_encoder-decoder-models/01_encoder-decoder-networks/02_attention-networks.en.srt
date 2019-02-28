@@ -1,0 +1,223 @@
+1
+00:00:00,370 --> 00:00:05,090
+Example here shows that sometimes,
+the original sentence
+
+2
+00:00:05,090 --> 00:00:10,070
+may not perfectly align with
+the translation at each time step.
+
+3
+00:00:12,050 --> 00:00:17,000
+In this example,
+the first English word is black.
+
+4
+00:00:18,230 --> 00:00:21,600
+Well, the first French word is chat.
+
+5
+00:00:22,670 --> 00:00:25,280
+That means cat in English.
+
+6
+00:00:27,160 --> 00:00:31,960
+How could we train the model to
+pay more attention to the word
+
+7
+00:00:31,960 --> 00:00:36,868
+cat instead of the word black
+at the first time step?
+
+8
+00:00:38,740 --> 00:00:44,223
+In the translation model,
+the intuition behind attention
+
+9
+00:00:44,223 --> 00:00:49,487
+network is that it allows
+the new network to pay attention
+
+10
+00:00:49,487 --> 00:00:55,753
+to only part of the input sentence
+while generating a translation.
+
+11
+00:00:55,753 --> 00:00:58,454
+Much like a human translator would do.
+
+12
+00:01:00,596 --> 00:01:05,735
+Now, let's formalize
+the intuition into the exact
+
+13
+00:01:05,735 --> 00:01:11,350
+details of how we could
+implement an attention network.
+
+14
+00:01:13,600 --> 00:01:17,560
+The attention network
+could be something similar
+
+15
+00:01:17,560 --> 00:01:21,600
+to the blue mini neural
+network on the left.
+
+16
+00:01:23,450 --> 00:01:27,410
+Before moving on,
+let's define some notations.
+
+17
+00:01:29,560 --> 00:01:36,830
+Alpha represents the tension
+weight at each time step.
+
+18
+00:01:36,830 --> 00:01:41,041
+H represents the hidden state
+
+19
+00:01:41,041 --> 00:01:45,597
+of encoder RN at each time step.
+
+20
+00:01:45,597 --> 00:01:49,717
+H subscript d represents the hidden
+
+21
+00:01:49,717 --> 00:01:54,530
+state of the decoder RN at each time step.
+
+22
+00:01:56,520 --> 00:02:01,210
+To train the attention network,
+we will follow three steps.
+
+23
+00:02:03,040 --> 00:02:06,403
+First, we want the tension weights.
+
+24
+00:02:06,403 --> 00:02:14,871
+Alpha to depend on the current word
+being translated in both languages.
+
+25
+00:02:14,871 --> 00:02:20,153
+So the mini network that
+produces the tension
+
+26
+00:02:20,153 --> 00:02:24,601
+weights will taking into account both
+
+27
+00:02:24,601 --> 00:02:29,049
+the hidden states of the encoder RN and
+
+28
+00:02:29,049 --> 00:02:35,314
+the hidden state of the decoder
+RN at times step heat.
+
+29
+00:02:35,314 --> 00:02:39,074
+This gives us our attention weight for
+
+30
+00:02:39,074 --> 00:02:43,657
+a given words of the input
+English sentence for
+
+31
+00:02:43,657 --> 00:02:48,252
+each words of the output,
+French sentences.
+
+32
+00:02:50,063 --> 00:02:54,678
+Then the tension vector,
+
+33
+00:02:54,678 --> 00:02:59,712
+alpha 1 times H1 plus alpha
+
+34
+00:02:59,712 --> 00:03:04,132
+2 times H2 plus, etc.
+
+35
+00:03:04,132 --> 00:03:09,117
+Gets combined with the hidden state of
+
+36
+00:03:09,117 --> 00:03:14,255
+the decoder RN at time step P to fine tune
+
+37
+00:03:14,255 --> 00:03:19,881
+the translation for current output word.
+
+38
+00:03:19,881 --> 00:03:24,694
+Lastly, the combined factor is
+
+39
+00:03:24,694 --> 00:03:29,862
+also used as an additional input in
+
+40
+00:03:29,862 --> 00:03:35,396
+the decoder RN at time step t plus 1.
+
+41
+00:03:35,396 --> 00:03:40,733
+We keep moving on by following these three
+
+42
+00:03:40,733 --> 00:03:46,991
+steps until reaching
+the end of sentence token.
+
+43
+00:03:46,991 --> 00:03:51,994
+The inversion of the black
+cat translation is
+
+44
+00:03:51,994 --> 00:03:56,874
+clearly visible in the attention diagram.
+
+45
+00:03:56,874 --> 00:04:02,011
+So is the fact that eight translates
+
+46
+00:04:02,011 --> 00:04:06,643
+as two words in French.
+
+47
+00:04:06,643 --> 00:04:10,755
+We can see the tension network staying
+
+48
+00:04:10,755 --> 00:04:15,644
+focused on the word eight for
+two time steps.
+
+49
+00:04:18,142 --> 00:04:20,520
+It sounds like a lot of work, right?
+
+50
+00:04:21,760 --> 00:04:30,350
+But don't panic, there are high level APIs
+available in TensorFlow that we can use.

@@ -1,0 +1,503 @@
+1
+00:00:00,000 --> 00:00:03,160
+Congratulations on finishing the lab.
+
+2
+00:00:03,160 --> 00:00:07,550
+Let's quickly go through the lab solutions here.
+
+3
+00:00:07,550 --> 00:00:11,965
+After logging into the dialogue flow console,
+
+4
+00:00:11,965 --> 00:00:16,025
+I am ready to create my first agent.
+
+5
+00:00:16,025 --> 00:00:21,015
+Click create agent in the left menu.
+
+6
+00:00:21,015 --> 00:00:26,790
+Here, I'm going to name the agent new agent.
+
+7
+00:00:26,790 --> 00:00:31,620
+Set the default language, default time zone,
+
+8
+00:00:31,620 --> 00:00:34,635
+and the right Google project,
+
+9
+00:00:34,635 --> 00:00:37,575
+and click Create button.
+
+10
+00:00:37,575 --> 00:00:43,670
+This will take a few seconds to set up the new agent.
+
+11
+00:00:47,420 --> 00:00:51,299
+Once the agent is created,
+
+12
+00:00:51,299 --> 00:00:56,325
+I am now looking at the dialogue flow console.
+
+13
+00:00:56,325 --> 00:01:01,575
+On the left, is the dialogue Flow menu.
+
+14
+00:01:01,575 --> 00:01:08,430
+The middle shows a list of intense for this agent.
+
+15
+00:01:08,430 --> 00:01:15,540
+By default, dialogue flow agents start with two intense.
+
+16
+00:01:15,540 --> 00:01:21,780
+Default fallback intent and default welcome intent.
+
+17
+00:01:21,780 --> 00:01:27,155
+On the right, is a dialogue flow simulator.
+
+18
+00:01:27,155 --> 00:01:29,670
+Let's try out.
+
+19
+00:01:29,670 --> 00:01:37,060
+Here I type hi and press enter.
+
+20
+00:01:37,070 --> 00:01:40,935
+My agent understood me.
+
+21
+00:01:40,935 --> 00:01:47,035
+Since my input match to a default welcome intent,
+
+22
+00:01:47,035 --> 00:01:54,020
+I receive one off the default replies inside the welcoming intent.
+
+23
+00:01:54,690 --> 00:02:05,705
+Next, I want my agent to answer some simple questions such as what is your name?
+
+24
+00:02:05,705 --> 00:02:12,080
+To do so, I am going to add an intent from
+
+25
+00:02:12,080 --> 00:02:20,640
+the left menu and call it name.
+
+26
+00:02:21,920 --> 00:02:25,839
+In the training phrases session,
+
+27
+00:02:25,839 --> 00:02:35,550
+I'm going to click on the tax field and enter the following sentences here.
+
+28
+00:02:41,740 --> 00:02:45,120
+What is your name?
+
+29
+00:02:51,310 --> 00:02:57,310
+Do you have a name or just name?
+
+30
+00:02:58,670 --> 00:03:02,050
+In the responses session,
+
+31
+00:03:02,050 --> 00:03:10,290
+I click on the text view again and I'm going to enter a response here.
+
+32
+00:03:13,270 --> 00:03:21,120
+My name is dialogue flow and now I'm going to save.
+
+33
+00:03:21,770 --> 00:03:24,330
+Time to try out.
+
+34
+00:03:24,330 --> 00:03:31,060
+In the simulator, I'm going to ask, what's your name?
+
+35
+00:03:34,550 --> 00:03:38,640
+Notice that even though my query,
+
+36
+00:03:38,640 --> 00:03:46,805
+what's your name is a little bit different than the training phrases what is
+
+37
+00:03:46,805 --> 00:03:52,550
+your name but the dialogue flow
+
+38
+00:03:52,550 --> 00:03:58,530
+still match the query to the correct name intense here.
+
+39
+00:03:58,930 --> 00:04:05,980
+Now, I'm going to create a more complex intent where some parameters for
+
+40
+00:04:05,980 --> 00:04:14,215
+spoken and programming languages and see how they can match to my specified intent.
+
+41
+00:04:14,215 --> 00:04:22,220
+Like previously, I am going to add a new intent from the left menu,
+
+42
+00:04:23,670 --> 00:04:28,240
+and name it as languages.
+
+43
+00:04:28,240 --> 00:04:31,434
+In the training phrases session,
+
+44
+00:04:31,434 --> 00:04:35,390
+I'll enters three training phrase.
+
+45
+00:04:38,910 --> 00:04:48,350
+I know English, I speak French,
+
+46
+00:04:48,350 --> 00:04:57,590
+and I know how to write in German.
+
+47
+00:04:59,790 --> 00:05:05,125
+Well, I am typing dialogue flow automatically
+
+48
+00:05:05,125 --> 00:05:11,455
+detects knowing entity such as system language in my phrase,
+
+49
+00:05:11,455 --> 00:05:17,720
+and create a parameter language and its value for me.
+
+50
+00:05:17,720 --> 00:05:24,355
+I can directly use the value of the parameter in my responses.
+
+51
+00:05:24,355 --> 00:05:26,675
+So, in this case,
+
+52
+00:05:26,675 --> 00:05:32,390
+I can use dollar sign language in my responses and it
+
+53
+00:05:32,390 --> 00:05:39,110
+will be replaced with the language specified in the user query.
+
+54
+00:05:39,110 --> 00:05:42,680
+In the responses session,
+
+55
+00:05:42,680 --> 00:05:48,905
+I click on the text field again and add one response.
+
+56
+00:05:48,905 --> 00:05:57,340
+Wow, I didn't know that you knew a language and click on Save button.
+
+57
+00:05:57,340 --> 00:06:00,140
+And time to try out.
+
+58
+00:06:00,140 --> 00:06:07,020
+Here, I'm going to ask, I know Russian?
+
+59
+00:06:07,590 --> 00:06:11,889
+Here the dialogue flow correctly extract
+
+60
+00:06:11,889 --> 00:06:19,075
+the language parameters with the value Russian from the query.
+
+61
+00:06:19,075 --> 00:06:28,070
+Also, the parameter value Russian is correctly inserted in the responses.
+
+62
+00:06:31,580 --> 00:06:35,945
+Except using the system entities,
+
+63
+00:06:35,945 --> 00:06:39,460
+I can also create my own and have
+
+64
+00:06:39,460 --> 00:06:44,375
+the agent understand some programming languages as well.
+
+65
+00:06:44,375 --> 00:06:48,820
+To create entities, I will come back to
+
+66
+00:06:48,820 --> 00:06:55,729
+the left menu and click on the Add button next to the entity.
+
+67
+00:06:55,729 --> 00:07:00,900
+Our name the entity programming language,
+
+68
+00:07:05,410 --> 00:07:11,030
+and add three programming language and their synonyms,
+
+69
+00:07:11,030 --> 00:07:13,440
+add a text field.
+
+70
+00:07:14,860 --> 00:07:19,100
+First, we're going to enter JavaScript.
+
+71
+00:07:19,100 --> 00:07:23,580
+JavaScript is also known as JS.
+
+72
+00:07:24,400 --> 00:07:30,665
+The second I going to enter java, and lastly,
+
+73
+00:07:30,665 --> 00:07:39,450
+for Python also known as PY and click on the Save button.
+
+74
+00:07:40,250 --> 00:07:46,115
+Let's go back to the language intense and add
+
+75
+00:07:46,115 --> 00:07:52,620
+training phrases and a response for the programming language.
+
+76
+00:07:56,840 --> 00:07:59,805
+In the training phrases,
+
+77
+00:07:59,805 --> 00:08:04,020
+I going to add two new training phrases here.
+
+78
+00:08:04,020 --> 00:08:06,910
+I know JavaScript.
+
+79
+00:08:11,660 --> 00:08:15,610
+I know how to code in Java.
+
+80
+00:08:21,530 --> 00:08:27,940
+While I'm typing, the dialogue flow automatically does the animations in
+
+81
+00:08:27,940 --> 00:08:34,930
+my phrase and create the parameter programming language and its value for me.
+
+82
+00:08:34,930 --> 00:08:42,320
+In the responses, at programming language is cool,
+
+83
+00:08:50,130 --> 00:08:53,090
+[inaudible] and click on Save.
+
+84
+00:08:55,580 --> 00:08:57,915
+Time to try out.
+
+85
+00:08:57,915 --> 00:09:01,050
+In the simulator, I'm going to ask,
+
+86
+00:09:01,050 --> 00:09:05,050
+I know how to code in PY.
+
+87
+00:09:11,390 --> 00:09:13,965
+As you can see here,
+
+88
+00:09:13,965 --> 00:09:19,070
+PY is correctly detected as a programming language
+
+89
+00:09:19,070 --> 00:09:25,130
+and replaced by its true value Python in the response.
+
+90
+00:09:28,270 --> 00:09:32,195
+Next, I want my agent to handle
+
+91
+00:09:32,195 --> 00:09:39,610
+some more complex conversation that need full ops and underlying contexts.
+
+92
+00:09:39,610 --> 00:09:42,895
+Still in the languages intent,
+
+93
+00:09:42,895 --> 00:09:50,969
+I'm going to extend the original responses by adding a follow up question.
+
+94
+00:09:53,410 --> 00:10:02,195
+So right here, I'm going to ask how long have you knew a language?
+
+95
+00:10:02,195 --> 00:10:04,400
+And click on Save button.
+
+96
+00:10:04,400 --> 00:10:07,055
+To add the follow-up intent,
+
+97
+00:10:07,055 --> 00:10:13,900
+I need to go back to the languages intense from the left menu.
+
+98
+00:10:15,430 --> 00:10:23,960
+I'm going to mouse over the language intense and click on add follow-up intent,
+
+99
+00:10:23,960 --> 00:10:28,870
+then click home custom from the list.
+
+100
+00:10:28,870 --> 00:10:39,089
+Dialogue flow automatically name the new follow-up intent as languages dash costume,
+
+101
+00:10:39,089 --> 00:10:45,905
+and the arrow here indicates the relationship between two intense.
+
+102
+00:10:45,905 --> 00:10:49,155
+In this new intent,
+
+103
+00:10:49,155 --> 00:10:56,314
+I am going to add some training phrases to answer the follow up question,
+
+104
+00:10:56,314 --> 00:11:00,100
+how long have you knew a language?
+
+105
+00:11:00,100 --> 00:11:03,000
+In their training phrases here,
+
+106
+00:11:03,000 --> 00:11:09,340
+I'm going to add three years,
+
+107
+00:11:09,410 --> 00:11:16,270
+about four days, for five years,
+
+108
+00:11:16,520 --> 00:11:19,690
+and click on Save.
+
+109
+00:11:20,450 --> 00:11:24,645
+Time to try out. In the simulator,
+
+110
+00:11:24,645 --> 00:11:29,380
+I enter I know French.
+
+111
+00:11:30,740 --> 00:11:34,785
+To answer the follow-up question here,
+
+112
+00:11:34,785 --> 00:11:40,000
+I enter about two weeks.
+
+113
+00:11:40,700 --> 00:11:50,615
+The agent has matched about two weeks to the correct intense language dash costume.
+
+114
+00:11:50,615 --> 00:11:56,270
+Since I haven't create the responses for this follow up intent,
+
+115
+00:11:56,270 --> 00:11:59,960
+my agent has no response here.
+
+116
+00:11:59,960 --> 00:12:02,905
+Let me quickly fix this.
+
+117
+00:12:02,905 --> 00:12:06,195
+In the responses session,
+
+118
+00:12:06,195 --> 00:12:10,810
+I'm going to add one response.
+
+119
+00:12:14,510 --> 00:12:20,100
+I can't believe you have known language for
+
+120
+00:12:20,100 --> 00:12:28,270
+a duration and click on the Save button and let's try out again.
+
+121
+00:12:28,270 --> 00:12:32,435
+I'm going to type the same query here.
+
+122
+00:12:32,435 --> 00:12:42,510
+I know French and their response to the follow-up question was one month.
+
+123
+00:12:42,850 --> 00:12:47,330
+Now, I have the proper response back.
+
+124
+00:12:47,330 --> 00:12:55,420
+The language parameter value is retrieved from the contacts and inserted in the response.
+
+125
+00:12:55,420 --> 00:12:57,280
+This is great.
+
+126
+00:12:57,280 --> 00:13:02,000
+I now have my conversational agent. Yes.

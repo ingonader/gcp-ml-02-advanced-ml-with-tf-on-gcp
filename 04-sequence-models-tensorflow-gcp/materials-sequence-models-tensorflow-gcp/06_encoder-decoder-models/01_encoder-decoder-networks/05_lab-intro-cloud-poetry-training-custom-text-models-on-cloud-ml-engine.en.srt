@@ -1,0 +1,59 @@
+1
+00:00:01,136 --> 00:00:07,598
+Now it's time for you to get some
+experience with the tensor2tensor.
+
+2
+00:00:07,598 --> 00:00:14,625
+In this lab, you will define
+a problem with tensor2tensor.
+
+3
+00:00:14,625 --> 00:00:20,398
+Generate training and evaluation datasets.
+
+4
+00:00:20,398 --> 00:00:25,044
+Customize the sequence to sequence model.
+
+5
+00:00:25,044 --> 00:00:32,065
+Train the model locally and
+on Cloud Machine Learning Engine.
+
+6
+00:00:32,065 --> 00:00:36,144
+Fine-tune hyperparameters.
+
+7
+00:00:36,144 --> 00:00:40,267
+Decode lines of poetry.
+
+8
+00:00:40,267 --> 00:00:42,047
+And deploy the model.
+
+9
+00:00:44,067 --> 00:00:49,346
+Don't forget,
+you have many attempts to start and
+
+10
+00:00:49,346 --> 00:00:57,468
+stop each lab, so don't worry if you
+don't make it through on the first time.
+
+11
+00:00:57,468 --> 00:01:02,310
+Also, as a tip,
+you can take a second attempt at
+
+12
+00:01:02,310 --> 00:01:07,273
+the lab even if you just
+wanted to experiment with
+
+13
+00:01:07,273 --> 00:01:12,375
+a code before watching
+the solution video later.

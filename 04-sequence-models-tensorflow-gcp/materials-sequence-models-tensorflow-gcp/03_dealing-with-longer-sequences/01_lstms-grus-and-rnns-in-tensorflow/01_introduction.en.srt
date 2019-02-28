@@ -1,0 +1,195 @@
+1
+00:00:00,000 --> 00:00:02,690
+Hi there, my name is Vijay,
+
+2
+00:00:02,690 --> 00:00:05,775
+and I'm a Machine Learning Solutions Engineer at Google.
+
+3
+00:00:05,775 --> 00:00:07,420
+In the last module,
+
+4
+00:00:07,420 --> 00:00:09,740
+you got an introduction to RNNs.
+
+5
+00:00:09,740 --> 00:00:13,000
+In this module, we'll dive deeper into that topic.
+
+6
+00:00:13,000 --> 00:00:15,610
+We'll talk about LSTMs,
+
+7
+00:00:15,610 --> 00:00:19,395
+deep RNNs, working with real data and more.
+
+8
+00:00:19,395 --> 00:00:23,405
+Let's start by talking about the shortcoming of RNNs.
+
+9
+00:00:23,405 --> 00:00:26,475
+At least the type of RNNs we've discussed to this point.
+
+10
+00:00:26,475 --> 00:00:29,565
+The problem is long sequences.
+
+11
+00:00:29,565 --> 00:00:35,505
+Recall that RNNs only consists of a single cell with a single set of weights.
+
+12
+00:00:35,505 --> 00:00:37,215
+At each new time-step,
+
+13
+00:00:37,215 --> 00:00:38,650
+we feed a new set of features,
+
+14
+00:00:38,650 --> 00:00:40,475
+x, and a new hidden state,
+
+15
+00:00:40,475 --> 00:00:42,320
+h, into the cell.
+
+16
+00:00:42,320 --> 00:00:46,295
+To make that process easier to visualize and reason about,
+
+17
+00:00:46,295 --> 00:00:49,650
+we usually depict RNNs in an unrolled format.
+
+18
+00:00:49,650 --> 00:00:55,220
+The diagram on the left and the right are just two representations of the same thing.
+
+19
+00:00:55,220 --> 00:00:58,280
+We call the total number of times need to feed features
+
+20
+00:00:58,280 --> 00:01:01,575
+back into the RNN cell your max sequence length.
+
+21
+00:01:01,575 --> 00:01:05,070
+In this diagram, the max sequence length is three.
+
+22
+00:01:05,070 --> 00:01:08,180
+Now let's take a real world example,
+
+23
+00:01:08,180 --> 00:01:10,970
+let's say I want to build a model to predict
+
+24
+00:01:10,970 --> 00:01:14,655
+the next word in a sentence given its previous words.
+
+25
+00:01:14,655 --> 00:01:19,490
+If the previous words were "Michael C was born in Paris France,
+
+26
+00:01:19,490 --> 00:01:21,245
+his mother tongue is?"
+
+27
+00:01:21,245 --> 00:01:25,730
+Fill in the blank, you could guess that the next word should be French.
+
+28
+00:01:25,730 --> 00:01:28,305
+But how would an RNN learn this.
+
+29
+00:01:28,305 --> 00:01:33,255
+An RNN can only learn dependencies and data up to its max sequence length.
+
+30
+00:01:33,255 --> 00:01:37,790
+You could argue that a max sequence length of five would work here because counting
+
+31
+00:01:37,790 --> 00:01:43,325
+five words back from the label French would get you to the context word France.
+
+32
+00:01:43,325 --> 00:01:45,100
+But just to be safe,
+
+33
+00:01:45,100 --> 00:01:48,105
+let's say we want to be able to read in the whole sentence.
+
+34
+00:01:48,105 --> 00:01:52,030
+That would mean our max sequence length would need to be 11.
+
+35
+00:01:52,030 --> 00:01:57,070
+Now, what if our training examples were more like this.
+
+36
+00:01:57,070 --> 00:02:02,100
+In this case, for the RNN to learn the relevant context to predict the label,
+
+37
+00:02:02,100 --> 00:02:06,145
+it would need a much much longer max sequence length.
+
+38
+00:02:06,145 --> 00:02:09,680
+The relevant context is all the way at the beginning of
+
+39
+00:02:09,680 --> 00:02:14,495
+the sequence so a max sequence length of 80 would be necessary to learn this.
+
+40
+00:02:14,495 --> 00:02:19,265
+However, an RNN that you unroll across 80 time steps is
+
+41
+00:02:19,265 --> 00:02:24,245
+very similar to an 80 layer deep neural network and therein lies the problem.
+
+42
+00:02:24,245 --> 00:02:25,670
+Remember when we talked about
+
+43
+00:02:25,670 --> 00:02:29,285
+the vanishing gradient problem in the course on image models?
+
+44
+00:02:29,285 --> 00:02:33,770
+It's the idea that the more layers a model has to backpropagate through,
+
+45
+00:02:33,770 --> 00:02:36,045
+the smaller the gradient gets.
+
+46
+00:02:36,045 --> 00:02:38,750
+This results in weights in the earlier layers of
+
+47
+00:02:38,750 --> 00:02:42,320
+the network having very little effect on the output.
+
+48
+00:02:42,320 --> 00:02:45,970
+The solution researchers found this problem is called
+
+49
+00:02:45,970 --> 00:02:50,550
+LSTM which stands for Long Short-Term Memory.

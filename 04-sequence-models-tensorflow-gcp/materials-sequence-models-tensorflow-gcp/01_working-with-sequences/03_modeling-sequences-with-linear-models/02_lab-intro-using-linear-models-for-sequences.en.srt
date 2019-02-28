@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:02,490
+Let's do our first lab where we'll apply
+
+2
+00:00:02,490 --> 00:00:05,305
+a linear model to our synthetic time series data.
+
+3
+00:00:05,305 --> 00:00:08,250
+In this lab, you will create a linear model by completing
+
+4
+00:00:08,250 --> 00:00:11,690
+the TODOs steps in model.py in your lab notebook.
+
+5
+00:00:11,690 --> 00:00:15,000
+Keep in mind that you have multiple attempts to start and stop each lab,
+
+6
+00:00:15,000 --> 00:00:17,355
+so don't worry if you don't make it through on the first time.
+
+7
+00:00:17,355 --> 00:00:20,200
+We'll review the solution together in the following video.

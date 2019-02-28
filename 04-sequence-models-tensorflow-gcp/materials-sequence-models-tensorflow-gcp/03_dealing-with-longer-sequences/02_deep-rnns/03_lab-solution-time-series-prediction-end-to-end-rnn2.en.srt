@@ -1,0 +1,343 @@
+1
+00:00:00,000 --> 00:00:04,895
+In this lab, we'll expand our RNN model from one layer to two.
+
+2
+00:00:04,895 --> 00:00:11,770
+Let's jump right into the model.py and locate the rnn2_model function.
+
+3
+00:00:14,740 --> 00:00:20,010
+Once again, our input tensor is already provided to us in the correct shape.
+
+4
+00:00:20,010 --> 00:00:23,090
+Now, instead of coding this from scratch,
+
+5
+00:00:23,090 --> 00:00:28,380
+let's copy down the code from our RNN model and modify from there.
+
+6
+00:00:42,920 --> 00:00:45,630
+We already have one cell,
+
+7
+00:00:45,630 --> 00:00:48,100
+so let's create a second.
+
+8
+00:00:48,670 --> 00:00:53,420
+We'll rename our first cell as cell1,
+
+9
+00:00:54,610 --> 00:00:59,900
+and then add a second cell called cell2.
+
+10
+00:01:04,390 --> 00:01:10,415
+Now, we can set the internal size of our second cell independently from the first.
+
+11
+00:01:10,415 --> 00:01:13,105
+Let's try making the first cell larger,
+
+12
+00:01:13,105 --> 00:01:14,990
+and the second cell smaller.
+
+13
+00:01:14,990 --> 00:01:20,520
+You can experiment with different cell sizes to see how it impacts performance.
+
+14
+00:01:25,470 --> 00:01:28,010
+Now that we have our cells defined,
+
+15
+00:01:28,010 --> 00:01:31,265
+we need to create a multi-RNN cell object with it.
+
+16
+00:01:31,265 --> 00:01:36,095
+Our multi-RNN cell takes a list of cells,
+
+17
+00:01:36,095 --> 00:01:38,670
+cell1 and cell2, as its input.
+
+18
+00:01:38,670 --> 00:01:42,455
+Our dynamic RNN instantiation is as before,
+
+19
+00:01:42,455 --> 00:01:45,100
+except we pass in the multi-cell object by
+
+20
+00:01:45,100 --> 00:01:48,230
+referring to the cells variable we just created.
+
+21
+00:01:48,230 --> 00:01:54,395
+The rest of our code is the same with the exception of one small but important change.
+
+22
+00:01:54,395 --> 00:01:57,205
+Since we now have two RNN cells,
+
+23
+00:01:57,205 --> 00:02:02,370
+the state object returned by the dynamic RNN is no longer
+
+24
+00:02:02,370 --> 00:02:04,510
+just a single vector but a list of
+
+25
+00:02:04,510 --> 00:02:09,270
+two vectors corresponding to the final state of each of the two cells.
+
+26
+00:02:09,270 --> 00:02:14,450
+We just want the last state vector in the list to pass on to our DNA,
+
+27
+00:02:14,450 --> 00:02:18,420
+because it already takes into account the state from the previous layer.
+
+28
+00:02:18,420 --> 00:02:24,155
+To extract this, we add a square bracket one to the list of states,
+
+29
+00:02:24,155 --> 00:02:27,080
+which extracts only the second state.
+
+30
+00:02:31,430 --> 00:02:35,745
+That's it, now we save our model.p y,
+
+31
+00:02:35,745 --> 00:02:40,540
+and switch back to our notebook to confirm our code works.
+
+32
+00:02:48,210 --> 00:02:52,985
+Be sure to change your dash dash model parameter to rnn2,
+
+33
+00:02:52,985 --> 00:02:55,950
+so that we're calling the function we just created.
+
+34
+00:02:55,950 --> 00:02:58,890
+Great, our code is working,
+
+35
+00:02:58,890 --> 00:03:03,390
+up until now we've only been running for 10 steps and unlimited amount of data.
+
+36
+00:03:03,390 --> 00:03:05,570
+Now let's generate some more data,
+
+37
+00:03:05,570 --> 00:03:09,690
+and run for a longer period using Cloud Machine Learning Engine.
+
+38
+00:03:12,110 --> 00:03:15,880
+This first cell generates 10 training files,
+
+39
+00:03:15,880 --> 00:03:18,005
+and 10 validation files.
+
+40
+00:03:18,005 --> 00:03:24,125
+Each training file contains 1,000 sequences for a total of 10,000 training sequences,
+
+41
+00:03:24,125 --> 00:03:26,480
+and each validation file contains
+
+42
+00:03:26,480 --> 00:03:32,220
+250 sequences for a total of 2,500 validation sequences.
+
+43
+00:03:33,000 --> 00:03:35,725
+Now that our data is created,
+
+44
+00:03:35,725 --> 00:03:39,775
+this next cell copies it to the cloud using gsutil,
+
+45
+00:03:39,775 --> 00:03:43,790
+so that our Cloud Machine Learning Engine job can access it.
+
+46
+00:03:44,090 --> 00:03:49,320
+Finally, we're ready to run our training job.
+
+47
+00:03:51,310 --> 00:03:54,495
+Note that we're kicking off not one,
+
+48
+00:03:54,495 --> 00:03:56,555
+but six training jobs,
+
+49
+00:03:56,555 --> 00:03:58,195
+as you can see here,
+
+50
+00:03:58,195 --> 00:04:00,305
+one for each model type.
+
+51
+00:04:00,305 --> 00:04:04,130
+This is one of the great advantages of using cloud machine learning engine,
+
+52
+00:04:04,130 --> 00:04:07,230
+we can run multiple trials in parallel.
+
+53
+00:04:07,250 --> 00:04:14,080
+Also note, that we're now training and for 3,000 steps, instead of just 10.
+
+54
+00:04:17,440 --> 00:04:20,110
+Once you've kicked off your jobs,
+
+55
+00:04:20,110 --> 00:04:22,049
+switchover to Cloud console,
+
+56
+00:04:22,049 --> 00:04:24,795
+and click on the Cloud Machine Learning Engine job,
+
+57
+00:04:24,795 --> 00:04:28,170
+to verify your jobs have started.
+
+58
+00:04:33,480 --> 00:04:37,715
+It will take about 15 minutes for all the jobs to complete.
+
+59
+00:04:37,715 --> 00:04:42,440
+Once the job's complete there are two ways you can check the results.
+
+60
+00:04:42,440 --> 00:04:46,380
+The first is by checking the cloud logs directly.
+
+61
+00:04:46,380 --> 00:04:51,880
+To do this, I click on the View logs "button" next to the job.
+
+62
+00:04:53,870 --> 00:04:57,965
+Then I can filter the logs by a search term,
+
+63
+00:04:57,965 --> 00:05:03,140
+in this case I look for our evaluation metric RMSE.
+
+64
+00:05:03,930 --> 00:05:07,420
+Depending on how recently you run the job,
+
+65
+00:05:07,420 --> 00:05:11,060
+you may need to click the Load older logs "button".
+
+66
+00:05:13,070 --> 00:05:21,590
+Looks like our RMSE for this job was 0.099.
+
+67
+00:05:21,590 --> 00:05:24,130
+While looking at the logs will get the job done,
+
+68
+00:05:24,130 --> 00:05:27,940
+it's a bit onerous to repeat this process for all six trials.
+
+69
+00:05:27,940 --> 00:05:30,880
+A better way is to look at Tensor Board,
+
+70
+00:05:30,880 --> 00:05:34,200
+and then we can compare all six results at once.
+
+71
+00:05:36,890 --> 00:05:42,665
+Here, I have the tensor board results for a job I ran earlier,
+
+72
+00:05:42,665 --> 00:05:46,790
+because all my trial share the same parent output directory,
+
+73
+00:05:46,790 --> 00:05:49,990
+I can see the results side-by-side here.
+
+74
+00:05:49,990 --> 00:05:55,225
+To do so, I will hover over the RMSE graph,
+
+75
+00:05:55,225 --> 00:06:00,790
+and a dialog box with the RMSE values for each trial will pop up.
+
+76
+00:06:00,790 --> 00:06:03,560
+Smoothing is turned on by default.
+
+77
+00:06:03,560 --> 00:06:04,940
+So, make sure you're reading
+
+78
+00:06:04,940 --> 00:06:08,940
+the actual values which are to the right of the smooth values.
+
+79
+00:06:09,700 --> 00:06:12,650
+A few things stand out to me here,
+
+80
+00:06:12,650 --> 00:06:17,670
+the first is that one model type performed significantly worse than all the others.
+
+81
+00:06:17,670 --> 00:06:22,480
+Unsurprisingly, that is our simple linear model.
+
+82
+00:06:23,410 --> 00:06:28,030
+After that the performance of all the other models is pretty similar.
+
+83
+00:06:28,030 --> 00:06:31,520
+However, the best performing one something called RNN,
+
+84
+00:06:31,520 --> 00:06:35,155
+with an RMSE of 0.095.
+
+85
+00:06:35,155 --> 00:06:37,600
+We'll talk about what that model is,
+
+86
+00:06:37,600 --> 00:06:40,220
+and why it may perform best next.

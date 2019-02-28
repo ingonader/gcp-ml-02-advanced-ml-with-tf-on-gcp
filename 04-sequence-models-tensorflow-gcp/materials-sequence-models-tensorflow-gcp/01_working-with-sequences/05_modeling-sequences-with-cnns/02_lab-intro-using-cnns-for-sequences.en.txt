@@ -1,0 +1,1 @@
+Let's do our third lab, where we'll apply a CNN to our synthetic time series data. In this lab, you'll create a CNN model by completing the TODOs steps in the model.py file. Keep in mind, you have multiple attempts to start and stop each lab, so don't worry if you don't make it through the first time. We'll review the solution together in the following video.

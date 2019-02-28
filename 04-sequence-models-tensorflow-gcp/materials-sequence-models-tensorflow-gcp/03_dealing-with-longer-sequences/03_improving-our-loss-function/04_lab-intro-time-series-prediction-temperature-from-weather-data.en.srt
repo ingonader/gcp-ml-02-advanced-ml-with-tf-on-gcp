@@ -1,0 +1,59 @@
+1
+00:00:00,200 --> 00:00:05,320
+We've talked about a lot of considerations about real world data.
+
+2
+00:00:05,320 --> 00:00:09,290
+Now, it's your turn to practice with this next lab.
+
+3
+00:00:09,290 --> 00:00:12,775
+In this lab, you'll see how to resample data,
+
+4
+00:00:12,775 --> 00:00:18,000
+split up sequences, generate a sequence of predictions and more.
+
+5
+00:00:18,000 --> 00:00:20,760
+You should proceed in the following order.
+
+6
+00:00:20,760 --> 00:00:23,525
+First, run the notebook as is.
+
+7
+00:00:23,525 --> 00:00:25,565
+Look at the data visualizations,
+
+8
+00:00:25,565 --> 00:00:27,940
+then look at the predictions at the end.
+
+9
+00:00:27,940 --> 00:00:34,240
+Next, play with the RESAMPLE BY and SEQLEN length hyperparameters.
+
+10
+00:00:34,240 --> 00:00:40,885
+Next, try predicting N data points ahead instead of only one ahead.
+
+11
+00:00:40,885 --> 00:00:47,230
+Finally, improve your RNN model by adding layers and adding regularization.
+
+12
+00:00:47,230 --> 00:00:49,460
+This is a longer lab.
+
+13
+00:00:49,460 --> 00:00:53,900
+So, keep in mind you have multiple attempts to start and stop each lab,
+
+14
+00:00:53,900 --> 00:00:57,135
+and don't worry if you don't make it through on the first time.
+
+15
+00:00:57,135 --> 00:01:01,230
+We'll review the solution together in the following video.

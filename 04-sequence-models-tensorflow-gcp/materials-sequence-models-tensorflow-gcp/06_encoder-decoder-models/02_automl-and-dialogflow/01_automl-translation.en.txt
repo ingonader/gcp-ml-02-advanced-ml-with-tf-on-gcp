@@ -1,0 +1,32 @@
+That was great we were able
+to use the tensor2tensor to train a sequence to
+sequence model quite easily. But if you noticed,
+we have gone through all of the steps of data processing,
+machine learning model design, hyper parameter tuning,
+evaluation, and etc. This process is very complex and
+time intensive, is there an automated way to do this? The answer is yes, for example, if we wanted to do translation,
+we have the input text, the output text, and
+we want to train a model. We can do it with tensor2tensor,
+we can write the problem, the data generation code ourselves or we can just use
+AutoML Translation which is a completely GUI driven
+technology to do it for us. AutoML Translation makes building
+the translation model easier, we just need to follow three steps, prepare training and the test data, build model and evaluate results. For the model building step we can
+either leverage the pre-built model or build custom model for
+our specific domain. That is the key differentiation for
+AutoML Translation. Why is the domain specific
+translation important? Let see an example. Let see, we want to translate
+that the driver is not working. Which is the correct translation? Is it the golf driver,
+the driver of the taxi or device driver from a software? This depends on the context,
+it depends on what came before. As we saw the translation may
+vary a lot in different domains. So how could we solve this
+with AutoML Translation? Firstly we can upload translated language pairs such as, [FOREIGN] a door, [FOREIGN] two table lamps and so forth. Then we use AutoML Translation to
+train a language translation model. At the end we evaluate the translations,
+just that simple. Let's see some example in action
+from the education domain. Here we uploaded over 127,000 Blackboard Spanish English sentence pair. A custom model is trained and
+evaluated by using the blue scores. Now for a new sentence in the same
+domain we can predict the translation using both the custom model and the
+Google Nueral Machine Translation model, which predicts the generic translation. Let's take a closer look at some
+education related translation. We have a Spanish sentence, [FOREIGN]. Without the domain custom model, the Spanish sentence is translated to, frequently asked questions by
+the moderator, which is pretty good. But with the custom model we got,
+moderator FAQs, which is a much closer translation
+that fits in the education domain.

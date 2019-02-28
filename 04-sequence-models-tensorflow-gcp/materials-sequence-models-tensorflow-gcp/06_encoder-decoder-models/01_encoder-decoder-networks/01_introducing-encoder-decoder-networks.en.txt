@@ -1,0 +1,63 @@
+My name is Katherine Zhao. I am an AI engineer at Google Cloud. You have learned many use cases,
+that can be solved using sequence models, like time series prediction and
+text classification. In both those cases, the label or what has to be predicted,
+is just a single value. What if you need the model
+to output not just the temperature tomorrow, or
+the source of the newspaper article? What if you need the model to
+output a full sequence as well? This is the kind of problem
+you face if you want to build a machine learning model
+to summarize an article. Now the model has to generate
+an entire paragraph, how do you do it? In this module,
+we will focus on a sequence to sequence model called encoder-decoder
+network to solve this use case,
+such as machine translation, text summarization, and
+question answering. Let's say we want to input
+an English sentence, the cat ate the mouse,
+and translate it into the French sentence [FOREIGN]. How can we train a neural
+network to input a sequence of English sentence and
+output a sequence of French sentence. Well, here's something that we could do. First, let's have a network that
+we're going to call it the encoder. It is built as an un-wrote
+recurrent neural network, or RNN. This could also be LSDM or GRU. Then we feed the English
+sentence one word at a time. After ingesting the inputs into the RNN, we all put a vector that
+represents the input sentence. After that, we compute another network. Now we're going to call it the decoder. The decoder takes the outputs from
+the encoder network as its input. Then it can be trained to output
+the translation one word at a time, until eventually it reaches
+the end token of the sentence. That is how the decoder stops. One of the most remarkable result in deep
+learning shows that this model works, given enough pairs of English and
+French sentences. If we're trained a model to
+input an English sentence, and output the corresponding
+French translation, this model actually works decently well. A problem that does not have an easy
+standard solution is the softmax layer. If we want to compute
+word probabilities over the entire English vocabulary, let's say, 100,000 English words, we need a softmax layer that outputs a vector
+of 100,000 elements. And then each element typically comes with a range of 500 ways. That's 50 million ways to
+predict one word, ouch! For predictions, we don't have a choice. But for training, the only thing that
+we're interested in is the gradients. Many techniques have been devised to compute gradients in a cheap,
+approximate way. TensorFlow has implemented a couple of
+techniques to speed up this process. For example,
+we can use sampled_softmax_loss method to compute and
+return the training loss. Now the translation model,
+a string, let's try out. How does the model predict a translation? We have that the English
+sentence into the encoder. The outputs of the encoder
+becomes the inputs of the first RN cell of the decoder. The input of the cell is some arbitrary go token that marks
+the beginning of the sentence. For the predictions, we can simply
+call the embedding_lookup method to look up IDs in a list
+of embedding tensors. Then we enroll the RN inputs using the method called dynamic_rnn. Y is going to be a dense layer. With the softmax, we can get the conditional probability of
+each word in the vocabulary. But how to get the actual predicted
+words from those probabilities? The first idea is to do greedy search, which generates the first
+word just by picking up whatever is the most likely first word,
+according to its probability. After picking the first word,
+we then pick whatever is the second word that seems
+most likely and continue. Problem of this approach is very obvious as it does not produce
+the best translation. So what should we do about it? The neural network gives us at
+each time step of the decoding the conditional probability of the next
+word by knowing what came before. Now, given a model predicting
+conditional probability of the next word, how can we
+compute the most probable sequence? This is a very well researched
+problem in computer science. It has applications in compression, signal transmission, and here as well. A few algorithms can be
+used to solve this problem, and the most widely used
+one is called beam search. Instead of picking only one
+most likely word at each time step in the decoder network and
+then move on. Like the greedy search does, beam search can consider multiple
+alternatives at a time. TensorFlow has an implementation
+called BeamSearchDecoder, and we can simply use that for
+our predictions.

@@ -1,0 +1,25 @@
+Let's take a break from the theory, and look at how to build RNN models
+in practice using TensorFlow. There are two TensorFlow APIs
+that support RNNs. One is ts.keras, and the other is tf.nn. In the labs in this
+module we will use tf.nn. But you'll get exposure to tf.keras and the text classification ad
+which is in the next module. First we choose our cell type,
+basic rnn cell, basicLSTM cell and GRUCell, correspond to simple RNN,
+LSTM and Gru respectively. We initialize the cell with the cell
+size which is a hyperparameter that specifies the vector size of
+the cell's internal state. We tune this in the same way we
+would choose the number of units in a dense layer. Too large and the model will be too slow. Too small and the model may not
+have enough learning capacity. Once we initialize our cell,
+we actually unroll our RNN. The operation for
+this is tf.nn.dynamic_rnn and it takes three arguments. The RNN cell, which we just instantiated,
+a Tensor of features, and a data type. The feature Tensor state contains
+our inputs for all time steps, and must have the shape, batch size, time
+sequence length, times input dimension. Input dimension determines how many
+features we input in a given time step. The dynamic rnn operation
+returns a two pool. The first object in the two
+pool is called output, and it contains the activations for
+every single time step. We'll see why that might
+be useful later on. For now, we only care about
+the activation for the last time step. This is what the second
+object state contains. Finally, we take state and pass it as the input to a DNN
+to generate our predictions. From this point forward, our code
+is no different from any other DNN.

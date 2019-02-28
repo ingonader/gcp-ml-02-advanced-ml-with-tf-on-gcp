@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:03,950
+In this lab, you will implement a two-layer RNN.
+
+2
+00:00:03,950 --> 00:00:10,450
+First, complete rnn2_model function in the model.py file.
+
+3
+00:00:10,450 --> 00:00:14,695
+Then, test the model locally to make sure the code works.
+
+4
+00:00:14,695 --> 00:00:18,600
+In this lab, I'd also like you to run the cell in the notebook,
+
+5
+00:00:18,600 --> 00:00:21,165
+which runs all model types in parallel.
+
+6
+00:00:21,165 --> 00:00:24,090
+This will allow you to compare the performance of
+
+7
+00:00:24,090 --> 00:00:26,660
+the different models head-to-head using tensorboard.

@@ -1,0 +1,52 @@
+1
+00:00:00,467 --> 00:00:04,040
+In this lab, we will continue
+with the sprinkler problem.
+
+2
+00:00:04,040 --> 00:00:08,250
+This time implementing an RNN
+to predict the sprinkler height.
+
+3
+00:00:08,250 --> 00:00:12,550
+You may use any RNN cell type you like,
+but I recommend using a GRU cell.
+
+4
+00:00:12,550 --> 00:00:14,890
+Specifically in this lab,
+
+5
+00:00:14,890 --> 00:00:19,090
+you will complete the rnn_model
+function in the model.py file.
+
+6
+00:00:20,742 --> 00:00:25,030
+Then you'll run the RNN model locally
+to make sure your code works.
+
+7
+00:00:26,230 --> 00:00:29,720
+Be sure to specify the --model argument
+
+8
+00:00:29,720 --> 00:00:34,436
+as RNN before you kick off
+the local training job.
+
+9
+00:00:34,436 --> 00:00:38,566
+Keep in mind, you have multiple
+attempts to start and stop each lab.
+
+10
+00:00:38,566 --> 00:00:40,496
+So don't worry if you don't
+make it through the first time.
+
+11
+00:00:42,046 --> 00:00:44,606
+We'll review the solution
+together in the following video.

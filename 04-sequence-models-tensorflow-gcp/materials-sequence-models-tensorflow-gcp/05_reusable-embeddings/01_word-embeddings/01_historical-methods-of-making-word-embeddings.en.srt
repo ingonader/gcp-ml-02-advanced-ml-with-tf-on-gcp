@@ -1,0 +1,435 @@
+1
+00:00:00,000 --> 00:00:02,015
+In the previous module,
+
+2
+00:00:02,015 --> 00:00:04,560
+we trained a model to perform text classification,
+
+3
+00:00:04,560 --> 00:00:09,060
+discuss the problems with treating words as categorical features and demonstrated how
+
+4
+00:00:09,060 --> 00:00:11,190
+embedding layers can be added to models to improve
+
+5
+00:00:11,190 --> 00:00:14,090
+the quality of representations and their usefulness.
+
+6
+00:00:14,090 --> 00:00:16,905
+However, the embedding layers that we trained required
+
+7
+00:00:16,905 --> 00:00:20,440
+labeled data because we train them as part of our classification model.
+
+8
+00:00:20,440 --> 00:00:22,770
+Labeled data is expensive and precious.
+
+9
+00:00:22,770 --> 00:00:25,340
+Often, we simply don't have enough of it.
+
+10
+00:00:25,340 --> 00:00:27,810
+In the previous course on image models,
+
+11
+00:00:27,810 --> 00:00:31,605
+we talked about a number of strategies for what to do when you don't have enough data.
+
+12
+00:00:31,605 --> 00:00:35,400
+Which of these were techniques for dealing with data scarcity?
+
+13
+00:00:36,490 --> 00:00:41,545
+Everything except ensembling is a valid technique for dealing with data scarcity.
+
+14
+00:00:41,545 --> 00:00:44,000
+In this module, we'll talk about how one of
+
+15
+00:00:44,000 --> 00:00:47,235
+these techniques transfer learning applies to natural language.
+
+16
+00:00:47,235 --> 00:00:50,480
+You'll learn about how researchers in other disciplines have historically
+
+17
+00:00:50,480 --> 00:00:54,120
+constructed embeddings of words without training on a supervised task,
+
+18
+00:00:54,120 --> 00:00:58,794
+recent techniques called GloVe and Word2Vec that are inspired by those techniques,
+
+19
+00:00:58,794 --> 00:01:03,585
+how you can easily make use of pre-trained Word2vec embeddings using TensorFlow Hub,
+
+20
+00:01:03,585 --> 00:01:06,410
+and how your task and the amount of data you have
+
+21
+00:01:06,410 --> 00:01:10,345
+determine how you should use Wrd2vec and GloVe in your model.
+
+22
+00:01:10,345 --> 00:01:13,220
+There's a long history of people quantifying word
+
+23
+00:01:13,220 --> 00:01:15,650
+meaning and constructing some sort of embedding.
+
+24
+00:01:15,650 --> 00:01:17,580
+When I say quantifying word meaning,
+
+25
+00:01:17,580 --> 00:01:20,195
+I mean mapping words to numbers.
+
+26
+00:01:20,195 --> 00:01:22,610
+What's interesting is, if you consider the extent to which
+
+27
+00:01:22,610 --> 00:01:24,860
+these approaches have relied on domain knowledge,
+
+28
+00:01:24,860 --> 00:01:26,690
+you can see a similar story to the one we've
+
+29
+00:01:26,690 --> 00:01:29,555
+discussed about feature engineering within machine learning.
+
+30
+00:01:29,555 --> 00:01:32,960
+While earlier on, researchers attempted to impose
+
+31
+00:01:32,960 --> 00:01:36,265
+their beliefs about words on the representations they created.
+
+32
+00:01:36,265 --> 00:01:40,730
+Over time, they seeded this power to the models that they created.
+
+33
+00:01:40,730 --> 00:01:43,430
+The average represents words quantitatively
+
+34
+00:01:43,430 --> 00:01:46,415
+began in the 1950's in the psychology community.
+
+35
+00:01:46,415 --> 00:01:49,330
+Psychologists acted just like ML practitioners
+
+36
+00:01:49,330 --> 00:01:52,570
+did and took a prescriptive view about the way words varied.
+
+37
+00:01:52,570 --> 00:01:54,980
+After coming up with a set of 50 dimensions,
+
+38
+00:01:54,980 --> 00:01:57,580
+each of which was a scale between two adjectives,
+
+39
+00:01:57,580 --> 00:02:01,180
+they then asked a set of human subjects to rate words along each one.
+
+40
+00:02:01,180 --> 00:02:05,140
+For example, one of the skills they came up with was small to large.
+
+41
+00:02:05,140 --> 00:02:08,990
+Then they averaged the ratings to get their vector representations.
+
+42
+00:02:08,990 --> 00:02:11,285
+For example, for the word "polite",
+
+43
+00:02:11,285 --> 00:02:15,905
+the subjects gave it a 4.9 on a seven-point scale from angular to rounded.
+
+44
+00:02:15,905 --> 00:02:19,940
+But human subjects are expensive and this process was hard to scale.
+
+45
+00:02:19,940 --> 00:02:22,130
+Beginning in the late one 1980's,
+
+46
+00:02:22,130 --> 00:02:24,370
+researchers began exploring methods of creating
+
+47
+00:02:24,370 --> 00:02:28,905
+numerical representations of word meaning that didn't require any human labeling.
+
+48
+00:02:28,905 --> 00:02:33,405
+At the core of their approaches was an idea called the distributional hypothesis,
+
+49
+00:02:33,405 --> 00:02:37,040
+which stated that the meanings of words can be found in their usage.
+
+50
+00:02:37,040 --> 00:02:39,400
+It's an idea that is very intuitive.
+
+51
+00:02:39,400 --> 00:02:41,900
+When you hear an unfamiliar word in conversation,
+
+52
+00:02:41,900 --> 00:02:44,570
+you look to see how it was used to figure out its meaning,
+
+53
+00:02:44,570 --> 00:02:46,715
+and every other word becomes evidence.
+
+54
+00:02:46,715 --> 00:02:51,175
+So for example, you'll know the syntactic role that mooped is playing immediately.
+
+55
+00:02:51,175 --> 00:02:52,925
+Then you see child and you think,
+
+56
+00:02:52,925 --> 00:02:54,380
+what sorts of things that children do?
+
+57
+00:02:54,380 --> 00:02:57,960
+Then you think, what types of things do people do in yards?
+
+58
+00:02:57,960 --> 00:03:00,740
+When you intersect all these pieces of evidence,
+
+59
+00:03:00,740 --> 00:03:03,155
+you arrive at a best guess for the meaning of the word.
+
+60
+00:03:03,155 --> 00:03:06,440
+One of the first to these approaches came from researchers who were trying to
+
+61
+00:03:06,440 --> 00:03:09,920
+solve the problem of ranking documents relative to a query.
+
+62
+00:03:09,920 --> 00:03:13,905
+Their approach was called Latent Semantic Analysis and involved two steps.
+
+63
+00:03:13,905 --> 00:03:17,080
+The first step was to compile a term-document matrix.
+
+64
+00:03:17,080 --> 00:03:20,450
+A term-document matrix is a table whose rows are terms,
+
+65
+00:03:20,450 --> 00:03:22,760
+whose columns are documents and its contents are
+
+66
+00:03:22,760 --> 00:03:26,490
+the frequency that a particular word occurs with a particular document.
+
+67
+00:03:26,490 --> 00:03:30,320
+One thing you could do is to take a row in this matrix called a term vector,
+
+68
+00:03:30,320 --> 00:03:32,485
+and treat it as the representation of that word.
+
+69
+00:03:32,485 --> 00:03:34,840
+However, researchers didn't do that.
+
+70
+00:03:34,840 --> 00:03:38,380
+Why are term vectors poor word embeddings?
+
+71
+00:03:38,700 --> 00:03:41,395
+The correct answer is both.
+
+72
+00:03:41,395 --> 00:03:44,390
+The term vectors weren't of high enough quality because they stemmed
+
+73
+00:03:44,390 --> 00:03:47,870
+from the limited sample of documents that the researchers had access to.
+
+74
+00:03:47,870 --> 00:03:51,980
+Think about the similarity between two terms that don't co-occur in the sample.
+
+75
+00:03:51,980 --> 00:03:53,920
+They will look completely dissimilar.
+
+76
+00:03:53,920 --> 00:03:58,315
+However, those two terms might co-occur in a document outside the sample.
+
+77
+00:03:58,315 --> 00:04:01,140
+Additionally, think about the size of these vectors.
+
+78
+00:04:01,140 --> 00:04:04,005
+They grow with the number of documents in the sample.
+
+79
+00:04:04,005 --> 00:04:07,515
+Consequently, researchers wanted a lower-dimensional,
+
+80
+00:04:07,515 --> 00:04:09,380
+higher-quality set of vectors.
+
+81
+00:04:09,380 --> 00:04:14,465
+So what they did was to use a technique from linear algebra called matrix factorization.
+
+82
+00:04:14,465 --> 00:04:17,430
+How this works is beyond the scope of this course.
+
+83
+00:04:17,430 --> 00:04:20,255
+However, what's important for you to know are two things.
+
+84
+00:04:20,255 --> 00:04:25,115
+Firstly, matrix factorization takes a matrix like the term-document matrix and creates
+
+85
+00:04:25,115 --> 00:04:27,890
+two matrices called factors that can be treated
+
+86
+00:04:27,890 --> 00:04:30,800
+as lower dimensional representations of the two domains,
+
+87
+00:04:30,800 --> 00:04:33,619
+which in this case are terms and documents.
+
+88
+00:04:33,619 --> 00:04:36,290
+Multiplying these two smaller matrices results in
+
+89
+00:04:36,290 --> 00:04:39,060
+an approximation of the original matrix.
+
+90
+00:04:39,060 --> 00:04:44,380
+Secondly, matrix factorization is useful in a variety of machine learning scenarios.
+
+91
+00:04:44,380 --> 00:04:46,700
+We'll use matrix factorization again to build
+
+92
+00:04:46,700 --> 00:04:49,610
+our recommendation systems in the next course.
+
+93
+00:04:49,610 --> 00:04:53,190
+Let's say our term-document matrix is called x.
+
+94
+00:04:53,190 --> 00:04:57,560
+The idea is to find two factor matrices such that the difference between
+
+95
+00:04:57,560 --> 00:05:01,865
+the product of the two factors and the original matrix is as small as possible.
+
+96
+00:05:01,865 --> 00:05:05,595
+We refer to this sort of error as reconstruction error.
+
+97
+00:05:05,595 --> 00:05:09,130
+The greater the number of dimensions in our factors u and v,
+
+98
+00:05:09,130 --> 00:05:11,450
+the more information they contain and thus
+
+99
+00:05:11,450 --> 00:05:15,525
+the closer there product will be to the original term-document matrix x.
+
+100
+00:05:15,525 --> 00:05:18,410
+What that meant for researchers was that they had a way to
+
+101
+00:05:18,410 --> 00:05:21,680
+trade off quality against usefulness.
+
+102
+00:05:21,680 --> 00:05:26,465
+Later, researchers would change this approach so that instead of a term-document matrix,
+
+103
+00:05:26,465 --> 00:05:28,630
+they created a term-term matrix,
+
+104
+00:05:28,630 --> 00:05:32,685
+where every value corresponding to the number of times the two words co-occured.
+
+105
+00:05:32,685 --> 00:05:35,900
+They constructed these matrices by sliding a window over
+
+106
+00:05:35,900 --> 00:05:40,234
+a corpus and treating words in that window at the same time as co-occurring.
+
+107
+00:05:40,234 --> 00:05:44,840
+This was consistent with the idea that the context necessary for understanding a word
+
+108
+00:05:44,840 --> 00:05:46,985
+was located in its immediate surroundings
+
+109
+00:05:46,985 --> 00:05:50,160
+more so than in the document in which it occurs.

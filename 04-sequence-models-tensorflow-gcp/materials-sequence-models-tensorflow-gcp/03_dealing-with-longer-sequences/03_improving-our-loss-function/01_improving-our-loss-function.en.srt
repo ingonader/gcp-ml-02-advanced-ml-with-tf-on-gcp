@@ -1,0 +1,175 @@
+1
+00:00:00,000 --> 00:00:03,930
+Welcome back. I hope you were able to get some practice stacking
+
+2
+00:00:03,930 --> 00:00:07,970
+RNNs cells to create deeper more expressive RNNs.
+
+3
+00:00:07,970 --> 00:00:09,825
+Use with caution though.
+
+4
+00:00:09,825 --> 00:00:13,200
+Deep RNNs takes significantly more time to compute.
+
+5
+00:00:13,200 --> 00:00:18,510
+Another improvement we can make to our RNN is making the loss function more robust.
+
+6
+00:00:18,510 --> 00:00:21,090
+Up until now, we've only been using
+
+7
+00:00:21,090 --> 00:00:25,420
+the activation from our final timestep to make a prediction.
+
+8
+00:00:25,420 --> 00:00:28,320
+This diagram illustrates this.
+
+9
+00:00:28,320 --> 00:00:31,895
+We take the final activation from the RNN,
+
+10
+00:00:31,895 --> 00:00:36,210
+H6 in this case pass it through a dense layer
+
+11
+00:00:36,210 --> 00:00:41,105
+to allow a nonlinear relationship between the state vector and the final output,
+
+12
+00:00:41,105 --> 00:00:44,945
+and then through a linear layer to output a single value.
+
+13
+00:00:44,945 --> 00:00:48,105
+This makes sense because in our sprinkler problem,
+
+14
+00:00:48,105 --> 00:00:50,990
+we're only asking for a single value
+
+15
+00:00:50,990 --> 00:00:56,685
+namely the height of the sprinkler and the next time step after the input sequence.
+
+16
+00:00:56,685 --> 00:01:01,940
+However, you could argue that a model that can predict the last value in a sequence
+
+17
+00:01:01,940 --> 00:01:04,040
+accurately should also be able to
+
+18
+00:01:04,040 --> 00:01:07,035
+predict the second to last value in the sequence accurately.
+
+19
+00:01:07,035 --> 00:01:09,590
+Otherwise, it's just a lucky guess.
+
+20
+00:01:09,590 --> 00:01:14,690
+So, one way to improve the robustness of our loss function against
+
+21
+00:01:14,690 --> 00:01:17,780
+these lucky guesses during training is to
+
+22
+00:01:17,780 --> 00:01:21,380
+measure loss not just on the final prediction in the sequence,
+
+23
+00:01:21,380 --> 00:01:24,740
+but to issue predictions over the last k time steps in
+
+24
+00:01:24,740 --> 00:01:28,760
+the sequence and then average the loss over all these predictions.
+
+25
+00:01:28,760 --> 00:01:30,430
+If this sounds familiar,
+
+26
+00:01:30,430 --> 00:01:32,420
+it's because you've seen a model that takes into
+
+27
+00:01:32,420 --> 00:01:35,965
+account losses from intermediate outputs before.
+
+28
+00:01:35,965 --> 00:01:40,130
+Remember Google net the inception CNN from
+
+29
+00:01:40,130 --> 00:01:46,010
+the image classification course after certain amount of convolution and pooling layers,
+
+30
+00:01:46,010 --> 00:01:48,650
+the model will output predictions midway through
+
+31
+00:01:48,650 --> 00:01:52,730
+the whole model and average that loss into the total loss function.
+
+32
+00:01:52,730 --> 00:01:55,525
+So, how many prediction should we average loss over?
+
+33
+00:01:55,525 --> 00:01:58,070
+Well, that's the hyperparameter.
+
+34
+00:01:58,070 --> 00:02:01,570
+If k is too small like k equals one,
+
+35
+00:02:01,570 --> 00:02:03,870
+our loss function may be too noisy.
+
+36
+00:02:03,870 --> 00:02:09,405
+It will unduly reward lucky guesses and punish unlucky guesses.
+
+37
+00:02:09,405 --> 00:02:11,775
+What if K is too large?
+
+38
+00:02:11,775 --> 00:02:15,860
+Let's say for example k was equal to the entire sequence length,
+
+39
+00:02:15,860 --> 00:02:20,810
+in this case, we'll be measuring loss on predictions that have very little context.
+
+40
+00:02:20,810 --> 00:02:25,775
+In fact, our first prediction will have only seed one previous datapoint.
+
+41
+00:02:25,775 --> 00:02:28,985
+We probably don't care if the loss on that prediction is high
+
+42
+00:02:28,985 --> 00:02:33,130
+because we'll never be making predictions with so little context.
+
+43
+00:02:33,370 --> 00:02:39,185
+In this diagram, we've chosen k to be half of the total sequence length.
+
+44
+00:02:39,185 --> 00:02:44,350
+Now, let's see a demo of how implementing this looks in TensorFlow
