@@ -37,9 +37,12 @@ def init(hparams):
 
 
 def linear_model(features, mode, params):
+    #TODO (done): finish linear model
     X = features[TIMESERIES_COL]
-    #TODO: finish linear model
-    pass
+    # X = tf.reshape(X, shape=[-1, SEQ_LEN])) ## no need to flatten here, since data is already flat
+    X = tf.layers.dense(X, units = 1, activation = None)  ## just one output unit for prediction
+    #tf.summary.scalar("loss", loss)
+    return X
 
 def dnn_model(features, mode, params):
   X = features[TIMESERIES_COL]
@@ -187,6 +190,7 @@ def sequence_regressor(features, labels, mode, params):
 
         # 2c. eval metric
         eval_metric_ops = {
+            #"Loss": loss,
             "RMSE": rmse,
             "RMSE_same_as_last": same_as_last_benchmark(features, labels),
         }
@@ -196,6 +200,12 @@ def sequence_regressor(features, labels, mode, params):
         predictions = predictions[:, -1]  # last predicted value
     predictions_dict = {"predicted": predictions}
 
+    ## note down loss for tensorboard: [[?]]
+    #tf.summary.scalar("loss_nth", loss)
+    #tf.summary.scalar("rmse_nth", rmse)
+    #merged_summary_op = tf.summary.merge_all()
+
+    
     # 4. return EstimatorSpec
     return tf.estimator.EstimatorSpec(
         mode=mode,
@@ -218,8 +228,9 @@ def train_and_evaluate(output_dir, hparams):
     estimator = tf.estimator.Estimator(model_fn=sequence_regressor,
                                        params=hparams,
                                        config=tf.estimator.RunConfig(
-                                           save_checkpoints_secs=
-                                           hparams['min_eval_frequency']),
+                                           save_checkpoints_secs=hparams['min_eval_frequency'],
+                                           save_summary_steps=100
+                                       ),
                                        model_dir=output_dir)
     train_spec = tf.estimator.TrainSpec(input_fn=get_train,
                                         max_steps=hparams['train_steps'])
