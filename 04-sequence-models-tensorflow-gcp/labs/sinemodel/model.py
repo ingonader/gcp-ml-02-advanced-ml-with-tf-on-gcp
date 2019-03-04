@@ -61,7 +61,7 @@ def dnn_model(features, mode, params):
   
   X = tf.layers.dense(X, units = 20, activation = tf.nn.relu, name = 'dense01')
   ## try adding tensorboard information:
-  tf.summary.histogram('dense01', X)
+  #tf.summary.histogram('dense01', X)
     
   X = tf.layers.dense(X, units = 3, activation = tf.nn.relu)
   # ## add weights to tensorboard: (doesn't work)
@@ -74,9 +74,42 @@ def dnn_model(features, mode, params):
   return X
 
 def cnn_model(features, mode, params):
-  X = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1]) # as a 1D "sequence" with only one time-series observation (height)
-  #TODO: finish CNN model
-  pass
+  #TODO (done): finish CNN model
+  ## flatten input:
+  net = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1]) # as a 1D "sequence" with only one time-series observation (height)
+
+  ## add convolutional and max pooling layers:
+  net = tf.layers.conv1d(inputs = net,
+                         filters = N_INPUTS // 2,
+                         kernel_size = 3,
+                         strides = 1,
+                         padding = "same",
+                         activation = tf.nn.relu)
+  net = tf.layers.max_pooling1d(inputs = net,
+                                pool_size = 2,
+                                strides = 2)
+  net = tf.layers.conv1d(inputs = net,
+                         filters = N_INPUTS // 2,
+                         kernel_size = 3,
+                         strides = 1,
+                         padding = "same",
+                         activation = tf.nn.relu)
+  net = tf.layers.max_pooling1d(inputs = net,
+                                pool_size = 2,
+                                strides = 2)
+  ## flatten output:
+  outlen = net.shape[1] * net.shape[2]  ## first dimension [0] is batch_size
+  net = tf.reshape(net, [-1, outlen])
+  ## one hidden layer:
+  net = tf.layers.dense(inputs = net, 
+                        units = 3, 
+                        activation = tf.nn.relu)
+  ## outputs for linear regression:
+  net = tf.layers.dense(inputs = net,
+                        units = 1,
+                        activation = None)
+                         
+  return net
 
 def rnn_model(features, mode, params):
   # 1. dynamic_rnn needs 3D shape: [BATCH_SIZE, N_INPUTS, 1]
@@ -199,8 +232,11 @@ def sequence_regressor(features, labels, mode, params):
     model_function = model_functions[params['model']]
     predictions = model_function(features, mode, params)
 
+    global_step = tf.train.get_global_step()
+    
     # 2. loss function, training/eval ops
     loss = None
+    rmse = [None, None]
     train_op = None
     eval_metric_ops = None
     if mode == tf.estimator.ModeKeys.TRAIN or mode == tf.estimator.ModeKeys.EVAL:
@@ -217,7 +253,8 @@ def sequence_regressor(features, labels, mode, params):
                     learning_rate=params['learning_rate'],
                     optimizer="Adam")
             ## record metrics for training:
-            tf.summary.scalar("RMSE_summary", rmse[1])
+            #tf.summary.scalar("RMSE_train_summary", rmse[1])
+            #tf.summary.scalar("loss_train_summary", loss)
 
 
         # 2c. eval metric
@@ -238,16 +275,29 @@ def sequence_regressor(features, labels, mode, params):
     #tf.summary.scalar("rmse_nth", rmse)
     #merged_summary_op = tf.summary.merge_all()
 
-    
+    ## create training hooks:
+    train_hook_list= []
+    train_tensors_log = {'RMSE_train_hook': rmse[1],
+                         'loss_train_hook': loss,
+                         'global_step': global_step}
+    train_hook_list.append(
+        tf.train.LoggingTensorHook(
+            tensors = train_tensors_log, 
+            every_n_iter = 100)
+    )
+
     # 4. return EstimatorSpec
     return tf.estimator.EstimatorSpec(
-        mode=mode,
-        predictions=predictions_dict,
-        loss=loss,
-        train_op=train_op,
-        eval_metric_ops=eval_metric_ops,
-        export_outputs={
-            'predictions': tf.estimator.export.PredictOutput(predictions_dict)}
+        mode = mode,
+        predictions = predictions_dict,
+        loss = loss,
+        train_op = train_op,
+        training_hooks = train_hook_list,
+        eval_metric_ops = eval_metric_ops,
+        evaluation_hooks = None,
+        export_outputs = {
+            'predictions': tf.estimator.export.PredictOutput(predictions_dict)
+        }
     )
 
 
@@ -261,7 +311,7 @@ def train_and_evaluate(output_dir, hparams):
     estimator = tf.estimator.Estimator(model_fn=sequence_regressor,
                                        params=hparams,
                                        config=tf.estimator.RunConfig(
-                                           save_checkpoints_secs=10, #hparams['min_eval_frequency'], ## [[here]]--currently hard-coded
+                                           save_checkpoints_secs=30, #hparams['min_eval_frequency'], ## [[here]]--currently hard-coded
                                            save_summary_steps=100
                                        ),
                                        model_dir=output_dir)
@@ -272,6 +322,6 @@ def train_and_evaluate(output_dir, hparams):
                                       steps=None,
                                       exporters=exporter,
                                       start_delay_secs=10, #hparams['eval_delay_secs'],   ## [[here]]--currently hard-coded
-                                      throttle_secs=10     #hparams['min_eval_frequency'] ## [[here]]--currently hard-coded
+                                      throttle_secs=30     #hparams['min_eval_frequency'] ## [[here]]--currently hard-coded
                                      )
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
