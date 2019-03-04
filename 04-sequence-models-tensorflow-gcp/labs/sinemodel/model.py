@@ -112,10 +112,28 @@ def cnn_model(features, mode, params):
   return net
 
 def rnn_model(features, mode, params):
+  ## size of the internal state in each of the cells:
+  CELL_SIZE = N_INPUTS // 3     
+    
   # 1. dynamic_rnn needs 3D shape: [BATCH_SIZE, N_INPUTS, 1]
   x = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1])
-  #TODO: finish rnn model
-  pass
+  
+  #TODO (done): finish rnn model
+  ## define RNN cells:
+  cell = tf.nn.rnn_cell.GRUCell(CELL_SIZE)
+  
+  ## unroll cells: 
+  outputs, state = tf.nn.dynamic_rnn(cell = cell,     ## deprecated; use keras.layers.RNN(cell) instead.
+                                     inputs = x,
+                                     dtype = tf.float32)
+  ## output contains the activations for every single time step. We
+  ## state contains the activation for the last time step.
+
+  ## pass last activation through a dense layer:
+  h1 = tf.layers.dense(state, units = N_INPUTS // 2, activation = tf.nn.relu)
+  predictions = tf.layers.dense(h1, units = 1, activation = None)  ## [batch_size, 1]
+  return predictions
+
 
 # 2-layer RNN
 def rnn2_model(features, mode, params):
@@ -232,7 +250,7 @@ def sequence_regressor(features, labels, mode, params):
     model_function = model_functions[params['model']]
     predictions = model_function(features, mode, params)
 
-    global_step = tf.train.get_global_step()
+    #global_step = tf.train.get_global_step()
     
     # 2. loss function, training/eval ops
     loss = None
@@ -276,15 +294,15 @@ def sequence_regressor(features, labels, mode, params):
     #merged_summary_op = tf.summary.merge_all()
 
     ## create training hooks:
-    train_hook_list= []
-    train_tensors_log = {'RMSE_train_hook': rmse[1],
-                         'loss_train_hook': loss,
-                         'global_step': global_step}
-    train_hook_list.append(
-        tf.train.LoggingTensorHook(
-            tensors = train_tensors_log, 
-            every_n_iter = 100)
-    )
+    #train_hook_list= []
+    #train_tensors_log = {'RMSE_train_hook': rmse[1],
+    #                     'loss_train_hook': loss,
+    #                     'global_step': global_step}
+    #train_hook_list.append(
+    #    tf.train.LoggingTensorHook(
+    #        tensors = train_tensors_log, 
+    #        every_n_iter = 100)
+    #)
 
     # 4. return EstimatorSpec
     return tf.estimator.EstimatorSpec(
@@ -292,9 +310,9 @@ def sequence_regressor(features, labels, mode, params):
         predictions = predictions_dict,
         loss = loss,
         train_op = train_op,
-        training_hooks = train_hook_list,
+        #training_hooks = train_hook_list,
         eval_metric_ops = eval_metric_ops,
-        evaluation_hooks = None,
+        #evaluation_hooks = None,
         export_outputs = {
             'predictions': tf.estimator.export.PredictOutput(predictions_dict)
         }
@@ -311,8 +329,8 @@ def train_and_evaluate(output_dir, hparams):
     estimator = tf.estimator.Estimator(model_fn=sequence_regressor,
                                        params=hparams,
                                        config=tf.estimator.RunConfig(
-                                           save_checkpoints_secs=30, #hparams['min_eval_frequency'], ## [[here]]--currently hard-coded
-                                           save_summary_steps=100
+                                           save_checkpoints_secs=hparams['min_eval_frequency']#, ## [[here]]--was hard-coded (as 30)
+                                           #save_summary_steps=1000  
                                        ),
                                        model_dir=output_dir)
     train_spec = tf.estimator.TrainSpec(input_fn=get_train,
@@ -321,7 +339,7 @@ def train_and_evaluate(output_dir, hparams):
     eval_spec = tf.estimator.EvalSpec(input_fn=get_valid,
                                       steps=None,
                                       exporters=exporter,
-                                      start_delay_secs=10, #hparams['eval_delay_secs'],   ## [[here]]--currently hard-coded
-                                      throttle_secs=30     #hparams['min_eval_frequency'] ## [[here]]--currently hard-coded
+                                      start_delay_secs=hparams['eval_delay_secs'],   ## [[here]]--was hard-coded (as 10)
+                                      throttle_secs=hparams['min_eval_frequency']    ## [[here]]--was hard-coded (as 30)
                                      )
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
