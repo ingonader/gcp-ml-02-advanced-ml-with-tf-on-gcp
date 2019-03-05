@@ -126,7 +126,7 @@ def rnn_model(features, mode, params):
   outputs, state = tf.nn.dynamic_rnn(cell = cell,     ## deprecated; use keras.layers.RNN(cell) instead.
                                      inputs = x,
                                      dtype = tf.float32)
-  ## output contains the activations for every single time step. We
+  ## output contains the activations for every single time step.
   ## state contains the activation for the last time step.
 
   ## pass last activation through a dense layer:
@@ -138,8 +138,30 @@ def rnn_model(features, mode, params):
 # 2-layer RNN
 def rnn2_model(features, mode, params):
   x = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1])
-  #TODO: finish 2-layer rnn model
-  pass
+  #TODO (done): finish 2-layer rnn model
+  ## define layers:
+  cell1 = tf.nn.rnn_cell.GRUCell(N_INPUTS * 2)
+  cell2 = tf.nn.rnn_cell.GRUCell(N_INPUTS // 2)
+  ## define multi-cell that contains all those layers:
+  multi_cell = tf.nn.rnn_cell.MultiRNNCell([cell1, cell2])
+  
+  ## unroll cells: 
+  outputs, state = tf.nn.dynamic_rnn(cell = multi_cell, 
+                                     inputs = x, 
+                                     dtype = tf.float32)
+  ## output contains the activations of the final layer for every single time step.
+  ## state now contains a list of vectors corresponding to the final state 
+  ## of each of the cells (i.e., of each layer)
+  print("rnn2_model: outputs: ", outputs)
+  print("rnn2_model: state: ", state)
+  print("rnn2_model: state[1]: ", state[1])
+
+  ## pass rnn output (state of last layer) to dense layer:
+  h1 = tf.layers.dense(state[1], 
+                       units = multi_cell.output_size // 2,
+                       activation = tf.nn.relu)
+  predictions = tf.layers.dense(h1, units = 1, activation = None)  ## one output (regression)
+  return predictions
 
 # create N-1 predictions
 def rnnN_model(features, mode, params):
