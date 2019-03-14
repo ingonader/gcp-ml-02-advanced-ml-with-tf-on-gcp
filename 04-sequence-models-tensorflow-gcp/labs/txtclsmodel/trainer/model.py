@@ -86,12 +86,14 @@ Create tf.estimator compatible input function
 """
 def input_fn(texts, labels, tokenizer, batch_size, mode):
     # Transform text to sequence of integers
-    x = # TODO (hint: use tokenizer)
+    # TODO (done): (hint: use tokenizer)
+    x = tokenizer.texts_to_sequences(texts) 
 
     # Fix sequence length to max value. Sequences shorter than the length are
     # padded in the beginning and sequences longer are truncated
     # at the beginning.
-    x = # TODO (hint: there is a useful function in tf.keras.preprocessing...)
+    # TODO (done): (hint: there is a useful function in tf.keras.preprocessing...)
+    x = sequence.pad_sequences(x, maxlen = MAX_SEQUENCE_LENGTH)
 
     # default settings for training
     num_epochs = None
@@ -179,7 +181,13 @@ def keras_estimator(model_dir,
     # Compile model with learning parameters.
     optimizer = tf.keras.optimizers.Adam(lr=learning_rate)
     model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy', metrics=['acc'])
-    estimator = # TODO: convert keras model to tf.estimator.Estimator
+    
+    # TODO (done): convert keras model to tf.estimator.Estimator
+    estimator = tf.keras.estimator.model_to_estimator(
+        keras_model = model,
+        model_dir = model_dir,
+        config = config
+    )
 
     return estimator
 
@@ -257,7 +265,14 @@ def train_and_evaluate(output_dir, hparams):
 
     # Create estimator
     run_config = tf.estimator.RunConfig(save_checkpoints_steps=500)
-    estimator = # TODO: create estimator
+    # TODO (done): create estimator
+    estimator = keras_estimator(
+        model_dir = output_dir,
+        config = run_config,
+        learning_rate = hparams['learning_rate'],
+        embedding_path = hparams['embedding_path'],
+        word_index = tokenizer.word_index
+    )
 
     # Create TrainSpec
     train_steps = hparams['num_epochs'] * len(train_texts) / hparams['batch_size']
