@@ -55,13 +55,15 @@ gsutil cp gs://my-bucket/my-file .
 ## in cloud shell:
 
 ## create a bucket (if necessary):
-export REGION=europe-west-1c
+export REGION=europe-west1
+#export REGION=us-central1
 export BUCKET=$(gcloud config get-value project)
 gsutil mb -l ${REGION} gs://${BUCKET}
 
 ## create datalab vm:
 export PROJECT=$(gcloud config get-value project)
 export ZONE=europe-west1-c
+#export ZONE=us-central1-c
 # echo "Y" | datalab create mydatalabvm --zone $ZONE
 printf "Y\n\n\n" | datalab create mydatalabvm --zone $ZONE
 #printf "Y\n\n\n" | datalab create bdmlvm --zone $ZONE
@@ -70,6 +72,7 @@ printf "Y\n\n\n" | datalab create mydatalabvm --zone $ZONE
 ## ssh into datalab vm:
 export PROJECT=$(gcloud config get-value project)
 export ZONE=europe-west1-c
+#export ZONE=us-central1-c
 gcloud compute ssh mydatalabvm --project $PROJECT --zone $ZONE
 
 ## in datalab vm:
@@ -105,14 +108,17 @@ REGION = 'europe-west1'  ## note: Cloud ML Engine not availabe in europe-west3!
 os.environ['BUCKET'] = BUCKET
 os.environ['PROJECT'] = PROJECT
 os.environ['REGION'] = REGION
+os.environ['TFVERSION'] = '1.8'
 
 print(PROJECT)
 print(BUCKET)
-print("gsutil mb -l {0} gs://{1}".format(REGION, BUCKET))
+print(REGION)
+
+#print("gsutil mb -l {0} gs://{1}".format(REGION, BUCKET))
 
 ## set config for gcp config: [[?]]
-print(os.popen("gcloud config set project $PROJECT").readlines())
-print(os.popen("gcloud config set compute/region $REGION").readlines())
+#print(os.popen("gcloud config set project $PROJECT").readlines())
+#print(os.popen("gcloud config set compute/region $REGION").readlines())
 ```
 
 ```bash

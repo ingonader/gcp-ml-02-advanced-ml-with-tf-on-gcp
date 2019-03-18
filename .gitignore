@@ -3,7 +3,7 @@
 ## ====================================================== ##
 
 ## ignore quizzes files:
-
+## '''''''''''''''''''''''''''''''''''''''''''''''''''''' ##
 01-end-to-end-ml-with-tf-on-gcp/quizzes-gcp-ml-02_v*.odt
 01-end-to-end-ml-with-tf-on-gcp/.~lock.quizzes-gcp-ml-02_v001.*
 */quizzes-gcp*.odt
@@ -13,24 +13,36 @@
 ## ignore materials downloaded for this course, because
 ## they will be added to course materials where appropriate
 ## (copied into locations that actually make sense):
+## ''''''''''''''''''''''''''''''''''''''''''''''''''''' ##
 training-data-analyst-cloned/*
 
 
 ## ignore pdf versions of lab notes:
-
+## ''''''''''''''''''''''''''''''''''''''''''''''''''''' ##
 */notes-and-labs-gcp-adv-ml-*.pdf
 
 
-## ignore certifications:
+## ignore some pats and some verions of html notebooks:
+## ''''''''''''''''''''''''''''''''''''''''''''''''''''' ##
+**/*_files/*
 
+
+## ignore certifications:
+## ''''''''''''''''''''''''''''''''''''''''''''''''''''' ##
 certificate-of-specializations/*
 
 
 ## ignore specific stuff:
+## ''''''''''''''''''''''''''''''''''''''''''''''''''''' ##
 02-gcp-production-ml-systems/kubeflow-examples/
 
+
+
+
+## ============================================================================= ##
 # Created by https://www.gitignore.io/api/video,macos,python,jupyternotebook
 # Edit at https://www.gitignore.io/?templates=video,macos,python,jupyternotebook
+## ============================================================================= ##
 
 ### JupyterNotebook ###
 .ipynb_checkpoints
