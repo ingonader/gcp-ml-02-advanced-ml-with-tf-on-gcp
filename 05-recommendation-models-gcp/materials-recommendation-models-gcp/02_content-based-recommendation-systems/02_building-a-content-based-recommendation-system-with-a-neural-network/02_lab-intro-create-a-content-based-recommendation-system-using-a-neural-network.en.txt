@@ -1,0 +1,9 @@
+Now it's time for you to give it a try. In this lab, we'll build a content-based
+recommender using a neural network to recommend the next article to read for
+visitors of the Courier website. First, we'll see how to use big query
+to collect information from the Courier website Google Analytics data and
+build our training and test sets. Then you'll use this data to construct the
+feature columns that will feed into our neural network, including cross columns
+combining some of our features. We'll also create additional metrics to
+assess the performance of our model, and pass this metric to TensorBoard so
+we can monitor our performance.

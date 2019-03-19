@@ -1,0 +1,66 @@
+By this point, we've got our environment
+set up with our DAGs running at a predefined schedule, or
+with triggered events. The last topic we'll cover before you
+practice what you've learned in your labs is how to monitor and
+troubleshoot your cloud functions and your Airflow workflows. One of the most common reasons you'll want
+to investigate the historical runs of your DAGs is in the event that your
+workflows simply stop working. Note that you can't have it auto-retry for
+a number of attempts, in case it's a transient bug. But sometimes you just can't get your
+workflow to run at all in the first place. In the Dag Runs,
+you can monitor when your pipelines ran, and in what state, like success,
+running, or failure. The quickest way to get to this page
+is by clicking on the schedule for any of your DAGs from the main DAGs page. Here we have five successful runs
+over five days for this DAG, so this one seems to be running just fine. Now back on the main page for our DAGs, we see some red, which indicates trouble
+with some of our more recent DAG runs. Speaking of DAG runs, you'll notice the
+three circles below, which indicate how many runs have passed, how many are
+currently active, or how many have failed. It certainly doesn't look good for
+268 runs failed and 0 passed for that first DAG. Let's see what happened, we'll click on the name of the DAG
+to get to the visual representation. It looks like the first task is
+succeeding, judging by the green border, but the next task,
+success-move-to-completion, is failing. Note that the lighter pink color for the
+failure-move-to-completion node beneath it, means that that node is skipped. So reading into this a little bit, the CSV file was correctly processed
+by data flow in the first task. But there's some issue moving this
+CSV file to a different GCS bucket as part of task number two. Now, to troubleshoot, click on the node of
+a particular task, and then click on Logs. Here you'll find the logs for
+that specific Airflow run. I generally search my browser for the word
+error, then start my diagnosis there. Here, this was a pretty simple error, where it we was trying to copy a file
+from an input bucket to an output bucket, and the output bucket simply didn't exist,
+or is named incorrectly. Another tool in your toolkit for diagnosing Airflow failures
+is your general GCP logging. Since Airflow launches other GCP services
+through tasks, you can see and filter for errors for services in Stackdriver, as you would
+debugging any other normal application. Here I filter for Dataflow step errors, to
+troubleshoot why my workflow is failing. It turns out that I had not changed
+the name of the output bucket for the CSV file. So after the file is processed
+by Dataflow as part of step one, it dumped the completed file
+back into the input bucket. Which you can begin to see why that's
+terrible, because that triggered another data flow job for processing, and so
+on, and so on, and so on, and so on. As you can see, workflows can be really
+powerful tools if we set them up properly, or really resource intensive,
+if not scheduled or architected wisely. One of the essential steps I
+recommend is pretty simple. Before really scheduling or triggering your workflow,
+try running it manually yourself first. And ensuring that you can get it to
+complete successfully before tying it to a more aggressive or automated schedule. There's nothing worst than waking
+up to a new workflow that ran for the past eight hours and
+failed each time, and spammed you team with an email each time
+it failed, I've definitely been there. You might be wondering, if there's an
+error with my cloud function, my Airflow instance would never have been triggered
+or issued any Airflow logs at all. Since, of course, it was unaware that we were trying to trigger
+it if the trigger didn't fire properly. And you're exactly right if you're
+using cloud functions, be sure to check the normal GCP logs for errors and
+warnings in addition to your Airflow logs. In this example, each time I uploaded
+a CVS file to my GCS bucket, hoping to trigger my cloud function and then my DAG, I got an error expecting
+to find my function triggered that. Remember way back when I said cloud
+functions were case sensitive? Looking for a function with capital
+DAG doesn't exist, if it's looking for a capital D, lowercase a, and lowercase g. So be sure to be mindful when setting up
+your cloud function for the first time. You made it to the end of the lectures. Before I release you to start on the labs,
+let's do a quick recap of what we've covered and
+the pitfalls that you can avoid. Firstly, Cloud Composer is managed Apache
+Airflow, and generally all environmental variables should be edited inside
+the Airflow UI, not within Cloud Composer. DAGs are simply a set of tasks which use
+operators to talk to other GCP services. DAGs are written in Python and are stored
+in the auto-created DAGs folder for each Airflow instance, again,
+that's just a GCS bucket. Workflows can be scheduled at a set
+interval, or triggered by an event. Lastly be sure to monitor your logs in
+both airflow and in GCP for warnings and errors. Keep in mind, you can set up email
+notification nodes as part of your workflow to alert you and your team
+in the event of workflow failures.

@@ -1,0 +1,263 @@
+1
+00:00:00,000 --> 00:00:05,115
+Great. We've now had an overview of our walls, matrix factorization estimator,
+
+2
+00:00:05,115 --> 00:00:07,780
+input function starting from our TF record files,
+
+3
+00:00:07,780 --> 00:00:12,840
+created our sparse central features of rows for users and columns for items.
+
+4
+00:00:12,840 --> 00:00:16,380
+But, now, let's dive even deeper into the input function starting
+
+5
+00:00:16,380 --> 00:00:20,265
+with an examination of our custom decode example function.
+
+6
+00:00:20,265 --> 00:00:23,520
+We've seen the overview of our TF record parsing function.
+
+7
+00:00:23,520 --> 00:00:25,190
+Let's dive deeper into some of its components,
+
+8
+00:00:25,190 --> 00:00:28,515
+namely the custom functions starting with the decode example function.
+
+9
+00:00:28,515 --> 00:00:34,010
+We call our decode example using a data set map where x is our example protos and
+
+10
+00:00:34,010 --> 00:00:36,620
+our vocab size is either the number of items or
+
+11
+00:00:36,620 --> 00:00:40,015
+users depending on which phase of walls we're in.
+
+12
+00:00:40,015 --> 00:00:43,760
+We first want to specify the schema on the TF record files using
+
+13
+00:00:43,760 --> 00:00:47,630
+a features dictionary into either fixed length or variable length features.
+
+14
+00:00:47,630 --> 00:00:52,060
+Let's say that we're decoding the item TF record and the key will be the item index,
+
+15
+00:00:52,060 --> 00:00:53,540
+which is just one value,
+
+16
+00:00:53,540 --> 00:00:55,530
+therefore it is fixed length.
+
+17
+00:00:55,530 --> 00:01:00,320
+The indices will be the user indices and there are variable number of these because
+
+18
+00:01:00,320 --> 00:01:05,435
+some items might have very few ratings while other items may have many ratings.
+
+19
+00:01:05,435 --> 00:01:08,030
+Lastly, the values will be the ratings
+
+20
+00:01:08,030 --> 00:01:11,790
+which will be the same variable length as the indices.
+
+21
+00:01:11,800 --> 00:01:14,625
+Using the feature map dictionary,
+
+22
+00:01:14,625 --> 00:01:18,975
+we will now parse the features from the example protos one example at a time.
+
+23
+00:01:18,975 --> 00:01:24,220
+Now, we want to use tf.sparse_merge to easily convert our indices n values into
+
+24
+00:01:24,220 --> 00:01:26,770
+a SparseTensor using the vocab size of
+
+25
+00:01:26,770 --> 00:01:30,200
+the number of items or users depending on which phase wall it's in.
+
+26
+00:01:30,200 --> 00:01:34,330
+Having this SparseTensor format representation of our data is a great choice since
+
+27
+00:01:34,330 --> 00:01:39,065
+our matrix is extremely sparse due to a very high number of users and items.
+
+28
+00:01:39,065 --> 00:01:41,140
+This way using the vocab size,
+
+29
+00:01:41,140 --> 00:01:43,510
+we only need to keep track of the interaction pairs that
+
+30
+00:01:43,510 --> 00:01:47,200
+happened and that all of the interaction pairs that didn't through
+
+31
+00:01:47,200 --> 00:01:50,350
+the indices tensor that corresponds with the values tensor that
+
+32
+00:01:50,350 --> 00:01:54,045
+we set up when writing our TF records during pre-processing.
+
+33
+00:01:54,045 --> 00:01:59,120
+Remember how we mentioned earlier that the batching process will replace, for instance,
+
+34
+00:01:59,120 --> 00:02:00,920
+the item ID in the first dimension of
+
+35
+00:02:00,920 --> 00:02:04,465
+the sparse tensors indices where the index within the batch.
+
+36
+00:02:04,465 --> 00:02:08,030
+Well, here we want to save the key into a tensor so that we
+
+37
+00:02:08,030 --> 00:02:11,825
+can use it to remap the indices after bashing is complete.
+
+38
+00:02:11,825 --> 00:02:13,400
+Because this is a map,
+
+39
+00:02:13,400 --> 00:02:16,750
+we are mapping the example protos in our dataset to SparseTensors.
+
+40
+00:02:16,750 --> 00:02:19,150
+But, we need some way to not lose our key,
+
+41
+00:02:19,150 --> 00:02:21,155
+so that we can fix the indices later,
+
+42
+00:02:21,155 --> 00:02:22,960
+some place to store the key.
+
+43
+00:02:22,960 --> 00:02:25,880
+A solution is to take the SparseTensor created by
+
+44
+00:02:25,880 --> 00:02:29,165
+the sparse merge operation and create a new Sparse Tensor.
+
+45
+00:02:29,165 --> 00:02:32,900
+But, concatenate the key to the end of the indices tensor within.
+
+46
+00:02:32,900 --> 00:02:36,995
+Because the indices and values tensors need to be the same length,
+
+47
+00:02:36,995 --> 00:02:41,974
+we also concatenate zero to the end of the values tensor as a dummy placeholder.
+
+48
+00:02:41,974 --> 00:02:44,790
+This way the key is splice into our mapping,
+
+49
+00:02:44,790 --> 00:02:48,065
+which we can then extract later to fix the indexing.
+
+50
+00:02:48,065 --> 00:02:51,260
+We are finally done designing our SparseTensor
+
+51
+00:02:51,260 --> 00:02:54,395
+and return it to complete the dataset mapping operation.
+
+52
+00:02:54,395 --> 00:02:57,365
+Now, that we've gone through the decode example function,
+
+53
+00:02:57,365 --> 00:02:58,840
+let's see what we have learned.
+
+54
+00:02:58,840 --> 00:03:04,760
+In our decode example function we use VarLenFeature indices and values of blank.
+
+55
+00:03:04,760 --> 00:03:10,370
+We perform a sparse_merge because of blank and we concatenate the key because of blank.
+
+56
+00:03:10,370 --> 00:03:13,285
+Choose the answer that best fills in the blanks.
+
+57
+00:03:13,285 --> 00:03:17,780
+The correct answer is A and our decode example function we use
+
+58
+00:03:17,780 --> 00:03:22,600
+VarLenFeature indices and values because of having many ratings per row column.
+
+59
+00:03:22,600 --> 00:03:25,680
+For instance, when predicting items for users,
+
+60
+00:03:25,680 --> 00:03:29,150
+each user will probably have a different number of items they've interacted with.
+
+61
+00:03:29,150 --> 00:03:32,365
+The indices and corresponding ratings, the values.
+
+62
+00:03:32,365 --> 00:03:34,550
+We perform a sparse_merge because the walls
+
+63
+00:03:34,550 --> 00:03:39,085
+matrix factorizations input function needs the inputs to be SparseTensors.
+
+64
+00:03:39,085 --> 00:03:42,410
+We concatenate the keys to the indices tensor because batching
+
+65
+00:03:42,410 --> 00:03:46,370
+overwrites the first dimension of the indices with the batch index.
+
+66
+00:03:46,370 --> 00:03:50,580
+So, we use this trick and the remap keys function later to correct it.

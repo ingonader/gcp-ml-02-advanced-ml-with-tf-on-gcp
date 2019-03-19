@@ -1,0 +1,95 @@
+1
+00:00:00,000 --> 00:00:01,710
+In this final lab,
+
+2
+00:00:01,710 --> 00:00:04,169
+you'll fill in the to-dos as part of the DAG,
+
+3
+00:00:04,169 --> 00:00:06,105
+and the recommendation system notebook.
+
+4
+00:00:06,105 --> 00:00:09,405
+Here you'll put your knowledge to the test on each task and
+
+5
+00:00:09,405 --> 00:00:13,665
+operator that's part of the production recommendation system, ML model.
+
+6
+00:00:13,665 --> 00:00:16,530
+Specifically, you'll review the architecture as a whole,
+
+7
+00:00:16,530 --> 00:00:19,260
+and diagram the lists of tasks and services needed.
+
+8
+00:00:19,260 --> 00:00:22,050
+Then you'll set up the workflow environment inside of
+
+9
+00:00:22,050 --> 00:00:26,895
+Cloud Composer which will provide you a link to the Apache Airflow Web server URL.
+
+10
+00:00:26,895 --> 00:00:29,925
+Next, you'll modify and complete the DAG file to
+
+11
+00:00:29,925 --> 00:00:33,255
+automatically send task to BigQuery and Google Cloud Storage,
+
+12
+00:00:33,255 --> 00:00:35,820
+to refresh the Google Analytics news articles for
+
+13
+00:00:35,820 --> 00:00:39,415
+consumption later in retraining your recommendation model.
+
+14
+00:00:39,415 --> 00:00:42,500
+Next, you'll complete the DAG file with submitting
+
+15
+00:00:42,500 --> 00:00:45,440
+a job to the Cloud Machine Learning Engine to retrain the model,
+
+16
+00:00:45,440 --> 00:00:50,110
+and then a job to App Engine to redeploy the updated application endpoint.
+
+17
+00:00:50,110 --> 00:00:53,570
+Finally, you get to test your new application to
+
+18
+00:00:53,570 --> 00:00:57,590
+serve up article recommendations for users using HTTP request.
+
+19
+00:00:57,590 --> 00:01:01,180
+Entire app architecture will look like this in the end.
+
+20
+00:01:01,180 --> 00:01:03,870
+The specific pieces of the DAG that you'll complete,
+
+21
+00:01:03,870 --> 00:01:06,060
+are the four tasks names shown here.
+
+22
+00:01:06,060 --> 00:01:07,860
+So, that's it.
+
+23
+00:01:07,860 --> 00:01:11,175
+Go ahead and get started with the end-to-end recommendation system lab,
+
+24
+00:01:11,175 --> 00:01:14,210
+and return back here for the solution walkthrough.

@@ -1,0 +1,291 @@
+1
+00:00:00,020 --> 00:00:04,739
+In addition to that tensor or matrix operation approach we saw previously,
+
+2
+00:00:04,739 --> 00:00:07,350
+we can also develop a content-based approach using
+
+3
+00:00:07,350 --> 00:00:10,485
+tools from our supervised machine learning toolbox.
+
+4
+00:00:10,485 --> 00:00:14,145
+That is, given a user's features and a movie's features,
+
+5
+00:00:14,145 --> 00:00:19,530
+we can try to model the star rating that a user might give the movie.
+
+6
+00:00:19,530 --> 00:00:22,320
+Or from a classification perspective,
+
+7
+00:00:22,320 --> 00:00:24,630
+perhaps we will try to determine which movie in
+
+8
+00:00:24,630 --> 00:00:27,885
+our database the user will want to watch next.
+
+9
+00:00:27,885 --> 00:00:31,680
+In either case, we would probably want to use features of
+
+10
+00:00:31,680 --> 00:00:36,430
+our user and features of our items in this case movies to make that prediction.
+
+11
+00:00:36,430 --> 00:00:38,180
+For the user features,
+
+12
+00:00:38,180 --> 00:00:40,955
+we could perhaps consider things like the user's age,
+
+13
+00:00:40,955 --> 00:00:43,460
+location, native language, gender,
+
+14
+00:00:43,460 --> 00:00:46,735
+or other demographics that we think might be relevant.
+
+15
+00:00:46,735 --> 00:00:48,445
+For the movie features,
+
+16
+00:00:48,445 --> 00:00:51,530
+it might be helpful to consider the movie genre, and duration,
+
+17
+00:00:51,530 --> 00:00:53,510
+or the director, iterating with
+
+18
+00:00:53,510 --> 00:00:57,575
+the Motion Picture Association or whether it's won any awards.
+
+19
+00:00:57,575 --> 00:01:00,610
+Let's see how this might work with an example.
+
+20
+00:01:00,610 --> 00:01:03,945
+We'll use data collected from kurier.at,
+
+21
+00:01:03,945 --> 00:01:06,260
+a large news provider in Austria.
+
+22
+00:01:06,260 --> 00:01:08,615
+Here's a snapshot of their website.
+
+23
+00:01:08,615 --> 00:01:13,705
+The Center is the front page and the related items recommendations are on the right.
+
+24
+00:01:13,705 --> 00:01:19,150
+We'll build a content-based filtering model to recommend articles to readers.
+
+25
+00:01:19,150 --> 00:01:21,310
+The date of this lab is available on
+
+26
+00:01:21,310 --> 00:01:24,905
+BigQuery as part of the cloud training demos dataset.
+
+27
+00:01:24,905 --> 00:01:27,095
+After some SQL queries,
+
+28
+00:01:27,095 --> 00:01:29,260
+we can clean up the initial table and create
+
+29
+00:01:29,260 --> 00:01:33,340
+the following dataset that we will use for training our recommendation model.
+
+30
+00:01:33,340 --> 00:01:38,795
+Each row of this dataset corresponds to a single visitor interaction with the website.
+
+31
+00:01:38,795 --> 00:01:41,440
+The input features of our recommender model
+
+32
+00:01:41,440 --> 00:01:44,545
+pertained to the features of the current article being read.
+
+33
+00:01:44,545 --> 00:01:48,790
+For example, we'll use the current article content ID.
+
+34
+00:01:48,790 --> 00:01:52,270
+An ID that corresponds to a single article and
+
+35
+00:01:52,270 --> 00:01:56,955
+the category title "Author" and newness of the current article.
+
+36
+00:01:56,955 --> 00:02:02,375
+The newness of the current article is captured by the month_since_epoch column.
+
+37
+00:02:02,375 --> 00:02:05,690
+The visitor ID is actually a browser ID.
+
+38
+00:02:05,690 --> 00:02:08,240
+So, a different device means a different ID.
+
+39
+00:02:08,240 --> 00:02:10,430
+So, we won't use it for our model.
+
+40
+00:02:10,430 --> 00:02:14,390
+The goal of our model is to predict the next article read by a visitor.
+
+41
+00:02:14,390 --> 00:02:18,245
+This is represented by the next_content_id column.
+
+42
+00:02:18,245 --> 00:02:22,740
+Let's see how we can incorporate each of these features in TensorFlow.
+
+43
+00:02:22,740 --> 00:02:25,570
+The content_id is prescribed by
+
+44
+00:02:25,570 --> 00:02:30,170
+kurier and corresponds to the ID of the current article being read.
+
+45
+00:02:30,170 --> 00:02:33,200
+We will make this a categorical column and use
+
+46
+00:02:33,200 --> 00:02:37,810
+hash buckets because the number of content IDs will likely change over time.
+
+47
+00:02:37,810 --> 00:02:40,520
+We'll then use an embedding column to embed
+
+48
+00:02:40,520 --> 00:02:43,630
+this categorical feature before passing it off to the model.
+
+49
+00:02:43,630 --> 00:02:46,350
+Similarly, for the category column,
+
+50
+00:02:46,350 --> 00:02:49,140
+this is also prescribed by the kurier website,
+
+51
+00:02:49,140 --> 00:02:51,440
+though here we have a vocabulary list.
+
+52
+00:02:51,440 --> 00:02:54,155
+So, naturally, we will use the feature column
+
+53
+00:02:54,155 --> 00:02:57,655
+for categorical features with a vocabulary list.
+
+54
+00:02:57,655 --> 00:03:03,410
+For the title, we will use a TensorFlow hub to embed the current article title,
+
+55
+00:03:03,410 --> 00:03:05,570
+and specifying the module spec,
+
+56
+00:03:05,570 --> 00:03:08,270
+we can prescribe which Hub module to use.
+
+57
+00:03:08,270 --> 00:03:13,380
+This will add the corresponding module to TensorFlow graph we are building for our model.
+
+58
+00:03:13,580 --> 00:03:17,410
+Because we have a finite number of authors when training the model,
+
+59
+00:03:17,410 --> 00:03:19,355
+we'll treat the author just as we did
+
+60
+00:03:19,355 --> 00:03:23,710
+the content_id using categorical columns with hash buckets.
+
+61
+00:03:23,710 --> 00:03:29,300
+The months_since_epoch_column represents how new the current article is.
+
+62
+00:03:29,300 --> 00:03:33,115
+We'll use this feature as bucketized values.
+
+63
+00:03:33,115 --> 00:03:37,130
+Of course, now that we have the basic feature columns in place,
+
+64
+00:03:37,130 --> 00:03:39,395
+we can add features using cross columns.
+
+65
+00:03:39,395 --> 00:03:43,370
+For example perhaps it makes sense to cross the months_since_epoch_column with
+
+66
+00:03:43,370 --> 00:03:46,040
+a categorical column because some categories are
+
+67
+00:03:46,040 --> 00:03:49,090
+more or less relevant depending on how new they are.
+
+68
+00:03:49,090 --> 00:03:53,180
+We'll leave you to determine the code for those bucketized features.
+
+69
+00:03:53,180 --> 00:03:55,970
+The final step is to build our model.
+
+70
+00:03:55,970 --> 00:03:58,235
+We'll start with just a single dense layer,
+
+71
+00:03:58,235 --> 00:04:01,970
+but feel free to experiment and try more interesting architectures.
+
+72
+00:04:01,970 --> 00:04:04,970
+Given the features we have constructed in the previous slides,
+
+73
+00:04:04,970 --> 00:04:07,590
+in code it would look like this.

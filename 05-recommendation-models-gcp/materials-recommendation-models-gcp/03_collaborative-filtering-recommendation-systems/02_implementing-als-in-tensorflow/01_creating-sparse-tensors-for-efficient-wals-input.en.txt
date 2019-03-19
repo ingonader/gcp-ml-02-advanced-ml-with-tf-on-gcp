@@ -1,0 +1,48 @@
+Now that we've learned how to get the data
+in the right form from a table in our data warehouse to our user interaction matrix
+through mapping business centrical values to row and column indices, do we need to
+implement the ALS algorithm from scratch to be able to use it and
+learn the user and item embeddings? Thankfully for us TensorFlow has the WALS
+Matrix Factorization estimator to take care of most of the work to
+create our recommender system. As with all canned estimators we just
+need to connect some of the piping, such as input functions, server input
+functions, and the training evaluate loop, and the estimator will take
+care of everything else. Because the WALS Matrix Factorization
+estimator requires whole rows and columns, we have to preprocess the data from our
+data warehouse to be the right form. Namely into a structure that we can store
+into each SparseTensor for rows and columns. Here's an example of our
+preprocessing step for columns since we are grouping by item ID. We will have similar code for
+rows where we group by user ID instead. So we want SparseTensors,
+a hierarchical data structure. What file type should we write
+our preprocessed data to? Here we're storing two arrays,
+it's kind of painful to do this in CSV and inefficient to do in JSON. Therefore, our best option would
+be to use TensorFlow records. And look,
+it's fairly easy to do in Python. Here, we created a TFRecordWriter with
+our specified path, users_for_item, in this example. For each item, we want to create
+an example that stores our features, which we can then write out as
+serialized examples to our output file. SparseTensors are hierarchical
+data structures where indices and values are stored, which in case will
+be the user IDs, or the index of the users from the user item interaction
+matrix, and the ratings respectively. We will also store the key,
+which is the item index, from the user interaction matrix. This value is important to save,
+which we'll see later, because during the batching, they first
+mention the SparseTensor indices tensor. With rank two,
+becomes the batch indices instead. So we'll need the key data to replace the
+incorrect overwrite when we're done with the batching phase of the input function. The indices and values can be quickly
+converted into a SparseTensor using tf.sparse_merge, where you need the ids,
+values, and the vocab size, such as a number of items in this example. Now that we've learned how we should
+pre process our data for WALS, let's test your knowledge. If we want to recommend items for
+a user when we are writing out to the TF Record file our key
+train feature should be blank. Our indices train feature should be blank. And our values train
+feature should be blank. Chose the answer that
+best fills in the blanks. The correct answer is E. Because we are recommending items, note
+the plural for a user, note the singular. We are in a situation where each
+example will be a unique user per row. There will be a variable
+number of items per each user, which will be the columns based on
+what that user interacted with. Some users interacting
+with only a few items and some users interacting with many items. The indices tensor will be the item
+indices or item IDs that have interacted with and the values tensor will be
+corresponding ratings at those user item interaction points within
+the user item interaction matrix. Answer A however, should look familiar,
+because that is the example we just went through which is for
+recommending users for an item.

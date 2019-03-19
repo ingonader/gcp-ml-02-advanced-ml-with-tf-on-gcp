@@ -1,0 +1,1046 @@
+1
+00:00:00,380 --> 00:00:03,230
+Content based recommendations
+used embedding spaces for
+
+2
+00:00:03,230 --> 00:00:07,560
+items only, whereas now for collaborative
+filtering we're learning where users and
+
+3
+00:00:07,560 --> 00:00:12,390
+items fit within a common embedding space
+along dimensions they have in common.
+
+4
+00:00:12,390 --> 00:00:14,760
+We can choose a number of
+dimensions to represent them in
+
+5
+00:00:14,760 --> 00:00:17,740
+either using human derived features or
+using latent features that
+
+6
+00:00:17,740 --> 00:00:22,110
+are under the hood of our preferences,
+which we'll learn how to find very soon.
+
+7
+00:00:22,110 --> 00:00:25,390
+Each item has a vector within its
+embedding space that describes the items
+
+8
+00:00:25,390 --> 00:00:28,160
+amount of expression of each dimension.
+
+9
+00:00:28,160 --> 00:00:31,210
+Each user also has a vector
+within its embedding space
+
+10
+00:00:31,210 --> 00:00:35,070
+that describes how strong their
+preference is for each dimension.
+
+11
+00:00:35,070 --> 00:00:37,137
+For now, let's keep things simple and
+
+12
+00:00:37,137 --> 00:00:39,775
+keep things just one
+dimension looking at items.
+
+13
+00:00:39,775 --> 00:00:43,990
+And we'll get back to multi-dimensional
+embeddings later, and how users fit in.
+
+14
+00:00:43,990 --> 00:00:46,020
+We'll start simple and
+then build ourselves up.
+
+15
+00:00:47,120 --> 00:00:51,660
+We could organize items, let's say movies
+by similarity in one dimension, for
+
+16
+00:00:51,660 --> 00:00:54,330
+example, of where they fall
+on the spectrum of movies for
+
+17
+00:00:54,330 --> 00:00:57,200
+children to movies for adults.
+
+18
+00:00:57,200 --> 00:00:59,260
+Let's say we have the movie Shrek,
+
+19
+00:00:59,260 --> 00:01:02,419
+we want to know where it falls on this
+children to adult movie spectrum.
+
+20
+00:01:04,040 --> 00:01:06,840
+Using our own built up knowledge
+we would say that Shrek would
+
+21
+00:01:06,840 --> 00:01:10,920
+probably go to the far left because it's
+an animated movie mainly for children.
+
+22
+00:01:12,040 --> 00:01:14,210
+What about the movie
+The Dark Knight Rises?
+
+23
+00:01:14,210 --> 00:01:16,400
+Where do we think it goes along our axis?
+
+24
+00:01:17,420 --> 00:01:21,980
+Well The Dark Knight Rises, we know, is
+definitely a more adult movie than Shrek,
+
+25
+00:01:21,980 --> 00:01:24,480
+so it should go to the right
+of Shrek on the spectrum.
+
+26
+00:01:25,860 --> 00:01:27,710
+Now that we have two movies placed,
+
+27
+00:01:27,710 --> 00:01:31,950
+things start to get a bit harder because
+we have three choices to decide from.
+
+28
+00:01:31,950 --> 00:01:34,960
+Here we have Harry Potter that we
+want to place along our spectrum.
+
+29
+00:01:34,960 --> 00:01:38,300
+Does it go to the left of Shrek,
+to the right of The Dark Knight Rises or
+
+30
+00:01:38,300 --> 00:01:39,800
+somewhere in between?
+
+31
+00:01:39,800 --> 00:01:42,190
+From our internal
+representations of these movies,
+
+32
+00:01:42,190 --> 00:01:46,170
+we can guess that Harry Potter goes
+between Shrek and The Dark Knight Rises.
+
+33
+00:01:46,170 --> 00:01:50,450
+It definitely has more adult themes than
+Shrek, but still not as much violence or
+
+34
+00:01:50,450 --> 00:01:52,420
+adult themes as The Dark Knight Rises.
+
+35
+00:01:52,420 --> 00:01:54,880
+Exactly where in between it
+should go we will get to soon.
+
+36
+00:01:56,060 --> 00:01:58,950
+All right, three movies placed,
+more to go.
+
+37
+00:01:58,950 --> 00:02:02,170
+We now have four choices of where
+to place the movie Memento.
+
+38
+00:02:02,170 --> 00:02:03,665
+What to do?
+
+39
+00:02:03,665 --> 00:02:05,650
+Memento has some very adult themes, and
+
+40
+00:02:05,650 --> 00:02:10,480
+our knowledge would probably place it even
+farther right than The Dark Knight Rises.
+
+41
+00:02:10,480 --> 00:02:13,220
+Lastly, we want to place
+the Triplets of Belleville.
+
+42
+00:02:13,220 --> 00:02:17,000
+As you can see, every time we add a movie,
+the number of positions we can
+
+43
+00:02:17,000 --> 00:02:21,010
+place it in relative to the other
+movies increases by one.
+
+44
+00:02:21,010 --> 00:02:23,570
+Imagine if we had thousands and
+thousands of movies.
+
+45
+00:02:24,630 --> 00:02:28,020
+The Triplets of Belleville is pretty far
+along the children's movie scale, but
+
+46
+00:02:28,020 --> 00:02:31,960
+not quite as much as Shrek, so
+this is where we will put it.
+
+47
+00:02:31,960 --> 00:02:34,620
+However, this is all very qualitative,
+
+48
+00:02:34,620 --> 00:02:37,970
+with just some unknown relative
+position along a number line.
+
+49
+00:02:37,970 --> 00:02:41,110
+Can we make this a little more
+quantitative, maybe with some numbers?
+
+50
+00:02:42,310 --> 00:02:46,650
+We've now added values on where we think
+these movies lie along our number line,
+
+51
+00:02:46,650 --> 00:02:49,730
+high negative values are considered
+very much children's movies, and
+
+52
+00:02:49,730 --> 00:02:52,520
+high positive values
+are considered very adult.
+
+53
+00:02:52,520 --> 00:02:55,230
+Movies close to zero
+are basically half way between,
+
+54
+00:02:55,230 --> 00:02:57,470
+what we'd say is a very a childish and
+very adult.
+
+55
+00:02:58,610 --> 00:03:02,410
+We've essentially created a 1D embedding
+space with our coordinate system and
+
+56
+00:03:02,410 --> 00:03:04,970
+our five points could have these values,
+
+57
+00:03:04,970 --> 00:03:08,520
+indicating where they sit on the
+children's movie, adult movie spectrum.
+
+58
+00:03:08,520 --> 00:03:11,780
+Now, you can calculate
+similarities by distance matrix,
+
+59
+00:03:11,780 --> 00:03:13,920
+between the points in
+our coordinate system.
+
+60
+00:03:13,920 --> 00:03:15,900
+Those that are closer, or
+have a smaller distance,
+
+61
+00:03:15,900 --> 00:03:19,870
+are more similar, at least with respect
+to this children adult factor we chose.
+
+62
+00:03:21,090 --> 00:03:24,436
+Based on these values, along this axis,
+The Dark Knight Rises and
+
+63
+00:03:24,436 --> 00:03:26,850
+Memento are the most similar movies.
+
+64
+00:03:26,850 --> 00:03:32,209
+However, even if two movies are very close
+in this one-dimensional projection using
+
+65
+00:03:32,209 --> 00:03:36,220
+child-adult spectrum, in other projections
+using other features of the movies,
+
+66
+00:03:36,220 --> 00:03:38,680
+they could be extremely far apart.
+
+67
+00:03:38,680 --> 00:03:42,700
+Let's now add a second dimension to
+calculate similarities between movies, for
+
+68
+00:03:42,700 --> 00:03:46,720
+example, where movies fall on
+the art house, blockbuster spectrum.
+
+69
+00:03:46,720 --> 00:03:49,300
+Not only have we arranged
+the movies along the children,
+
+70
+00:03:49,300 --> 00:03:53,390
+adult movie spectrum, they are now
+spread out along the second dimension.
+
+71
+00:03:53,390 --> 00:03:57,580
+As we add dimensions our embedding spaces
+grow exponentially larger and become
+
+72
+00:03:57,580 --> 00:04:01,560
+sparser and sparser with large voids
+between points in the embedding space.
+
+73
+00:04:02,730 --> 00:04:06,040
+In this 2D embedding space
+coordinate system we created,
+
+74
+00:04:06,040 --> 00:04:09,290
+our five points could have these values
+indicating where they sit on both
+
+75
+00:04:09,290 --> 00:04:14,660
+a children's movie adult movie spectrum,
+and the arthouse blockbuster spectrums.
+
+76
+00:04:14,660 --> 00:04:18,780
+As we can see, the movies points in our
+two-dimensional embedding space have
+
+77
+00:04:18,780 --> 00:04:23,820
+the same coordinate values as along our
+original children adult spectrum, however,
+
+78
+00:04:23,820 --> 00:04:28,330
+they have now been spread out over our
+new arthouse blockbuster spectrum.
+
+79
+00:04:28,330 --> 00:04:32,020
+The points haven't changed at all,
+but our coordinate system has.
+
+80
+00:04:32,020 --> 00:04:33,700
+Coordinate systems are important,
+
+81
+00:04:33,700 --> 00:04:36,100
+they are just a way to
+describe points within space.
+
+82
+00:04:37,350 --> 00:04:40,270
+Based on these values in our new
+two-dimensional embedding space,
+
+83
+00:04:40,270 --> 00:04:44,120
+The Dark Rises and
+Memento are no longer the closest, or
+
+84
+00:04:44,120 --> 00:04:48,200
+most similar movies, at least not
+using the dot product distance metric,
+
+85
+00:04:48,200 --> 00:04:50,980
+the two closest are now Harry Potter and
+Shrek.
+
+86
+00:04:50,980 --> 00:04:54,860
+In fact, our previous closest
+aren't now even the second closest,
+
+87
+00:04:54,860 --> 00:04:57,900
+which goes to Harry Potter and
+The Dark Knight Rises.
+
+88
+00:04:57,900 --> 00:05:02,030
+This is due to how close these three
+movies are along the blockbuster axis,
+
+89
+00:05:02,030 --> 00:05:04,139
+which is dominating in
+the dot product calculation.
+
+90
+00:05:05,360 --> 00:05:08,940
+So how do we apply these embeddings to
+the user-item interaction matrix so
+
+91
+00:05:08,940 --> 00:05:12,770
+that we can infer how unknown
+interactions can be rated?
+
+92
+00:05:12,770 --> 00:05:16,440
+Well, we've already talked about the item
+embedding space on the two dimensions
+
+93
+00:05:16,440 --> 00:05:21,360
+that we choose, children adult, and
+art house blockbuster spectrums.
+
+94
+00:05:21,360 --> 00:05:24,200
+But what about the user embeddings?
+
+95
+00:05:24,200 --> 00:05:27,850
+Let's say we knew where a user could
+be placed along both of our dimensions,
+
+96
+00:05:27,850 --> 00:05:30,820
+giving us their coordinate
+values in our embedding space.
+
+97
+00:05:30,820 --> 00:05:34,050
+Each user would have a two-dimensional
+coordinate, and each
+
+98
+00:05:34,050 --> 00:05:37,950
+item would also have a two-dimensional
+coordinate within our space.
+
+99
+00:05:37,950 --> 00:05:40,280
+To find out the interaction
+value between users and
+
+100
+00:05:40,280 --> 00:05:44,700
+items, we simply take the dot
+product between each user item pair.
+
+101
+00:05:44,700 --> 00:05:48,942
+The IJth interaction value is the inner
+product of the I th user barrier and
+
+102
+00:05:48,942 --> 00:05:50,990
+the Jth item vector.
+
+103
+00:05:50,990 --> 00:05:53,260
+Let's see how that looks
+in our embedding space.
+
+104
+00:05:54,760 --> 00:05:57,240
+Going back to our coordinate
+system plot from before,
+
+105
+00:05:57,240 --> 00:06:00,020
+we have our movies plotted in the two
+dimensional embedding space at their
+
+106
+00:06:00,020 --> 00:06:04,410
+coordinate values, based on where they
+fall within the two vectors we chos.
+
+107
+00:06:04,410 --> 00:06:07,770
+We've also now added the users
+at their respective coordinates.
+
+108
+00:06:07,770 --> 00:06:10,400
+So, what should we
+recommendation to each user?
+
+109
+00:06:10,400 --> 00:06:11,600
+Let's look at the leftmost user.
+
+110
+00:06:13,060 --> 00:06:16,770
+To find the answer to what movie
+the leftmost user should watch,
+
+111
+00:06:16,770 --> 00:06:20,660
+all we need to do is take the dot
+product between the user and each movie.
+
+112
+00:06:20,660 --> 00:06:24,260
+In this example, we chose to
+return the top two highest movies,
+
+113
+00:06:24,260 --> 00:06:28,580
+which end up being Shrek and The Triplets
+of Belleville because they had the two
+
+114
+00:06:28,580 --> 00:06:32,350
+highest dot products for
+that user across all the other movies.
+
+115
+00:06:32,350 --> 00:06:35,840
+Now this might seem obvious
+from looking at this graph,
+
+116
+00:06:35,840 --> 00:06:40,800
+however it is not as easy for a computer
+to see this, because our trained eyes and
+
+117
+00:06:40,800 --> 00:06:44,550
+the neural networks in our brains have
+had decades of experience to see.
+
+118
+00:06:45,860 --> 00:06:49,410
+Yet, this is only with two dimensions and
+with few items.
+
+119
+00:06:49,410 --> 00:06:51,210
+If we were to increase the dimensionality,
+
+120
+00:06:51,210 --> 00:06:56,010
+we humans would have a very difficult time
+discerning which movies are the closest.
+
+121
+00:06:56,010 --> 00:06:59,630
+We would probably stop inspecting and
+just take the doubt product.
+
+122
+00:06:59,630 --> 00:07:01,500
+The same can be done for items.
+
+123
+00:07:01,500 --> 00:07:04,702
+Let's say we want to see what
+movies closest to Shrek are.
+
+124
+00:07:04,702 --> 00:07:08,160
+Instead of taking the dot product
+between a user and all the items,
+
+125
+00:07:08,160 --> 00:07:12,136
+we take an item of interest and take
+the dot product with all the other items.
+
+126
+00:07:12,136 --> 00:07:15,285
+In the example,
+we once again are returning the top two,
+
+127
+00:07:15,285 --> 00:07:18,969
+which turns out to be Harry Potter and
+The Triplets of Belleville.
+
+128
+00:07:18,969 --> 00:07:23,091
+You do the exact same to find users
+similar to users of interest by taking
+
+129
+00:07:23,091 --> 00:07:24,818
+a dot product between users.
+
+130
+00:07:24,818 --> 00:07:26,121
+So as we can see, users and
+
+131
+00:07:26,121 --> 00:07:30,610
+items can be represented as d-dimensional
+points within an embedding space.
+
+132
+00:07:30,610 --> 00:07:34,168
+In our example, we choose some
+human experience based factors for
+
+133
+00:07:34,168 --> 00:07:37,851
+each of our two dimensions, and
+humans manually scored each movie,
+
+134
+00:07:37,851 --> 00:07:41,520
+giving it a value for
+each dimension along its axis.
+
+135
+00:07:41,520 --> 00:07:45,410
+We did the same for evaluating each user's
+coordinates in our embedding space.
+
+136
+00:07:45,410 --> 00:07:50,380
+Well, this works great for toy examples
+with four users and five items, but
+
+137
+00:07:50,380 --> 00:07:54,530
+it quickly becomes unscalable as more
+users and items are added to the system.
+
+138
+00:07:54,530 --> 00:07:58,850
+Furthermore, as we saw in the last course,
+when psychologists used what they thought
+
+139
+00:07:58,850 --> 00:08:02,148
+would be good features for embedding,
+it turned out not to be that great.
+
+140
+00:08:02,148 --> 00:08:05,870
+Here are human-derived features
+may not be the best choice.
+
+141
+00:08:05,870 --> 00:08:07,450
+So how can we choose then?
+
+142
+00:08:08,800 --> 00:08:12,150
+Fortunately for us,
+the embeddings can be learned from data.
+
+143
+00:08:12,150 --> 00:08:16,371
+Instead of defining the factors that we
+will assign values along our coordinate
+
+144
+00:08:16,371 --> 00:08:20,089
+system, we will use the user item
+interaction data to learn the latent
+
+145
+00:08:20,089 --> 00:08:23,933
+factors that best factorize the user
+item interaction matrix into a user
+
+146
+00:08:23,933 --> 00:08:26,410
+factor embedding and
+item factor embedding.
+
+147
+00:08:27,920 --> 00:08:31,920
+We are essentially compressing the data,
+our very sparse interaction matrix, and
+
+148
+00:08:31,920 --> 00:08:36,250
+relying on the generalities within,
+which are the latent factors.
+
+149
+00:08:36,250 --> 00:08:41,220
+You might be reminded of PCA, SVD, or
+other dimensionality reduction techniques,
+
+150
+00:08:41,220 --> 00:08:44,430
+like we covered in the last course,
+for reusable embeddings.
+
+151
+00:08:44,430 --> 00:08:49,480
+The user interaction matrix factorization
+splits this very large user by item matrix
+
+152
+00:08:49,480 --> 00:08:54,260
+into two smaller matrices of row factors,
+which are users in this case, and
+
+153
+00:08:54,260 --> 00:08:57,180
+column factors,
+which are movies in this case.
+
+154
+00:08:57,180 --> 00:09:01,960
+You can think of these two factor matrices
+as essentially user and item embeddings.
+
+155
+00:09:01,960 --> 00:09:07,180
+Now, you might be wondering why matrix U
+has two columns and matrix V has two rows.
+
+156
+00:09:07,180 --> 00:09:09,980
+Well, this is simply dimensionality
+of our learned embedding space
+
+157
+00:09:09,980 --> 00:09:11,470
+of our latent features.
+
+158
+00:09:11,470 --> 00:09:15,060
+Remember, a latent feature is a feature
+that we are not directly observing or
+
+159
+00:09:15,060 --> 00:09:18,770
+defining, but are instead inferring
+through our model from the other
+
+160
+00:09:18,770 --> 00:09:23,220
+variables that are directly observed,
+namely the user item interaction pairs.
+
+161
+00:09:23,220 --> 00:09:26,490
+Just like for other dimensionality
+reduction techniques like PCA and
+
+162
+00:09:26,490 --> 00:09:31,220
+SBD, the number of latent features is
+a hyperparameter that we can use as a knob
+
+163
+00:09:31,220 --> 00:09:33,780
+for the tradeoff between more
+information compression and
+
+164
+00:09:33,780 --> 00:09:36,980
+more reconstruction error from
+our approximated matrices.
+
+165
+00:09:36,980 --> 00:09:39,050
+Just how much space are we saving?
+
+166
+00:09:39,050 --> 00:09:40,660
+Let's say there are u users and
+
+167
+00:09:40,660 --> 00:09:46,330
+i items, which gives our user item
+interaction matrix a, a size of u by i.
+
+168
+00:09:46,330 --> 00:09:48,810
+If our website has 50 million users and
+
+169
+00:09:48,810 --> 00:09:53,930
+10 thousand movies, that's already
+500 billion interaction pairs.
+
+170
+00:09:53,930 --> 00:09:57,790
+On the other hand,
+if we can have k laden features,
+
+171
+00:09:57,790 --> 00:10:03,250
+then u will be u by k elements and
+v will have k by i elements.
+
+172
+00:10:03,250 --> 00:10:06,130
+The total space is just the number
+of users plus the number
+
+173
+00:10:06,130 --> 00:10:08,537
+of movies times the number
+of latent features.
+
+174
+00:10:08,537 --> 00:10:10,836
+Even with 10 latent features in this case,
+
+175
+00:10:10,836 --> 00:10:13,500
+it is still a thousand times
+less space than before.
+
+176
+00:10:15,290 --> 00:10:18,740
+As long as the number of latent features
+is less than half the harmonic mean
+
+177
+00:10:18,740 --> 00:10:22,440
+of the number of users and
+the number of items, this will save space.
+
+178
+00:10:22,440 --> 00:10:26,240
+For this hypothetical website, that
+would be almost 10,000 latent features,
+
+179
+00:10:26,240 --> 00:10:32,190
+9,998 to be precise, which is almost as
+if we hadn't embedded the movies at all,
+
+180
+00:10:32,190 --> 00:10:34,310
+since there were 10,000
+movies to begin with.
+
+181
+00:10:34,310 --> 00:10:35,910
+Each movie is essentially
+it's own feature.
+
+182
+00:10:37,380 --> 00:10:39,888
+To make a prediction,
+we simply take the dot product
+
+183
+00:10:39,888 --> 00:10:43,080
+of a user with the item factors or
+an item with the user factors, and
+
+184
+00:10:43,080 --> 00:10:46,680
+we will get a prediction value for
+that particular rating.
+
+185
+00:10:46,680 --> 00:10:48,670
+In this example,
+we want to predict the rating for
+
+186
+00:10:48,670 --> 00:10:52,370
+user four for the movie Shrek,
+which is the third column.
+
+187
+00:10:52,370 --> 00:10:59,723
+So we multiply 0.1 with 1, and
+1 with a -1, to get a value of -0.9.
+
+188
+00:10:59,723 --> 00:11:02,925
+Harry Potter gets a prediction of -0.11,
+and
+
+189
+00:11:02,925 --> 00:11:07,050
+The Triplets of Belleville also
+gets a prediction of a -0.9.
+
+190
+00:11:07,050 --> 00:11:10,920
+If we were recommending the highest
+predicted unwatched movie to user four out
+
+191
+00:11:10,920 --> 00:11:12,330
+of the movies shown,
+
+192
+00:11:12,330 --> 00:11:15,000
+that would be Harry Potter because
+it has the highest predicted score.
+
+193
+00:11:16,050 --> 00:11:19,600
+Now it's time to test your knowledge about
+finding the best recommendations based on
+
+194
+00:11:19,600 --> 00:11:21,390
+user and item similarities.
+
+195
+00:11:21,390 --> 00:11:24,250
+Based on this user item
+interaction matrix of users and
+
+196
+00:11:24,250 --> 00:11:27,760
+movies, which movie should user 4 watch?
+
+197
+00:11:27,760 --> 00:11:29,650
+The correct answer is A.
+
+198
+00:11:29,650 --> 00:11:32,980
+To find this answer, we should have
+calculated all the dot products between
+
+199
+00:11:32,980 --> 00:11:37,820
+user four's user factor vector and
+all the movie factor vectors.
+
+200
+00:11:37,820 --> 00:11:43,700
+User four's predicted rating for Harry
+Potter by the dot product is a -0.11.
+
+201
+00:11:43,700 --> 00:11:48,200
+The Triplets of Belleville and
+Shrek are both a -0.9.
+
+202
+00:11:48,200 --> 00:11:52,500
+The Dark Knight Rises is 1 and
+Memento is 0.91.
+
+203
+00:11:52,500 --> 00:11:56,530
+Remember we are just recommending
+the top one movies in this question, so
+
+204
+00:11:56,530 --> 00:11:59,810
+we should return the max dot
+product between user four's,user
+
+205
+00:11:59,810 --> 00:12:05,070
+factor vectors of 0.1 and 1,
+with all the movie factor vectors.
+
+206
+00:12:05,070 --> 00:12:09,559
+So, why is the answer Harry Potter when
+The Dark Knight Rises has the highest
+
+207
+00:12:09,559 --> 00:12:11,636
+dot product out of all the movies?
+
+208
+00:12:11,636 --> 00:12:15,380
+The reason is because the user has
+already rated The Dark Knight Rises,
+
+209
+00:12:15,380 --> 00:12:18,740
+implicitly in this example, and
+thus we don't want to recommend
+
+210
+00:12:18,740 --> 00:12:22,790
+that the user watch a movie they've
+already seen, because most users know
+
+211
+00:12:22,790 --> 00:12:26,040
+whether they liked something in the past,
+and instead, want to watch something new.
+
+212
+00:12:27,050 --> 00:12:31,020
+Therefore, we must filter out all off the
+movies that have already been rated, and
+
+213
+00:12:31,020 --> 00:12:33,853
+then from the resulting subset,
+choose the top one.
+
+214
+00:12:35,043 --> 00:12:38,773
+This results in Harry Potter,
+although the negative dot product,
+
+215
+00:12:38,773 --> 00:12:42,913
+which means that the movie is predicted
+to be below neutral sentiment, but
+
+216
+00:12:42,913 --> 00:12:45,773
+has the highest dot product value
+out of the unwatched movies.

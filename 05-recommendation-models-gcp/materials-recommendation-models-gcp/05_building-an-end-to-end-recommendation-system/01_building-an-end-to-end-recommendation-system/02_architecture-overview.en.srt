@@ -1,0 +1,243 @@
+1
+00:00:00,000 --> 00:00:04,470
+First and foremost, building a complex recommendation system involves
+
+2
+00:00:04,470 --> 00:00:06,510
+significant data engineering as well as
+
+3
+00:00:06,510 --> 00:00:10,020
+all the model code when you learn to build the accurate model in the first place.
+
+4
+00:00:10,020 --> 00:00:14,700
+Building and serving product ML models is a core skill of any ML engineer.
+
+5
+00:00:14,700 --> 00:00:17,610
+Remember this diagram where you learned about the code that in
+
+6
+00:00:17,610 --> 00:00:21,255
+ML model is only about five percent of the whole ML system?
+
+7
+00:00:21,255 --> 00:00:23,310
+Now, let's apply that concept and see what
+
+8
+00:00:23,310 --> 00:00:27,150
+our actual architecture is going to look like for news recommendations.
+
+9
+00:00:27,150 --> 00:00:29,700
+As review, here are all the pieces that we're
+
+10
+00:00:29,700 --> 00:00:32,445
+going to review and build for our recommendation system.
+
+11
+00:00:32,445 --> 00:00:35,235
+Recall that walls that batch predictions.
+
+12
+00:00:35,235 --> 00:00:38,205
+So, we need to train and run the model periodically to stay fresh.
+
+13
+00:00:38,205 --> 00:00:39,590
+Batch prediction, by the way,
+
+14
+00:00:39,590 --> 00:00:41,900
+is perfectly fine for this type of application.
+
+15
+00:00:41,900 --> 00:00:44,030
+Say you wait until the end of the business day
+
+16
+00:00:44,030 --> 00:00:46,670
+after all your online news articles have been created,
+
+17
+00:00:46,670 --> 00:00:48,620
+and then group them all together as a batch of
+
+18
+00:00:48,620 --> 00:00:51,080
+new recommendations into our training dataset.
+
+19
+00:00:51,080 --> 00:00:53,180
+Online prediction is hard to scale,
+
+20
+00:00:53,180 --> 00:00:55,555
+is unnecessary for this type of problem.
+
+21
+00:00:55,555 --> 00:00:58,580
+If you wanted to get even more granularity than once per day,
+
+22
+00:00:58,580 --> 00:01:00,440
+you could pull a batch once per hour,
+
+23
+00:01:00,440 --> 00:01:02,960
+flex say that top 10 recommendations for each user,
+
+24
+00:01:02,960 --> 00:01:05,135
+and then serve them out of a database.
+
+25
+00:01:05,135 --> 00:01:08,540
+Here's our challenge, new articles and new user behavior from
+
+26
+00:01:08,540 --> 00:01:12,515
+Google Analytics just came in our source datasets. What do we do?
+
+27
+00:01:12,515 --> 00:01:16,670
+You know that you first need to bring that fresh data into our ML training dataset,
+
+28
+00:01:16,670 --> 00:01:20,375
+this involves sending tasks to BigQuery and Google Cloud Storage.
+
+29
+00:01:20,375 --> 00:01:23,385
+Where are these tasks managed and scheduled?
+
+30
+00:01:23,385 --> 00:01:26,270
+Through a workflow service like Cloud composer.
+
+31
+00:01:26,270 --> 00:01:27,725
+At the end of each day,
+
+32
+00:01:27,725 --> 00:01:32,570
+we can have Cloud composer refresh our training dataset by sending a task to BigQuery or
+
+33
+00:01:32,570 --> 00:01:35,120
+the latest Google Analytics data lives and then have BigQuery
+
+34
+00:01:35,120 --> 00:01:38,150
+run an export job to Google Cloud Storage.
+
+35
+00:01:38,150 --> 00:01:40,310
+We can then trigger a new training job to
+
+36
+00:01:40,310 --> 00:01:43,715
+Cloud ML Engine to retrain our recommendation model.
+
+37
+00:01:43,715 --> 00:01:47,360
+Finally, that retrain model is deployed to App Engine to be available as
+
+38
+00:01:47,360 --> 00:01:51,020
+an API endpoint to whichever service needs to make those calls.
+
+39
+00:01:51,020 --> 00:01:54,170
+This could be our front end web site at the poles recommendation system,
+
+40
+00:01:54,170 --> 00:01:57,995
+and displays the top five news articles for each user when they visit.
+
+41
+00:01:57,995 --> 00:02:02,150
+Some of you may be wondering is this all works great if your dataset has already loaded
+
+42
+00:02:02,150 --> 00:02:05,720
+into BigQuery like the Google Analytics sample dataset that you're working with.
+
+43
+00:02:05,720 --> 00:02:09,920
+But what about if my dataset isn't even in Google Cloud Platform at all yet?
+
+44
+00:02:09,920 --> 00:02:13,070
+Say it's in a CSV file that I just have locally,
+
+45
+00:02:13,070 --> 00:02:15,980
+and also I don't want to run a static workflow job once a
+
+46
+00:02:15,980 --> 00:02:19,005
+night because my ML data could come in all at once,
+
+47
+00:02:19,005 --> 00:02:20,500
+or one hour of the day,
+
+48
+00:02:20,500 --> 00:02:22,520
+or periodically a little bit differently,
+
+49
+00:02:22,520 --> 00:02:26,835
+and I wanted the latest reflected as soon as possible for the model that train from.
+
+50
+00:02:26,835 --> 00:02:30,560
+In your first lab, you'll be triggering an event whenever
+
+51
+00:02:30,560 --> 00:02:34,985
+a new CSV file is uploaded to Google Cloud Storage bucket that you specify.
+
+52
+00:02:34,985 --> 00:02:37,805
+What happens is you have a cloud function watch
+
+53
+00:02:37,805 --> 00:02:40,399
+for any new files that are added to your bucket,
+
+54
+00:02:40,399 --> 00:02:43,940
+and then immediately trigger your cloud composer workflow to
+
+55
+00:02:43,940 --> 00:02:47,570
+continue with the rest of the processing and ingestion of that data into BigQuery,
+
+56
+00:02:47,570 --> 00:02:51,110
+and then finally have it available in the cloud ML Engine for retraining.
+
+57
+00:02:51,110 --> 00:02:52,670
+So, by the end of this course,
+
+58
+00:02:52,670 --> 00:02:56,480
+you'll have two methods for running automated workflows on ML datasets.
+
+59
+00:02:56,480 --> 00:03:01,670
+First is the regular ended the day schedule and the second is the triggered workflow.
+
+60
+00:03:01,670 --> 00:03:05,370
+A way to learn how to work with instead of an orchestration layer through cloud composer,
+
+61
+00:03:05,370 --> 00:03:08,550
+because that's what we're going to demo and work with next.

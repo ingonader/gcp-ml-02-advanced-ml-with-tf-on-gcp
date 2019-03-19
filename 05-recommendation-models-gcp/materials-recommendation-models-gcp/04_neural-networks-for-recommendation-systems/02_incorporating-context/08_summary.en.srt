@@ -1,0 +1,115 @@
+1
+00:00:00,000 --> 00:00:03,330
+Using neural networks to combine all the advantages and eliminate
+
+2
+00:00:03,330 --> 00:00:07,875
+the disadvantages of the three broad types of recommendation systems is very powerful.
+
+3
+00:00:07,875 --> 00:00:11,580
+We were able to eliminate or at least mitigate the disadvantages of
+
+4
+00:00:11,580 --> 00:00:13,635
+each broad recommendation system approach
+
+5
+00:00:13,635 --> 00:00:16,695
+and use full advantage of their individual strengths.
+
+6
+00:00:16,695 --> 00:00:19,350
+These hybrid models fortunately don't use
+
+7
+00:00:19,350 --> 00:00:23,325
+any fancy new system and just build off of what we already have.
+
+8
+00:00:23,325 --> 00:00:25,705
+However, to get the full power to them,
+
+9
+00:00:25,705 --> 00:00:27,920
+we should provide as much data as possible from
+
+10
+00:00:27,920 --> 00:00:32,315
+many different sources and connect all these models together into an ML pipeline.
+
+11
+00:00:32,315 --> 00:00:36,185
+We put all this together ourselves in a hybrid neural network lab.
+
+12
+00:00:36,185 --> 00:00:39,065
+We learned about how context factors into our experiences with
+
+13
+00:00:39,065 --> 00:00:43,085
+items such as what our mood was at the time like our stress level,
+
+14
+00:00:43,085 --> 00:00:46,370
+who else we experience things with like our family,
+
+15
+00:00:46,370 --> 00:00:50,630
+where we experience things that matter from the everyday locations to the truly amazing,
+
+16
+00:00:50,630 --> 00:00:54,485
+how time plays a factor in our experience such as the difference in seasons,
+
+17
+00:00:54,485 --> 00:00:57,380
+or if we are experiencing things during special occasions,
+
+18
+00:00:57,380 --> 00:01:00,280
+wrapped up with the emotion, excitement, and expectations.
+
+19
+00:01:00,280 --> 00:01:02,480
+We learn how to take this context and use it with
+
+20
+00:01:02,480 --> 00:01:05,795
+the three main approaches of context-aware recommendation systems,
+
+21
+00:01:05,795 --> 00:01:09,430
+contextual pre-filtering, post-filtering, and modeling.
+
+22
+00:01:09,430 --> 00:01:11,870
+Lastly, we learned about some of the inner workings of
+
+23
+00:01:11,870 --> 00:01:14,675
+the YouTube video hybrid recommendation system and saw how
+
+24
+00:01:14,675 --> 00:01:17,600
+two different neural networks harnessing enormous amounts of
+
+25
+00:01:17,600 --> 00:01:21,395
+data can create some very powerful recommendations to delight its users.
+
+26
+00:01:21,395 --> 00:01:23,175
+In the next module,
+
+27
+00:01:23,175 --> 00:01:27,290
+we will see how we can productionize and automate much of the necessary pipeline using
+
+28
+00:01:27,290 --> 00:01:29,840
+the greater Google Cloud Platform ecosystem to make
+
+29
+00:01:29,840 --> 00:01:33,230
+our hybrid neural network recommendation system even better.

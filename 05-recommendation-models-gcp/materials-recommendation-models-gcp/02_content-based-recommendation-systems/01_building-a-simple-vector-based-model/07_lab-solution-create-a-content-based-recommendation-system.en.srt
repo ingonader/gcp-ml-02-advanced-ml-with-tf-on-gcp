@@ -1,0 +1,863 @@
+1
+00:00:00,000 --> 00:00:02,880
+So, the goal of this lab is to see how to build
+
+2
+00:00:02,880 --> 00:00:07,065
+a content-based filter using only low-level TensorFlow operations.
+
+3
+00:00:07,065 --> 00:00:10,595
+We're going to follow the technique that we described in the lecture.
+
+4
+00:00:10,595 --> 00:00:14,145
+We'll start by importing the necessary libraries.
+
+5
+00:00:14,145 --> 00:00:18,510
+In this example, we only need Numpy and TensorFlow and we'll
+
+6
+00:00:18,510 --> 00:00:22,875
+print out the version of TensorFlow just to make sure that we're working with 1.8,
+
+7
+00:00:22,875 --> 00:00:25,110
+which we are. So, that's great.
+
+8
+00:00:25,110 --> 00:00:28,755
+In the next cell, we'll give names to our users,
+
+9
+00:00:28,755 --> 00:00:30,320
+names for our movie titles,
+
+10
+00:00:30,320 --> 00:00:35,460
+and our features and we'll set the variables for the number of each of these.
+
+11
+00:00:36,730 --> 00:00:39,550
+Moving on. In this example,
+
+12
+00:00:39,550 --> 00:00:41,635
+we're going to assume that we only have four users,
+
+13
+00:00:41,635 --> 00:00:43,465
+six movies and five features.
+
+14
+00:00:43,465 --> 00:00:45,800
+So, recall that for a content-based filter,
+
+15
+00:00:45,800 --> 00:00:48,335
+it's necessary to hand engineer the features
+
+16
+00:00:48,335 --> 00:00:51,740
+that we're going to use to embed our movies and our users.
+
+17
+00:00:51,740 --> 00:00:55,114
+Here, we're going to use the features of action, sci-fi,
+
+18
+00:00:55,114 --> 00:00:59,365
+comedy, cartoon and drama to create our five dimensional embedding space.
+
+19
+00:00:59,365 --> 00:01:02,180
+In the next cell, we're going to initialize the inputs and define
+
+20
+00:01:02,180 --> 00:01:06,540
+both the user item interaction matrix and the movie feature matrix.
+
+21
+00:01:07,960 --> 00:01:10,690
+The variable users movies holds
+
+22
+00:01:10,690 --> 00:01:14,740
+the user item interaction matrix and each row corresponds to a user and
+
+23
+00:01:14,740 --> 00:01:17,290
+each column corresponds to a movie and
+
+24
+00:01:17,290 --> 00:01:21,010
+the values indicate the ratings of each user gave for each movie.
+
+25
+00:01:21,010 --> 00:01:23,460
+So, for example, looking at the first row,
+
+26
+00:01:23,460 --> 00:01:26,575
+this corresponds to Ryan's ratings for the movies.
+
+27
+00:01:26,575 --> 00:01:30,685
+It looks like Ryan gave a rating of 4 out of 10 for Star Wars,
+
+28
+00:01:30,685 --> 00:01:34,375
+a rating of 6 out of 10 for The Dark Knight and rating a rating of 8 out of 10 for Shrek,
+
+29
+00:01:34,375 --> 00:01:37,570
+and the zeros in the remaining elements of the row
+
+30
+00:01:37,570 --> 00:01:41,320
+indicates that Ryan hasn't seen or hasn't rated the other movies.
+
+31
+00:01:41,320 --> 00:01:43,750
+Ryan has given no ratings for the Incredibles, Blue,
+
+32
+00:01:43,750 --> 00:01:47,600
+or Memento and the same is true for each row after that.
+
+33
+00:01:47,760 --> 00:01:52,005
+The variable movies features here,
+
+34
+00:01:52,005 --> 00:01:55,505
+holds the k-hot encoding of the features for each movie.
+
+35
+00:01:55,505 --> 00:01:59,975
+So, in this matrix, each row represents a movie and each column represents a feature.
+
+36
+00:01:59,975 --> 00:02:04,110
+So, for example, for our first movie, Star Wars,
+
+37
+00:02:04,390 --> 00:02:08,030
+that series of zeros and ones in this row,
+
+38
+00:02:08,030 --> 00:02:11,660
+indicate that Star Wars is encoded as having action,
+
+39
+00:02:11,660 --> 00:02:15,785
+sci-fi, no comedy, no cartoon and some drama.
+
+40
+00:02:15,785 --> 00:02:18,080
+So, since we're doing these computations in TensorFlow,
+
+41
+00:02:18,080 --> 00:02:22,130
+this next block of code is just to take the variables that we
+
+42
+00:02:22,130 --> 00:02:27,480
+set above and store them as TensorFlow constants.
+
+43
+00:02:30,530 --> 00:02:33,110
+Now, we come to our first to-do.
+
+44
+00:02:33,110 --> 00:02:34,610
+The goal here is to create
+
+45
+00:02:34,610 --> 00:02:37,790
+the users movies features Tensor that we discussed in the lecture.
+
+46
+00:02:37,790 --> 00:02:39,710
+So, this is going to be made by stacking together
+
+47
+00:02:39,710 --> 00:02:42,850
+the weighted features matrices for each user.
+
+48
+00:02:42,850 --> 00:02:44,820
+What we'll want to do is,
+
+49
+00:02:44,820 --> 00:02:48,590
+compute the weighted feature matrix for each user can store all
+
+50
+00:02:48,590 --> 00:02:52,895
+those as a list and then we can stack them together using a tf.stack operation.
+
+51
+00:02:52,895 --> 00:02:57,830
+So, let's do that now. So, in code,
+
+52
+00:02:57,830 --> 00:03:02,820
+we can create a list of this product for each user using a list comprehension.
+
+53
+00:03:03,250 --> 00:03:07,260
+So, I'll start with list comprehension in this way.
+
+54
+00:03:07,930 --> 00:03:12,290
+I will be multiplying each row of the users' movies
+
+55
+00:03:12,290 --> 00:03:16,565
+matrix to the values in the movies features matrix.
+
+56
+00:03:16,565 --> 00:03:20,980
+So, I'll take the user's movies matrix.
+
+57
+00:03:20,980 --> 00:03:23,990
+I want to take the transpose of that.
+
+58
+00:03:23,990 --> 00:03:27,090
+I can do that using tf.transpose here.
+
+59
+00:03:29,870 --> 00:03:32,205
+To take one row,
+
+60
+00:03:32,205 --> 00:03:33,720
+I'll slice this out.
+
+61
+00:03:33,720 --> 00:03:36,125
+After taking the transpose, I'll slice it out by taking
+
+62
+00:03:36,125 --> 00:03:39,860
+all the rows and just the ith column and then I'll multiply that
+
+63
+00:03:39,860 --> 00:03:46,010
+by the movies features matrix and I want to do this for every user.
+
+64
+00:03:46,010 --> 00:03:47,405
+So, to create in my list comprehension,
+
+65
+00:03:47,405 --> 00:03:54,750
+I'll do this for all the i's in the range from 0 to the number of users that I have.
+
+66
+00:03:57,290 --> 00:04:00,740
+So, in order for this broadcast multiplication to work,
+
+67
+00:04:00,740 --> 00:04:05,195
+we also need to expand the dimensions of the users movies tensor in the first axis.
+
+68
+00:04:05,195 --> 00:04:07,650
+So, this computation itself wouldn't work on its own.
+
+69
+00:04:07,650 --> 00:04:12,290
+So, what we need to do is use a tf.expand dimensions
+
+70
+00:04:12,290 --> 00:04:15,200
+of our transpose of
+
+71
+00:04:15,200 --> 00:04:20,120
+the users movies matrix and we'll specify the axis to be equal to one.
+
+72
+00:04:20,120 --> 00:04:22,260
+So, now what this will do,
+
+73
+00:04:22,260 --> 00:04:24,860
+is it will create a list which is going to be
+
+74
+00:04:24,860 --> 00:04:28,800
+the weighted feature matrix for every user in our database.
+
+75
+00:04:29,870 --> 00:04:33,995
+Next, what we'll do, is we'll stack together
+
+76
+00:04:33,995 --> 00:04:40,610
+these weighted feature matrices to create our total user make movies features tensor.
+
+77
+00:04:40,610 --> 00:04:42,830
+So, in Tensorflow, the way that would look is,
+
+78
+00:04:42,830 --> 00:04:52,090
+we can just do a tf.stack on the weighted feature matrices that we computed just above.
+
+79
+00:05:00,170 --> 00:05:02,915
+The last step is to normalize
+
+80
+00:05:02,915 --> 00:05:06,125
+this user's movies features tensor against the movies dimension.
+
+81
+00:05:06,125 --> 00:05:08,485
+So that the components all sum to one.
+
+82
+00:05:08,485 --> 00:05:11,180
+This is done by summing across the movies dimension,
+
+83
+00:05:11,180 --> 00:05:15,660
+in that tensor we created above and then normalizing with the total values.
+
+84
+00:05:15,660 --> 00:05:18,165
+So, those two values are computed here;
+
+85
+00:05:18,165 --> 00:05:22,135
+users_movies_feats_sums, sums against the movies dimension.
+
+86
+00:05:22,135 --> 00:05:24,400
+So, to do that we're using a tf.reduce_sum.
+
+87
+00:05:24,400 --> 00:05:28,490
+Here we're specifying the axis to be equal to one because that's the axis for
+
+88
+00:05:28,490 --> 00:05:32,720
+our movies and our users movies features
+
+89
+00:05:32,720 --> 00:05:36,755
+totals then we'll do another reduce_sum which is then going to
+
+90
+00:05:36,755 --> 00:05:42,180
+sum for each user the sum of all the feature values.
+
+91
+00:05:44,240 --> 00:05:46,430
+So, next what we want to do is,
+
+92
+00:05:46,430 --> 00:05:49,970
+normalize this tensor for each user and we can do that using a list comprehension.
+
+93
+00:05:49,970 --> 00:05:51,275
+So, I'll set up my list,
+
+94
+00:05:51,275 --> 00:06:00,440
+we'll take the users_movies_feats_sums for each user and we'll divide by
+
+95
+00:06:00,440 --> 00:06:08,555
+the users_movies_feats_totals for each user
+
+96
+00:06:08,555 --> 00:06:14,165
+and we'll do this for every i in the range from 0 to the number of our users.
+
+97
+00:06:14,165 --> 00:06:16,280
+This is going to create a list that has
+
+98
+00:06:16,280 --> 00:06:19,730
+the user feature vector for every user in our database and so,
+
+99
+00:06:19,730 --> 00:06:23,765
+the last thing we're going to do is stack these tensors together to create
+
+100
+00:06:23,765 --> 00:06:28,265
+a single matrix for all of our user feature vectors.
+
+101
+00:06:28,265 --> 00:06:35,310
+So, like before, we'll use a tf.stack and we'll set our axis to be equal to 0.
+
+102
+00:06:35,720 --> 00:06:39,320
+So, the resulting users features matrix that we just created is
+
+103
+00:06:39,320 --> 00:06:43,745
+a collection of all the user feature vectors for each of the four users that we have.
+
+104
+00:06:43,745 --> 00:06:47,120
+Given this, we can look back and interpret the feature relevance for
+
+105
+00:06:47,120 --> 00:06:51,505
+each user and we're gonna do this the following upper function, so you can see that here.
+
+106
+00:06:51,505 --> 00:06:54,180
+So, let's read through what this function does.
+
+107
+00:06:54,180 --> 00:07:00,410
+So, this function find_users_top_feats takes as input a user Index and what it returns,
+
+108
+00:07:00,410 --> 00:07:03,875
+are the top features for that given user.
+
+109
+00:07:03,875 --> 00:07:08,060
+So, to do that, we're using this top k function
+
+110
+00:07:08,060 --> 00:07:11,975
+in TensorFlow and what we'll pass are the users
+
+111
+00:07:11,975 --> 00:07:15,440
+features that we created above for
+
+112
+00:07:15,440 --> 00:07:21,360
+that user and we're going to ask it to return the top five features for each user.
+
+113
+00:07:21,650 --> 00:07:24,220
+The last element of this function then,
+
+114
+00:07:24,220 --> 00:07:28,310
+is to use tf.gather in D and what this does is it
+
+115
+00:07:28,310 --> 00:07:35,670
+takes a list of our features and it just evaluates the top indices for that given user.
+
+116
+00:07:36,650 --> 00:07:42,560
+If we actually want to evaluate what these variables are equal to,
+
+117
+00:07:42,560 --> 00:07:43,730
+since we're working in TensorFlow,
+
+118
+00:07:43,730 --> 00:07:46,355
+we need to create a TensorFlow session.
+
+119
+00:07:46,355 --> 00:07:49,290
+So, that's what we do in the following cell.
+
+120
+00:07:52,130 --> 00:07:57,380
+So, we create a TensorFlow session here and we initialize our global variables.
+
+121
+00:07:57,380 --> 00:08:00,310
+We're going to create this empty dictionary called
+
+122
+00:08:00,310 --> 00:08:03,370
+users_topfeats and what we'll do in the following for loop,
+
+123
+00:08:03,370 --> 00:08:06,520
+is just propagate that dictionary where each key will correspond to
+
+124
+00:08:06,520 --> 00:08:10,210
+a user and each value of that key will correspond to that user's top features.
+
+125
+00:08:10,210 --> 00:08:12,760
+So, you can see that's what's happening here.
+
+126
+00:08:12,760 --> 00:08:15,280
+The top features it will evaluate in the session,
+
+127
+00:08:15,280 --> 00:08:18,625
+define users_topfeats for that single user.
+
+128
+00:08:18,625 --> 00:08:20,410
+To propagate the dictionary,
+
+129
+00:08:20,410 --> 00:08:23,440
+we're going to set the key to be equal to that user and the value will be
+
+130
+00:08:23,440 --> 00:08:26,490
+the list that we return that we're calling top features.
+
+131
+00:08:26,490 --> 00:08:32,240
+So, this next cell we can look and see what our users top features look like.
+
+132
+00:08:32,960 --> 00:08:35,700
+So, looking at the first example,
+
+133
+00:08:35,700 --> 00:08:36,900
+we see that for Chris,
+
+134
+00:08:36,900 --> 00:08:40,640
+the most important features for him would be action, then sci-fi,
+
+135
+00:08:40,640 --> 00:08:42,020
+then drama, then comedies,
+
+136
+00:08:42,020 --> 00:08:46,530
+and then cartoons, and the same for all the other users in our database.
+
+137
+00:08:47,720 --> 00:08:50,570
+So, in this last section, what we're going to do is,
+
+138
+00:08:50,570 --> 00:08:52,520
+we're gonna use that user's features tensor to
+
+139
+00:08:52,520 --> 00:08:55,580
+determine our movie recommendations for each of our users.
+
+140
+00:08:55,580 --> 00:08:57,170
+To do this, we'll need to compute
+
+141
+00:08:57,170 --> 00:08:59,840
+the similarity measure between each user and each movie.
+
+142
+00:08:59,840 --> 00:09:02,755
+We'll use a dot product as our similarity measure.
+
+143
+00:09:02,755 --> 00:09:05,735
+Since we want to compute the dot product between
+
+144
+00:09:05,735 --> 00:09:09,475
+a given user feature vector and every movie in our database,
+
+145
+00:09:09,475 --> 00:09:12,140
+we can use a map function.
+
+146
+00:09:12,890 --> 00:09:15,280
+So, that's where we come to this to do here.
+
+147
+00:09:15,280 --> 00:09:18,865
+Actually gives us a hint telling us we can use the tf.map function.
+
+148
+00:09:18,865 --> 00:09:22,595
+What it does is, it applies some given lambda function to a list of
+
+149
+00:09:22,595 --> 00:09:26,300
+Tensors and since we're taking the dot product as our similarity measure,
+
+150
+00:09:26,300 --> 00:09:30,270
+the operation we want to use is a tf.tenserdot.
+
+151
+00:09:31,160 --> 00:09:33,480
+So, to fill this out, what we'll do is,
+
+152
+00:09:33,480 --> 00:09:36,165
+we'll take tf.map function,
+
+153
+00:09:36,165 --> 00:09:38,860
+we'll set up our lambda function.
+
+154
+00:09:40,520 --> 00:09:44,280
+What this will do is, it'll compute the dot products.
+
+155
+00:09:44,280 --> 00:09:53,300
+So, tf.tenserdot between our users features tensor for each user.
+
+156
+00:09:53,350 --> 00:09:57,320
+Setup here X because it will be taking a dot product
+
+157
+00:09:57,320 --> 00:10:00,845
+of that vector with the movie features vector.
+
+158
+00:10:00,845 --> 00:10:06,360
+We'll set the axes equal to one since we're taking the dot product using tenserdot.
+
+159
+00:10:07,190 --> 00:10:12,500
+Then we specify what we want to iterate this lambda function over and we're
+
+160
+00:10:12,500 --> 00:10:18,420
+multiplying through the movies features vector. So, it's that up here.
+
+161
+00:10:18,920 --> 00:10:23,030
+This will compute the user ratings for a single user so as before,
+
+162
+00:10:23,030 --> 00:10:25,770
+I'm going to wrap this in a list comprehension.
+
+163
+00:10:27,440 --> 00:10:31,610
+I want to do this again for all the i's in
+
+164
+00:10:31,610 --> 00:10:35,780
+the range from 0 to the number of users that we have.
+
+165
+00:10:38,840 --> 00:10:41,350
+This last part of the cell just says,
+
+166
+00:10:41,350 --> 00:10:43,450
+once you have that list of all the users ratings,
+
+167
+00:10:43,450 --> 00:10:48,050
+stack them together to get a single tensor called all_users_ratings.
+
+168
+00:10:49,390 --> 00:10:52,525
+So, moving on. As we mentioned in the lecture,
+
+169
+00:10:52,525 --> 00:10:53,980
+to make movie recommendations,
+
+170
+00:10:53,980 --> 00:10:56,570
+we don't want to bother with movies that the user has already seen.
+
+171
+00:10:56,570 --> 00:11:00,685
+So, we're going to create a mask so we can ignore the previously rated movies.
+
+172
+00:11:00,685 --> 00:11:03,065
+We can do that using tf.where.
+
+173
+00:11:03,065 --> 00:11:07,455
+So, just to remind you, the way tf works is by specifying a Boolean condition.
+
+174
+00:11:07,455 --> 00:11:09,690
+When the condition is true, we take the first value
+
+175
+00:11:09,690 --> 00:11:12,210
+and if the condition is false, we take the second.
+
+176
+00:11:12,210 --> 00:11:14,700
+So, here's our Boolean condition, this tf.equal.
+
+177
+00:11:14,700 --> 00:11:17,425
+We're going to see where is our user's movies tensor
+
+178
+00:11:17,425 --> 00:11:21,140
+equal to 0 and when it is equal to 0,
+
+179
+00:11:21,140 --> 00:11:25,520
+we're going to use the all users ratings and when it's not equal to 0,
+
+180
+00:11:25,520 --> 00:11:30,990
+we're going to set it to be equal to minus infinity just so we can completely ignore it.
+
+181
+00:11:32,630 --> 00:11:35,880
+Define the top movie recommendations for each user,
+
+182
+00:11:35,880 --> 00:11:39,095
+we'll use a similar helper function to the one we saw above.
+
+183
+00:11:39,095 --> 00:11:42,860
+The function here, find user top movies, takes two inputs.
+
+184
+00:11:42,860 --> 00:11:46,570
+It takes the user index and the number of movies to recommend.
+
+185
+00:11:46,570 --> 00:11:48,495
+And it does two things.
+
+186
+00:11:48,495 --> 00:11:52,245
+So first, it determines the movies index.
+
+187
+00:11:52,245 --> 00:11:58,280
+So, these are the indices of the top movies for a single user.
+
+188
+00:11:58,280 --> 00:12:01,120
+So, we're using the top k function as before.
+
+189
+00:12:01,120 --> 00:12:04,400
+As input, we are giving it the all users ratings
+
+190
+00:12:04,400 --> 00:12:07,940
+new matrix that we created above which is just our user ratings
+
+191
+00:12:07,940 --> 00:12:11,210
+for all of our users but masking out the movies the user has already
+
+192
+00:12:11,210 --> 00:12:14,510
+rated and we're passing the number of movies to recommend.
+
+193
+00:12:14,510 --> 00:12:19,770
+This could change for certain users because users have seen different numbers of movies.
+
+194
+00:12:21,140 --> 00:12:28,685
+At the end, we just return the movies for each given user.
+
+195
+00:12:28,685 --> 00:12:32,060
+Again, to do that, we'll use this gather in D operation,
+
+196
+00:12:32,060 --> 00:12:37,380
+we pass in our movies list and we say evaluated at the indices that we found above.
+
+197
+00:12:39,260 --> 00:12:42,680
+So, as before, in order to evaluate these values,
+
+198
+00:12:42,680 --> 00:12:44,600
+we need to create a TensorFlow session.
+
+199
+00:12:44,600 --> 00:12:49,080
+We'll initialize our global values using tf.global_variables_initializer.
+
+200
+00:12:49,080 --> 00:12:52,535
+Then create an empty dictionary called user_topmovies.
+
+201
+00:12:52,535 --> 00:12:53,960
+What we'll do in this next for loop,
+
+202
+00:12:53,960 --> 00:12:56,150
+is to propagate that dictionary, again,
+
+203
+00:12:56,150 --> 00:13:01,825
+using the users as keys and then now the values will be a list of their top movies.
+
+204
+00:13:01,825 --> 00:13:06,470
+So, for each user, we want to figure out how many movies to recommend and to do that,
+
+205
+00:13:06,470 --> 00:13:09,230
+we'll create this variable called number to recommend.
+
+206
+00:13:09,230 --> 00:13:13,295
+It just going to be done by taking a reduce sum on
+
+207
+00:13:13,295 --> 00:13:19,560
+the user's movies matrix and figuring out how many times there are zeros for each user.
+
+208
+00:13:19,760 --> 00:13:24,950
+The for loop will then iterate through each of our users and it will
+
+209
+00:13:24,950 --> 00:13:30,830
+collect the top movies using our find user top movies function above.
+
+210
+00:13:30,830 --> 00:13:32,900
+Then add to our dictionary,
+
+211
+00:13:32,900 --> 00:13:39,360
+the key which is the user and the value which is the list of the movies for that user.
+
+212
+00:13:41,090 --> 00:13:44,990
+We can then examine what this dictionary looks like and see
+
+213
+00:13:44,990 --> 00:13:48,125
+what the movie recommendations would be for any one of our users.
+
+214
+00:13:48,125 --> 00:13:50,260
+So, for example, for Danielle,
+
+215
+00:13:50,260 --> 00:13:54,290
+we see that for her we'd likely want to recommend The Incredibles first,
+
+216
+00:13:54,290 --> 00:13:57,330
+Star Wars second, and The Dark Knight third

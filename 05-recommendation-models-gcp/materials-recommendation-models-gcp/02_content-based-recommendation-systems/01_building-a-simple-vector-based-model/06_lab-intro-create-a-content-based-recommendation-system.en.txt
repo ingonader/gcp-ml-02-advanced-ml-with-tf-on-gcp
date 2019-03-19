@@ -1,0 +1,1 @@
+Now that we have learned the basic implementation of content-based filtering, let's turn knowledge into action. This lab demonstrates how to build a content-based recommender using TensorFlow. We'll put code to the multiple user method we just discussed, using most of the code we just saw. You'll see how this can all be done using only low-level TensorFlow operations.

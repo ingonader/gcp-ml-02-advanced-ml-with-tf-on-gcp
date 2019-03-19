@@ -1,0 +1,283 @@
+1
+00:00:00,020 --> 00:00:02,115
+Let's go a bit deeper,
+
+2
+00:00:02,115 --> 00:00:03,765
+and look at a specific example.
+
+3
+00:00:03,765 --> 00:00:06,420
+Putting some numbers in the previous ideas to see how
+
+4
+00:00:06,420 --> 00:00:10,470
+exactly we can create a recommendation using content-based filtering.
+
+5
+00:00:10,470 --> 00:00:12,555
+Consider a single user,
+
+6
+00:00:12,555 --> 00:00:15,645
+and suppose we have only seven movies in our database.
+
+7
+00:00:15,645 --> 00:00:18,865
+This user has seen and rated three of the movies.
+
+8
+00:00:18,865 --> 00:00:22,625
+We'd like to figure out which of the remaining four movies to recommend.
+
+9
+00:00:22,625 --> 00:00:25,855
+We'll assume a rating scale of 1-10.
+
+10
+00:00:25,855 --> 00:00:29,610
+One means they didn't like it and 10 means they loved it.
+
+11
+00:00:29,610 --> 00:00:32,400
+This user gave Strike a 7 out of 10,
+
+12
+00:00:32,400 --> 00:00:33,945
+Blue a 4 out of 10,
+
+13
+00:00:33,945 --> 00:00:36,295
+and Harry Potter, a 10 out of 10.
+
+14
+00:00:36,295 --> 00:00:38,780
+We'd like to use this information to recommend
+
+15
+00:00:38,780 --> 00:00:41,195
+one of the movies the user hasn't seen yet.
+
+16
+00:00:41,195 --> 00:00:46,645
+To do this, we represent each of these movies using predetermined features or genres.
+
+17
+00:00:46,645 --> 00:00:49,530
+Here, we're using the genres, fantasy,
+
+18
+00:00:49,530 --> 00:00:52,380
+action, cartoon, drama, and comedy.
+
+19
+00:00:52,380 --> 00:00:56,915
+Each movie is k-hot encoded as to whether it has that feature.
+
+20
+00:00:56,915 --> 00:01:01,405
+Some movies satisfy only one feature. Some have more.
+
+21
+00:01:01,405 --> 00:01:04,210
+You can imagine with more granularity of features,
+
+22
+00:01:04,210 --> 00:01:07,485
+we'd be able to describe our movies in a more precise way.
+
+23
+00:01:07,485 --> 00:01:11,300
+But for now, we'll just use these five categories.
+
+24
+00:01:11,300 --> 00:01:13,940
+Given their previous movie ratings,
+
+25
+00:01:13,940 --> 00:01:19,305
+we can describe our user in terms of the same features we use to describe our movies.
+
+26
+00:01:19,305 --> 00:01:21,280
+That is, we can place our user in
+
+27
+00:01:21,280 --> 00:01:23,470
+the same five-dimensional embedded feature space
+
+28
+00:01:23,470 --> 00:01:25,940
+that we are using to represent our movies.
+
+29
+00:01:25,940 --> 00:01:28,960
+To do this, we first scale each feature by
+
+30
+00:01:28,960 --> 00:01:32,035
+this user's ratings and then normalize the resulting vector.
+
+31
+00:01:32,035 --> 00:01:34,900
+This is called the user feature vector.
+
+32
+00:01:34,900 --> 00:01:38,620
+Basically, it gives an idea of where our user sits in
+
+33
+00:01:38,620 --> 00:01:40,570
+our embedding space of features based on
+
+34
+00:01:40,570 --> 00:01:43,705
+their previous ratings of various movies in our database.
+
+35
+00:01:43,705 --> 00:01:45,925
+Let's work through that now.
+
+36
+00:01:45,925 --> 00:01:50,720
+First, multiply the movie feature matrix by their ratings given by that user.
+
+37
+00:01:50,720 --> 00:01:54,640
+Then aggregate by summing across each feature dimension.
+
+38
+00:01:54,640 --> 00:01:59,190
+This gives us a five-dimensional vector in our feature space embedding.
+
+39
+00:01:59,190 --> 00:02:03,995
+The user-feature vector is the normalization of that vector.
+
+40
+00:02:03,995 --> 00:02:06,170
+We see that for this user,
+
+41
+00:02:06,170 --> 00:02:08,350
+comedy seems to be a favorite category.
+
+42
+00:02:08,350 --> 00:02:10,125
+It has the largest value.
+
+43
+00:02:10,125 --> 00:02:14,140
+This makes sense looking back at their ratings for three movies.
+
+44
+00:02:14,140 --> 00:02:18,230
+The two movies that were classified as comedy have relatively high ratings,
+
+45
+00:02:18,230 --> 00:02:20,725
+7 out of 10 and 10 out of 10.
+
+46
+00:02:20,725 --> 00:02:23,600
+The drama category appears to be the lowest,
+
+47
+00:02:23,600 --> 00:02:26,795
+which also makes sense looking at the rating of this user.
+
+48
+00:02:26,795 --> 00:02:29,380
+For the one drama movie they have seen,
+
+49
+00:02:29,380 --> 00:02:31,805
+they didn't rate very highly.
+
+50
+00:02:31,805 --> 00:02:35,740
+The numeric values of the user feature vector makes sense with
+
+51
+00:02:35,740 --> 00:02:40,660
+the intuition we have from the users ratings and the feature descriptions of the movies.
+
+52
+00:02:40,660 --> 00:02:45,500
+It is interesting to point out that the action dimension is zero for this user.
+
+53
+00:02:45,500 --> 00:02:49,000
+Is this because the user doesn't like action at all?
+
+54
+00:02:49,000 --> 00:02:50,664
+Not necessarily.
+
+55
+00:02:50,664 --> 00:02:52,090
+If you look at their ratings,
+
+56
+00:02:52,090 --> 00:02:55,840
+none of the movies they've previously rated contain the action feature.
+
+57
+00:02:55,840 --> 00:02:59,020
+Think about how this affects our user feature vector.
+
+58
+00:02:59,020 --> 00:03:00,935
+We'll come back to this later.
+
+59
+00:03:00,935 --> 00:03:03,850
+Let's look at another user's movie ratings.
+
+60
+00:03:03,850 --> 00:03:06,550
+Compute the user feature vector for this user,
+
+61
+00:03:06,550 --> 00:03:10,030
+based on their ratings for the movies and their respective features.
+
+62
+00:03:10,030 --> 00:03:13,675
+Which category has the strongest influence for this user?
+
+63
+00:03:13,675 --> 00:03:19,175
+For this user, the fantasy category has greatest value and thus, the strongest influence.
+
+64
+00:03:19,175 --> 00:03:21,155
+To verify this, first,
+
+65
+00:03:21,155 --> 00:03:24,005
+scale the movie feature matrix by the user's ratings,
+
+66
+00:03:24,005 --> 00:03:26,365
+then sum across the feature columns.
+
+67
+00:03:26,365 --> 00:03:30,290
+The user feature vector is the normalization of that vector.
+
+68
+00:03:30,290 --> 00:03:32,345
+In doing this computation,
+
+69
+00:03:32,345 --> 00:03:36,035
+we see that fantasy has a relative score of 0.31,
+
+70
+00:03:36,035 --> 00:03:38,635
+although drama is close with 0.28.
+
+71
+00:03:38,635 --> 00:03:42,290
+This means that fantasy category has the strongest influence.

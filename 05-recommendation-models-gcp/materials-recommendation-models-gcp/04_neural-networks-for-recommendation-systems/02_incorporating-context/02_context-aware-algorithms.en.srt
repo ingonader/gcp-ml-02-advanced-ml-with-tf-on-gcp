@@ -1,0 +1,415 @@
+1
+00:00:00,000 --> 00:00:05,250
+There are three main types of context-aware recommendation systems or CARS algorithms,
+
+2
+00:00:05,250 --> 00:00:10,215
+there's: contextual prefiltering, contextual postfiltering, and contextual modeling.
+
+3
+00:00:10,215 --> 00:00:12,885
+Let's go into more detail for each type.
+
+4
+00:00:12,885 --> 00:00:16,830
+For contextual prefiltering, we start with our user by item,
+
+5
+00:00:16,830 --> 00:00:19,890
+by context tensor that contains ratings.
+
+6
+00:00:19,890 --> 00:00:22,815
+In traditional collaborative filtering recommendation systems,
+
+7
+00:00:22,815 --> 00:00:27,105
+we have just a user-item interaction matrix that contains ratings.
+
+8
+00:00:27,105 --> 00:00:29,730
+We then apply a filter on our context before
+
+9
+00:00:29,730 --> 00:00:33,285
+the traditional user-item interaction matrix recommendation system,
+
+10
+00:00:33,285 --> 00:00:35,655
+which is why it's called prefiltering.
+
+11
+00:00:35,655 --> 00:00:37,110
+As an example of this,
+
+12
+00:00:37,110 --> 00:00:40,005
+imagine we are looking at movie theater tickets online,
+
+13
+00:00:40,005 --> 00:00:42,195
+and we hope to go Thursday after work.
+
+14
+00:00:42,195 --> 00:00:45,530
+Therefore, the algorithm will filter out all movies that
+
+15
+00:00:45,530 --> 00:00:49,270
+don't have the time dimension of context equaling Thursday.
+
+16
+00:00:49,270 --> 00:00:54,200
+However, we need to make sure things don't get too specific, for example,
+
+17
+00:00:54,200 --> 00:00:58,625
+this user wanting to go to this exact theater on Thursday with a friend from work,
+
+18
+00:00:58,625 --> 00:01:01,930
+where there will be special effects glasses to wear during the movie.
+
+19
+00:01:01,930 --> 00:01:04,165
+That is a really specific contexts,
+
+20
+00:01:04,165 --> 00:01:06,940
+and there are probably going to be sparsity issues.
+
+21
+00:01:06,940 --> 00:01:09,805
+We can also use context generalization,
+
+22
+00:01:09,805 --> 00:01:13,160
+where instead of saying the user wants to see a movie on exactly Thursday,
+
+23
+00:01:13,160 --> 00:01:17,305
+it's a blend of Thursday and weekday for instance.
+
+24
+00:01:17,305 --> 00:01:20,180
+After the data has been filtered by context,
+
+25
+00:01:20,180 --> 00:01:24,080
+the data is once again our usual user-item interaction matrix,
+
+26
+00:01:24,080 --> 00:01:28,015
+which we can use in our traditional collaborative filtering recommendation systems.
+
+27
+00:01:28,015 --> 00:01:32,255
+Know that a contextualized data is filtered by certain dimensions of context,
+
+28
+00:01:32,255 --> 00:01:35,485
+so it's actually a subset of the original data.
+
+29
+00:01:35,485 --> 00:01:38,060
+Our contextualized data now goes through
+
+30
+00:01:38,060 --> 00:01:41,525
+a traditional two-dimensional collaborative filtering recommendation system.
+
+31
+00:01:41,525 --> 00:01:45,500
+This is a big plus because there is no need to develop and implement
+
+32
+00:01:45,500 --> 00:01:50,050
+new algorithms to handle this multidimensional contexts in our input tensor.
+
+33
+00:01:50,050 --> 00:01:54,619
+As we've learned, our recommendation system will simultaneously learn the user,
+
+34
+00:01:54,619 --> 00:01:58,655
+and item embeddings that we can then use to make recommendations.
+
+35
+00:01:58,655 --> 00:02:01,430
+Next, as we learned in module three,
+
+36
+00:02:01,430 --> 00:02:04,640
+we now apply our user vector to the embeddings learned by
+
+37
+00:02:04,640 --> 00:02:06,695
+the recommender to get a predicted rating for
+
+38
+00:02:06,695 --> 00:02:09,230
+each item the user hasn't already interacted with.
+
+39
+00:02:09,230 --> 00:02:11,885
+Lastly, for contextual prefiltering,
+
+40
+00:02:11,885 --> 00:02:15,550
+we return the top k item recommendations to the user.
+
+41
+00:02:15,550 --> 00:02:19,740
+Many different contextual prefiltering algorithms have been developed.
+
+42
+00:02:19,740 --> 00:02:22,030
+Because this is contextual prefiltering,
+
+43
+00:02:22,030 --> 00:02:25,010
+they all are different methods of representing and splitting the data,
+
+44
+00:02:25,010 --> 00:02:28,600
+so that can be used in a traditional two-dimensional recommendation system.
+
+45
+00:02:28,600 --> 00:02:30,920
+We'll take a deeper look at item splitting,
+
+46
+00:02:30,920 --> 00:02:35,510
+user splitting, and the combination of the two, with user-item splitting.
+
+47
+00:02:35,510 --> 00:02:38,569
+We've talked about how context can change our perception,
+
+48
+00:02:38,569 --> 00:02:40,555
+and our sentiment of the same item.
+
+49
+00:02:40,555 --> 00:02:43,340
+Therefore, it isn't unreasonable to come up with
+
+50
+00:02:43,340 --> 00:02:48,140
+a data representation model where we split items into item contexts pairs.
+
+51
+00:02:48,140 --> 00:02:53,175
+Here's an example of a user-item context table with the associated ratings.
+
+52
+00:02:53,175 --> 00:02:57,140
+This example, only has one dimension of context, time.
+
+53
+00:02:57,140 --> 00:03:00,020
+Let's briefly analyze it with inspection.
+
+54
+00:03:00,020 --> 00:03:02,450
+The first thing we might notice is that there are
+
+55
+00:03:02,450 --> 00:03:05,960
+four users and they all watch the same movie twice,
+
+56
+00:03:05,960 --> 00:03:07,790
+but at different times.
+
+57
+00:03:07,790 --> 00:03:09,230
+Looking at the ratings,
+
+58
+00:03:09,230 --> 00:03:13,085
+we can see that there's a big block of very high ratings at the top.
+
+59
+00:03:13,085 --> 00:03:16,910
+We can also see a large block of low ratings right below,
+
+60
+00:03:16,910 --> 00:03:18,875
+this also looks really strange.
+
+61
+00:03:18,875 --> 00:03:20,545
+What can be causing this?
+
+62
+00:03:20,545 --> 00:03:22,665
+Let's check the context.
+
+63
+00:03:22,665 --> 00:03:25,230
+Well, there's the difference.
+
+64
+00:03:25,230 --> 00:03:28,400
+All the high ratings are when the movies were watched on weekends,
+
+65
+00:03:28,400 --> 00:03:31,715
+and all the low ratings are when the movies were watched on weekdays.
+
+66
+00:03:31,715 --> 00:03:34,430
+Because there is such a significant difference of radians between
+
+67
+00:03:34,430 --> 00:03:37,250
+the two contexts with everything else being equal,
+
+68
+00:03:37,250 --> 00:03:41,410
+let's split the item into two item contexts entities.
+
+69
+00:03:41,410 --> 00:03:44,690
+There we go. As we can now see our items have
+
+70
+00:03:44,690 --> 00:03:47,975
+been stratified across context, they're blended together.
+
+71
+00:03:47,975 --> 00:03:51,355
+This functions as if the item was actually multiple items.
+
+72
+00:03:51,355 --> 00:03:55,100
+This is easy to see when we have a small toy data set like this,
+
+73
+00:03:55,100 --> 00:03:59,275
+but how would we do it for much larger and more complex data sets?
+
+74
+00:03:59,275 --> 00:04:02,930
+We simply can use a t-test on two chunks of ratings,
+
+75
+00:04:02,930 --> 00:04:05,450
+and choose what gives the maximum t value,
+
+76
+00:04:05,450 --> 00:04:07,490
+and thus the smallest p-value.
+
+77
+00:04:07,490 --> 00:04:09,105
+There's a simple splitting,
+
+78
+00:04:09,105 --> 00:04:11,854
+when splitting across one dimension of context,
+
+79
+00:04:11,854 --> 00:04:15,745
+and complex splitting was putting over multiple dimensions of contexts.
+
+80
+00:04:15,745 --> 00:04:20,240
+Complex splitting can have sparsity issues and can have overfitting problems.
+
+81
+00:04:20,240 --> 00:04:23,650
+So, single splitting is often used to avoid these issues.
+
+82
+00:04:23,650 --> 00:04:27,680
+There's also user splitting which it's extremely similar to item splitting,
+
+83
+00:04:27,680 --> 00:04:31,415
+except now we split along user rather than item.
+
+84
+00:04:31,415 --> 00:04:33,710
+If we arrange our data now to be sorted by
+
+85
+00:04:33,710 --> 00:04:37,595
+user our user-item context table looks like this.
+
+86
+00:04:37,595 --> 00:04:40,310
+With user splitting, we're now splitting along
+
+87
+00:04:40,310 --> 00:04:43,475
+users as if they are separate users interacting with the item.
+
+88
+00:04:43,475 --> 00:04:47,165
+Users are basically now, user context pairs.
+
+89
+00:04:47,165 --> 00:04:49,005
+As the name suggests,
+
+90
+00:04:49,005 --> 00:04:50,660
+user-item splitting is splitting along
+
+91
+00:04:50,660 --> 00:04:54,205
+both dimensions and blending context into users and items.
+
+92
+00:04:54,205 --> 00:04:59,615
+There's a new dimension of context location added to help make this example more clear.
+
+93
+00:04:59,615 --> 00:05:01,445
+To see what we have done with splitting,
+
+94
+00:05:01,445 --> 00:05:03,410
+the context columns are still remaining.
+
+95
+00:05:03,410 --> 00:05:05,240
+Here we did two simple splits;
+
+96
+00:05:05,240 --> 00:05:08,030
+a user split along the time context dimension,
+
+97
+00:05:08,030 --> 00:05:09,050
+and in item split,
+
+98
+00:05:09,050 --> 00:05:11,395
+along the location context dimension.
+
+99
+00:05:11,395 --> 00:05:13,250
+Removing the context columns,
+
+100
+00:05:13,250 --> 00:05:15,550
+we split along simplifies this table to this,
+
+101
+00:05:15,550 --> 00:05:19,100
+where we have user time contexts pairs as individual users,
+
+102
+00:05:19,100 --> 00:05:22,540
+and item location context pairs as individual items.
+
+103
+00:05:22,540 --> 00:05:24,270
+We can now send this contextually
+
+104
+00:05:24,270 --> 00:05:28,540
+prefiltered data to our traditional two-dimensional recommendation system.

@@ -1,0 +1,67 @@
+1
+00:00:00,000 --> 00:00:01,380
+Now, that we have learned how
+
+2
+00:00:01,380 --> 00:00:04,410
+WALS matrix factorization works for collaborative filtering,
+
+3
+00:00:04,410 --> 00:00:06,450
+let's put our new knowledge to action.
+
+4
+00:00:06,450 --> 00:00:08,505
+This lab demonstrates how to implement
+
+5
+00:00:08,505 --> 00:00:10,650
+a WALS matrix factorization approach to
+
+6
+00:00:10,650 --> 00:00:13,185
+do collaborative filtering using Google Analytics Data.
+
+7
+00:00:13,185 --> 00:00:15,780
+We'll be using most of the code that we learned earlier.
+
+8
+00:00:15,780 --> 00:00:20,955
+In later modules, we will combine this and content-based with a deep neural network,
+
+9
+00:00:20,955 --> 00:00:22,860
+and then learn how to productionize and automate
+
+10
+00:00:22,860 --> 00:00:26,190
+our solution using the Google Cloud platform ecosystem.
+
+11
+00:00:26,190 --> 00:00:30,060
+In this lab, we will be completing the to-dos in the WALS notebook.
+
+12
+00:00:30,060 --> 00:00:33,680
+Specifically, we will need to complete the decode example function,
+
+13
+00:00:33,680 --> 00:00:37,495
+where we decode the TF record protos and store the result in our dataset.
+
+14
+00:00:37,495 --> 00:00:38,970
+Also, we need to add
+
+15
+00:00:38,970 --> 00:00:42,470
+the WALS matrix factorization estimator within the batch predict function.
+
+16
+00:00:42,470 --> 00:00:44,930
+Making sure to include call to the input function,
+
+17
+00:00:44,930 --> 00:00:48,140
+serve an input function and our vocabularies.

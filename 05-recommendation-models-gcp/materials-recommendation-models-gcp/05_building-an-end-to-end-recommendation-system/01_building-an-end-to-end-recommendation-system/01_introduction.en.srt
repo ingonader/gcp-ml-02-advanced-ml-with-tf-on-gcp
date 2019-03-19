@@ -1,0 +1,339 @@
+1
+00:00:00,360 --> 00:00:03,570
+Hi, I'm Evan, a technical curriculum
+developer for Google Cloud.
+
+2
+00:00:03,570 --> 00:00:04,355
+In this module,
+
+3
+00:00:04,355 --> 00:00:08,740
+we're going to put together all the pieces
+to build a smart end-to-end work flow for
+
+4
+00:00:08,740 --> 00:00:12,500
+your newly built WALS recommendation
+model for news articles.
+
+5
+00:00:12,500 --> 00:00:16,890
+In this module, we'll review the overall
+architecture of a recommendation system.
+
+6
+00:00:16,890 --> 00:00:17,870
+Although the content for
+
+7
+00:00:17,870 --> 00:00:20,700
+your own recommendation system may be
+different than what you practice in these
+
+8
+00:00:20,700 --> 00:00:24,540
+labs, your architecture is likely
+to look something similar.
+
+9
+00:00:24,540 --> 00:00:27,610
+Speaking of architecture, the glue that
+we're going to use to bring all of our
+
+10
+00:00:27,610 --> 00:00:32,885
+refresh data and ML pieces together will
+be a Cloud Composer orchestration layer.
+
+11
+00:00:32,885 --> 00:00:37,160
+Cloud composer is a fully managed Apache
+Airflow instance, which is an open source
+
+12
+00:00:37,160 --> 00:00:40,830
+tool for orchestrating complex workflows
+and data processing pipelines.
+
+13
+00:00:41,840 --> 00:00:45,032
+Our first goal once we have
+the work flow environment set up,
+
+14
+00:00:45,032 --> 00:00:49,181
+is to address the challenge of getting
+new data into our ML training data cell.
+
+15
+00:00:49,181 --> 00:00:52,948
+You'll see how we'll approach this from
+a periodic data pull job for BigQuery
+
+16
+00:00:52,948 --> 00:00:57,116
+running at a set interval to more advanced
+event-triggered workflow, like updating
+
+17
+00:00:57,116 --> 00:01:01,930
+a BigQuery dataset whenever a new CSV
+file is loaded into Google Cloud Storage.
+
+18
+00:01:01,930 --> 00:01:05,320
+Once the data's refreshed,
+we need to then periodically retrain and
+
+19
+00:01:05,320 --> 00:01:09,320
+redeploy our recommendation model and
+serve it via an API endpoint.
+
+20
+00:01:09,320 --> 00:01:12,866
+The two primary pieces of GCP we'll
+use here will be Cloud ML Engine,
+
+21
+00:01:12,866 --> 00:01:16,841
+where we'll submit training jobs to,
+and App Engine where we'll deploy and
+
+22
+00:01:16,841 --> 00:01:20,360
+redeploy our recommendation models for
+serving.
+
+23
+00:01:20,360 --> 00:01:23,837
+Lastly, you'll practice this all
+yourself using the same news article
+
+24
+00:01:23,837 --> 00:01:27,087
+data source and WALS recommendation
+model you previously built and
+
+25
+00:01:27,087 --> 00:01:28,810
+TensorFlow as part of this course.
+
+26
+00:01:30,010 --> 00:01:33,320
+Recall that you previously built the ML
+model that recommends news articles
+
+27
+00:01:33,320 --> 00:01:35,270
+on the Kurier website.
+
+28
+00:01:35,270 --> 00:01:37,880
+You saw different methods for
+building recommendation models
+
+29
+00:01:37,880 --> 00:01:40,680
+using collaborative filtering and
+deep neural networks.
+
+30
+00:01:40,680 --> 00:01:42,770
+You then deployed those models for
+serving, and
+
+31
+00:01:42,770 --> 00:01:46,000
+hopefully were pretty impressed with the
+recommendations the models predicted for
+
+32
+00:01:46,000 --> 00:01:48,130
+news articles for your users.
+
+33
+00:01:48,130 --> 00:01:49,760
+But here's the challenge.
+
+34
+00:01:49,760 --> 00:01:52,350
+What about when new news articles come in?
+
+35
+00:01:53,545 --> 00:01:56,980
+Our ML model needs to keep up to
+date with fresh recommendations.
+
+36
+00:01:56,980 --> 00:02:00,230
+Imagine if YouTube didn't show you
+the latest videos from a creator that you
+
+37
+00:02:00,230 --> 00:02:03,530
+really liked or
+similar content that was just released?
+
+38
+00:02:03,530 --> 00:02:06,590
+Your ML model might have been great
+when it was first deployed, but
+
+39
+00:02:06,590 --> 00:02:07,934
+now your recommendations are stale.
+
+40
+00:02:07,934 --> 00:02:11,810
+And you noticed few users coming
+back to your site again and again.
+
+41
+00:02:11,810 --> 00:02:15,150
+So let's address the problem
+of fresh recommendations.
+
+42
+00:02:15,150 --> 00:02:20,080
+We need to periodically refresh our data,
+retrain our model, and then redeploy it.
+
+43
+00:02:20,080 --> 00:02:23,220
+And we need a smart way
+to do this automatically.
+
+44
+00:02:23,220 --> 00:02:25,200
+Here's an added challenge.
+
+45
+00:02:25,200 --> 00:02:27,700
+How much should you trust
+the pipeline of your upstream data?
+
+46
+00:02:27,700 --> 00:02:30,770
+In this case, it's new news articles.
+
+47
+00:02:30,770 --> 00:02:33,610
+Say on Monday,
+it provides us with 10,000 articles or
+
+48
+00:02:33,610 --> 00:02:36,410
+user behavior interactions
+through Google Analytics.
+
+49
+00:02:36,410 --> 00:02:41,380
+But Tuesday that same upstream data source
+gives a zero when we were expecting
+
+50
+00:02:41,380 --> 00:02:42,150
+many more.
+
+51
+00:02:42,150 --> 00:02:46,420
+Now that we have a living and breathing
+recommendation model that's periodically
+
+52
+00:02:46,420 --> 00:02:48,923
+retrained, we need to
+protect it from bad data.
+
+53
+00:02:48,923 --> 00:02:52,797
+We'll look at a few cool ways that you
+can arm your workflows with health checks
+
+54
+00:02:52,797 --> 00:02:53,450
+a bit later.
+
+55
+00:02:54,940 --> 00:02:57,750
+At a high level, this is the architecture
+that we're going to build for
+
+56
+00:02:57,750 --> 00:02:59,720
+an end-to-end recommendation system.
+
+57
+00:02:59,720 --> 00:03:02,080
+The pieces should all
+look pretty familiar.
+
+58
+00:03:02,080 --> 00:03:06,860
+Data comes in from Google Analytics into
+BigQuery, which is exported to GCS for
+
+59
+00:03:06,860 --> 00:03:08,700
+training as a CSV.
+
+60
+00:03:08,700 --> 00:03:09,680
+Our TensorFlow code for
+
+61
+00:03:09,680 --> 00:03:14,580
+the model is run on Cloud ML Engine,
+which is deployed to App Engine as an API.
+
+62
+00:03:14,580 --> 00:03:18,466
+As you might have guessed, the glue that
+holds this entire workflow together is
+
+63
+00:03:18,466 --> 00:03:21,018
+Cloud Composer as an overall
+orchestration layer.
+
+64
+00:03:21,018 --> 00:03:25,832
+And we'll spend lots of time discussing
+the inner workings of Cloud Composer and
+
+65
+00:03:25,832 --> 00:03:30,470
+how you can schedule, call and
+send tasks to other GCP services.
+
+66
+00:03:30,470 --> 00:03:33,983
+The end result for our particular use
+case, which is serving up relevant news
+
+67
+00:03:33,983 --> 00:03:37,640
+articles for visitors visiting our
+website, will look something like this.
+
+68
+00:03:37,640 --> 00:03:42,341
+We can make a simple API request to App
+Engine for a particular user and specify
+
+69
+00:03:42,341 --> 00:03:47,204
+how many articles we want to recommend,
+and end up giving those articles back.
+
+70
+00:03:47,204 --> 00:03:50,642
+Now that you've seen the end state,
+next we'll walk through each component of
+
+71
+00:03:50,642 --> 00:03:54,250
+the architecture in greater detail, so
+you know the basics before your first lab.

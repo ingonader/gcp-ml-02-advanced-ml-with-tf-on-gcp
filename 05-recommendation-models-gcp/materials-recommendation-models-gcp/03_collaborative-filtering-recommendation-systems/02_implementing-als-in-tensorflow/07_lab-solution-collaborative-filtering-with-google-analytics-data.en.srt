@@ -1,0 +1,3407 @@
+1
+00:00:00,000 --> 00:00:06,780
+All right. We're going to look at the WALSMatrixFactorization notebook.
+
+2
+00:00:06,780 --> 00:00:10,530
+We're going to go through collaborative filtering using Google Analytics Data.
+
+3
+00:00:10,530 --> 00:00:13,360
+We're going to see how we can do this to work.
+
+4
+00:00:14,060 --> 00:00:17,129
+First what we're going to do is we're going to import
+
+5
+00:00:17,129 --> 00:00:21,210
+our OS library here and we're going to set our project,
+
+6
+00:00:21,210 --> 00:00:23,895
+our bucket, and our region into our environment variables.
+
+7
+00:00:23,895 --> 00:00:28,125
+Replace these with whatever your projectID is and your bucket name.
+
+8
+00:00:28,125 --> 00:00:31,275
+We're going to put these in our environment variables right here.
+
+9
+00:00:31,275 --> 00:00:33,360
+We're using TensorFlow version 1.8,
+
+10
+00:00:33,360 --> 00:00:37,035
+in this lab and then we're going to set our configs,
+
+11
+00:00:37,035 --> 00:00:38,955
+for our project and our compute region,
+
+12
+00:00:38,955 --> 00:00:42,030
+using those environment variables by calling bash.
+
+13
+00:00:42,030 --> 00:00:44,685
+From there, we're going to import TensorFlow,
+
+14
+00:00:44,685 --> 00:00:46,530
+because we'll be using that for this lab.
+
+15
+00:00:46,530 --> 00:00:48,350
+I'm going to print the TF version,
+
+16
+00:00:48,350 --> 00:00:52,520
+just to make sure that we're using the right one, 1.8. All right.
+
+17
+00:00:52,520 --> 00:00:54,610
+Now, we're going to create our raw dataset.
+
+18
+00:00:54,610 --> 00:00:56,795
+For collaborative filtering, we don't need to know
+
+19
+00:00:56,795 --> 00:00:59,795
+anything about either the users or the content.
+
+20
+00:00:59,795 --> 00:01:03,110
+Essentially, all we need to know is the userID, the itemID,
+
+21
+00:01:03,110 --> 00:01:06,220
+and the rating that the particular user gave to a particular item.
+
+22
+00:01:06,220 --> 00:01:09,495
+This is what makes the user item interaction matrix.
+
+23
+00:01:09,495 --> 00:01:12,400
+In this case, we are working with newspaper articles.
+
+24
+00:01:12,400 --> 00:01:15,050
+The company doesn't ask our users to write the articles,
+
+25
+00:01:15,050 --> 00:01:18,470
+however we can use the time spent on the page as a proxy for rating,
+
+26
+00:01:18,470 --> 00:01:20,465
+which is going to be their session duration.
+
+27
+00:01:20,465 --> 00:01:23,360
+Normally, we'd also add a time filter to this,
+
+28
+00:01:23,360 --> 00:01:25,850
+for instance like the last seven days,
+
+29
+00:01:25,850 --> 00:01:28,220
+but our dataset is itself limited to a few days,
+
+30
+00:01:28,220 --> 00:01:30,095
+so we don't have to worry about that too much.
+
+31
+00:01:30,095 --> 00:01:33,080
+All right. First, what we're going to do is,
+
+32
+00:01:33,080 --> 00:01:37,500
+we're going to import the BigQuery library from datalab,
+
+33
+00:01:37,500 --> 00:01:39,645
+then we're going to write our query.
+
+34
+00:01:39,645 --> 00:01:43,170
+In our query, I'm using standard SQL and we're going to create
+
+35
+00:01:43,170 --> 00:01:47,030
+a CTE table here with this width, visitor page content,
+
+36
+00:01:47,030 --> 00:01:53,175
+and we're going to select from the table right here, GA session sample,
+
+37
+00:01:53,175 --> 00:01:58,550
+the fullVisitorID and then we're also going to select the max from this index,
+
+38
+00:01:58,550 --> 00:02:01,820
+from this nested table on the custom dimensions,
+
+39
+00:02:01,820 --> 00:02:04,265
+which these are going to become our contentIDs,
+
+40
+00:02:04,265 --> 00:02:05,930
+so the latest contentID,
+
+41
+00:02:05,930 --> 00:02:10,970
+then I'll hit the lead of the hit's time around the partition over,
+
+42
+00:02:10,970 --> 00:02:15,535
+fullVisitorID and order it by the hit's time, in ascending order.
+
+43
+00:02:15,535 --> 00:02:18,320
+I want to subtract out the hit's time and this will be our session duration.
+
+44
+00:02:18,320 --> 00:02:24,025
+Basically, each session that a user interacting with that content.
+
+45
+00:02:24,025 --> 00:02:26,170
+What we're going to do is we're going to make sure that we're
+
+46
+00:02:26,170 --> 00:02:27,805
+only including hits on pages.
+
+47
+00:02:27,805 --> 00:02:29,440
+So, that's how we're going to have this, where clause here,
+
+48
+00:02:29,440 --> 00:02:33,685
+hits.type equals page and then we're going to group by the fullVisitorID,
+
+49
+00:02:33,685 --> 00:02:36,640
+a latest contentID, and the hit's time.
+
+50
+00:02:36,640 --> 00:02:39,355
+From there, using the CTE table,
+
+51
+00:02:39,355 --> 00:02:42,755
+we're going to select the fullVisitorID as the visitorId,
+
+52
+00:02:42,755 --> 00:02:45,095
+the latestcontentId as our contentId,
+
+53
+00:02:45,095 --> 00:02:48,635
+and SUM with other session_durations as our session_duration,
+
+54
+00:02:48,635 --> 00:02:51,695
+for that particular visitorId and contentId.
+
+55
+00:02:51,695 --> 00:02:56,430
+Okay? We're going to filter out things where the latestcontentId is not null,
+
+56
+00:02:56,430 --> 00:02:59,530
+because we don't really care about content that doesn't
+
+57
+00:02:59,530 --> 00:03:03,220
+exist and we're going to group by the fullVisitorID and the latestcontentId,
+
+58
+00:03:03,220 --> 00:03:05,755
+and we're going to make sure that session_durations are greater than zero,
+
+59
+00:03:05,755 --> 00:03:08,355
+because anything is zero or less than,
+
+60
+00:03:08,355 --> 00:03:11,240
+is either bad data or not useful for us.
+
+61
+00:03:11,240 --> 00:03:14,930
+I want to order by the latestcontentId, so, that's repeatable.
+
+62
+00:03:14,930 --> 00:03:18,530
+All right. Now that we've had that SQL query written,
+
+63
+00:03:18,530 --> 00:03:20,245
+we're going to write that into a dataframe.
+
+64
+00:03:20,245 --> 00:03:22,445
+We're going to do this using the BigQuery library,
+
+65
+00:03:22,445 --> 00:03:24,845
+where we call it bg.query, the query pass,
+
+66
+00:03:24,845 --> 00:03:27,545
+which is our SQL query we created up here called SQL.
+
+67
+00:03:27,545 --> 00:03:30,305
+I'm going to execute it, I'm going to take that result,
+
+68
+00:03:30,305 --> 00:03:31,730
+and send it to a dataframe.
+
+69
+00:03:31,730 --> 00:03:34,100
+From there, we're going to print out the head of the dataframe,
+
+70
+00:03:34,100 --> 00:03:35,855
+which will show the first five rows.
+
+71
+00:03:35,855 --> 00:03:39,545
+As you can see in our little table here, for this row,
+
+72
+00:03:39,545 --> 00:03:40,820
+we have this visitorId,
+
+73
+00:03:40,820 --> 00:03:43,775
+which is a long integer, a contentId here,
+
+74
+00:03:43,775 --> 00:03:45,385
+the thing that they viewed,
+
+75
+00:03:45,385 --> 00:03:46,725
+it's another long integer,
+
+76
+00:03:46,725 --> 00:03:48,680
+and the session_duration right here,
+
+77
+00:03:48,680 --> 00:03:53,780
+which is going to be how long that that visitor interacted with this piece of content.
+
+78
+00:03:53,780 --> 00:03:55,660
+Let's see some of the stats.
+
+79
+00:03:55,660 --> 00:03:57,000
+To do the stats,
+
+80
+00:03:57,000 --> 00:03:58,780
+we're going to do a df.describe,
+
+81
+00:03:58,780 --> 00:04:02,720
+so this will describe the statistics of the dataframe and I'm going to print it out.
+
+82
+00:04:02,720 --> 00:04:07,930
+As you can see here, we have our accounts and our session durations.
+
+83
+00:04:07,930 --> 00:04:15,785
+We have on average it looks like session durations of 1.2
+
+84
+00:04:15,785 --> 00:04:23,910
+times 10_5 seconds and there is 2.7 times 10_5 number of interactions.
+
+85
+00:04:23,910 --> 00:04:25,710
+Since standard deviation here is pretty high,
+
+86
+00:04:25,710 --> 00:04:28,470
+so that way you can see there's lot of variants amongst users.
+
+87
+00:04:28,470 --> 00:04:30,950
+The minimum looks like it's one second.
+
+88
+00:04:30,950 --> 00:04:32,330
+Why would it be one second?
+
+89
+00:04:32,330 --> 00:04:34,930
+Now remember we filtered out anything that was zero or less,
+
+90
+00:04:34,930 --> 00:04:37,205
+so therefore we shouldn't have anything less than one.
+
+91
+00:04:37,205 --> 00:04:39,650
+The maximum here, that's our longtime.
+
+92
+00:04:39,650 --> 00:04:41,615
+Someone's really reading a lot of content,
+
+93
+00:04:41,615 --> 00:04:45,875
+it looks like 7.6 million seconds.
+
+94
+00:04:45,875 --> 00:04:50,035
+All right. But let's try to get that in a more reasonable ranges.
+
+95
+00:04:50,035 --> 00:04:53,180
+To do that, we're going to create a rating and the rating is going to be
+
+96
+00:04:53,180 --> 00:04:56,005
+the session_duration scaled to be in the range of zero to one,
+
+97
+00:04:56,005 --> 00:04:57,760
+this will help during training.
+
+98
+00:04:57,760 --> 00:05:01,810
+To do this, we're first going to take our session_duration and we're going to
+
+99
+00:05:01,810 --> 00:05:05,685
+subtract out the stats of the median, for that session_duration.
+
+100
+00:05:05,685 --> 00:05:07,985
+I'm going to divide by the median to denormalize it.
+
+101
+00:05:07,985 --> 00:05:11,225
+From there, we're going to add one and multiply it by 0.3,
+
+102
+00:05:11,225 --> 00:05:13,565
+to get our new rating.
+
+103
+00:05:13,565 --> 00:05:17,455
+From there, we're going to say if any ratings are greater than one,
+
+104
+00:05:17,455 --> 00:05:19,040
+we're going to camp at one.
+
+105
+00:05:19,040 --> 00:05:21,210
+Therefore nothing can be higher than one.
+
+106
+00:05:21,210 --> 00:05:23,990
+Now if we hit df.describe, you'll see,
+
+107
+00:05:23,990 --> 00:05:26,425
+we still have the same number of counts,
+
+108
+00:05:26,425 --> 00:05:30,805
+however, our ratings all had the correct ranges.
+
+109
+00:05:30,805 --> 00:05:35,045
+To the minimum here is almost zero and the maximum here is one,
+
+110
+00:05:35,045 --> 00:05:38,450
+where we've kept things off that nothing can ever go above that.
+
+111
+00:05:38,580 --> 00:05:41,200
+Now we don't need session_duration anymore.
+
+112
+00:05:41,200 --> 00:05:42,880
+So, we've created our own rating column,
+
+113
+00:05:42,880 --> 00:05:44,755
+so we can delete it from the dataframe.
+
+114
+00:05:44,755 --> 00:05:48,880
+Next, we'll call bash and we'll make sure that anything in
+
+115
+00:05:48,880 --> 00:05:52,960
+our folder called data is deleted and they'll make a new directory called data,
+
+116
+00:05:52,960 --> 00:05:56,560
+that will put all these pieces of data in.
+
+117
+00:05:56,560 --> 00:06:01,135
+To do that, we're going to call the method to the dataframe to CSV,
+
+118
+00:06:01,135 --> 00:06:02,370
+pass in our CSV,
+
+119
+00:06:02,370 --> 00:06:04,870
+named create collab raw,
+
+120
+00:06:04,870 --> 00:06:07,595
+so basically our collaborative raw data,
+
+121
+00:06:07,595 --> 00:06:10,235
+because there's no index and no header.
+
+122
+00:06:10,235 --> 00:06:13,220
+Then we're going to call bash again and we're
+
+123
+00:06:13,220 --> 00:06:16,015
+going to write it out and as you can see there it is.
+
+124
+00:06:16,015 --> 00:06:18,060
+As you can see here's our visitorIds,
+
+125
+00:06:18,060 --> 00:06:23,540
+our contentIds and our ratings that we just created, all going from zero to one.
+
+126
+00:06:23,540 --> 00:06:28,075
+Great. So, now we need to do is we need to create our dataset for WALS,
+
+127
+00:06:28,075 --> 00:06:31,080
+the raw dataset above won't work for WALS.
+
+128
+00:06:31,080 --> 00:06:33,360
+First, the userId and itemId,
+
+129
+00:06:33,360 --> 00:06:35,380
+have to be zero, one, two.
+
+130
+00:06:35,380 --> 00:06:39,005
+So, we need to create a mapping from visitorId and the raw data to userId,
+
+131
+00:06:39,005 --> 00:06:41,870
+and contentId and the raw data to itemId.
+
+132
+00:06:41,870 --> 00:06:44,495
+Why do we do this? Well, remember this is
+
+133
+00:06:44,495 --> 00:06:46,715
+a user item interaction matrix
+
+134
+00:06:46,715 --> 00:06:51,005
+and we need to have the indices of the matrix to use to be able to link up later on.
+
+135
+00:06:51,005 --> 00:06:53,840
+We also need to save the above mapping to
+
+136
+00:06:53,840 --> 00:06:56,590
+a file because at prediction time we need to know how to map,
+
+137
+00:06:56,590 --> 00:07:01,805
+the contentId in the table above to the itemId and same goes for the users.
+
+138
+00:07:01,805 --> 00:07:04,670
+We don't know who user zero is going to be,
+
+139
+00:07:04,670 --> 00:07:07,715
+but all itemId number 462,
+
+140
+00:07:07,715 --> 00:07:11,960
+but if we have the reverse mapping we can also go backwards and say,
+
+141
+00:07:11,960 --> 00:07:16,805
+is actually user really long integer that goes to contentId also long integer.
+
+142
+00:07:16,805 --> 00:07:19,220
+But that fits our business case.
+
+143
+00:07:19,220 --> 00:07:23,760
+Lastly, we'll need to have two files; a rows dataset,
+
+144
+00:07:23,760 --> 00:07:26,300
+where all the items from a particular user are listed and a
+
+145
+00:07:26,300 --> 00:07:29,785
+column dataset where the users for a particular item are listed.
+
+146
+00:07:29,785 --> 00:07:32,640
+Remember, we're using Alternating Least Squares here.
+
+147
+00:07:32,640 --> 00:07:35,250
+So, it will back and forth between rows and columns,
+
+148
+00:07:35,250 --> 00:07:39,770
+fixing one while solving for the other and vice versa.
+
+149
+00:07:39,770 --> 00:07:42,315
+All right. So, to create this mapping,
+
+150
+00:07:42,315 --> 00:07:44,550
+I'm going to import pandas and numpy.
+
+151
+00:07:44,550 --> 00:07:48,750
+I'm going to create a mapping function here where it takes in values and the filename.
+
+152
+00:07:48,750 --> 00:07:56,025
+I'm going to open the file name and I'm going to take for each value and position.
+
+153
+00:07:56,025 --> 00:08:00,365
+I'm going to loop through and enumerate all the unique values from that file.
+
+154
+00:08:00,365 --> 00:08:04,410
+For the value and position in each one of those,
+
+155
+00:08:04,410 --> 00:08:08,630
+I'm going to write out the value and location for that, the index.
+
+156
+00:08:08,630 --> 00:08:11,445
+I'm going to return the value ID out of this function.
+
+157
+00:08:11,445 --> 00:08:13,350
+So, let's see how that works.
+
+158
+00:08:13,350 --> 00:08:15,090
+So, I'm going to take my data frame.
+
+159
+00:08:15,090 --> 00:08:19,605
+I'm going to read in the file we just created above with our raw data.
+
+160
+00:08:19,605 --> 00:08:23,060
+No header, I'm going to give these names to our columns visitor ID,
+
+161
+00:08:23,060 --> 00:08:24,900
+content ID, and rating.
+
+162
+00:08:24,900 --> 00:08:26,595
+We're going to give the data types,
+
+163
+00:08:26,595 --> 00:08:28,050
+we're going to say this is the string,
+
+164
+00:08:28,050 --> 00:08:32,555
+kind of is a string and radius is going to be a float between zero and one.
+
+165
+00:08:32,555 --> 00:08:35,370
+Next what we're going to do, is we're going to say two CSV.
+
+166
+00:08:35,370 --> 00:08:37,085
+Now we're going to be writing it back out.
+
+167
+00:08:37,085 --> 00:08:39,510
+Alright. So, we're going to take our data frame that we just created,
+
+168
+00:08:39,510 --> 00:08:41,875
+I'm going to call it the two CSV method on it and write
+
+169
+00:08:41,875 --> 00:08:45,480
+back out to make sure that it has the correct things.
+
+170
+00:08:45,480 --> 00:08:47,490
+Next, we're going to take
+
+171
+00:08:47,490 --> 00:08:50,640
+the user mapping and we're going to create a mapping from that using our function
+
+172
+00:08:50,640 --> 00:08:56,205
+above right here and we're going to map visitor ID to our users.
+
+173
+00:08:56,205 --> 00:09:00,100
+Likewise, we're going to create an item mapping and we're going to take our data frame
+
+174
+00:09:00,100 --> 00:09:04,405
+with content ID and then create our items.
+
+175
+00:09:04,405 --> 00:09:06,875
+All right, let's see what that looks like.
+
+176
+00:09:06,875 --> 00:09:08,675
+So, we're going to take the head,
+
+177
+00:09:08,675 --> 00:09:12,735
+the top three rows from each of our data sets that we created.
+
+178
+00:09:12,735 --> 00:09:17,070
+So, here's our raw data set as you can see here is our long integers for each visitor ID,
+
+179
+00:09:17,070 --> 00:09:21,930
+a long integer for each content ID and our ratings that go from zero to one.
+
+180
+00:09:21,930 --> 00:09:25,430
+If we look at our items file,
+
+181
+00:09:25,430 --> 00:09:32,355
+you can see here is our content ID and the associated item ID that we created from that.
+
+182
+00:09:32,355 --> 00:09:34,145
+So, Content ID, item ID,
+
+183
+00:09:34,145 --> 00:09:35,555
+Content ID, item ID,
+
+184
+00:09:35,555 --> 00:09:37,175
+Content ID, item ID.
+
+185
+00:09:37,175 --> 00:09:41,450
+This is our mapping from Content ID to item ID.
+
+186
+00:09:41,450 --> 00:09:43,485
+Let's look at our user's file.
+
+187
+00:09:43,485 --> 00:09:45,075
+You can see our user,
+
+188
+00:09:45,075 --> 00:09:49,255
+our visitor ID right here and then this gets mapped to a user ID.
+
+189
+00:09:49,255 --> 00:09:51,095
+Visitor ID, user ID.
+
+190
+00:09:51,095 --> 00:09:52,815
+Visitor ID, user ID.
+
+191
+00:09:52,815 --> 00:09:56,280
+So, this is our mapping from visitor ID the user ID.
+
+192
+00:09:56,280 --> 00:09:59,800
+Great. So, now what we're going to do is we're going to get a data frame where we're
+
+193
+00:09:59,800 --> 00:10:03,150
+going to take this map and we're going to do the conversion.
+
+194
+00:10:03,150 --> 00:10:05,970
+So, we'll take visitor ID then we map it using
+
+195
+00:10:05,970 --> 00:10:09,590
+the mapping we just created and that will become our user ID in our dataframe.
+
+196
+00:10:09,590 --> 00:10:12,995
+Likewise we'll do the same with content ID where we map using our item map we
+
+197
+00:10:12,995 --> 00:10:16,710
+created to get our dataframe column of item ID.
+
+198
+00:10:16,710 --> 00:10:20,345
+We're going to create a mapped dataframe now that's going to be
+
+199
+00:10:20,345 --> 00:10:24,090
+the concatentation of these dataframes using user ID,
+
+200
+00:10:24,090 --> 00:10:26,060
+Item ID and a rating.
+
+201
+00:10:26,060 --> 00:10:29,855
+We're now going to write this out to a file using the method
+
+202
+00:10:29,855 --> 00:10:34,605
+two CSV of our mapped dataframe to the colab mapped dot CSV.
+
+203
+00:10:34,605 --> 00:10:36,510
+Let's look at what some of that looks like.
+
+204
+00:10:36,510 --> 00:10:39,395
+Here we go. As you can see in this table,
+
+205
+00:10:39,395 --> 00:10:44,195
+we have our user ID's or item ID's and our ratings.
+
+206
+00:10:44,195 --> 00:10:47,025
+You can see these look like matrices.
+
+207
+00:10:47,025 --> 00:10:51,520
+They start from zero and they enumerate out to N minus one rows and start from
+
+208
+00:10:51,520 --> 00:10:52,950
+zero and enumerate out to N
+
+209
+00:10:52,950 --> 00:10:57,050
+minus one columns and all their ratings are nicely between zero and one.
+
+210
+00:10:57,050 --> 00:10:59,790
+All right. Let's see what we'll do next.
+
+211
+00:10:59,790 --> 00:11:02,800
+Creating rows and columns datasets. All right.
+
+212
+00:11:02,800 --> 00:11:06,335
+So, now we have our user mappings and our item mappings.
+
+213
+00:11:06,335 --> 00:11:10,400
+Let see how we can create our actual data to go to the estimator.
+
+214
+00:11:10,400 --> 00:11:12,370
+So, we're going to import pandas and numpy
+
+215
+00:11:12,370 --> 00:11:15,420
+again and we're going to read in our mapped dataframe.
+
+216
+00:11:15,420 --> 00:11:17,615
+I'm going to do that from our colab mapped
+
+217
+00:11:17,615 --> 00:11:20,145
+dot CSV file and these will be the names of our columns.
+
+218
+00:11:20,145 --> 00:11:22,275
+User ID, Item ID, and rating.
+
+219
+00:11:22,275 --> 00:11:26,750
+As you can see above, this is what matches, so great.
+
+220
+00:11:26,750 --> 00:11:30,305
+We need to figure out how many items and users we're going to have.
+
+221
+00:11:30,305 --> 00:11:33,530
+So, to do that since everything's enumerated nicely,
+
+222
+00:11:33,530 --> 00:11:34,815
+we can just do a max.
+
+223
+00:11:34,815 --> 00:11:37,595
+So, to do that we're going to take their map dataframe item id,
+
+224
+00:11:37,595 --> 00:11:41,435
+take the numpy max of that and just add one because remember,
+
+225
+00:11:41,435 --> 00:11:44,195
+it's N minus one same as their indices.
+
+226
+00:11:44,195 --> 00:11:48,140
+Same goes for users. We'll take the maps dataframes user ID column,
+
+227
+00:11:48,140 --> 00:11:50,040
+find the numpy max of that,
+
+228
+00:11:50,040 --> 00:11:52,505
+add one and that's the number of users.
+
+229
+00:11:52,505 --> 00:11:56,710
+What we'll do then is we're going to round the map dataframe rating to
+
+230
+00:11:56,710 --> 00:12:00,790
+values of two significant figures and we'll set that back into our rating.
+
+231
+00:12:00,790 --> 00:12:03,405
+So, that way we don't have long superlinear floats.
+
+232
+00:12:03,405 --> 00:12:10,770
+Next we'll print the items and users and interactions and we'll see what that number is.
+
+233
+00:12:10,770 --> 00:12:15,640
+So, we had in this data set 5,668 items,
+
+234
+00:12:15,640 --> 00:12:22,744
+82,802 users, and between all of those there was 278,913 interactions.
+
+235
+00:12:22,744 --> 00:12:24,385
+Wow! That's a lot.
+
+236
+00:12:24,385 --> 00:12:27,895
+But still if you use the Cartesian product between items and users,
+
+237
+00:12:27,895 --> 00:12:29,915
+this is a really small percentage of that.
+
+238
+00:12:29,915 --> 00:12:32,910
+So, as you can see, our user item interaction data is very
+
+239
+00:12:32,910 --> 00:12:37,410
+sparse like most recommendation collaborative filtering systems have.
+
+240
+00:12:37,410 --> 00:12:39,570
+So, now we're going to group by items.
+
+241
+00:12:39,570 --> 00:12:41,190
+To do that, we're going to take our map dataframe we're
+
+242
+00:12:41,190 --> 00:12:43,385
+going to group by the item ID field.
+
+243
+00:12:43,385 --> 00:12:47,380
+Okay. We are then going to create a loop here so we can just see what's inside
+
+244
+00:12:47,380 --> 00:12:52,095
+and for each item and group inside a group by items, we're going to print it out.
+
+245
+00:12:52,095 --> 00:12:54,470
+We're going to do that five times.
+
+246
+00:12:54,870 --> 00:12:58,310
+So, here we go. We have the very first one,
+
+247
+00:12:58,310 --> 00:12:59,990
+here is our item ID,
+
+248
+00:12:59,990 --> 00:13:07,545
+an item ID has zero has this user ID and it has this rating.
+
+249
+00:13:07,545 --> 00:13:13,940
+Item ID one has user ID one going with it and it has one rating.
+
+250
+00:13:13,940 --> 00:13:16,400
+Now, here's where it gets a little different.
+
+251
+00:13:16,400 --> 00:13:19,835
+Item ID two has actually two users that have interacted with it,
+
+252
+00:13:19,835 --> 00:13:24,620
+user two and user three and they each had their corresponding ratings right here.
+
+253
+00:13:24,620 --> 00:13:31,040
+So, 0.17 goes with this user and 0.25 goes with this user. All right.
+
+254
+00:13:31,040 --> 00:13:36,420
+Moving on we have item three with user four with a rating of this,
+
+255
+00:13:36,420 --> 00:13:39,950
+0.05, and so on. All right.
+
+256
+00:13:39,950 --> 00:13:41,735
+So, now that we have our maps,
+
+257
+00:13:41,735 --> 00:13:44,235
+we need to put this into TF records remember.
+
+258
+00:13:44,235 --> 00:13:46,080
+So, let's see how this goes.
+
+259
+00:13:46,080 --> 00:13:48,660
+So, we're going to import TensorFlow in case we haven't already done it.
+
+260
+00:13:48,660 --> 00:13:51,150
+We'll do our groupby items were we're taking our map
+
+261
+00:13:51,150 --> 00:13:54,500
+by dataframe and we're going to groupby item ID.
+
+262
+00:13:54,500 --> 00:13:57,800
+Okay. We're then going to call TF record writer
+
+263
+00:13:57,800 --> 00:14:01,410
+for Python IOstream and it's going to be users for item.
+
+264
+00:14:01,410 --> 00:14:02,890
+So, it's going to be the singular item,
+
+265
+00:14:02,890 --> 00:14:04,960
+unique item and all the users that went with
+
+266
+00:14:04,960 --> 00:14:08,375
+that item and all the corresponding ratings that went with those users.
+
+267
+00:14:08,375 --> 00:14:11,810
+So, for each item and grouped entity in there,
+
+268
+00:14:11,810 --> 00:14:14,965
+we're going to loop over and we're going to create an example.
+
+269
+00:14:14,965 --> 00:14:17,300
+So, it will be TF.Train.example.
+
+270
+00:14:17,300 --> 00:14:18,615
+I'm going to set our features,
+
+271
+00:14:18,615 --> 00:14:22,250
+our features are going to be these train features to be a feature dictionary.
+
+272
+00:14:22,250 --> 00:14:24,055
+Now, if you remember from before,
+
+273
+00:14:24,055 --> 00:14:25,280
+we're going to have three things here.
+
+274
+00:14:25,280 --> 00:14:29,225
+We have the key, the key here is going to be the item ID here.
+
+275
+00:14:29,225 --> 00:14:35,460
+Item, the indices here are going to be our user IDs that were groupby.
+
+276
+00:14:35,460 --> 00:14:39,960
+The values here will be the corresponding ratings that went with those users.
+
+277
+00:14:39,960 --> 00:14:44,675
+From there we're going to serialize that all to a string and write it out to the file.
+
+278
+00:14:44,675 --> 00:14:47,795
+Likewise we'll do the same with users.
+
+279
+00:14:47,795 --> 00:14:51,995
+We're going to take our math by dataframe and group by this time user ID.
+
+280
+00:14:51,995 --> 00:14:54,630
+From here we're once again get a TF record writer but
+
+281
+00:14:54,630 --> 00:14:56,955
+now we're going to be writing out to the file items for user.
+
+282
+00:14:56,955 --> 00:14:59,290
+So, this case we have one unique user with
+
+283
+00:14:59,290 --> 00:15:03,320
+multiple items and then the corresponding ratings that go along with those.
+
+284
+00:15:03,320 --> 00:15:07,475
+Just like before, except now we're going to be looping by item,
+
+285
+00:15:07,475 --> 00:15:11,845
+we're going to loop over item or user are going to be grouped by those.
+
+286
+00:15:11,845 --> 00:15:14,130
+We'll once again create an example and
+
+287
+00:15:14,130 --> 00:15:17,270
+this time we're going to have key will be our user ID,
+
+288
+00:15:17,270 --> 00:15:20,605
+the indices will be our grouped by item IDs and
+
+289
+00:15:20,605 --> 00:15:24,460
+our values will be our good by ratings that correspond with those item IDs.
+
+290
+00:15:24,460 --> 00:15:27,210
+Once again we're going to serialize those to string.
+
+291
+00:15:27,210 --> 00:15:29,250
+To make things a little simpler,
+
+292
+00:15:29,250 --> 00:15:30,825
+we're going to create a sample data set here.
+
+293
+00:15:30,825 --> 00:15:32,150
+We're going to do the same thing,
+
+294
+00:15:32,150 --> 00:15:34,515
+items for user that's going to be a subset.
+
+295
+00:15:34,515 --> 00:15:37,635
+Okay. Since we have a lot of users 82,000 remember.
+
+296
+00:15:37,635 --> 00:15:41,800
+So, we're going do this and now it's going to loop over the top 20.
+
+297
+00:15:42,140 --> 00:15:45,515
+Now, let's see what our data looks like.
+
+298
+00:15:45,515 --> 00:15:47,920
+So, you can see we have lots of files we've created now.
+
+299
+00:15:47,920 --> 00:15:49,435
+We have our raw file here,
+
+300
+00:15:49,435 --> 00:15:52,155
+our users and items mappings,
+
+301
+00:15:52,155 --> 00:15:56,355
+our mapped raw data and then our users for item,
+
+302
+00:15:56,355 --> 00:16:00,920
+our items for user and our items for users subset TF records.
+
+303
+00:16:00,920 --> 00:16:03,605
+Great. So, as you can see here to summarize,
+
+304
+00:16:03,605 --> 00:16:07,085
+we've created the following data files from collabraw.CSV.
+
+305
+00:16:07,085 --> 00:16:11,030
+We have collab_mapped.CSV which essentially is the same data as in collab raw
+
+306
+00:16:11,030 --> 00:16:14,935
+except that visitor ID and content ID which are business specific
+
+307
+00:16:14,935 --> 00:16:19,210
+have been mapped now to user ID and item ID which are enumerated in
+
+308
+00:16:19,210 --> 00:16:24,285
+zero to the number of mappings that are stored in items.CSV and users.CSV.
+
+309
+00:16:24,285 --> 00:16:26,515
+So, we can use these during inference.
+
+310
+00:16:26,515 --> 00:16:32,205
+Users for item contains all the user ratings for each item into TF record example format,
+
+311
+00:16:32,205 --> 00:16:34,605
+and items for user contains all the item ratings for
+
+312
+00:16:34,605 --> 00:16:37,495
+each user in TF example format as well.
+
+313
+00:16:37,495 --> 00:16:39,950
+Now that we have our data in the correct format,
+
+314
+00:16:39,950 --> 00:16:41,635
+let's train with walls.
+
+315
+00:16:41,635 --> 00:16:45,410
+Once you have a data set do matrix factorization with walls using
+
+316
+00:16:45,410 --> 00:16:48,885
+the matrix factorization estimator in the contrib directory.
+
+317
+00:16:48,885 --> 00:16:51,820
+It's an estimator model so it should be relatively familiar.
+
+318
+00:16:51,820 --> 00:16:54,400
+As usual we write an input function to provide the data to
+
+319
+00:16:54,400 --> 00:16:57,675
+the model and then create the estimator to do train and evaluate.
+
+320
+00:16:57,675 --> 00:17:00,460
+Because it's contrib and hasn't moved over to TF estimator yet,
+
+321
+00:17:00,460 --> 00:17:03,580
+we use TF.contrib.learn.experiment to handle
+
+322
+00:17:03,580 --> 00:17:07,895
+the training loop and then we'll use learn runner to actually run the experiment.
+
+323
+00:17:07,895 --> 00:17:12,255
+So, first to do this we're going to import all our other libraries.
+
+324
+00:17:12,255 --> 00:17:14,800
+Here you can see we're importing our walls
+
+325
+00:17:14,800 --> 00:17:19,150
+matrix factorization from the contrib library under factorizations.
+
+326
+00:17:19,150 --> 00:17:22,330
+To do this, we're going to do our read data set.
+
+327
+00:17:22,330 --> 00:17:24,100
+We're going to pass in the mode, sources,
+
+328
+00:17:24,100 --> 00:17:28,855
+training or evaluation and then the arguments that are going to be passed.
+
+329
+00:17:28,855 --> 00:17:32,170
+So, here's our decode example function that takes
+
+330
+00:17:32,170 --> 00:17:35,695
+our example protocols from the TF records and our vocabulary science.
+
+331
+00:17:35,695 --> 00:17:37,645
+Here in the lab portion,
+
+332
+00:17:37,645 --> 00:17:39,310
+you had to fill this out.
+
+333
+00:17:39,310 --> 00:17:42,670
+Let's go over this to see if you did it correctly.
+
+334
+00:17:42,670 --> 00:17:45,100
+So, we're going to read on our features dictionary here,
+
+335
+00:17:45,100 --> 00:17:46,360
+coming from our protos.
+
+336
+00:17:46,360 --> 00:17:47,635
+So, we're going to have a key here,
+
+337
+00:17:47,635 --> 00:17:50,905
+which are going to be depending on our user ID or item ID,
+
+338
+00:17:50,905 --> 00:17:52,585
+depending on what TF record it's reading.
+
+339
+00:17:52,585 --> 00:17:54,790
+This will be our fixed length feature.
+
+340
+00:17:54,790 --> 00:17:57,670
+The indices here and the values will both be
+
+341
+00:17:57,670 --> 00:18:01,010
+variable length features and they'll both be the same length.
+
+342
+00:18:02,040 --> 00:18:04,735
+If key is our user ID,
+
+343
+00:18:04,735 --> 00:18:07,930
+the indices will be our item IDs and their corresponding ratings.
+
+344
+00:18:07,930 --> 00:18:11,680
+If key is the other way around it'll be the opposite.
+
+345
+00:18:11,680 --> 00:18:15,580
+Then what we're going to do is we're going to parsed our features using this dictionary
+
+346
+00:18:15,580 --> 00:18:19,000
+we created here from our protos and we'll get our parsed features.
+
+347
+00:18:19,000 --> 00:18:23,155
+From there, we're going to pull our values out by doing a TF dot sparse merge,
+
+348
+00:18:23,155 --> 00:18:25,150
+which will take our indices and
+
+349
+00:18:25,150 --> 00:18:29,095
+our values and using our vocab size it will create a SparseTensor.
+
+350
+00:18:29,095 --> 00:18:32,965
+Remember, to fix the batching re-indexing problem,
+
+351
+00:18:32,965 --> 00:18:35,050
+we're going to save a key to remap after batching.
+
+352
+00:18:35,050 --> 00:18:39,415
+So, we'll take our parsed features key and write that out to this tensor here.
+
+353
+00:18:39,415 --> 00:18:44,470
+Finally, we're going to create our decode and Sparse Tensor which will be first,
+
+354
+00:18:44,470 --> 00:18:48,310
+the indices part of our SparseTensor will be the concatenation of our values,
+
+355
+00:18:48,310 --> 00:18:51,415
+the indices, and then the key.
+
+356
+00:18:51,415 --> 00:18:54,130
+Because remember, this is how we're going to transfer our key through
+
+357
+00:18:54,130 --> 00:18:56,620
+the input function along the axis zero.
+
+358
+00:18:56,620 --> 00:19:00,355
+Our values will be the concatenation of the actual values we've read in,
+
+359
+00:19:00,355 --> 00:19:04,270
+and we're going to add in a dummy value which will be zero.
+
+360
+00:19:04,270 --> 00:19:08,245
+Lastly, our data shapes will be just the datasets we started with.
+
+361
+00:19:08,245 --> 00:19:11,290
+From there, we're going to return our decoded SparseTensor
+
+362
+00:19:11,290 --> 00:19:13,730
+onto the rest of the input function.
+
+363
+00:19:15,240 --> 00:19:19,585
+Now, what we're going to do next is remap the keys from the Sparse Tensor.
+
+364
+00:19:19,585 --> 00:19:21,880
+Now, remember the reason we're doing this is because
+
+365
+00:19:21,880 --> 00:19:26,754
+the input function during batching replace the actual key indices,
+
+366
+00:19:26,754 --> 00:19:31,675
+that are the first dimension of our indices of the SparseTensor with the batch indices,
+
+367
+00:19:31,675 --> 00:19:33,805
+which we don't want because during training,
+
+368
+00:19:33,805 --> 00:19:36,865
+you're not going to be able to sweep correctly and will not actually learn much.
+
+369
+00:19:36,865 --> 00:19:39,160
+Because the indices will keep getting repeated every batch,
+
+370
+00:19:39,160 --> 00:19:41,485
+zero, one, two, however much your batch size is.
+
+371
+00:19:41,485 --> 00:19:44,185
+So, let's see how remap keys works.
+
+372
+00:19:44,185 --> 00:19:45,880
+So, we've already covered this in depth,
+
+373
+00:19:45,880 --> 00:19:47,530
+but let's just go through this quickly.
+
+374
+00:19:47,530 --> 00:19:50,650
+So, first what we're going to do is we're going to take our SparseTensor that comes in.
+
+375
+00:19:50,650 --> 00:19:52,810
+Remember, this has already been batched,
+
+376
+00:19:52,810 --> 00:19:54,925
+so we have a batch of these coming in.
+
+377
+00:19:54,925 --> 00:19:57,640
+So, we're going to have current indices of our SparseTensor we need to fix.
+
+378
+00:19:57,640 --> 00:19:59,650
+We're going to write these out, the bad indices and
+
+379
+00:19:59,650 --> 00:20:03,640
+the bad values which will come from our indices and values members of our SparseTensor.
+
+380
+00:20:03,640 --> 00:20:06,460
+We're going to group by the batch indices and get the count for each.
+
+381
+00:20:06,460 --> 00:20:09,340
+So, for this, all we're doing is basically taking a segment sum.
+
+382
+00:20:09,340 --> 00:20:13,090
+Where our data is going to be ones or where our bad indices are,
+
+383
+00:20:13,090 --> 00:20:14,740
+and the segment ID's of
+
+384
+00:20:14,740 --> 00:20:18,730
+our bad indices and then we'll do minus one. That will be the size.
+
+385
+00:20:18,730 --> 00:20:20,874
+The length of batch indices,
+
+386
+00:20:20,874 --> 00:20:25,795
+it'll basically be batch size unless it was a partially full batch, what should be this?
+
+387
+00:20:25,795 --> 00:20:28,270
+Predict the shape of our size and we'll take
+
+388
+00:20:28,270 --> 00:20:31,645
+just the first dimension of that and that'll be our length.
+
+389
+00:20:31,645 --> 00:20:35,755
+Next, we'll find the cumulative sum which will be used for indexing later, right here.
+
+390
+00:20:35,755 --> 00:20:39,160
+That's the cumulative sum of the size and then we'll find us our cumulative sum,
+
+391
+00:20:39,160 --> 00:20:40,975
+so we can find our offsets.
+
+392
+00:20:40,975 --> 00:20:44,125
+To find the offsets, we're going to first create our length range.
+
+393
+00:20:44,125 --> 00:20:47,470
+So, let's basically enumerate from zero to the length.
+
+394
+00:20:47,470 --> 00:20:50,620
+So, the number of examples in each batch to find
+
+395
+00:20:50,620 --> 00:20:53,560
+this and then their indices will be the cumulative range.
+
+396
+00:20:53,560 --> 00:20:54,715
+We'll just take this cumulative,
+
+397
+00:20:54,715 --> 00:20:56,170
+which are our assets plus this,
+
+398
+00:20:56,170 --> 00:20:58,435
+which will give our actual indices of
+
+399
+00:20:58,435 --> 00:21:03,775
+the items we added during the concatenation in our decode example function.
+
+400
+00:21:03,775 --> 00:21:05,680
+From there, we're going to gather.
+
+401
+00:21:05,680 --> 00:21:09,145
+So, the keys that we've exerted back out of our concatenated Sparse Tensor.
+
+402
+00:21:09,145 --> 00:21:10,915
+Okay. So, we're going to do our TF test squeeze,
+
+403
+00:21:10,915 --> 00:21:12,790
+gather using the bad indices,
+
+404
+00:21:12,790 --> 00:21:14,050
+we're going to pull out of those,
+
+405
+00:21:14,050 --> 00:21:16,720
+we're going to extract from it using this gather from
+
+406
+00:21:16,720 --> 00:21:20,035
+the cumulative range of the second column.
+
+407
+00:21:20,035 --> 00:21:23,260
+Okay. So, the numerator row indices,
+
+408
+00:21:23,260 --> 00:21:26,455
+the Sparse Tensors indices number are all going to get next.
+
+409
+00:21:26,455 --> 00:21:28,135
+From here, I was going to create a range.
+
+410
+00:21:28,135 --> 00:21:29,920
+I'm going to enumerate over the shape.
+
+411
+00:21:29,920 --> 00:21:34,195
+So, that way we have the number of times each example was in the batch.
+
+412
+00:21:34,195 --> 00:21:37,375
+We want to find here the row indices of this sparse tensors indices member,
+
+413
+00:21:37,375 --> 00:21:40,180
+that are the actual data in that concatenated rows.
+
+414
+00:21:40,180 --> 00:21:43,795
+So, we want to find the intersection of the two sets and then take the opposite of that.
+
+415
+00:21:43,795 --> 00:21:48,370
+So, to do that we're just going to create two little helper tensors here X and S,
+
+416
+00:21:48,370 --> 00:21:51,790
+X will be our Sparse indices range and S will be the cumulative range.
+
+417
+00:21:51,790 --> 00:21:54,070
+So, first what we're going to do is going to tile this.
+
+418
+00:21:54,070 --> 00:21:56,320
+So, we need to know the number of times we're going to be tiling.
+
+419
+00:21:56,320 --> 00:22:01,480
+To do that, we're going to concatenate which ones using the shape of
+
+420
+00:22:01,480 --> 00:22:07,540
+our Tensor and then the other shape of our S tensor here, our accumulate range.
+
+421
+00:22:07,540 --> 00:22:09,085
+We're going to concatenate those two things together,
+
+422
+00:22:09,085 --> 00:22:11,870
+and that will the number of multiples that were going to tile X.
+
+423
+00:22:11,870 --> 00:22:14,700
+So, I want to expand X on sparse indices range into
+
+424
+00:22:14,700 --> 00:22:17,445
+a range two tensor and then multiply it by the rows,
+
+425
+00:22:17,445 --> 00:22:21,585
+by one, so there's no copying and the column for the number of examples in the batch.
+
+426
+00:22:21,585 --> 00:22:25,300
+So, to do that we just do a TF tile and then TF's that are expanding,
+
+427
+00:22:25,300 --> 00:22:27,340
+we're going to turn this into a matrix and then we're going
+
+428
+00:22:27,340 --> 00:22:29,800
+to tile the number of times we just found.
+
+429
+00:22:29,800 --> 00:22:33,730
+From there, essentially what we're going to do is a vectorized logical or and then we're
+
+430
+00:22:33,730 --> 00:22:37,640
+going to negate it with our unionary compliment operator here where there is tilly.
+
+431
+00:22:37,640 --> 00:22:42,120
+To do that, when it's a equal where X tile equals S. So, basically here,
+
+432
+00:22:42,120 --> 00:22:45,840
+anywhere that the actual concatenated indices is
+
+433
+00:22:45,840 --> 00:22:50,010
+found will be true and then across all of them we're going to reduce any.
+
+434
+00:22:50,010 --> 00:22:51,620
+So, wherever there's any truce,
+
+435
+00:22:51,620 --> 00:22:53,620
+the overlap and we'll get all the truce wherever there
+
+436
+00:22:53,620 --> 00:22:56,125
+is a one and the rest will be left with zeros.
+
+437
+00:22:56,125 --> 00:22:57,745
+Then we'll take a not here,
+
+438
+00:22:57,745 --> 00:23:01,795
+with us today which basically flips all the ones and zeros and all the zeros to ones.
+
+439
+00:23:01,795 --> 00:23:07,540
+This will be X not and S. Moving on,
+
+440
+00:23:07,540 --> 00:23:10,210
+the SparseTensor's indices, that are actual data by using
+
+441
+00:23:10,210 --> 00:23:14,320
+the Boolean mask we just made above applied to the entire indices member of SparseTensor.
+
+442
+00:23:14,320 --> 00:23:16,960
+So, now we want to pull out our selected indices here.
+
+443
+00:23:16,960 --> 00:23:19,420
+To do that, now that we have this Boolean mask,
+
+444
+00:23:19,420 --> 00:23:20,935
+we can apply a Boolean mask to it,
+
+445
+00:23:20,935 --> 00:23:24,280
+where our tensor will be the bad indices and our mass will be this X
+
+446
+00:23:24,280 --> 00:23:28,165
+not in S or zero axis.
+
+447
+00:23:28,165 --> 00:23:31,885
+That's the indices, but we also want the values are ratings.
+
+448
+00:23:31,885 --> 00:23:36,370
+To do that, we just use the same Boolean mask and now apply it to the bad values tensor.
+
+449
+00:23:36,370 --> 00:23:39,520
+Using biomass we created a long zero x axis.
+
+450
+00:23:39,520 --> 00:23:44,935
+Now, that's great and all but we haven't removed the batch indices yet.
+
+451
+00:23:44,935 --> 00:23:49,645
+So, first to do that we need to replace the first column selected indices with the keys.
+
+452
+00:23:49,645 --> 00:23:51,865
+So, we firstly need to tile our gathered indices.
+
+453
+00:23:51,865 --> 00:23:54,355
+So, first we're going create a tiling.
+
+454
+00:23:54,355 --> 00:23:57,055
+Now, we can't do this as simple as before,
+
+455
+00:23:57,055 --> 00:23:59,695
+because the arranging is going to be Jagged
+
+456
+00:23:59,695 --> 00:24:03,759
+Each item might have different numbers of users and same likewise,
+
+457
+00:24:03,759 --> 00:24:05,500
+each user might have done numbers of items.
+
+458
+00:24:05,500 --> 00:24:09,475
+Right. One user might have seen five things and another user medicine 10.
+
+459
+00:24:09,475 --> 00:24:13,270
+So, there's no nice way to do this without a while loop which we'll get to next.
+
+460
+00:24:13,270 --> 00:24:17,470
+So, first we need to initialize our while loop with initial tiling.
+
+461
+00:24:17,470 --> 00:24:20,140
+To do that, we're shrinking our gathered indices,
+
+462
+00:24:20,140 --> 00:24:22,810
+the zero column is or a batch indices
+
+463
+00:24:22,810 --> 00:24:25,600
+and we're going to do it multiple times using the size here.
+
+464
+00:24:25,600 --> 00:24:28,645
+Okay. From there, when you create a loop body.
+
+465
+00:24:28,645 --> 00:24:31,825
+So that way, we can create our own tf.map function,
+
+466
+00:24:31,825 --> 00:24:35,140
+because the stack in tensor arrays have to be rectangular.
+
+467
+00:24:35,140 --> 00:24:36,820
+In this case, since its jagged,
+
+468
+00:24:36,820 --> 00:24:38,800
+we don't have that. So, we'll create our own.
+
+469
+00:24:38,800 --> 00:24:40,510
+So, to do that loop body,
+
+470
+00:24:40,510 --> 00:24:44,710
+we're going to pass in our loop variable here,I,
+
+471
+00:24:44,710 --> 00:24:48,550
+then our tensor that we're going to grow here called tensor grow.
+
+472
+00:24:48,550 --> 00:24:52,030
+Inside a little body, it will return the next loop variable.
+
+473
+00:24:52,030 --> 00:24:56,710
+So, I plus one and we can concatenate our values here,
+
+474
+00:24:56,710 --> 00:24:59,140
+which are going to be our original tensor grow and
+
+475
+00:24:59,140 --> 00:25:01,840
+then when I add on top of that a tiling of that,
+
+476
+00:25:01,840 --> 00:25:04,210
+or expanded in terms of our gathered indices.
+
+477
+00:25:04,210 --> 00:25:05,815
+How many times we're going to do this?
+
+478
+00:25:05,815 --> 00:25:08,935
+On multiple number of times that we found above based on the size,
+
+479
+00:25:08,935 --> 00:25:12,985
+how many items that user had, for instance.
+
+480
+00:25:12,985 --> 00:25:15,220
+Well, that's great and all,
+
+481
+00:25:15,220 --> 00:25:16,420
+but we need to call this loop.
+
+482
+00:25:16,420 --> 00:25:18,925
+So, what we're going to do here is going to get our tf.while_loop,
+
+483
+00:25:18,925 --> 00:25:22,600
+pass in our Lambda of our loop variable here,
+
+484
+00:25:22,600 --> 00:25:25,300
+and tensor_grow with the condition that i is going to be
+
+485
+00:25:25,300 --> 00:25:28,300
+less than the length because we don't want to go outside of our batch,
+
+486
+00:25:28,300 --> 00:25:29,845
+and then we're going to have our loop body,
+
+487
+00:25:29,845 --> 00:25:31,690
+which we're going to execute, and they're going to pass in
+
+488
+00:25:31,690 --> 00:25:34,000
+our initial variables for i in tensor_grow,
+
+489
+00:25:34,000 --> 00:25:38,725
+which will be one for i and then our initial tiling for tensor_grow.
+
+490
+00:25:38,725 --> 00:25:41,290
+This will get us our result tensor here.
+
+491
+00:25:41,290 --> 00:25:43,285
+So, now what we're going to do is we're going to concatenate
+
+492
+00:25:43,285 --> 00:25:46,255
+our tiled keys with the second column of selected indices,
+
+493
+00:25:46,255 --> 00:25:48,205
+so that we will have the correct keys now.
+
+494
+00:25:48,205 --> 00:25:52,135
+So, selected indices fixed will be the concatenation of
+
+495
+00:25:52,135 --> 00:25:53,950
+expanded dims a result because right
+
+496
+00:25:53,950 --> 00:25:56,155
+now it's a vectors we're going to turn it into a matrix,
+
+497
+00:25:56,155 --> 00:25:58,630
+and then we're going to concatenate that with the
+
+498
+00:25:58,630 --> 00:26:01,180
+expanded as a selected indices of the second column,
+
+499
+00:26:01,180 --> 00:26:02,470
+because remember we don't want the first column
+
+500
+00:26:02,470 --> 00:26:04,075
+because the first column is the batch indices,
+
+501
+00:26:04,075 --> 00:26:05,455
+which is what we're trying to throw out.
+
+502
+00:26:05,455 --> 00:26:06,955
+So, we want to get these,
+
+503
+00:26:06,955 --> 00:26:10,105
+and we're going to concatenate those two together along columns.
+
+504
+00:26:10,105 --> 00:26:13,675
+Now, that's all fixed, we got to put it all back together in a nice SparseTensor,
+
+505
+00:26:13,675 --> 00:26:16,735
+so that our input function can send it off to the estimator.
+
+506
+00:26:16,735 --> 00:26:19,780
+To do that, we're going to create SparseTensor using our indices,
+
+507
+00:26:19,780 --> 00:26:21,805
+which will be our selected indices fixed,
+
+508
+00:26:21,805 --> 00:26:23,860
+and our values are selected values,
+
+509
+00:26:23,860 --> 00:26:25,105
+these are our ratings right here,
+
+510
+00:26:25,105 --> 00:26:27,085
+and the density will be the same as before,
+
+511
+00:26:27,085 --> 00:26:32,335
+and then we return back out to our main parse TF records function.
+
+512
+00:26:32,335 --> 00:26:35,065
+So, now we're willing to parse TF records,
+
+513
+00:26:35,065 --> 00:26:37,615
+we'll be parse a file name and our vocab size.
+
+514
+00:26:37,615 --> 00:26:40,225
+So, if mode equals train,
+
+515
+00:26:40,225 --> 00:26:42,160
+we want to make sure that the number of epochs equals none.
+
+516
+00:26:42,160 --> 00:26:43,960
+So, that way it trains indefinitely and uses
+
+517
+00:26:43,960 --> 00:26:46,510
+the train steps to decide when to stop training.
+
+518
+00:26:46,510 --> 00:26:49,810
+Else if we're not in train, other words,
+
+519
+00:26:49,810 --> 00:26:54,865
+evaluation we're going to have one epic that we just got the one and only one time,
+
+520
+00:26:54,865 --> 00:26:58,285
+and that way we can do our evaluation correctly.
+
+521
+00:26:58,285 --> 00:27:00,730
+We're going to do here is get our files list,
+
+522
+00:27:00,730 --> 00:27:03,489
+so we pick our input path from above using our filename,
+
+523
+00:27:03,489 --> 00:27:05,290
+and we're going to create a list of files and
+
+524
+00:27:05,290 --> 00:27:08,470
+the files are shorted out because it was too big for one file.
+
+525
+00:27:08,470 --> 00:27:11,620
+From there we take our file list and create a dataset.
+
+526
+00:27:11,620 --> 00:27:13,885
+To do that remember these are TF records,
+
+527
+00:27:13,885 --> 00:27:17,950
+we're going to create our TF record file dataset using our files and create our dataset.
+
+528
+00:27:17,950 --> 00:27:19,240
+From there, we got to do
+
+529
+00:27:19,240 --> 00:27:22,045
+our decode example function that we have just went through above,
+
+530
+00:27:22,045 --> 00:27:24,620
+using our example protos as input,
+
+531
+00:27:24,620 --> 00:27:28,455
+and the current vocab size depending if we're doing items or users.
+
+532
+00:27:28,455 --> 00:27:32,130
+Next, we are going to repeat the number of epics that we've set up here.
+
+533
+00:27:32,130 --> 00:27:34,470
+Next we're going to do our batching.
+
+534
+00:27:34,470 --> 00:27:40,060
+So, we have a batch size number of items or users depending on which phase we're in,
+
+535
+00:27:40,060 --> 00:27:42,190
+but here we're going to do our remap keys to
+
+536
+00:27:42,190 --> 00:27:44,350
+fix some of the batching indices being overwritten,
+
+537
+00:27:44,350 --> 00:27:46,570
+and lastly we're going to create our one-shot iterator which will
+
+538
+00:27:46,570 --> 00:27:49,840
+return our batch of examples.
+
+539
+00:27:49,840 --> 00:27:54,220
+So, now this all gets called in our rapt input function right here where we could refuse
+
+540
+00:27:54,220 --> 00:27:58,990
+your dictionary of input rows where we call parse TF records for items for users,
+
+541
+00:27:58,990 --> 00:28:01,930
+so remember this is a single user having multiple items and therefore,
+
+542
+00:28:01,930 --> 00:28:05,710
+multiple ratings, and the vocabulary here is the number of items,
+
+543
+00:28:05,710 --> 00:28:09,100
+and then our input columns for our factorization is going to
+
+544
+00:28:09,100 --> 00:28:12,490
+be using the users for item file,
+
+545
+00:28:12,490 --> 00:28:15,280
+where now our vocabulary's the number of users where we have
+
+546
+00:28:15,280 --> 00:28:19,645
+one unique item and multiple users for each item and therefore also multiple ratings.
+
+547
+00:28:19,645 --> 00:28:21,655
+Lastly, we're going to protect row here,
+
+548
+00:28:21,655 --> 00:28:24,385
+so that we can use this during serving where we can just
+
+549
+00:28:24,385 --> 00:28:27,700
+decide are we predicting rows or columns.
+
+550
+00:28:27,700 --> 00:28:29,635
+So, true will predict rows,
+
+551
+00:28:29,635 --> 00:28:35,335
+so we'll be predicting items for users and false we'll be using predicting columns,
+
+552
+00:28:35,335 --> 00:28:39,520
+so we'll be trying to predict users for items as in like a targeting model.
+
+553
+00:28:39,520 --> 00:28:42,370
+From here we're going to return features and none.
+
+554
+00:28:42,370 --> 00:28:45,535
+Remember this none here is usually for our labels,
+
+555
+00:28:45,535 --> 00:28:51,070
+but because this is an alternating algorithm in law and phase our labels
+
+556
+00:28:51,070 --> 00:28:53,350
+are going to be the columns and the other phase or labels will be
+
+557
+00:28:53,350 --> 00:28:56,860
+the rows because we fixed one while solving for the other and vice versa,
+
+558
+00:28:56,860 --> 00:28:59,320
+and just for developing line by line you don't really
+
+559
+00:28:59,320 --> 00:29:01,300
+need some production but just so you can see.
+
+560
+00:29:01,300 --> 00:29:03,610
+We're going to create input function subset where we just use
+
+561
+00:29:03,610 --> 00:29:08,090
+our small number of users you created here out of the 82,000.
+
+562
+00:29:08,400 --> 00:29:12,115
+All right, and then from there our input functions done,
+
+563
+00:29:12,115 --> 00:29:13,975
+let's try it out and see what it looks like.
+
+564
+00:29:13,975 --> 00:29:16,435
+So, this code is helpful in developing the input function,
+
+565
+00:29:16,435 --> 00:29:18,400
+you don't need in production, but it's a good way to check
+
+566
+00:29:18,400 --> 00:29:20,695
+while you're coding to make sure things are running smoothly.
+
+567
+00:29:20,695 --> 00:29:24,385
+Okay, to do this we create a function called try out,
+
+568
+00:29:24,385 --> 00:29:26,470
+and to do that we're going to create a session.
+
+569
+00:29:26,470 --> 00:29:28,720
+Within that session, we're going a function,
+
+570
+00:29:28,720 --> 00:29:31,570
+that's going to point to our read dataset function above,
+
+571
+00:29:31,570 --> 00:29:34,495
+and here we're going to pass in our mode,
+
+572
+00:29:34,495 --> 00:29:36,220
+a mode is going to be eval in this case,
+
+573
+00:29:36,220 --> 00:29:38,080
+we're going to be reading from the eval data set,
+
+574
+00:29:38,080 --> 00:29:43,750
+and we're going to do our input path our data and our batch size,
+
+575
+00:29:43,750 --> 00:29:47,395
+is going to be eight or number of items is going to be
+
+576
+00:29:47,395 --> 00:29:51,670
+5668 and our number of users is going to be the total number of users 82, 802.
+
+577
+00:29:51,670 --> 00:29:54,310
+When I write out our features from this function when
+
+578
+00:29:54,310 --> 00:29:56,520
+as we call it and I'm going to print off our features,
+
+579
+00:29:56,520 --> 00:29:58,950
+our input rows using eval.
+
+580
+00:29:58,950 --> 00:30:01,770
+Let's see what that looks like, as you can see we
+
+581
+00:30:01,770 --> 00:30:05,040
+have our SparseTensor, here are indices.
+
+582
+00:30:05,040 --> 00:30:10,195
+Okay. Let me show you these are going to be using our input rows here,
+
+583
+00:30:10,195 --> 00:30:16,825
+so that means that these will be user IDs and then these will be item IDs down here,
+
+584
+00:30:16,825 --> 00:30:18,580
+and then here in our values right these are
+
+585
+00:30:18,580 --> 00:30:21,190
+the associated ratings that go with each of these combinations,
+
+586
+00:30:21,190 --> 00:30:24,250
+these user item combinations, and of course,
+
+587
+00:30:24,250 --> 00:30:30,770
+our dense_shape is going to be the batch size here times the number of items.
+
+588
+00:30:31,320 --> 00:30:35,440
+All right, that's great let's set up our function to find
+
+589
+00:30:35,440 --> 00:30:38,170
+the top K. We don't want
+
+590
+00:30:38,170 --> 00:30:41,710
+every single recommendation for every single user, we just want the top K of them.
+
+591
+00:30:41,710 --> 00:30:44,245
+To do that we're going to pass in the user ID,
+
+592
+00:30:44,245 --> 00:30:47,965
+the item factors that we've been trained and then what K should be,
+
+593
+00:30:47,965 --> 00:30:49,405
+should be five, 10,
+
+594
+00:30:49,405 --> 00:30:51,145
+opens what your problem is.
+
+595
+00:30:51,145 --> 00:30:53,890
+All right, to do this we're going to get all of our items,
+
+596
+00:30:53,890 --> 00:30:56,485
+we'll solve the entire matrix by doing a matrix multiply,
+
+597
+00:30:56,485 --> 00:31:02,740
+of our user expanding dams and to a one by number of user vectors,
+
+598
+00:31:02,740 --> 00:31:05,049
+if it's just one users be one-by-one.
+
+599
+00:31:05,049 --> 00:31:07,330
+Since it's our bad prediction yet and then
+
+600
+00:31:07,330 --> 00:31:09,430
+we're going to do our transpose or item factors,
+
+601
+00:31:09,430 --> 00:31:16,090
+which will be a items by k or d-dimensional matrix.
+
+602
+00:31:16,090 --> 00:31:19,420
+So, we got our top k revenue tf.nn.topk
+
+603
+00:31:19,420 --> 00:31:22,390
+of all of our items where k equals k and then last we're going to
+
+604
+00:31:22,390 --> 00:31:28,375
+return the casting of the indices to integers because remember these must be IDs,
+
+605
+00:31:28,375 --> 00:31:33,295
+so we're going to pass those IDs back of the top k items.
+
+606
+00:31:33,295 --> 00:31:35,679
+But if you want do more than one,
+
+607
+00:31:35,679 --> 00:31:38,260
+at a time when a user at a time should you bet prediction.
+
+608
+00:31:38,260 --> 00:31:40,300
+So, here we're going to pass our arguments inside on
+
+609
+00:31:40,300 --> 00:31:42,895
+a call NumPy and were to create a session.
+
+610
+00:31:42,895 --> 00:31:45,520
+Remember, this session is completely disconnected graph
+
+611
+00:31:45,520 --> 00:31:47,695
+it's its own graph or in its own session.
+
+612
+00:31:47,695 --> 00:31:49,870
+To do that, we have to create an estimator
+
+613
+00:31:49,870 --> 00:31:53,185
+this estimator will read in what we've already trained,
+
+614
+00:31:53,185 --> 00:31:56,185
+from our output directory here from intermodal directory.
+
+615
+00:31:56,185 --> 00:31:58,510
+So, that we can read in the values that were trained and get
+
+616
+00:31:58,510 --> 00:32:03,310
+our user factors in our item factors be able to do our predictions.
+
+617
+00:32:03,310 --> 00:32:05,260
+So, we're going to call our estimator here,
+
+618
+00:32:05,260 --> 00:32:08,410
+which you should have filled in during the lab of Tf contribute
+
+619
+00:32:08,410 --> 00:32:11,110
+factorization walls matrix factorization
+
+620
+00:32:11,110 --> 00:32:13,915
+or number of rows will be of course a number of users,
+
+621
+00:32:13,915 --> 00:32:16,000
+number columns with a number of items,
+
+622
+00:32:16,000 --> 00:32:20,890
+the MBA dimension this is what we decided how many latent features we would solve for,
+
+623
+00:32:20,890 --> 00:32:24,235
+the number of meds and here's Ramon directory.
+
+624
+00:32:24,235 --> 00:32:27,610
+The rest of the lab was already done for you so,
+
+625
+00:32:27,610 --> 00:32:30,595
+now you can kind of just follow along and see what we've done.
+
+626
+00:32:30,595 --> 00:32:34,345
+So, this is how you get the row factors for an outer vocab user data.
+
+627
+00:32:34,345 --> 00:32:39,580
+So, if case there was a new user or a new item you could use these.
+
+628
+00:32:39,580 --> 00:32:45,715
+So, you'd list get protections using that and you convert to a tensor of the row factors,
+
+629
+00:32:45,715 --> 00:32:48,670
+but for vocab data so far users
+
+630
+00:32:48,670 --> 00:32:51,760
+that already exist and items that already exists we can use this instead,
+
+631
+00:32:51,760 --> 00:32:53,965
+the row vectors are already in that checkpoint.
+
+632
+00:32:53,965 --> 00:32:57,205
+So, user factors would just be a tf.convert to tensor,
+
+633
+00:32:57,205 --> 00:33:01,195
+I'm going to call the estimator I'm going to call the method get Rho factors.
+
+634
+00:33:01,195 --> 00:33:03,655
+You're going to get the first dimension of that,
+
+635
+00:33:03,655 --> 00:33:07,780
+which will be the number of users by number of embeds will be the shape.
+
+636
+00:33:07,780 --> 00:33:10,630
+In either case we have to assume the catalog hasn't changed,
+
+637
+00:33:10,630 --> 00:33:15,715
+so you've just seen there's been no new items added to the interaction matrix.
+
+638
+00:33:15,715 --> 00:33:17,365
+So, colon or factors are brought in.
+
+639
+00:33:17,365 --> 00:33:20,230
+So, I don't factor so just be tf.convert to tensor.
+
+640
+00:33:20,230 --> 00:33:24,595
+We're going to call once again, call our estimator using the method get co-factors
+
+641
+00:33:24,595 --> 00:33:26,830
+taken the first dimension and it is
+
+642
+00:33:26,830 --> 00:33:29,710
+going to be number of items by number of imbalance as the shape,
+
+643
+00:33:29,710 --> 00:33:33,250
+for each user and our batch we're going to find the top k items.
+
+644
+00:33:33,250 --> 00:33:37,150
+So, top k it's going to be a squeeze when it call this map function f2 to
+
+645
+00:33:37,150 --> 00:33:41,590
+loop through all these users essentially with this vectorized top k,
+
+646
+00:33:41,590 --> 00:33:45,655
+I'm going to a user or call top k, using user.
+
+647
+00:33:45,655 --> 00:33:48,340
+Where user factors will be r elements that we'll
+
+648
+00:33:48,340 --> 00:33:51,190
+loop over and then our item factors will be what?
+
+649
+00:33:51,190 --> 00:33:53,830
+We multiply with and then our top k will be how many we
+
+650
+00:33:53,830 --> 00:33:56,770
+save back out and that gets read into our top k right here,
+
+651
+00:33:56,770 --> 00:33:59,170
+which will be users by top-k shape.
+
+652
+00:33:59,170 --> 00:34:02,035
+From here we're going to do is create our branch predictions.
+
+653
+00:34:02,035 --> 00:34:04,030
+Okay. So, for the best items for
+
+654
+00:34:04,030 --> 00:34:06,790
+user and top k we're going to evaluate this Tensor right,
+
+655
+00:34:06,790 --> 00:34:08,585
+here this top k tensor.
+
+656
+00:34:08,585 --> 00:34:11,625
+From there runs the graph and then we're going to write out
+
+657
+00:34:11,625 --> 00:34:14,400
+a comma delimited list inside of
+
+658
+00:34:14,400 --> 00:34:21,100
+our filename here for each unique user what their top k items would be.
+
+659
+00:34:21,210 --> 00:34:23,710
+How do we call this? Well, we're going to create
+
+660
+00:34:23,710 --> 00:34:25,960
+our serving input function that we're going to pass
+
+661
+00:34:25,960 --> 00:34:30,265
+arguments to for user embeddings where we pass a user ID.
+
+662
+00:34:30,265 --> 00:34:32,605
+So, all items for this user for the user embeddings,
+
+663
+00:34:32,605 --> 00:34:36,850
+the items will be arranged in enumerated range of all the items possible.
+
+664
+00:34:36,850 --> 00:34:41,995
+The users will be the user ID times a tensor of ones for all the items.
+
+665
+00:34:41,995 --> 00:34:45,730
+That way, essentially, we tile their user ID across all of them.
+
+666
+00:34:45,730 --> 00:34:48,205
+The ratings will just be a dummy right now,
+
+667
+00:34:48,205 --> 00:34:50,965
+0.1 times the ones like the users.
+
+668
+00:34:50,965 --> 00:34:52,750
+So, this will just be used because we're not actually
+
+669
+00:34:52,750 --> 00:34:54,820
+using the ratings, we're predicting ratings.
+
+670
+00:34:54,820 --> 00:34:57,265
+But we need a placeholder right now to build it right into.
+
+671
+00:34:57,265 --> 00:34:59,170
+Then we'll return our items, our users,
+
+672
+00:34:59,170 --> 00:35:01,840
+our ratings, and our tf.constant true.
+
+673
+00:35:01,840 --> 00:35:04,675
+Does anyone remember what tf.constant true is for?
+
+674
+00:35:04,675 --> 00:35:06,595
+Remember this was our projectile rows.
+
+675
+00:35:06,595 --> 00:35:08,260
+Since we're predicting for users,
+
+676
+00:35:08,260 --> 00:35:09,625
+we want to have this be true.
+
+677
+00:35:09,625 --> 00:35:11,110
+Whereas if we're predicting for items,
+
+678
+00:35:11,110 --> 00:35:13,420
+it would be false as we'll see shortly.
+
+679
+00:35:13,420 --> 00:35:17,275
+If we're doing it for item embeddings where we pass in the item ID,
+
+680
+00:35:17,275 --> 00:35:19,870
+the users now will be the range,
+
+681
+00:35:19,870 --> 00:35:21,475
+the enumerated range of all the users,
+
+682
+00:35:21,475 --> 00:35:27,415
+and the items ID will now be the item ID tiled across all of the ones for each user.
+
+683
+00:35:27,415 --> 00:35:29,830
+The ratings ones are going to be dummies, and we'll return.
+
+684
+00:35:29,830 --> 00:35:32,439
+The items, the user's, the ratings are now false,
+
+685
+00:35:32,439 --> 00:35:35,650
+because now we're projecting columns and not rows.
+
+686
+00:35:35,650 --> 00:35:39,175
+All right. So, now this all gets called in the survey input function.
+
+687
+00:35:39,175 --> 00:35:40,989
+So, we have a feature placeholder,
+
+688
+00:35:40,989 --> 00:35:46,510
+where we read in data from whatever is sending the inputs to our model.
+
+689
+00:35:46,510 --> 00:35:52,450
+We have a placeholder for one integer for a user ID and one integer for an item ID.
+
+690
+00:35:52,450 --> 00:35:54,610
+In here, what we're going to do is we're going to say,
+
+691
+00:35:54,610 --> 00:35:56,260
+well, depending on whats sent,
+
+692
+00:35:56,260 --> 00:35:58,240
+we had to make sure we're either doing users or
+
+693
+00:35:58,240 --> 00:36:02,440
+items for what the user that sent this request wants.
+
+694
+00:36:02,440 --> 00:36:04,360
+To do that, as we mentioned earlier,
+
+695
+00:36:04,360 --> 00:36:09,460
+we're going to use a tf.cond,where we're going to see if the user ID is less than zero,
+
+696
+00:36:09,460 --> 00:36:10,915
+so if they give a negative number,
+
+697
+00:36:10,915 --> 00:36:13,090
+we're going to do item embeddings instead.
+
+698
+00:36:13,090 --> 00:36:16,060
+Else, if it's greater than or equal to zero,
+
+699
+00:36:16,060 --> 00:36:17,920
+we're going to do a user embeddings.
+
+700
+00:36:17,920 --> 00:36:22,030
+To do that, once we're done figuring out if it's for items or for users,
+
+701
+00:36:22,030 --> 00:36:26,050
+we're going to stack the users and items tensors together to get our rows
+
+702
+00:36:26,050 --> 00:36:27,820
+and then we do this transpose of stacking
+
+703
+00:36:27,820 --> 00:36:31,060
+the items and users tensors together to get the columns.
+
+704
+00:36:31,060 --> 00:36:36,160
+From there, our input rows will be a SparseTensor of the rows with the ratings as
+
+705
+00:36:36,160 --> 00:36:41,890
+our values with the dense shape of number of users by number of items.
+
+706
+00:36:41,890 --> 00:36:45,880
+Our input columns will be the transpose by using the columns as
+
+707
+00:36:45,880 --> 00:36:50,620
+our indices now and their ratings as our values,
+
+708
+00:36:50,620 --> 00:36:53,830
+once again with the dent shape of number of users per number of items.
+
+709
+00:36:53,830 --> 00:36:56,200
+Now we have our features dictionary we're going to create from
+
+710
+00:36:56,200 --> 00:36:59,260
+these placeholders using input rows,
+
+711
+00:36:59,260 --> 00:37:02,065
+input columns, and what project rows.
+
+712
+00:37:02,065 --> 00:37:06,715
+Last thing that we'll do, well return tf.contribute.learn.input function ops,
+
+713
+00:37:06,715 --> 00:37:09,460
+our features, no labels,
+
+714
+00:37:09,460 --> 00:37:10,810
+and our feature placeholder,
+
+715
+00:37:10,810 --> 00:37:12,790
+and return as serving input function.
+
+716
+00:37:12,790 --> 00:37:14,620
+Wow, that was a lot,
+
+717
+00:37:14,620 --> 00:37:17,665
+but we finally made it to our train and evaluate function.
+
+718
+00:37:17,665 --> 00:37:20,725
+First, what we're going to do is figure out how many train steps we're going to do.
+
+719
+00:37:20,725 --> 00:37:26,200
+To do this, we do a little bit of math and figure out maybe the number of epics,
+
+720
+00:37:26,200 --> 00:37:28,345
+also times the number of users,
+
+721
+00:37:28,345 --> 00:37:32,380
+times maybe 0.5 and then divide by the batch size.
+
+722
+00:37:32,380 --> 00:37:34,900
+That might be a good number of train steps to perform,
+
+723
+00:37:34,900 --> 00:37:37,255
+and the steps in each epic might be
+
+724
+00:37:37,255 --> 00:37:41,500
+0.5 plus the number of users divided by the batch size.
+
+725
+00:37:41,500 --> 00:37:43,600
+So, this will tell us that we're going to train for
+
+726
+00:37:43,600 --> 00:37:46,750
+this many steps and evaluating this many times.
+
+727
+00:37:46,750 --> 00:37:49,900
+So, now we're gonna create our experiment function
+
+728
+00:37:49,900 --> 00:37:52,420
+that we'll write out to our output directory.
+
+729
+00:37:52,420 --> 00:37:56,335
+It's going to return an experiment and inside the experiment is going to be
+
+730
+00:37:56,335 --> 00:38:01,840
+our estimator which will be the tf.contribute factorization.walls matrix factorization.
+
+731
+00:38:01,840 --> 00:38:05,890
+Where the argument is going to pass the number of rows via number of users,
+
+732
+00:38:05,890 --> 00:38:07,975
+the number of columns via number of items.
+
+733
+00:38:07,975 --> 00:38:11,320
+The embedding dimension is going to be the number of embedding dimensions we want.
+
+734
+00:38:11,320 --> 00:38:13,570
+So, how many latent features are we shooting for here?
+
+735
+00:38:13,570 --> 00:38:15,640
+Is it 2, 4, 20?
+
+736
+00:38:15,640 --> 00:38:17,110
+And then our model directory,
+
+737
+00:38:17,110 --> 00:38:19,990
+so we're going to write this all out to it to keep our model files.
+
+738
+00:38:19,990 --> 00:38:23,890
+Our training but functional be read data set where we pass in the train keys.
+
+739
+00:38:23,890 --> 00:38:29,155
+So, that way we're going to use this mode to make sure that our number of epics is none,
+
+740
+00:38:29,155 --> 00:38:31,810
+so, it'll indefinitely run until we run out of train steps.
+
+741
+00:38:31,810 --> 00:38:35,170
+Our eval input function will be the read data set except now with the eval.
+
+742
+00:38:35,170 --> 00:38:38,725
+So, we'll run through the dataset only once because number of epics equals one.
+
+743
+00:38:38,725 --> 00:38:42,160
+Our train steps is going to equal our train steps from above.
+
+744
+00:38:42,160 --> 00:38:44,395
+Eval steps is going to equal to one,
+
+745
+00:38:44,395 --> 00:38:47,050
+and then our min-eval frequency will be the number of
+
+746
+00:38:47,050 --> 00:38:50,290
+steps for each epic that we're going to do, that we set up over here.
+
+747
+00:38:50,290 --> 00:38:52,585
+Now, we also want to save this model out,
+
+748
+00:38:52,585 --> 00:38:57,425
+so we're going to define an export strategy here using our saved_model_export_utils.
+
+749
+00:38:57,425 --> 00:39:00,220
+I'm going to make the export strategy our serving input function.
+
+750
+00:39:00,220 --> 00:39:02,350
+Its going to be our create_serving_input_function with
+
+751
+00:39:02,350 --> 00:39:05,095
+our arguments passed to this train and evaluate function.
+
+752
+00:39:05,095 --> 00:39:07,720
+From there, we're going to import
+
+753
+00:39:07,720 --> 00:39:11,140
+TensorFlow.contribute.learned.Python.learn, the learn runner.
+
+754
+00:39:11,140 --> 00:39:14,530
+This learn runner is actually where we run our train and evaluate loop.
+
+755
+00:39:14,530 --> 00:39:17,395
+As you can see here, learn runner it's going to run
+
+756
+00:39:17,395 --> 00:39:21,640
+our experiment function and it's going to write it out to the output directory.
+
+757
+00:39:21,640 --> 00:39:23,050
+Then after we're all done with that,
+
+758
+00:39:23,050 --> 00:39:25,930
+we'll do a batch prediction using our arguments.
+
+759
+00:39:25,930 --> 00:39:29,050
+From there, we're going to import
+
+760
+00:39:29,050 --> 00:39:34,105
+our shut utility here and we're going to call that with the method remove_tree.
+
+761
+00:39:34,105 --> 00:39:37,090
+So, that way wals train will be completely fresh.
+
+762
+00:39:37,090 --> 00:39:40,450
+So, that way when we train into it we won't have any collisions or any problems,
+
+763
+00:39:40,450 --> 00:39:41,980
+it'll be exactly at this run.
+
+764
+00:39:41,980 --> 00:39:44,140
+Now, we are going to pass our arguments.
+
+765
+00:39:44,140 --> 00:39:45,310
+We're going to create a dictionary here.
+
+766
+00:39:45,310 --> 00:39:47,335
+Our output directory will be called wals trained.
+
+767
+00:39:47,335 --> 00:39:49,120
+Our input path will be data.
+
+768
+00:39:49,120 --> 00:39:51,250
+Remember, we had multiple data files in there.
+
+769
+00:39:51,250 --> 00:39:53,980
+Our number of epochs will be 0.5 in this case,
+
+770
+00:39:53,980 --> 00:39:56,725
+number of items it's going to be the number of items that we found,
+
+771
+00:39:56,725 --> 00:39:58,765
+the number users- the number of users we found.
+
+772
+00:39:58,765 --> 00:40:01,330
+Our batch size we chose would be 512.
+
+773
+00:40:01,330 --> 00:40:03,250
+Number of embeddings is going to be 10.
+
+774
+00:40:03,250 --> 00:40:06,175
+So, it'll 10 latent features in this model,
+
+775
+00:40:06,175 --> 00:40:07,720
+and then their topk's going to be three.
+
+776
+00:40:07,720 --> 00:40:11,690
+Of course, you can always change these things down here because they're hyperparameters.
+
+777
+00:40:11,700 --> 00:40:14,830
+All right. So, as we can see, it'll train.
+
+778
+00:40:14,830 --> 00:40:16,510
+In this case it's going to train for eight steps.
+
+779
+00:40:16,510 --> 00:40:20,095
+It's going to evaluate every 161 steps.
+
+780
+00:40:20,095 --> 00:40:24,220
+To do that, it's going to create our training evaluate loop.
+
+781
+00:40:24,220 --> 00:40:26,185
+It's going to create our checkpoints,
+
+782
+00:40:26,185 --> 00:40:28,765
+all of our configurations,
+
+783
+00:40:28,765 --> 00:40:33,850
+and then it's going to start running right here. It starts running.
+
+784
+00:40:33,850 --> 00:40:36,294
+It starts doing it's train. It's just doing it's sweeps.
+
+785
+00:40:36,294 --> 00:40:39,295
+It saving out checkpoints with our models here.
+
+786
+00:40:39,295 --> 00:40:41,590
+Here's our loss function right here.
+
+787
+00:40:41,590 --> 00:40:44,095
+So, we've got 97,000 loss for the first step.
+
+788
+00:40:44,095 --> 00:40:46,330
+It's going to fit the step starting.
+
+789
+00:40:46,330 --> 00:40:50,305
+Going on, saving checkpoints now for step eight which is the last step remember,
+
+790
+00:40:50,305 --> 00:40:52,255
+because there's eight steps for training.
+
+791
+00:40:52,255 --> 00:40:53,665
+Then it writes it all out.
+
+792
+00:40:53,665 --> 00:40:56,605
+Here's our loss for our final step, and then we're done.
+
+793
+00:40:56,605 --> 00:40:57,940
+Then we do an evaluation,
+
+794
+00:40:57,940 --> 00:41:01,030
+and here's for step eight.
+
+795
+00:41:01,030 --> 00:41:03,430
+This our loss and evaluation,
+
+796
+00:41:03,430 --> 00:41:06,505
+and we're done with that part.
+
+797
+00:41:06,505 --> 00:41:09,550
+So, now if we look at what's inside our wals train directory,
+
+798
+00:41:09,550 --> 00:41:11,755
+we can see we have batch prediction.text.
+
+799
+00:41:11,755 --> 00:41:15,730
+our checkpoints, the evaluation folder, the events out.
+
+800
+00:41:15,730 --> 00:41:17,590
+So, we can look at this in tensor board.
+
+801
+00:41:17,590 --> 00:41:20,335
+The export is where our saved model is trained,
+
+802
+00:41:20,335 --> 00:41:23,065
+our graph, and a bunch of checkpoints in it.
+
+803
+00:41:23,065 --> 00:41:26,395
+Let's have a look inside batch predictive.text.
+
+804
+00:41:26,395 --> 00:41:28,480
+As you can see here,
+
+805
+00:41:28,480 --> 00:41:34,570
+we have for each user our top three movies. Isn't that great.
+
+806
+00:41:34,570 --> 00:41:39,580
+However, you might notice that these are not our original content IDs,
+
+807
+00:41:39,580 --> 00:41:40,780
+which we'll talk about later.
+
+808
+00:41:40,780 --> 00:41:45,550
+We'd need to maybe do a reverse mapping to get these back into content IDs we care about.
+
+809
+00:41:45,550 --> 00:41:49,000
+So, you can also do the same learn runner as a Python module.
+
+810
+00:41:49,000 --> 00:41:51,520
+So here, everything is basically the same except it's been
+
+811
+00:41:51,520 --> 00:41:55,790
+copied into a model.py and a task.py,
+
+812
+00:41:56,040 --> 00:42:01,420
+where we pass on by command line the parameters that we care about.
+
+813
+00:42:01,420 --> 00:42:06,445
+You can see here, it trains as it did before except now using the module,
+
+814
+00:42:06,445 --> 00:42:10,510
+and it writes the save model out to where we pointed to,
+
+815
+00:42:10,510 --> 00:42:12,370
+and then we're done.
+
+816
+00:42:12,370 --> 00:42:15,399
+Now, if you want to get row and column factors,
+
+817
+00:42:15,399 --> 00:42:17,050
+you need to do a little bit more.
+
+818
+00:42:17,050 --> 00:42:19,255
+So, once you have a trained wals model,
+
+819
+00:42:19,255 --> 00:42:22,090
+you can get row and column factors user and item
+
+820
+00:42:22,090 --> 00:42:26,080
+embeddings using the serving_input function that we exported in our export folder.
+
+821
+00:42:26,080 --> 00:42:28,600
+We'll look at how to use these in the section on building
+
+822
+00:42:28,600 --> 00:42:32,210
+a recommendation system using deep neural networks in the next module.
+
+823
+00:42:32,280 --> 00:42:36,550
+So, you can see here, we're going to create a input json.
+
+824
+00:42:36,550 --> 00:42:38,695
+I'm going to have a user ID, its going to be four.
+
+825
+00:42:38,695 --> 00:42:41,245
+Index four and item ID index negative one.
+
+826
+00:42:41,245 --> 00:42:43,900
+So, what this means is we're going to be predicting items for
+
+827
+00:42:43,900 --> 00:42:47,575
+a user since this is negative one and user ID is positive.
+
+828
+00:42:47,575 --> 00:42:49,345
+So, our tf.com will say,
+
+829
+00:42:49,345 --> 00:42:52,180
+this is users I'm doing here not Items.
+
+830
+00:42:52,180 --> 00:42:54,460
+To do that, we're going to send in our input
+
+831
+00:42:54,460 --> 00:42:57,070
+Json and it's going to do our production out of
+
+832
+00:42:57,070 --> 00:43:02,350
+these are the items that are the best for the user,
+
+833
+00:43:02,350 --> 00:43:05,060
+their ratings, their perfect ratings.
+
+834
+00:43:05,060 --> 00:43:07,155
+Same goes for the user ID.
+
+835
+00:43:07,155 --> 00:43:08,880
+We're predicting for item four now, so,
+
+836
+00:43:08,880 --> 00:43:11,325
+now I want to target users for that item.
+
+837
+00:43:11,325 --> 00:43:13,200
+So, we're going to send that off to
+
+838
+00:43:13,200 --> 00:43:15,510
+our ML Engine local predict and once
+
+839
+00:43:15,510 --> 00:43:18,910
+again we're going to get the projected rating for those.
+
+840
+00:43:19,260 --> 00:43:21,445
+So, now to run on cloud,
+
+841
+00:43:21,445 --> 00:43:22,945
+we do the same exact thing.
+
+842
+00:43:22,945 --> 00:43:25,540
+But first we're going to send our data to
+
+843
+00:43:25,540 --> 00:43:30,625
+our bucket on Google Cloud Storage and wals data directory.
+
+844
+00:43:30,625 --> 00:43:33,325
+Next, we're going to call the cloud training job.
+
+845
+00:43:33,325 --> 00:43:39,340
+I'll use our our model that we created and send all that over using a basic GPU,
+
+846
+00:43:39,340 --> 00:43:42,205
+and using our number of epochs now at 10,
+
+847
+00:43:42,205 --> 00:43:43,930
+because now we have the power of the cloud behind us.
+
+848
+00:43:43,930 --> 00:43:46,390
+So, we can definitely go a lot bigger and
+
+849
+00:43:46,390 --> 00:43:49,900
+larger in our number of items and our number of users.
+
+850
+00:43:49,900 --> 00:43:53,455
+We send that off, and it takes about 10 minutes or so for me.
+
+851
+00:43:53,455 --> 00:43:56,485
+We'll see how it goes for you. That's that.
+
+852
+00:43:56,485 --> 00:44:00,050
+That's the wals matrix factorization lab.

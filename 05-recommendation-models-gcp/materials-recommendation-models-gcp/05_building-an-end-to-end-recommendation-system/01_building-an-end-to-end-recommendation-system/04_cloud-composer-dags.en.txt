@@ -1,0 +1,65 @@
+Now that you're familiar with the basic
+environment setup, it's time to discuss your primary artifact, which is your
+DAG and the operators you are using to call whichever services
+you want to send tasks to. First, Airflow workflows
+are written in Python. You only have one Python file for
+each DAG. For example, here we have a simple_load_dag.py in our
+dag folder inside of our GCS bucket. And you can see a preview of what
+the DAG file looks like here. Don't worry about reading the code,
+we'll go into that later. It's sufficient enough to know for
+now that there are a series of user created tasks in each DAG file
+that invoke predefined operators. Take for example this task, which
+uses the dataflow python operator and is given the task id of
+process-delimited-and-push. We'll go over creating a DAG file and
+its components a little bit later. Once you've uploaded the python
+file to the DAGs folder, you can then navigate back
+to the Airflow web server. And under DAGs you'll see the DAG
+you just created with code visually represented as a directed graph,
+nodes and edges. You'll remember that the Python code
+that defined a task that we called process-delimited-and-push is
+now a node in our graph here. Let's explore a bit more
+of the Airflow web UI. You can see that this particular workflow
+is called GcsToBigQueryTriggered, and it has three tasks when it runs. Number one, process-delimited-and-push, which I just happen to know from that
+Python file that you saw earlier. That this task involves a data flow job to
+read in a new CSV file from a GCS bucket, process it and
+write tho output to BigQuery. Number two, success-move-to-completion, which then moves the CSV file from
+the input GCS bucket to a process or a completed GCS bucket,
+a separate one for archiving. Or number three,
+if the pipeline fails part of the way, the file is moved to the completion
+bucket but tagged as a failure. This is an example of a DAG
+that isn't strictly sequential. There's a decision made to run one node or a different node,
+based on the outcome of the parent node. That's how you get a branch. Now, this is just an example DAG. More complex DAGs, like the one
+that you're going to build for your recommendation model, will have
+more tasks as part of your graph. Take this new DAG, which has two
+BigQuery tasks, one ML engine task, and one App Engine deployment task. This is a preview of the last lab, where you're going to be building
+your own recommendation system. Regardless of the size and shape of
+your workflow DAG, one common thread for all workflows is the common
+operators that are used. If the DAG itself is how to run the code
+in the workflow, first do step one. Then move to step two or step three. The operator is specifying the what that
+actually gets done as part of the task. In this simple example, we're calling
+on the dataflow Python operator and the general Python operator. Those are by no means the only operators. So let's pause here and look at all
+the operators that are at your disposal to achieve our goal of automatic
+retraining and deployment of our ML model. Airflow has many operators, which you can invoke to use
+the tasks that you want to complete. Operators are usually atomic in a task,
+which means that generally, you only see one operator per one task. I've taken this list directly from the
+Apache Airflow docs of all the services that Airflow can orchestrate to. Let's take a look at some of
+the ones that are common and most relevant to us as ML engineers. As you might have guessed, we'll certainly
+will be making use of the BigQuery operators since our workflows live and die by the data that's fed into
+them through GCS and BigQuery. Here's a list of the specific operators
+that we can invoke in a task to call on the BigQuery service for
+querying and other data related tasks. You'll be mainly working with
+the first three in this course. But I encourage you to scan the resource
+link on all the operators that you could use, so you can get a feel for
+everything that's possible. Once we have our training
+data in a good place, the next logical step in our workflow is
+to then retrain and redeploy our model. In the same DAG file,
+after the BigQuery operator is complete, we can then make a service call
+to a cloud ML engine operator to kick off a new training job and manage
+our model like incrementing the version. You might have noticed that your Airflow
+DAG can have operators that send out tasks to other cloud providers,
+this is great for hybrid workflows. Where you have components across
+multiple cloud platforms or even a combination of cloud and
+on-premise. Apache Airflow is open source, and it's continuously adding more
+operators to other services. So be sure to check out the list in
+the documentation periodically if you're waiting for
+a new service to be added.

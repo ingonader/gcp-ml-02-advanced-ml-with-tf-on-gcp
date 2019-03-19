@@ -1,0 +1,88 @@
+So we've now learned how the user
+item interaction matrix works, and how we can create user embeddings and item embeddings within the same latent
+space, which can be learned from data. So what machine learning
+algorithms can help us with this? Collaborative filtering uses a user
+item interaction matrix, and it is a 2D table that provides ratings for
+user item pairs. These matrices are usually very sparse
+because there's a large number of users and a large number of items,
+which creates a massive cartesian product. These gargantuan matrices normally need to
+be shrunk down to a more attractable size, for example, through matrix factorization. With this method, we first factorize
+the user interactions matrix into two smaller matrices,
+user factors and item factors. If given a user ID, we can multiply item
+factors to get the predicted ratings for all items. Also vice versa, if given a movie ID, we can multiply by user factors to get
+the predicted rating for all users. Now that we have all the predicted
+ratings, we can return the top k rated items back to the user, who can now
+possibly make a better decision. We want to factorize our user interaction
+matrix, A, into the two smaller matrices, user factor matrix, U,
+and item factor matrix, V. Because this is an approximation, we want
+to minimize the squared error between the original user interaction matrix and
+the product of the two factor matrices. This resembles a least squares problem,
+and there are several ways to solve it. But which one should we choose? One method is to use
+the classic learning algorithm, stochastic gradient descent, or SGD. Let's go through the strengths and
+weaknesses of using SGD. SGD is very flexible. It can be used for many different
+types of problems and loss functions. And we probably already have
+a lot of experience using it, so plus one to the strengths. SGD is also parallel, which is awesome
+because then we can scale out our matrix factorization and
+quickly tackle much larger problems. Another plus one to the strengths. SGD, however, is one of the slower
+algorithms we could use because it possibly has to go through many
+iterations until it learns a good fit. Plus one to the weaknesses now. Remember all the unobserved user item
+interactions we had in the prior tables? Well, unfortunately, user item
+interaction data tends to be very sparse, especially for problems with a large
+number of users and columns. So we want an algorithm that can
+handle this lack of observations. Unfortunately, SGD has
+a hard time handling these. So that is another con for SGD, bringing us to a total of
+two strengths and two weaknesses. Another algorithm we can use is
+alternating least squares, or ALS, which alternatively solves U holding V constant,
+and then solves for V holding U constant. Let's look at the strengths and
+weaknesses of this method now. Well, unfortunately, as the name suggests,
+this algorithm only works for least squares problems. So that is plus one for weaknesses. However, luckily, for this particular
+problem, we have a least squares loss that we are trying to minimize,
+so this is still a viable option. Just like SGD,
+ALS is a paralyzable algorithm. Therefore, we can also scale out our
+problem to handle much larger data in a shorter amount of time. Plus one to the strengths. ALS is usually much faster
+at convergence than SGD. This makes sense because SGD is
+a more of a generalist algorithm, which gives it it's flexibility. However, ALS is a specialist algorithm for
+least squares problems, which this is, so it is somewhat optimized
+to solve these types of problems faster. Another plus one for the strengths. Lastly, unlike SGD, ALS or
+a close variant can easily handle unobserved interaction
+pairs, which is great news because those are usually extremely abundant
+in our interaction matrix. That's another strength for ALS, bringing
+us to a total of three strengths and only one weakness. Now, exactly what happens to
+the unobserved interaction pairs? Let's look at our earlier
+interaction matrix, specifically, the implicit
+feedback version. As you can see, we've replaced
+the check marks with 1s instead. So how do the different algorithms treat
+the missing interaction pairs data? One simple way to solve this is to
+perform the singular value decomposition, as we did in the previous course for
+latent semantic analysis. This matrix factorization method, however, requires all real numbers
+in the matrix it is decomposing. Therefore, the unobserved
+pairs are given values of 0. You might think this is not significant,
+but it greatly changed what the data means, because we were essentially
+making a large assumption and imputing zeros wherever data was missing. This can lead to poor performance
+in making recommendations. What else can we try instead? Using matrix factorization for collaborative filtering such as ALS,
+we just ignore the missing values. Notice that in the last formula,
+we were minimizing. We are only summing
+the observed instances. This deals in a great fix, but with a minor tweak, we can obtain
+something that usually works very well. What if instead of merely setting all
+unobserved pairs to 0, or ignoring them completely, we assigned a weight for
+those interaction pairs that are missing? We can think of this as not giving it
+an absolutely certain negative score, but instead as a low confidence score. This is called weighted alternating
+least squares, or WALS for short. Notice that in the modified equation,
+we have the ALS term on the left and a new term on the right that
+weights the unobserved entries. This usually provides much
+better recommendations and is the algorithm we will now focus on. Now it's time to test your knowledge about
+the ways unobserved pairs are handled by different algorithms. There are many ways to handle unobserved
+user-interaction matrix pairs. Blank explicitly sets all
+missing values to zero. Blank simply ignores missing values. Blank uses weights instead of zeros that
+can be thought of as representing blank. Choose the answers that
+best fill in the blanks. The correct answer is B. In singular value decomposition, or SVD, we explicitly set all
+machine values to zero. This could be problematic because we
+are making a very large assumption and imputing data that could
+have meaning when, in fact, there was no data there,
+which can throw off our predictions. The matrix factorization of
+a collaborative filtering algorithm, alternating least squares or ALS,
+simply ignores missing values. Weighted alternating least squares, or
+WALS, uses weights instead of zeros, which can be thought of as
+representing low confidence. WALS provides some of the best
+recommendation performance compared to these other methods, and
+is what we will focus on using for collaborative filtering.

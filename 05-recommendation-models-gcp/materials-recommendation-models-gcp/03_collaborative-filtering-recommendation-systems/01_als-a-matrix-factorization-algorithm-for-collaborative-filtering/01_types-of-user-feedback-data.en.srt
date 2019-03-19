@@ -1,0 +1,615 @@
+1
+00:00:00,000 --> 00:00:01,680
+Hi. I'm Ryan.
+
+2
+00:00:01,680 --> 00:00:03,345
+I'm a machine-learning scientist at Google,
+
+3
+00:00:03,345 --> 00:00:04,740
+and I love applying math,
+
+4
+00:00:04,740 --> 00:00:07,965
+and machine learning to big data to better make sense to the world.
+
+5
+00:00:07,965 --> 00:00:10,680
+Now that we've learned the basics of recommender systems,
+
+6
+00:00:10,680 --> 00:00:13,890
+and how content based variants work, in this module,
+
+7
+00:00:13,890 --> 00:00:17,985
+we will dive into the powerful recommendation technique of collaborative filtering.
+
+8
+00:00:17,985 --> 00:00:21,360
+In this module, you will learn how to build
+
+9
+00:00:21,360 --> 00:00:24,449
+a collaborative filtering recommendation system using WALS,
+
+10
+00:00:24,449 --> 00:00:27,270
+or Weighted Alternating Least Squares.
+
+11
+00:00:27,270 --> 00:00:30,120
+We will learn this by first understanding how to take
+
+12
+00:00:30,120 --> 00:00:32,685
+data of the interactions between users and items,
+
+13
+00:00:32,685 --> 00:00:34,110
+and find similar items,
+
+14
+00:00:34,110 --> 00:00:36,120
+or users to recommend.
+
+15
+00:00:36,120 --> 00:00:38,280
+This could be what users should watch next,
+
+16
+00:00:38,280 --> 00:00:41,430
+what they should buy, or who they should market to.
+
+17
+00:00:41,430 --> 00:00:45,680
+Then we'll learn how to take this new understanding to correctly prepare our data
+
+18
+00:00:45,680 --> 00:00:49,745
+for Tensorflows WALS matrix factorization estimators input function,
+
+19
+00:00:49,745 --> 00:00:51,415
+that we're going to create.
+
+20
+00:00:51,415 --> 00:00:54,350
+We'll next learn how to use the trained WALS estimator
+
+21
+00:00:54,350 --> 00:00:57,560
+to make batch predictions which are recommendations.
+
+22
+00:00:57,560 --> 00:01:00,695
+Finally, we'll learn how to create a productionized version,
+
+23
+00:01:00,695 --> 00:01:02,015
+and go over some of the strengths,
+
+24
+00:01:02,015 --> 00:01:03,620
+and weaknesses of our model,
+
+25
+00:01:03,620 --> 00:01:05,905
+and ways we can help address some of those issues.
+
+26
+00:01:05,905 --> 00:01:10,070
+We've learned about how content-based recommendation systems can use properties,
+
+27
+00:01:10,070 --> 00:01:12,865
+and features of items to make recommendations.
+
+28
+00:01:12,865 --> 00:01:15,210
+If given items that a user likes,
+
+29
+00:01:15,210 --> 00:01:17,860
+we can search in embedding space for similar items.
+
+30
+00:01:17,860 --> 00:01:22,520
+In other words, items in the local neighborhood of the item factor embedding space,
+
+31
+00:01:22,520 --> 00:01:24,500
+using some distance metric.
+
+32
+00:01:24,500 --> 00:01:27,890
+This can be great because it doesn't need data about other users,
+
+33
+00:01:27,890 --> 00:01:30,205
+and can recommend niche items.
+
+34
+00:01:30,205 --> 00:01:33,065
+However, it usually requires domain knowledge.
+
+35
+00:01:33,065 --> 00:01:35,165
+It only makes safe recommendations,
+
+36
+00:01:35,165 --> 00:01:37,730
+and stays in our local bubble of embedding space,
+
+37
+00:01:37,730 --> 00:01:40,640
+and it doesn't try things off our limited data manifold.
+
+38
+00:01:40,640 --> 00:01:43,370
+For instance, the similarities between the properties of
+
+39
+00:01:43,370 --> 00:01:46,394
+fruit smoothies, color, taste, acidity,
+
+40
+00:01:46,394 --> 00:01:49,400
+texture, et cetera, can all be represented by
+
+41
+00:01:49,400 --> 00:01:53,030
+points for each item in a multidimensional embedding space.
+
+42
+00:01:53,030 --> 00:01:56,485
+What if we don't know the best factors to compare items with?
+
+43
+00:01:56,485 --> 00:01:59,960
+We often think we know the factors that influence certain behaviors,
+
+44
+00:01:59,960 --> 00:02:01,370
+or lead to certain preferences,
+
+45
+00:02:01,370 --> 00:02:03,260
+but sometimes we can be wrong.
+
+46
+00:02:03,260 --> 00:02:07,505
+Let's see an example. Touching the Void was published in 1988,
+
+47
+00:02:07,505 --> 00:02:09,200
+and didn't so many copies.
+
+48
+00:02:09,200 --> 00:02:12,495
+Then, Into Thin Air came out in 1999,
+
+49
+00:02:12,495 --> 00:02:13,995
+and it was the best seller.
+
+50
+00:02:13,995 --> 00:02:16,410
+A bookseller noticed that many users who were
+
+51
+00:02:16,410 --> 00:02:19,390
+buying Into Thin Air also bought Touching the Void,
+
+52
+00:02:19,390 --> 00:02:22,245
+and started recommending it to buyers of Into Thin Air.
+
+53
+00:02:22,245 --> 00:02:25,445
+Soon, sales of Touching the Void started to take off,
+
+54
+00:02:25,445 --> 00:02:29,585
+and now that book outsells Into Thin Air by more than two to one.
+
+55
+00:02:29,585 --> 00:02:33,595
+Know that recommendations were made without knowing anything about the users,
+
+56
+00:02:33,595 --> 00:02:35,390
+other than their buying behavior,
+
+57
+00:02:35,390 --> 00:02:37,775
+and without knowing anything but the content of the two books.
+
+58
+00:02:37,775 --> 00:02:39,920
+This is an example of collaborative filtering,
+
+59
+00:02:39,920 --> 00:02:43,385
+and shows the power of that technique for making recommendations.
+
+60
+00:02:43,385 --> 00:02:46,430
+Instead of requiring lots of domain knowledge,
+
+61
+00:02:46,430 --> 00:02:48,860
+Collaborative Filtering can learn the latent factors
+
+62
+00:02:48,860 --> 00:02:51,845
+contained in the user item interaction data we have.
+
+63
+00:02:51,845 --> 00:02:55,720
+Collaborative filtering can also give recommendations some serendipity,
+
+64
+00:02:55,720 --> 00:03:00,110
+because even though one user's data manifold or neighborhood maybe small,
+
+65
+00:03:00,110 --> 00:03:02,345
+and only in one small bubble of embedding space,
+
+66
+00:03:02,345 --> 00:03:06,890
+other users may have the first users manifold as a subset of there's.
+
+67
+00:03:06,890 --> 00:03:09,560
+This means that the users are similar to each other,
+
+68
+00:03:09,560 --> 00:03:12,650
+and perhaps the first user might actually like to branch out,
+
+69
+00:03:12,650 --> 00:03:15,200
+and see things that the other users also liked.
+
+70
+00:03:15,200 --> 00:03:20,090
+Collaborative filtering solves two problems at the same time between users and items.
+
+71
+00:03:20,090 --> 00:03:23,800
+It uses similarities between items and users simultaneously.
+
+72
+00:03:23,800 --> 00:03:27,575
+Obviously, a hybrid approach of content-based Collaborative filtering,
+
+73
+00:03:27,575 --> 00:03:30,560
+and knowledge based recommendations usually works best,
+
+74
+00:03:30,560 --> 00:03:32,225
+which we will cover in the next module.
+
+75
+00:03:32,225 --> 00:03:35,870
+But for now, let's look at the awesome power of Collaborative filtering.
+
+76
+00:03:35,870 --> 00:03:38,660
+For example, instead of just having items such as
+
+77
+00:03:38,660 --> 00:03:41,960
+drinks represented as points in a multidimensional embedding space,
+
+78
+00:03:41,960 --> 00:03:45,575
+users themselves too can be represented along each dimension,
+
+79
+00:03:45,575 --> 00:03:48,340
+two embeddings within the same space.
+
+80
+00:03:48,340 --> 00:03:51,410
+Collaborative filtering uses the interactions between users,
+
+81
+00:03:51,410 --> 00:03:53,645
+and items to find similarities between them.
+
+82
+00:03:53,645 --> 00:03:55,744
+This can be represented as a matrix,
+
+83
+00:03:55,744 --> 00:03:57,650
+although usually a very sparse one,
+
+84
+00:03:57,650 --> 00:04:01,010
+because usually there are large numbers of users and items,
+
+85
+00:04:01,010 --> 00:04:02,545
+and most have never interacted.
+
+86
+00:04:02,545 --> 00:04:05,140
+Therefore, to get around this sparsity problem,
+
+87
+00:04:05,140 --> 00:04:08,840
+collaborative filtering usually uses matrix factorization.
+
+88
+00:04:08,840 --> 00:04:11,345
+Matrix factorization in collaborative filtering
+
+89
+00:04:11,345 --> 00:04:13,970
+starts from ratings or user interaction-matrix,
+
+90
+00:04:13,970 --> 00:04:15,365
+where the rows are users,
+
+91
+00:04:15,365 --> 00:04:16,750
+and items are columns.
+
+92
+00:04:16,750 --> 00:04:19,975
+In this example, there are four users and five items,
+
+93
+00:04:19,975 --> 00:04:23,090
+which are movies that the users may have seen on our website.
+
+94
+00:04:23,090 --> 00:04:26,825
+Our goal is to recommend movies to each user that they would like to see.
+
+95
+00:04:26,825 --> 00:04:30,820
+So, should user 4 see the movie, Shrek, or not.
+
+96
+00:04:30,820 --> 00:04:33,205
+Well, that depends on the ratings.
+
+97
+00:04:33,205 --> 00:04:35,675
+Sometimes these ratings are explicit.
+
+98
+00:04:35,675 --> 00:04:37,270
+This could be the number of stars,
+
+99
+00:04:37,270 --> 00:04:41,380
+the number of thumbs up, or maybe just a simple like or dislike button click.
+
+100
+00:04:41,380 --> 00:04:43,550
+The main point here is that a user is
+
+101
+00:04:43,550 --> 00:04:47,405
+intentionally explicitly leaving feedback for that item.
+
+102
+00:04:47,405 --> 00:04:49,715
+You'll notice that there are a lot of blank squares,
+
+103
+00:04:49,715 --> 00:04:51,520
+and we'll learn how to handle that later.
+
+104
+00:04:51,520 --> 00:04:55,355
+In this example, the scores for each movie could be a one through five,
+
+105
+00:04:55,355 --> 00:04:57,155
+where one is a strong dislike,
+
+106
+00:04:57,155 --> 00:05:00,020
+three is neutral, and five is a strong like.
+
+107
+00:05:00,020 --> 00:05:03,920
+Explicit feedback is usually difficult to get, but thankfully,
+
+108
+00:05:03,920 --> 00:05:05,790
+there's also implicit feedback,
+
+109
+00:05:05,790 --> 00:05:09,020
+which is still more information than if there was no feedback.
+
+110
+00:05:09,020 --> 00:05:12,680
+Implicit feedback is different from explicit feedback because it is not
+
+111
+00:05:12,680 --> 00:05:16,760
+intentionally given as a means of rating the item the user has interacted with.
+
+112
+00:05:16,760 --> 00:05:20,520
+However, there was some type of interaction, and from that,
+
+113
+00:05:20,520 --> 00:05:23,225
+we can infer whether the user had a positive,
+
+114
+00:05:23,225 --> 00:05:24,820
+or a negative experience.
+
+115
+00:05:24,820 --> 00:05:27,185
+This could be whether someone viewed a video,
+
+116
+00:05:27,185 --> 00:05:28,835
+how long they watched a video,
+
+117
+00:05:28,835 --> 00:05:30,950
+if a user spent a lot of time on a page,
+
+118
+00:05:30,950 --> 00:05:34,760
+if they clicked certain areas or buttons on the page, et cetera.
+
+119
+00:05:34,760 --> 00:05:39,280
+Much of the time we cannot give a real valued score, as in the last table.
+
+120
+00:05:39,280 --> 00:05:40,900
+For instance, in this example,
+
+121
+00:05:40,900 --> 00:05:43,160
+we simply assign a checkbox which will end up
+
+122
+00:05:43,160 --> 00:05:46,985
+numerically as a one to indicate that user i watched movie j.
+
+123
+00:05:46,985 --> 00:05:51,575
+Sometimes, there's both explicit and implicit data for user item interactions,
+
+124
+00:05:51,575 --> 00:05:54,190
+that can be leveraged for recommendations.
+
+125
+00:05:54,190 --> 00:05:58,100
+We think about how a user movie data might be stored in a database.
+
+126
+00:05:58,100 --> 00:06:01,115
+There might be an index column, a timestamp column,
+
+127
+00:06:01,115 --> 00:06:02,345
+a user ID column,
+
+128
+00:06:02,345 --> 00:06:03,680
+a movie ID column,
+
+129
+00:06:03,680 --> 00:06:05,455
+and then a column with the rating.
+
+130
+00:06:05,455 --> 00:06:07,585
+In this implicit feedback example,
+
+131
+00:06:07,585 --> 00:06:12,530
+the implicit rating from user 2 for the movie Memento was a one,
+
+132
+00:06:12,530 --> 00:06:14,270
+meaning that whatever their interaction was,
+
+133
+00:06:14,270 --> 00:06:17,440
+that interaction was flagged as implicit positive feedback.
+
+134
+00:06:17,440 --> 00:06:19,890
+Now it's time to test your knowledge,
+
+135
+00:06:19,890 --> 00:06:21,630
+about the types of feedback.
+
+136
+00:06:21,630 --> 00:06:24,395
+If we were creating a YouTube video recommender system,
+
+137
+00:06:24,395 --> 00:06:26,810
+where we had like and dislike data,
+
+138
+00:06:26,810 --> 00:06:29,180
+and also the duration of the video was watched,
+
+139
+00:06:29,180 --> 00:06:31,600
+which feedback would be considered explicit,
+
+140
+00:06:31,600 --> 00:06:33,360
+and which to be considered implicit?
+
+141
+00:06:33,360 --> 00:06:35,640
+Was the like and dislike data,
+
+142
+00:06:35,640 --> 00:06:37,635
+explicit or implicit feedback?
+
+143
+00:06:37,635 --> 00:06:41,525
+Was the watch duration explicit or implicit feedback?
+
+144
+00:06:41,525 --> 00:06:46,220
+The correct answer is D. The like and dislike data is explicit
+
+145
+00:06:46,220 --> 00:06:50,540
+because a user is purposefully giving either positive feedback by clicking like,
+
+146
+00:06:50,540 --> 00:06:52,955
+or negative feedback by clicking dislike.
+
+147
+00:06:52,955 --> 00:06:55,085
+They are telling us explicitly.
+
+148
+00:06:55,085 --> 00:06:58,640
+Whereas watch duration is more like implicit feedback.
+
+149
+00:06:58,640 --> 00:07:02,360
+The user isn't purposefully telling us whether they liked the video,
+
+150
+00:07:02,360 --> 00:07:03,994
+but we can make an inference.
+
+151
+00:07:03,994 --> 00:07:07,190
+Perhaps users that like the video we'll watch it longer,
+
+152
+00:07:07,190 --> 00:07:08,770
+or even to full completion,
+
+153
+00:07:08,770 --> 00:07:12,395
+whereas users that don't like the video may quickly change to something else,
+
+154
+00:07:12,395 --> 00:07:14,490
+and thus have a short duration.

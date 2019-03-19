@@ -1,0 +1,391 @@
+1
+00:00:00,460 --> 00:00:03,480
+Now that you're familiar with the basic
+environment setup, it's time to discuss
+
+2
+00:00:03,480 --> 00:00:07,370
+your primary artifact, which is your
+DAG and the operators you are using to
+
+3
+00:00:07,370 --> 00:00:10,880
+call whichever services
+you want to send tasks to.
+
+4
+00:00:10,880 --> 00:00:13,285
+First, Airflow workflows
+are written in Python.
+
+5
+00:00:13,285 --> 00:00:16,725
+You only have one Python file for
+each DAG.
+
+6
+00:00:16,725 --> 00:00:17,715
+For example,
+
+7
+00:00:17,715 --> 00:00:22,785
+here we have a simple_load_dag.py in our
+dag folder inside of our GCS bucket.
+
+8
+00:00:22,785 --> 00:00:26,125
+And you can see a preview of what
+the DAG file looks like here.
+
+9
+00:00:26,125 --> 00:00:28,795
+Don't worry about reading the code,
+we'll go into that later.
+
+10
+00:00:28,795 --> 00:00:31,755
+It's sufficient enough to know for
+now that there are a series of
+
+11
+00:00:31,755 --> 00:00:37,330
+user created tasks in each DAG file
+that invoke predefined operators.
+
+12
+00:00:37,330 --> 00:00:41,470
+Take for example this task, which
+uses the dataflow python operator and
+
+13
+00:00:41,470 --> 00:00:45,980
+is given the task id of
+process-delimited-and-push.
+
+14
+00:00:45,980 --> 00:00:49,070
+We'll go over creating a DAG file and
+its components a little bit later.
+
+15
+00:00:50,100 --> 00:00:52,980
+Once you've uploaded the python
+file to the DAGs folder,
+
+16
+00:00:52,980 --> 00:00:55,641
+you can then navigate back
+to the Airflow web server.
+
+17
+00:00:55,641 --> 00:00:59,994
+And under DAGs you'll see the DAG
+you just created with code visually
+
+18
+00:00:59,994 --> 00:01:03,890
+represented as a directed graph,
+nodes and edges.
+
+19
+00:01:03,890 --> 00:01:07,597
+You'll remember that the Python code
+that defined a task that we called
+
+20
+00:01:07,597 --> 00:01:11,013
+process-delimited-and-push is
+now a node in our graph here.
+
+21
+00:01:11,013 --> 00:01:14,193
+Let's explore a bit more
+of the Airflow web UI.
+
+22
+00:01:14,193 --> 00:01:18,905
+You can see that this particular workflow
+is called GcsToBigQueryTriggered, and
+
+23
+00:01:18,905 --> 00:01:21,170
+it has three tasks when it runs.
+
+24
+00:01:21,170 --> 00:01:23,530
+Number one, process-delimited-and-push,
+
+25
+00:01:23,530 --> 00:01:26,852
+which I just happen to know from that
+Python file that you saw earlier.
+
+26
+00:01:26,852 --> 00:01:32,413
+That this task involves a data flow job to
+read in a new CSV file from a GCS bucket,
+
+27
+00:01:32,413 --> 00:01:35,572
+process it and
+write tho output to BigQuery.
+
+28
+00:01:35,572 --> 00:01:38,899
+Number two, success-move-to-completion,
+
+29
+00:01:38,899 --> 00:01:43,411
+which then moves the CSV file from
+the input GCS bucket to a process or
+
+30
+00:01:43,411 --> 00:01:47,148
+a completed GCS bucket,
+a separate one for archiving.
+
+31
+00:01:47,148 --> 00:01:50,874
+Or number three,
+if the pipeline fails part of the way,
+
+32
+00:01:50,874 --> 00:01:55,336
+the file is moved to the completion
+bucket but tagged as a failure.
+
+33
+00:01:55,336 --> 00:01:59,120
+This is an example of a DAG
+that isn't strictly sequential.
+
+34
+00:01:59,120 --> 00:02:01,890
+There's a decision made to run one node or
+
+35
+00:02:01,890 --> 00:02:05,520
+a different node,
+based on the outcome of the parent node.
+
+36
+00:02:05,520 --> 00:02:07,400
+That's how you get a branch.
+
+37
+00:02:07,400 --> 00:02:09,548
+Now, this is just an example DAG.
+
+38
+00:02:09,548 --> 00:02:11,760
+More complex DAGs, like the one
+that you're going to build for
+
+39
+00:02:11,760 --> 00:02:15,610
+your recommendation model, will have
+more tasks as part of your graph.
+
+40
+00:02:15,610 --> 00:02:20,510
+Take this new DAG, which has two
+BigQuery tasks, one ML engine task, and
+
+41
+00:02:20,510 --> 00:02:22,800
+one App Engine deployment task.
+
+42
+00:02:22,800 --> 00:02:24,530
+This is a preview of the last lab,
+
+43
+00:02:24,530 --> 00:02:27,950
+where you're going to be building
+your own recommendation system.
+
+44
+00:02:27,950 --> 00:02:32,070
+Regardless of the size and shape of
+your workflow DAG, one common thread for
+
+45
+00:02:32,070 --> 00:02:35,430
+all workflows is the common
+operators that are used.
+
+46
+00:02:35,430 --> 00:02:40,388
+If the DAG itself is how to run the code
+in the workflow, first do step one.
+
+47
+00:02:40,388 --> 00:02:42,743
+Then move to step two or step three.
+
+48
+00:02:42,743 --> 00:02:48,550
+The operator is specifying the what that
+actually gets done as part of the task.
+
+49
+00:02:48,550 --> 00:02:51,970
+In this simple example, we're calling
+on the dataflow Python operator and
+
+50
+00:02:51,970 --> 00:02:53,950
+the general Python operator.
+
+51
+00:02:53,950 --> 00:02:56,085
+Those are by no means the only operators.
+
+52
+00:02:56,085 --> 00:03:00,245
+So let's pause here and look at all
+the operators that are at your disposal
+
+53
+00:03:00,245 --> 00:03:05,275
+to achieve our goal of automatic
+retraining and deployment of our ML model.
+
+54
+00:03:05,275 --> 00:03:06,645
+Airflow has many operators,
+
+55
+00:03:06,645 --> 00:03:09,905
+which you can invoke to use
+the tasks that you want to complete.
+
+56
+00:03:09,905 --> 00:03:13,215
+Operators are usually atomic in a task,
+which means that generally,
+
+57
+00:03:13,215 --> 00:03:16,240
+you only see one operator per one task.
+
+58
+00:03:16,240 --> 00:03:20,290
+I've taken this list directly from the
+Apache Airflow docs of all the services
+
+59
+00:03:20,290 --> 00:03:22,520
+that Airflow can orchestrate to.
+
+60
+00:03:22,520 --> 00:03:24,440
+Let's take a look at some of
+the ones that are common and
+
+61
+00:03:24,440 --> 00:03:26,830
+most relevant to us as ML engineers.
+
+62
+00:03:27,830 --> 00:03:30,770
+As you might have guessed, we'll certainly
+will be making use of the BigQuery
+
+63
+00:03:30,770 --> 00:03:32,740
+operators since our workflows live and
+
+64
+00:03:32,740 --> 00:03:36,800
+die by the data that's fed into
+them through GCS and BigQuery.
+
+65
+00:03:36,800 --> 00:03:40,584
+Here's a list of the specific operators
+that we can invoke in a task to
+
+66
+00:03:40,584 --> 00:03:44,578
+call on the BigQuery service for
+querying and other data related tasks.
+
+67
+00:03:44,578 --> 00:03:47,610
+You'll be mainly working with
+the first three in this course.
+
+68
+00:03:47,610 --> 00:03:51,120
+But I encourage you to scan the resource
+link on all the operators that you could
+
+69
+00:03:51,120 --> 00:03:53,700
+use, so you can get a feel for
+everything that's possible.
+
+70
+00:03:55,130 --> 00:03:57,340
+Once we have our training
+data in a good place,
+
+71
+00:03:57,340 --> 00:04:02,030
+the next logical step in our workflow is
+to then retrain and redeploy our model.
+
+72
+00:04:02,030 --> 00:04:05,850
+In the same DAG file,
+after the BigQuery operator is complete,
+
+73
+00:04:05,850 --> 00:04:09,540
+we can then make a service call
+to a cloud ML engine operator
+
+74
+00:04:09,540 --> 00:04:13,270
+to kick off a new training job and manage
+our model like incrementing the version.
+
+75
+00:04:14,520 --> 00:04:17,340
+You might have noticed that your Airflow
+DAG can have operators that send out
+
+76
+00:04:17,340 --> 00:04:21,472
+tasks to other cloud providers,
+this is great for hybrid workflows.
+
+77
+00:04:21,472 --> 00:04:24,470
+Where you have components across
+multiple cloud platforms or
+
+78
+00:04:24,470 --> 00:04:27,258
+even a combination of cloud and
+on-premise.
+
+79
+00:04:27,258 --> 00:04:28,968
+Apache Airflow is open source,
+
+80
+00:04:28,968 --> 00:04:32,848
+and it's continuously adding more
+operators to other services.
+
+81
+00:04:32,848 --> 00:04:36,018
+So be sure to check out the list in
+the documentation periodically if
+
+82
+00:04:36,018 --> 00:04:37,978
+you're waiting for
+a new service to be added.

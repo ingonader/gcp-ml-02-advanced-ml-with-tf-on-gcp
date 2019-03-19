@@ -1,0 +1,367 @@
+1
+00:00:00,000 --> 00:00:04,110
+So now that we have preprocess our data and save that out to TF Records,
+
+2
+00:00:04,110 --> 00:00:08,100
+we had the data in the correct format to be read into the needed Sparse Tensor format.
+
+3
+00:00:08,100 --> 00:00:12,210
+If you want to be able to eventually predict items for our users,
+
+4
+00:00:12,210 --> 00:00:15,255
+we will need a key which will be the user index.
+
+5
+00:00:15,255 --> 00:00:19,635
+We'll also need the items that each user interacted with which will be our indices,
+
+6
+00:00:19,635 --> 00:00:24,060
+and we'll also need the ratings of these interactions and we'll set as our values.
+
+7
+00:00:24,060 --> 00:00:27,000
+But just how does this get into our estimator?
+
+8
+00:00:27,000 --> 00:00:29,100
+What even are the pieces needed to get into
+
+9
+00:00:29,100 --> 00:00:33,015
+the WALS Matrix Factorization Estimator to work? Let's look.
+
+10
+00:00:33,015 --> 00:00:36,300
+Here's the code to run the WALS Matrix Factorization Estimator.
+
+11
+00:00:36,300 --> 00:00:39,300
+At the moment, WALS is a contrib estimator.
+
+12
+00:00:39,300 --> 00:00:42,685
+So, I'm using experiment and we'll be using learn runner.
+
+13
+00:00:42,685 --> 00:00:46,240
+We need to obviously tell WALS how big our matrix is,
+
+14
+00:00:46,240 --> 00:00:49,435
+how many users and how many items in our interaction matrix.
+
+15
+00:00:49,435 --> 00:00:52,720
+We need to get the number of dimensions or latent factors we want
+
+16
+00:00:52,720 --> 00:00:56,195
+to compress our interaction matrix down into for our embeddings.
+
+17
+00:00:56,195 --> 00:01:00,205
+Of course, we also need to tell the estimator where to write out the model files.
+
+18
+00:01:00,205 --> 00:01:03,895
+We'll need a train input function that takes our preprocess TF records,
+
+19
+00:01:03,895 --> 00:01:07,580
+and likewise an eval input function for those TF records.
+
+20
+00:01:07,580 --> 00:01:12,390
+Also, we'll need the number of steps or batches we are going to train for.
+
+21
+00:01:12,390 --> 00:01:15,400
+One evaluation step, we'll want to set
+
+22
+00:01:15,400 --> 00:01:17,680
+the minimum evaluation frequency so that we don't get
+
+23
+00:01:17,680 --> 00:01:20,290
+our training bogged down by evaluating too often.
+
+24
+00:01:20,290 --> 00:01:22,750
+Lastly, we'll set an export strategy with our
+
+25
+00:01:22,750 --> 00:01:25,605
+serving input function for inference serving.
+
+26
+00:01:25,605 --> 00:01:29,240
+Let's first take a deeper dive into our input functions so that we can
+
+27
+00:01:29,240 --> 00:01:32,390
+see how to use our newly created preprocess TF records.
+
+28
+00:01:32,390 --> 00:01:36,140
+So, now that we preprocess our data and save that to our TF records,
+
+29
+00:01:36,140 --> 00:01:38,395
+our input function is going to need to read them.
+
+30
+00:01:38,395 --> 00:01:42,890
+Therefore, let's define a function that will parse our TF records.
+
+31
+00:01:42,890 --> 00:01:48,020
+First, our function parse TF records receives a file name and the vocab_size,
+
+32
+00:01:48,020 --> 00:01:51,580
+which is required as we saw in the sparse merge signature earlier.
+
+33
+00:01:51,580 --> 00:01:54,585
+For items_for_user, the vocabulary is the items,
+
+34
+00:01:54,585 --> 00:01:57,165
+so vocab_size equals nitems.
+
+35
+00:01:57,165 --> 00:02:00,285
+For users_for_item, the vocabulary is the users,
+
+36
+00:02:00,285 --> 00:02:03,390
+so vocab_size equals nusers.
+
+37
+00:02:03,390 --> 00:02:05,160
+Now that we're in the function,
+
+38
+00:02:05,160 --> 00:02:09,665
+we first create a list of all the files at the input path with a past filename signature,
+
+39
+00:02:09,665 --> 00:02:13,745
+including wildcards using tf.gfile.Glob.
+
+40
+00:02:13,745 --> 00:02:15,275
+When we have our file list,
+
+41
+00:02:15,275 --> 00:02:17,620
+we will create a TF record data set.
+
+42
+00:02:17,620 --> 00:02:21,760
+Next, we take our TF record data set and apply a map to it,
+
+43
+00:02:21,760 --> 00:02:24,560
+where we will decode each serialize example using
+
+44
+00:02:24,560 --> 00:02:28,150
+a custom function we made and the corresponding vocab_size.
+
+45
+00:02:28,150 --> 00:02:34,470
+In this case, the vocab_size for input rows is nitems and input columns is nusers.
+
+46
+00:02:34,470 --> 00:02:39,185
+Of course, we don't want to only go through the files one time.
+
+47
+00:02:39,185 --> 00:02:43,820
+Therefore, we will apply a repeat on our data set a number of epic times.
+
+48
+00:02:43,820 --> 00:02:48,080
+We also know that batching is important in machine learning,
+
+49
+00:02:48,080 --> 00:02:50,510
+so instead of using only one example at a time,
+
+50
+00:02:50,510 --> 00:02:53,620
+we want to use a batch size number of examples.
+
+51
+00:02:53,620 --> 00:02:55,330
+After batching is complete,
+
+52
+00:02:55,330 --> 00:02:57,290
+we need to remap the keys that we talked about
+
+53
+00:02:57,290 --> 00:03:00,050
+earlier in order to fix the first dimension of the rank
+
+54
+00:03:00,050 --> 00:03:03,140
+two indices tensor of our Sparse Tensor
+
+55
+00:03:03,140 --> 00:03:07,270
+because batching overwrote it with the index within the batch.
+
+56
+00:03:07,270 --> 00:03:10,155
+Lastly, now that our Sparse Tensors are fixed,
+
+57
+00:03:10,155 --> 00:03:12,510
+we will return the next batch of Sparse Tensors
+
+58
+00:03:12,510 --> 00:03:15,815
+from our data set using a one-shot iterator.
+
+59
+00:03:15,815 --> 00:03:18,920
+This is all wrapped by the input function which will
+
+60
+00:03:18,920 --> 00:03:21,940
+be called by the WALS Matrix Factorization Estimator.
+
+61
+00:03:21,940 --> 00:03:24,245
+We call parse TF records for our rows,
+
+62
+00:03:24,245 --> 00:03:25,700
+which will be items_for_user,
+
+63
+00:03:25,700 --> 00:03:28,295
+and for our columns, which will be users per item.
+
+64
+00:03:28,295 --> 00:03:31,040
+This is saved in a features dictionary.
+
+65
+00:03:31,040 --> 00:03:35,920
+We could have other features in the dictionary such as priority weights, et cetera.
+
+66
+00:03:35,920 --> 00:03:37,970
+We returned features only from
+
+67
+00:03:37,970 --> 00:03:41,060
+the input function because our labels are within our features as we
+
+68
+00:03:41,060 --> 00:03:46,015
+alternate back and forth between solving rows and columns while keeping the other fixed.
+
+69
+00:03:46,015 --> 00:03:49,550
+Now that we've written our input function and TF records helper function,
+
+70
+00:03:49,550 --> 00:03:51,175
+let's test your knowledge.
+
+71
+00:03:51,175 --> 00:03:53,750
+The WALS Measures Factorization Estimator takes
+
+72
+00:03:53,750 --> 00:03:56,450
+the input rows and input columns as features.
+
+73
+00:03:56,450 --> 00:04:00,515
+If we have our items_for_user and users_for_item TF records,
+
+74
+00:04:00,515 --> 00:04:05,830
+which filename and vocab_size should we use for each of these features, respectively?
+
+75
+00:04:05,830 --> 00:04:08,925
+The correct answer is C. Remember,
+
+76
+00:04:08,925 --> 00:04:11,180
+our user-item interaction matrix has shape,
+
+77
+00:04:11,180 --> 00:04:13,760
+number of users by number of items.
+
+78
+00:04:13,760 --> 00:04:19,195
+Therefore, there's a row for each unique user and a column for each unique item.
+
+79
+00:04:19,195 --> 00:04:22,150
+Thus, when looking at the input rows
+
+80
+00:04:22,150 --> 00:04:25,805
+features it will be a batch of rows from our data set.
+
+81
+00:04:25,805 --> 00:04:29,180
+This means we should be using the items_for_user TF record,
+
+82
+00:04:29,180 --> 00:04:31,990
+since there'll be multiple items for each unique user.
+
+83
+00:04:31,990 --> 00:04:34,970
+The vocab_size which is used for the indices of
+
+84
+00:04:34,970 --> 00:04:38,835
+our Sparse Tensor for the input rows feature will be nitems
+
+85
+00:04:38,835 --> 00:04:42,170
+because each unique user will have interacted with a subset of
+
+86
+00:04:42,170 --> 00:04:46,355
+items from the entire item inventory or vocabulary.
+
+87
+00:04:46,355 --> 00:04:49,510
+However, when assigning the input columns feature,
+
+88
+00:04:49,510 --> 00:04:52,880
+we should use the users_for_item TF record because now we're
+
+89
+00:04:52,880 --> 00:04:56,770
+looking at a unique item that has multiple users that interacted with it.
+
+90
+00:04:56,770 --> 00:05:01,970
+The vocab_size should be end users since when making our input columns Sparse Tensor,
+
+91
+00:05:01,970 --> 00:05:06,140
+we will use this vocab_size for our indices tensor since
+
+92
+00:05:06,140 --> 00:05:11,260
+each item has interacted with a subset of the entire user base or vocabulary.

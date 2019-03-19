@@ -1,0 +1,195 @@
+1
+00:00:00,000 --> 00:00:02,325
+Just as in contextually pre-filtering,
+
+2
+00:00:02,325 --> 00:00:06,540
+the contextual postfiltering algorithm begins with our initial user by item,
+
+3
+00:00:06,540 --> 00:00:09,925
+multidimensional context tensor containing ratings.
+
+4
+00:00:09,925 --> 00:00:12,420
+However, notice here, we are sending
+
+5
+00:00:12,420 --> 00:00:16,365
+our initial data directly to our traditional two-dimensional recommendation system.
+
+6
+00:00:16,365 --> 00:00:18,015
+How can this be?
+
+7
+00:00:18,015 --> 00:00:21,560
+Why did we not apply the contexts filter before the recommender?
+
+8
+00:00:21,560 --> 00:00:24,190
+What happens to all the context dimensions?
+
+9
+00:00:24,190 --> 00:00:26,400
+Well, we simply ignore them.
+
+10
+00:00:26,400 --> 00:00:27,930
+We ignore a context.
+
+11
+00:00:27,930 --> 00:00:31,880
+We process the data as if it was just a user item interaction matrix.
+
+12
+00:00:31,880 --> 00:00:34,010
+This is good in the respect that we can use
+
+13
+00:00:34,010 --> 00:00:36,350
+our traditional collaborative filtering technology,
+
+14
+00:00:36,350 --> 00:00:38,660
+but are the recommendation going to be the same
+
+15
+00:00:38,660 --> 00:00:41,360
+as if we never had the contexts that it to begin with?
+
+16
+00:00:41,360 --> 00:00:43,535
+Let's wait and see to find out.
+
+17
+00:00:43,535 --> 00:00:45,710
+We then apply our users vector to
+
+18
+00:00:45,710 --> 00:00:49,375
+the output embeddings to get the representation in embedding space.
+
+19
+00:00:49,375 --> 00:00:51,870
+This gives us our recommendations.
+
+20
+00:00:51,870 --> 00:00:54,050
+But these are exactly the same as if we never had
+
+21
+00:00:54,050 --> 00:00:56,360
+contexts data because the machine learning,
+
+22
+00:00:56,360 --> 00:00:58,775
+it has such a shame to throughout possibly good data,
+
+23
+00:00:58,775 --> 00:01:00,475
+how do we fix this problem?
+
+24
+00:01:00,475 --> 00:01:02,390
+Well, we can try to adjust
+
+25
+00:01:02,390 --> 00:01:06,350
+our non-contractual recommendations by applying the context back in.
+
+26
+00:01:06,350 --> 00:01:09,200
+As you can see, this happens after the recommender
+
+27
+00:01:09,200 --> 00:01:12,685
+hence it is called the contextual postfiltering.
+
+28
+00:01:12,685 --> 00:01:17,060
+This can be done by filtering out recommendations that don't match the current context,
+
+29
+00:01:17,060 --> 00:01:18,770
+or altering the ranking of
+
+30
+00:01:18,770 --> 00:01:22,175
+the predictions or recommendations returned by the recommender.
+
+31
+00:01:22,175 --> 00:01:26,605
+These adjustments can be determined using either heuristic or model-based approaches.
+
+32
+00:01:26,605 --> 00:01:30,110
+For example, if our user from before still wants to see a movie on
+
+33
+00:01:30,110 --> 00:01:34,400
+Thursday after work and on Thursday they usually watch action movies,
+
+34
+00:01:34,400 --> 00:01:37,490
+our postfiltering can filter out all non-action movies
+
+35
+00:01:37,490 --> 00:01:41,570
+for the recommendations returned by our non-contractual recommender.
+
+36
+00:01:41,570 --> 00:01:46,255
+This then gets us finally to the contextual recommendations that we wanted.
+
+37
+00:01:46,255 --> 00:01:51,800
+Contextual postfiltering has several methods of which weight and filter are the most
+
+38
+00:01:51,800 --> 00:01:53,570
+popular and are based on adjusting
+
+39
+00:01:53,570 --> 00:01:58,135
+the non-contextual recommendations based on the contexts relevance to the user.
+
+40
+00:01:58,135 --> 00:01:59,695
+To find this relevance,
+
+41
+00:01:59,695 --> 00:02:03,605
+the contextual probability is calculated for user I, choosing item J,
+
+42
+00:02:03,605 --> 00:02:09,350
+in context C. This is calculated by dividing the number of users similar to user I who
+
+43
+00:02:09,350 --> 00:02:11,600
+shows the same item J in the same context
+
+44
+00:02:11,600 --> 00:02:15,885
+C by the total number of users similar to user I.
+
+45
+00:02:15,885 --> 00:02:19,640
+The weight method multiplies the non-contextualized ratings by
+
+46
+00:02:19,640 --> 00:02:23,615
+the contextual probability to get the adjusted contextualize ratings.
+
+47
+00:02:23,615 --> 00:02:26,075
+The filter method on the other hand,
+
+48
+00:02:26,075 --> 00:02:27,950
+filters out predicted ratings below
+
+49
+00:02:27,950 --> 00:02:30,740
+a certain threshold value of the conditional probability.

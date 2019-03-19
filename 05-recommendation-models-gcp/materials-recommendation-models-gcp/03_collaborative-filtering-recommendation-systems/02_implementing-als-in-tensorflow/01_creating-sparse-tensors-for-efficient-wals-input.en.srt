@@ -1,0 +1,278 @@
+1
+00:00:00,660 --> 00:00:05,246
+Now that we've learned how to get the data
+in the right form from a table in our data
+
+2
+00:00:05,246 --> 00:00:10,108
+warehouse to our user interaction matrix
+through mapping business centrical values
+
+3
+00:00:10,108 --> 00:00:14,698
+to row and column indices, do we need to
+implement the ALS algorithm from scratch
+
+4
+00:00:14,698 --> 00:00:18,033
+to be able to use it and
+learn the user and item embeddings?
+
+5
+00:00:18,033 --> 00:00:22,502
+Thankfully for us TensorFlow has the WALS
+Matrix Factorization estimator to take
+
+6
+00:00:22,502 --> 00:00:25,686
+care of most of the work to
+create our recommender system.
+
+7
+00:00:25,686 --> 00:00:29,388
+As with all canned estimators we just
+need to connect some of the piping,
+
+8
+00:00:29,388 --> 00:00:33,760
+such as input functions, server input
+functions, and the training evaluate loop,
+
+9
+00:00:33,760 --> 00:00:36,514
+and the estimator will take
+care of everything else.
+
+10
+00:00:36,514 --> 00:00:41,182
+Because the WALS Matrix Factorization
+estimator requires whole rows and columns,
+
+11
+00:00:41,182 --> 00:00:45,337
+we have to preprocess the data from our
+data warehouse to be the right form.
+
+12
+00:00:45,337 --> 00:00:49,945
+Namely into a structure that we can store
+into each SparseTensor for rows and
+
+13
+00:00:49,945 --> 00:00:50,595
+columns.
+
+14
+00:00:50,595 --> 00:00:53,104
+Here's an example of our
+preprocessing step for
+
+15
+00:00:53,104 --> 00:00:55,253
+columns since we are grouping by item ID.
+
+16
+00:00:55,253 --> 00:01:00,298
+We will have similar code for
+rows where we group by user ID instead.
+
+17
+00:01:00,298 --> 00:01:03,507
+So we want SparseTensors,
+a hierarchical data structure.
+
+18
+00:01:03,507 --> 00:01:06,443
+What file type should we write
+our preprocessed data to?
+
+19
+00:01:06,443 --> 00:01:11,279
+Here we're storing two arrays,
+it's kind of painful to do this in CSV and
+
+20
+00:01:11,279 --> 00:01:13,076
+inefficient to do in JSON.
+
+21
+00:01:13,076 --> 00:01:16,325
+Therefore, our best option would
+be to use TensorFlow records.
+
+22
+00:01:16,325 --> 00:01:18,770
+And look,
+it's fairly easy to do in Python.
+
+23
+00:01:18,770 --> 00:01:23,586
+Here, we created a TFRecordWriter with
+our specified path, users_for_item,
+
+24
+00:01:23,586 --> 00:01:24,629
+in this example.
+
+25
+00:01:24,629 --> 00:01:28,563
+For each item, we want to create
+an example that stores our features,
+
+26
+00:01:28,563 --> 00:01:32,514
+which we can then write out as
+serialized examples to our output file.
+
+27
+00:01:32,514 --> 00:01:36,206
+SparseTensors are hierarchical
+data structures where indices and
+
+28
+00:01:36,206 --> 00:01:39,959
+values are stored, which in case will
+be the user IDs, or the index of
+
+29
+00:01:39,959 --> 00:01:44,444
+the users from the user item interaction
+matrix, and the ratings respectively.
+
+30
+00:01:44,444 --> 00:01:47,920
+We will also store the key,
+which is the item index,
+
+31
+00:01:47,920 --> 00:01:50,294
+from the user interaction matrix.
+
+32
+00:01:50,294 --> 00:01:53,343
+This value is important to save,
+which we'll see later,
+
+33
+00:01:53,343 --> 00:01:57,843
+because during the batching, they first
+mention the SparseTensor indices tensor.
+
+34
+00:01:57,843 --> 00:02:00,463
+With rank two,
+becomes the batch indices instead.
+
+35
+00:02:00,463 --> 00:02:04,880
+So we'll need the key data to replace the
+incorrect overwrite when we're done with
+
+36
+00:02:04,880 --> 00:02:07,166
+the batching phase of the input function.
+
+37
+00:02:07,166 --> 00:02:11,544
+The indices and values can be quickly
+converted into a SparseTensor using
+
+38
+00:02:11,544 --> 00:02:16,063
+tf.sparse_merge, where you need the ids,
+values, and the vocab size,
+
+39
+00:02:16,063 --> 00:02:18,547
+such as a number of items in this example.
+
+40
+00:02:18,547 --> 00:02:21,928
+Now that we've learned how we should
+pre process our data for WALS,
+
+41
+00:02:21,928 --> 00:02:23,423
+let's test your knowledge.
+
+42
+00:02:23,423 --> 00:02:27,795
+If we want to recommend items for
+a user when we are writing out
+
+43
+00:02:27,795 --> 00:02:32,106
+to the TF Record file our key
+train feature should be blank.
+
+44
+00:02:32,106 --> 00:02:34,341
+Our indices train feature should be blank.
+
+45
+00:02:34,341 --> 00:02:37,505
+And our values train
+feature should be blank.
+
+46
+00:02:37,505 --> 00:02:40,783
+Chose the answer that
+best fills in the blanks.
+
+47
+00:02:40,783 --> 00:02:42,575
+The correct answer is E.
+
+48
+00:02:42,575 --> 00:02:48,421
+Because we are recommending items, note
+the plural for a user, note the singular.
+
+49
+00:02:48,421 --> 00:02:52,815
+We are in a situation where each
+example will be a unique user per row.
+
+50
+00:02:52,815 --> 00:02:55,805
+There will be a variable
+number of items per each user,
+
+51
+00:02:55,805 --> 00:02:59,451
+which will be the columns based on
+what that user interacted with.
+
+52
+00:02:59,451 --> 00:03:01,909
+Some users interacting
+with only a few items and
+
+53
+00:03:01,909 --> 00:03:04,070
+some users interacting with many items.
+
+54
+00:03:04,070 --> 00:03:08,386
+The indices tensor will be the item
+indices or item IDs that have interacted
+
+55
+00:03:08,386 --> 00:03:12,429
+with and the values tensor will be
+corresponding ratings at those user
+
+56
+00:03:12,429 --> 00:03:16,358
+item interaction points within
+the user item interaction matrix.
+
+57
+00:03:16,358 --> 00:03:20,056
+Answer A however, should look familiar,
+because that is the example
+
+58
+00:03:20,056 --> 00:03:23,520
+we just went through which is for
+recommending users for an item.

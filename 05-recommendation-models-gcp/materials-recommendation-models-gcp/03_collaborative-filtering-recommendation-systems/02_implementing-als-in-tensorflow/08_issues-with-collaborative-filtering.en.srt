@@ -1,0 +1,323 @@
+1
+00:00:00,000 --> 00:00:03,930
+So, we have our batch predictions and we're ready to continue, right?
+
+2
+00:00:03,930 --> 00:00:07,185
+Well, unfortunately the output is not very human readable.
+
+3
+00:00:07,185 --> 00:00:11,205
+For instance, what is item ID 800 on the third line?
+
+4
+00:00:11,205 --> 00:00:13,035
+Who is user ID two?
+
+5
+00:00:13,035 --> 00:00:14,220
+Which isn't even listed,
+
+6
+00:00:14,220 --> 00:00:17,580
+but we know it's the third line which corresponds to user index two.
+
+7
+00:00:17,580 --> 00:00:19,530
+What's the problem here?
+
+8
+00:00:19,530 --> 00:00:25,320
+We enumerated the users and items but we really need are the visitor ID and Content ID,
+
+9
+00:00:25,320 --> 00:00:27,330
+which we can tie back to original data.
+
+10
+00:00:27,330 --> 00:00:29,700
+We map from visitor ID and content ID,
+
+11
+00:00:29,700 --> 00:00:33,435
+but we need to reverse mapping to get back from our enumerations.
+
+12
+00:00:33,435 --> 00:00:37,639
+What we really need are visitorId and contentId in our prediction files,
+
+13
+00:00:37,639 --> 00:00:40,045
+not the enumerated userId and itemId.
+
+14
+00:00:40,045 --> 00:00:43,985
+Of course, we can do this reverse mapping and post-processing but,
+
+15
+00:00:43,985 --> 00:00:47,240
+can we do it while writing the file instead?
+
+16
+00:00:47,240 --> 00:00:50,765
+Even though we typically will do training on a periodic basis,
+
+17
+00:00:50,765 --> 00:00:54,080
+on a nightly or hourly snapshot based on some time window,
+
+18
+00:00:54,080 --> 00:00:56,510
+the datasets can be too large to be able to take
+
+19
+00:00:56,510 --> 00:00:59,165
+advantage of using in-memory tools, like Pandas.
+
+20
+00:00:59,165 --> 00:01:03,260
+So, we need a way to do this and be able to handle the scale.
+
+21
+00:01:03,260 --> 00:01:07,760
+We should use TensorFlow-Transform to first create the group-by data set.
+
+22
+00:01:07,760 --> 00:01:11,210
+Then you create the mapping vocabulary or visitorId the userId.
+
+23
+00:01:11,210 --> 00:01:15,020
+Then we can use that vocabulary to reverse map when doing predictions.
+
+24
+00:01:15,020 --> 00:01:17,275
+Let's see how that would look in a dataflow graph.
+
+25
+00:01:17,275 --> 00:01:20,210
+TensorFlow Transform uses Cloud Dataflow in
+
+26
+00:01:20,210 --> 00:01:24,545
+the analysis stage to create assets that TensorFlow uses in training and prediction.
+
+27
+00:01:24,545 --> 00:01:27,020
+Here is this example's DataFlow graph.
+
+28
+00:01:27,020 --> 00:01:28,765
+Let's walk through each step.
+
+29
+00:01:28,765 --> 00:01:33,785
+First, since we were using Google Analytics data from BigQuery, we will read that in.
+
+30
+00:01:33,785 --> 00:01:36,440
+Next, we'll use TensorFlow- Transform for
+
+31
+00:01:36,440 --> 00:01:40,030
+the analysis to get the proper statistics like building the vocabularies.
+
+32
+00:01:40,030 --> 00:01:42,110
+Then, we'll create the transform function
+
+33
+00:01:42,110 --> 00:01:44,480
+that TensorFlow will use to do the correct mapping.
+
+34
+00:01:44,480 --> 00:01:49,865
+This will create the vocabularies of visitorId to userId and contentId to itemId,
+
+35
+00:01:49,865 --> 00:01:52,840
+that we can use for the map and reverse map.
+
+36
+00:01:52,840 --> 00:01:54,620
+Now, that we have the vocabularies,
+
+37
+00:01:54,620 --> 00:01:58,400
+we can create the group-by data sets for both users and items.
+
+38
+00:01:58,400 --> 00:02:00,815
+Just as before when we were using Pandas,
+
+39
+00:02:00,815 --> 00:02:04,780
+DataFlow will convert our group-by datasets into TensorFlow records.
+
+40
+00:02:04,780 --> 00:02:07,650
+Finally, we will write our pre-process files to
+
+41
+00:02:07,650 --> 00:02:11,530
+cloud storage so they can be used by our TensorFlow model.
+
+42
+00:02:11,530 --> 00:02:13,775
+The training code remains the same.
+
+43
+00:02:13,775 --> 00:02:15,705
+Instead of Pandas pre-processes in our data,
+
+44
+00:02:15,705 --> 00:02:19,980
+the dataflow job writes up TF records containing itemId and userId.
+
+45
+00:02:19,980 --> 00:02:22,250
+Our batch production code for addition code takes that,
+
+46
+00:02:22,250 --> 00:02:24,470
+looks it up in the vocabulary and writes that are
+
+47
+00:02:24,470 --> 00:02:27,205
+files that contain contentId and visitorId.
+
+48
+00:02:27,205 --> 00:02:29,060
+We just need to make a few additions to
+
+49
+00:02:29,060 --> 00:02:32,180
+the batch prediction code and everything will work perfectly.
+
+50
+00:02:32,180 --> 00:02:34,535
+First, we'll define a new function,
+
+51
+00:02:34,535 --> 00:02:39,575
+create lookup, that uses the transform function assets to read in the vocabularies.
+
+52
+00:02:39,575 --> 00:02:42,680
+We'll call our create lookup function for both item
+
+53
+00:02:42,680 --> 00:02:45,920
+and user vocabularies to use for our reverse mapping.
+
+54
+00:02:45,920 --> 00:02:50,545
+Lastly, we'll look at the vocabulary when writing out the userId and itemId.
+
+55
+00:02:50,545 --> 00:02:54,695
+This is easy and doesn't require a dictionary because we're dealing with indices here
+
+56
+00:02:54,695 --> 00:02:59,465
+and can just return that element based on index location, a vocabulary list.
+
+57
+00:02:59,465 --> 00:03:01,435
+Let's test your knowledge.
+
+58
+00:03:01,435 --> 00:03:04,580
+We want a scalable way to generate predictions that directly tie
+
+59
+00:03:04,580 --> 00:03:07,850
+back to the original data and not just enumerated indices.
+
+60
+00:03:07,850 --> 00:03:11,090
+We should use TensorFlow- Transform to first create blank,
+
+61
+00:03:11,090 --> 00:03:14,765
+then create blank, and lastly create blank.
+
+62
+00:03:14,765 --> 00:03:17,600
+Choose the answer that best fills in the blanks.
+
+63
+00:03:17,600 --> 00:03:23,000
+The correct answer is C. To use the walls matrix factorization estimator,
+
+64
+00:03:23,000 --> 00:03:25,500
+we need to convert from our human readable user and
+
+65
+00:03:25,500 --> 00:03:28,255
+item identifiers to enumerated indices.
+
+66
+00:03:28,255 --> 00:03:30,395
+However, without a reverse mapping
+
+67
+00:03:30,395 --> 00:03:33,575
+the predictions will not be in the correct form for us to easily understand them.
+
+68
+00:03:33,575 --> 00:03:36,590
+Therefore, we want to scalable way to generate predictions that
+
+69
+00:03:36,590 --> 00:03:40,585
+directly tie back to the original data and not just enumerated indices.
+
+70
+00:03:40,585 --> 00:03:44,195
+We should use TensorFlow Transform to first create the group-by datasets,
+
+71
+00:03:44,195 --> 00:03:47,435
+so that each item has a list of issues that interacted with it,
+
+72
+00:03:47,435 --> 00:03:49,070
+with our corresponding ratings.
+
+73
+00:03:49,070 --> 00:03:51,875
+Each user has a list of each item that they interacted with,
+
+74
+00:03:51,875 --> 00:03:54,220
+also with the corresponding ratings.
+
+75
+00:03:54,220 --> 00:03:57,770
+Then, we create the vocabularies to perform the forward mapping from
+
+76
+00:03:57,770 --> 00:04:00,920
+the group-by datasets to enumerated indices,
+
+77
+00:04:00,920 --> 00:04:04,120
+which can then be used in the walls matrix factorization estimator.
+
+78
+00:04:04,120 --> 00:04:06,530
+Lastly, we create the predictions using
+
+79
+00:04:06,530 --> 00:04:08,930
+the TensorFlow Transform assets to create a lookup to do
+
+80
+00:04:08,930 --> 00:04:10,280
+the reverse mapping from
+
+81
+00:04:10,280 --> 00:04:14,350
+our predicted enumerated indices to our original data formatting.

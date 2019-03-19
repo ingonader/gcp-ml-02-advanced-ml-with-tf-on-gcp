@@ -1,0 +1,391 @@
+1
+00:00:00,000 --> 00:00:03,030
+Just like the other two types of context-aware algorithms,
+
+2
+00:00:03,030 --> 00:00:05,575
+contextual modeling begins with our user, by item,
+
+3
+00:00:05,575 --> 00:00:09,285
+by multidimensional context tensor, containing ratings.
+
+4
+00:00:09,285 --> 00:00:11,805
+This data goes directly to our recommender.
+
+5
+00:00:11,805 --> 00:00:15,510
+But notice, this is not our traditional two-dimensional recommender system,
+
+6
+00:00:15,510 --> 00:00:19,470
+but an M-dimensional one where context is a part of our model.
+
+7
+00:00:19,470 --> 00:00:21,750
+Contexts is that explicit predictor,
+
+8
+00:00:21,750 --> 00:00:24,375
+along with a usual user item relationship.
+
+9
+00:00:24,375 --> 00:00:27,210
+These multidimensional recommendation functions,
+
+10
+00:00:27,210 --> 00:00:30,585
+can be represented by heuristics or predictive model based approaches,
+
+11
+00:00:30,585 --> 00:00:31,755
+such as decision trees,
+
+12
+00:00:31,755 --> 00:00:34,860
+regression models or probabilistic models.
+
+13
+00:00:34,860 --> 00:00:39,180
+We then can apply our user vector to our multidimensional recommendations,
+
+14
+00:00:39,180 --> 00:00:42,450
+during the representation in multidimensional embedding space.
+
+15
+00:00:42,450 --> 00:00:47,005
+Then we apply our context vector to our multidimensional recommendations,
+
+16
+00:00:47,005 --> 00:00:50,780
+giving us finally our contextual recommendations for our user.
+
+17
+00:00:50,780 --> 00:00:53,870
+Contextual modeling, has many different algorithms to learn
+
+18
+00:00:53,870 --> 00:00:57,275
+multidimensional models of contextual user item interactions.
+
+19
+00:00:57,275 --> 00:01:01,630
+Factorization became very popular and has led to many methods over the years.
+
+20
+00:01:01,630 --> 00:01:07,545
+Let's take a deeper look at deviation-based context-aware matrix factorization.
+
+21
+00:01:07,545 --> 00:01:11,650
+In deviation-base context-aware matrix factorization,
+
+22
+00:01:11,650 --> 00:01:15,770
+we want to know how a user's rating is deviated across contexts.
+
+23
+00:01:15,770 --> 00:01:20,615
+This difference is called the contextual rating deviation, or CRD.
+
+24
+00:01:20,615 --> 00:01:24,230
+It looks at the deviations of users across contexts dimensions.
+
+25
+00:01:24,230 --> 00:01:26,300
+Let's look at a quick example.
+
+26
+00:01:26,300 --> 00:01:29,830
+Here is an example of some of our contextual data for movies.
+
+27
+00:01:29,830 --> 00:01:34,220
+Here we have essentially groups by all the unique contexts, which in this example,
+
+28
+00:01:34,220 --> 00:01:37,685
+we have eight of, with three-dimensions each: location,
+
+29
+00:01:37,685 --> 00:01:40,865
+time, and who the user watched the movie with.
+
+30
+00:01:40,865 --> 00:01:44,185
+Let's only look at two contexts to keep things simpler.
+
+31
+00:01:44,185 --> 00:01:47,525
+We can calculate the contextual rating deviation or CRD,
+
+32
+00:01:47,525 --> 00:01:49,130
+for each of these contexts dimensions.
+
+33
+00:01:49,130 --> 00:01:51,920
+The CRD for location is 0.8,
+
+34
+00:01:51,920 --> 00:01:54,589
+which mean that users ratings and location dimension,
+
+35
+00:01:54,589 --> 00:01:58,270
+are generally 0.8 higher for theatre than home.
+
+36
+00:01:58,270 --> 00:02:01,495
+The CRD for time is a negative 0.2,
+
+37
+00:02:01,495 --> 00:02:04,400
+which means that user's ratings in the time dimension,
+
+38
+00:02:04,400 --> 00:02:09,115
+are generally 0.2 lower for weekday than weekend.
+
+39
+00:02:09,115 --> 00:02:13,610
+The CRD for who the user watched the movie width is 0.1,
+
+40
+00:02:13,610 --> 00:02:17,555
+which is generally 0.1 higher for friend than for family.
+
+41
+00:02:17,555 --> 00:02:23,020
+So, how do we use the contextual rating deviation to adjusting predictions?
+
+42
+00:02:23,020 --> 00:02:25,535
+In traditional recommendation systems,
+
+43
+00:02:25,535 --> 00:02:26,810
+we find in our ratings,
+
+44
+00:02:26,810 --> 00:02:31,750
+we can use standard matrix factorization or we can use bias matrix factorization.
+
+45
+00:02:31,750 --> 00:02:34,115
+Where we add a term for the global average rating,
+
+46
+00:02:34,115 --> 00:02:35,900
+a bias term for user u,
+
+47
+00:02:35,900 --> 00:02:37,895
+and a bias term for item i.
+
+48
+00:02:37,895 --> 00:02:41,290
+Of course, we have our user item interaction term,
+
+49
+00:02:41,290 --> 00:02:43,680
+which is the dot product of the users vector p,
+
+50
+00:02:43,680 --> 00:02:45,925
+from the user factor embedding matrix u,
+
+51
+00:02:45,925 --> 00:02:48,055
+and the items factor vector q,
+
+52
+00:02:48,055 --> 00:02:52,220
+from the item factor embedding matrix v. As we can see,
+
+53
+00:02:52,220 --> 00:02:55,685
+context is completely missing from our rating predictions.
+
+54
+00:02:55,685 --> 00:02:58,265
+Instead of using the previous equation,
+
+55
+00:02:58,265 --> 00:03:02,775
+we can use the context-aware matrix factorization context approach.
+
+56
+00:03:02,775 --> 00:03:05,715
+We can see, that almost everything is the same,
+
+57
+00:03:05,715 --> 00:03:07,740
+except for two terms.
+
+58
+00:03:07,740 --> 00:03:09,295
+On the right-hand side,
+
+59
+00:03:09,295 --> 00:03:13,369
+we have added the contextual rating deviations, summed across contexts.
+
+60
+00:03:13,369 --> 00:03:17,780
+This gives us contextual multidimensional ratings on the left-hand side.
+
+61
+00:03:17,780 --> 00:03:23,765
+Yet, this isn't the only deviation based context-aware matrix factorization approach.
+
+62
+00:03:23,765 --> 00:03:25,660
+Let's see some others.
+
+63
+00:03:25,660 --> 00:03:29,780
+There also the context user and contexts item approaches.
+
+64
+00:03:29,780 --> 00:03:31,730
+In the context user approach,
+
+65
+00:03:31,730 --> 00:03:35,045
+we've absorbed the user bias term into our CRD function,
+
+66
+00:03:35,045 --> 00:03:38,180
+which is now dependent on both contexts and user.
+
+67
+00:03:38,180 --> 00:03:40,235
+In the context item approach,
+
+68
+00:03:40,235 --> 00:03:43,370
+we absorbed the item bias term into our CRD function,
+
+69
+00:03:43,370 --> 00:03:46,265
+which is now dependent on both contexts and item.
+
+70
+00:03:46,265 --> 00:03:49,100
+Which approach works best out of the three?
+
+71
+00:03:49,100 --> 00:03:52,565
+It all really depends on your problem, data, etc.
+
+72
+00:03:52,565 --> 00:03:55,445
+So, please, experiment and try them all.
+
+73
+00:03:55,445 --> 00:03:57,770
+Now that we've learned about the three main types of
+
+74
+00:03:57,770 --> 00:04:00,050
+context-aware recommendation system algorithms,
+
+75
+00:04:00,050 --> 00:04:01,655
+let's test your knowledge.
+
+76
+00:04:01,655 --> 00:04:05,090
+Which context-aware recommendation system type produces
+
+77
+00:04:05,090 --> 00:04:07,430
+non-contractual recommendations that at later
+
+78
+00:04:07,430 --> 00:04:11,345
+adjusts via context into contextual recommendations?
+
+79
+00:04:11,345 --> 00:04:16,910
+Contextual modeling, contextual postprocessing, contextual prefiltering,
+
+80
+00:04:16,910 --> 00:04:20,515
+contextual adjustment, contextual postfiltering,
+
+81
+00:04:20,515 --> 00:04:24,335
+contextual aggregation or none of the above.
+
+82
+00:04:24,335 --> 00:04:28,190
+The correct answer is E. Contextual postfiltering
+
+83
+00:04:28,190 --> 00:04:31,880
+begins with our user item multidimensional context tensor,
+
+84
+00:04:31,880 --> 00:04:35,030
+it then completely ignores context and sends the data through
+
+85
+00:04:35,030 --> 00:04:38,470
+a traditional two-dimensional user item recommendation system
+
+86
+00:04:38,470 --> 00:04:41,780
+which produces non contextual recommendations.
+
+87
+00:04:41,780 --> 00:04:45,155
+We then use the targeted contexts to adjust
+
+88
+00:04:45,155 --> 00:04:48,620
+the recommendations as we saw with the filter and weight methods,
+
+89
+00:04:48,620 --> 00:04:51,505
+to finally arrive at the contextual recommendations.
+
+90
+00:04:51,505 --> 00:04:55,340
+Contextual modeling actually uses an M-dimensional recomender
+
+91
+00:04:55,340 --> 00:04:59,240
+that uses contexts as an explicit predictor in a prediction model,
+
+92
+00:04:59,240 --> 00:05:02,825
+or via heuristics outputting in multidimensional recommendations.
+
+93
+00:05:02,825 --> 00:05:06,050
+Contextual prefiltering as the name suggest,
+
+94
+00:05:06,050 --> 00:05:11,510
+first filters the user item context data set by context or a generalized context,
+
+95
+00:05:11,510 --> 00:05:15,365
+to reduce the original tensor to a subset of just user item interactions,
+
+96
+00:05:15,365 --> 00:05:19,250
+that we can use in our traditional two-dimensional recommendation system.
+
+97
+00:05:19,250 --> 00:05:21,350
+The other answers we didn't cover,
+
+98
+00:05:21,350 --> 00:05:24,240
+and were just made up but they sound cool.

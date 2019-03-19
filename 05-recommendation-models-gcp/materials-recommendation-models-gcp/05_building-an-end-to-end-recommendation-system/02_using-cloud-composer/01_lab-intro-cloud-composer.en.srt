@@ -1,0 +1,119 @@
+1
+00:00:00,000 --> 00:00:02,730
+This is the first of two labs in this module.
+
+2
+00:00:02,730 --> 00:00:04,230
+This first one is optional,
+
+3
+00:00:04,230 --> 00:00:06,600
+I strongly recommend it for those who are looking to
+
+4
+00:00:06,600 --> 00:00:09,345
+build event-driven triggers into their workflows.
+
+5
+00:00:09,345 --> 00:00:13,110
+This is especially useful for data engineers who want to automate
+
+6
+00:00:13,110 --> 00:00:18,780
+ETL workflows into BigQuery from flat files and program and health checks using SQL.
+
+7
+00:00:18,780 --> 00:00:22,620
+Our goal is to automatically ingest a CSV file into
+
+8
+00:00:22,620 --> 00:00:26,685
+BigQuery as soon as it's uploaded to a GCS bucket that we specify.
+
+9
+00:00:26,685 --> 00:00:30,300
+The use case is that we have some new ML data that's outside of
+
+10
+00:00:30,300 --> 00:00:34,850
+GCP and outside of BigQuery like this set of CSV files here.
+
+11
+00:00:34,850 --> 00:00:37,510
+So, here's the ideal workflow that you're going to create.
+
+12
+00:00:37,510 --> 00:00:41,440
+Once a CSV file is uploaded to a predefined GCS bucket,
+
+13
+00:00:41,440 --> 00:00:43,500
+it'll then trigger a cloud function,
+
+14
+00:00:43,500 --> 00:00:48,305
+which will trigger an airflow deg which will then start up a dataflow job.
+
+15
+00:00:48,305 --> 00:00:53,960
+Then the deg file tells dataflow where the CSV file is located and also provides
+
+16
+00:00:53,960 --> 00:00:57,275
+the location of the actual dataflow preprocessing code
+
+17
+00:00:57,275 --> 00:00:59,735
+to be run as part of a data pipeline.
+
+18
+00:00:59,735 --> 00:01:02,110
+Once the dataflow job is run,
+
+19
+00:01:02,110 --> 00:01:05,120
+it'll process through that CSV file and then move
+
+20
+00:01:05,120 --> 00:01:08,435
+it to an archival GCS bucket for auditing purposes.
+
+21
+00:01:08,435 --> 00:01:11,240
+Then, as the last part of the dataflow job,
+
+22
+00:01:11,240 --> 00:01:14,635
+it'll write out the records from GCS into BigQuery,
+
+23
+00:01:14,635 --> 00:01:17,630
+using the normal dataflow Apache Beam based functions
+
+24
+00:01:17,630 --> 00:01:20,360
+like BigQuery sink, like you see here.
+
+25
+00:01:20,360 --> 00:01:22,175
+Once it's in BigQuery,
+
+26
+00:01:22,175 --> 00:01:25,940
+we could have a Cloud ML Engine job retraining an ML model,
+
+27
+00:01:25,940 --> 00:01:28,585
+but we'll save that for the last lab in this course.
+
+28
+00:01:28,585 --> 00:01:32,015
+So, go ahead and work your way through the event-driven workflow.
+
+29
+00:01:32,015 --> 00:01:33,860
+Keep in mind your multiple attempts at
+
+30
+00:01:33,860 --> 00:01:37,660
+the lab and then we'll cover the solution together afterward.

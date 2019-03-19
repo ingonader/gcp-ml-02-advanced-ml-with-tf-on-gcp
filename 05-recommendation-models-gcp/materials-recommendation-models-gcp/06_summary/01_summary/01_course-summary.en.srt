@@ -1,0 +1,139 @@
+1
+00:00:00,000 --> 00:00:02,535
+Hello, my name is Lak,
+
+2
+00:00:02,535 --> 00:00:08,070
+and I led the team that put together this course and this specialization.
+
+3
+00:00:08,070 --> 00:00:13,515
+We started out this course by explaining what recommendation systems are.
+
+4
+00:00:13,515 --> 00:00:16,620
+We said that when you watch a video on YouTube
+
+5
+00:00:16,620 --> 00:00:20,205
+and you see a list of suggested videos to watch next,
+
+6
+00:00:20,205 --> 00:00:24,945
+that list is being built by recommendation machine learning model.
+
+7
+00:00:24,945 --> 00:00:31,950
+You can't just build a recommendation engine and ML model and call it a day,
+
+8
+00:00:31,950 --> 00:00:36,825
+you also need to build the entire end-to-end system.
+
+9
+00:00:36,825 --> 00:00:40,994
+We looked at how to build content-based recommendation systems,
+
+10
+00:00:40,994 --> 00:00:44,090
+where the system recommends items to
+
+11
+00:00:44,090 --> 00:00:48,995
+users based on metadata that's known about the items.
+
+12
+00:00:48,995 --> 00:00:51,875
+We then learned how to implement
+
+13
+00:00:51,875 --> 00:00:57,174
+collaborative filtering where you don't have any metadata about the products or users,
+
+14
+00:00:57,174 --> 00:01:01,070
+instead you learn about item similarity and
+
+15
+00:01:01,070 --> 00:01:06,005
+user similarity from ratings data or interaction data.
+
+16
+00:01:06,005 --> 00:01:09,880
+Because this interaction matrix is very large,
+
+17
+00:01:09,880 --> 00:01:13,430
+we use the alternating least squares algorithm to
+
+18
+00:01:13,430 --> 00:01:19,625
+factorize the interaction matrix into user factors and item factors.
+
+19
+00:01:19,625 --> 00:01:25,340
+Then, if we need to find whether a user will like a particular movie,
+
+20
+00:01:25,340 --> 00:01:27,920
+it's as simple as taking the row corresponding to
+
+21
+00:01:27,920 --> 00:01:30,890
+the user and the column corresponding to the movie,
+
+22
+00:01:30,890 --> 00:01:34,150
+and multiplying them to get the predicted rating.
+
+23
+00:01:34,150 --> 00:01:37,380
+To recommend movies to users,
+
+24
+00:01:37,380 --> 00:01:42,230
+we can then recommend the movies that we predict they will rate the highest.
+
+25
+00:01:42,230 --> 00:01:44,465
+We did this in TensorFlow.
+
+26
+00:01:44,465 --> 00:01:50,145
+Then, we looked at how to build a hybrid recommendation system.
+
+27
+00:01:50,145 --> 00:01:54,530
+The hybrid model uses all the data available and
+
+28
+00:01:54,530 --> 00:01:59,345
+connects all of these models together into a machine learning pipeline.
+
+29
+00:01:59,345 --> 00:02:02,695
+Finally, we learned how to productionize
+
+30
+00:02:02,695 --> 00:02:05,840
+and automate the machine learning pipeline in order to
+
+31
+00:02:05,840 --> 00:02:12,505
+build and continuously retrain an end-to-end recommendation system.
+
+32
+00:02:12,505 --> 00:02:16,340
+We were able to orchestrate the continuous retraining of
+
+33
+00:02:16,340 --> 00:02:22,130
+the recommendation system as new ratings data keeps coming in from users.
+
+34
+00:02:22,130 --> 00:02:27,155
+With this, we come to the end of this course on recommendation systems.
+
+35
+00:02:27,155 --> 00:02:31,120
+Thank you for accompanying us on this journey.

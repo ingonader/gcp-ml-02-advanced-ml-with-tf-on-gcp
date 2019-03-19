@@ -1,0 +1,239 @@
+1
+00:00:00,000 --> 00:00:01,575
+Previously in this course,
+
+2
+00:00:01,575 --> 00:00:04,155
+we saw some examples of YouTube recommendations.
+
+3
+00:00:04,155 --> 00:00:05,640
+As we can see from the image,
+
+4
+00:00:05,640 --> 00:00:08,070
+most recommendations are along the same vein,
+
+5
+00:00:08,070 --> 00:00:10,410
+because perhaps this user enjoys programming,
+
+6
+00:00:10,410 --> 00:00:12,585
+TensorFlow, and machine learning.
+
+7
+00:00:12,585 --> 00:00:15,960
+But it also has serendipitous recommendations such as
+
+8
+00:00:15,960 --> 00:00:20,465
+the no sugar video which we may like despite never thinking to search for it.
+
+9
+00:00:20,465 --> 00:00:24,090
+There is obviously a very sophisticated hybrid recommendation system
+
+10
+00:00:24,090 --> 00:00:25,440
+under the hood of YouTube,
+
+11
+00:00:25,440 --> 00:00:28,660
+because it typically makes great recommendations to its users.
+
+12
+00:00:28,660 --> 00:00:32,025
+Let's now take a look underneath and see what exactly is going on.
+
+13
+00:00:32,025 --> 00:00:35,990
+YouTube uses a pretty complex hybrid recommendation system that consists of
+
+14
+00:00:35,990 --> 00:00:40,985
+two neural networks and many different data sources to make great video recommendations.
+
+15
+00:00:40,985 --> 00:00:46,085
+There's a candidate generation network that accepts millions of video corpuses.
+
+16
+00:00:46,085 --> 00:00:47,630
+The output of this network,
+
+17
+00:00:47,630 --> 00:00:48,710
+which is in the hundreds,
+
+18
+00:00:48,710 --> 00:00:52,625
+is the input to a ranking network combined with other candidate sources,
+
+19
+00:00:52,625 --> 00:00:55,550
+which could be things like videos in the news for freshness,
+
+20
+00:00:55,550 --> 00:00:59,965
+videos for neighboring videos,related videos, or sponsored videos.
+
+21
+00:00:59,965 --> 00:01:02,385
+This is also combined with video features.
+
+22
+00:01:02,385 --> 00:01:04,940
+This produces dozens of recommendations.
+
+23
+00:01:04,940 --> 00:01:07,520
+Both networks also have user history and
+
+24
+00:01:07,520 --> 00:01:10,925
+context feeding into them to improve the recommendation quality.
+
+25
+00:01:10,925 --> 00:01:13,610
+But training this hybrid model is not as simple as just
+
+26
+00:01:13,610 --> 00:01:17,210
+setting an out of the box loss function and letting it go.
+
+27
+00:01:17,210 --> 00:01:21,230
+YouTube trains the candidate generation network to have high precision.
+
+28
+00:01:21,230 --> 00:01:26,080
+High precision in this case means that every candidate generated is relevant to user.
+
+29
+00:01:26,080 --> 00:01:29,660
+Obviously, this is important because users do not want to be shown
+
+30
+00:01:29,660 --> 00:01:33,365
+irrelevant videos and will lose trust in the recommendations and product.
+
+31
+00:01:33,365 --> 00:01:37,850
+However, the second ranking network trains to have high recall.
+
+32
+00:01:37,850 --> 00:01:39,710
+High recall in this case means that it will
+
+33
+00:01:39,710 --> 00:01:42,305
+recommend things the user will definitely like.
+
+34
+00:01:42,305 --> 00:01:44,855
+Now that we've started to see what is under the hood
+
+35
+00:01:44,855 --> 00:01:47,270
+of YouTube's hybrid recommendation system,
+
+36
+00:01:47,270 --> 00:01:48,725
+let's test your knowledge.
+
+37
+00:01:48,725 --> 00:01:53,140
+YouTube uses two neural networks connected in an ML pipeline.
+
+38
+00:01:53,140 --> 00:01:57,215
+What metric is the candidate generation network trained to maximize?
+
+39
+00:01:57,215 --> 00:02:00,530
+What metric is the ranking network trained to maximize?
+
+40
+00:02:00,530 --> 00:02:02,630
+When thinking about which answer is correct,
+
+41
+00:02:02,630 --> 00:02:05,540
+it may help to think about what each network is supposed to do,
+
+42
+00:02:05,540 --> 00:02:08,180
+and what metric would help it do that.
+
+43
+00:02:08,180 --> 00:02:12,010
+The correct answer is F, precision and recall.
+
+44
+00:02:12,010 --> 00:02:16,025
+The candidate generation network is taking millions of video corpuses,
+
+45
+00:02:16,025 --> 00:02:18,215
+as well as user and context history,
+
+46
+00:02:18,215 --> 00:02:20,885
+to narrow down the field to hundreds of candidate videos.
+
+47
+00:02:20,885 --> 00:02:24,760
+It wants to make sure that what it is predicting will be highly relevant to the user.
+
+48
+00:02:24,760 --> 00:02:26,460
+Therefore, to ensure that,
+
+49
+00:02:26,460 --> 00:02:27,900
+precision is a good choice.
+
+50
+00:02:27,900 --> 00:02:30,370
+To make sure that when we say something is relevant,
+
+51
+00:02:30,370 --> 00:02:32,395
+we can do it with high confidence.
+
+52
+00:02:32,395 --> 00:02:35,870
+The ranking network is taking these hundreds of candidate videos,
+
+53
+00:02:35,870 --> 00:02:39,020
+combining that with video features and other candidate sources,
+
+54
+00:02:39,020 --> 00:02:41,200
+as well as user and context history.
+
+55
+00:02:41,200 --> 00:02:43,610
+The function of the ranking network is to narrow down
+
+56
+00:02:43,610 --> 00:02:46,085
+the candidates even further to only dozens,
+
+57
+00:02:46,085 --> 00:02:47,690
+while making sure that the videos being
+
+58
+00:02:47,690 --> 00:02:50,465
+returned will definitely be something that users like.
+
+59
+00:02:50,465 --> 00:02:54,955
+This means that maximizing recall for this network will help make sure this happens.
+
+60
+00:02:54,955 --> 00:02:59,400
+Therefore, users end up with relevant videos that they really like.

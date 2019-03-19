@@ -1,0 +1,554 @@
+1
+00:00:00,440 --> 00:00:04,290
+So we've now learned how the user
+item interaction matrix works, and
+
+2
+00:00:04,290 --> 00:00:06,180
+how we can create user embeddings and
+
+3
+00:00:06,180 --> 00:00:10,380
+item embeddings within the same latent
+space, which can be learned from data.
+
+4
+00:00:10,380 --> 00:00:14,220
+So what machine learning
+algorithms can help us with this?
+
+5
+00:00:14,220 --> 00:00:17,000
+Collaborative filtering uses a user
+item interaction matrix, and
+
+6
+00:00:17,000 --> 00:00:20,580
+it is a 2D table that provides ratings for
+user item pairs.
+
+7
+00:00:20,580 --> 00:00:24,800
+These matrices are usually very sparse
+because there's a large number of users
+
+8
+00:00:24,800 --> 00:00:29,350
+and a large number of items,
+which creates a massive cartesian product.
+
+9
+00:00:29,350 --> 00:00:33,920
+These gargantuan matrices normally need to
+be shrunk down to a more attractable size,
+
+10
+00:00:33,920 --> 00:00:36,820
+for example, through matrix factorization.
+
+11
+00:00:36,820 --> 00:00:40,540
+With this method, we first factorize
+the user interactions matrix
+
+12
+00:00:40,540 --> 00:00:45,100
+into two smaller matrices,
+user factors and item factors.
+
+13
+00:00:45,100 --> 00:00:49,610
+If given a user ID, we can multiply item
+factors to get the predicted ratings for
+
+14
+00:00:49,610 --> 00:00:51,030
+all items.
+
+15
+00:00:51,030 --> 00:00:53,610
+Also vice versa, if given a movie ID,
+
+16
+00:00:53,610 --> 00:00:58,220
+we can multiply by user factors to get
+the predicted rating for all users.
+
+17
+00:00:58,220 --> 00:01:01,910
+Now that we have all the predicted
+ratings, we can return the top k rated
+
+18
+00:01:01,910 --> 00:01:05,750
+items back to the user, who can now
+possibly make a better decision.
+
+19
+00:01:07,270 --> 00:01:12,210
+We want to factorize our user interaction
+matrix, A, into the two smaller matrices,
+
+20
+00:01:12,210 --> 00:01:15,930
+user factor matrix, U,
+and item factor matrix, V.
+
+21
+00:01:15,930 --> 00:01:19,750
+Because this is an approximation, we want
+to minimize the squared error between
+
+22
+00:01:19,750 --> 00:01:23,879
+the original user interaction matrix and
+the product of the two factor matrices.
+
+23
+00:01:25,410 --> 00:01:29,460
+This resembles a least squares problem,
+and there are several ways to solve it.
+
+24
+00:01:29,460 --> 00:01:31,820
+But which one should we choose?
+
+25
+00:01:31,820 --> 00:01:34,530
+One method is to use
+the classic learning algorithm,
+
+26
+00:01:34,530 --> 00:01:37,810
+stochastic gradient descent, or SGD.
+
+27
+00:01:37,810 --> 00:01:41,040
+Let's go through the strengths and
+weaknesses of using SGD.
+
+28
+00:01:42,610 --> 00:01:44,580
+SGD is very flexible.
+
+29
+00:01:44,580 --> 00:01:47,660
+It can be used for many different
+types of problems and loss functions.
+
+30
+00:01:47,660 --> 00:01:50,730
+And we probably already have
+a lot of experience using it, so
+
+31
+00:01:50,730 --> 00:01:52,240
+plus one to the strengths.
+
+32
+00:01:53,520 --> 00:01:57,860
+SGD is also parallel, which is awesome
+because then we can scale out our matrix
+
+33
+00:01:57,860 --> 00:02:01,570
+factorization and
+quickly tackle much larger problems.
+
+34
+00:02:01,570 --> 00:02:03,230
+Another plus one to the strengths.
+
+35
+00:02:04,940 --> 00:02:08,200
+SGD, however, is one of the slower
+algorithms we could use
+
+36
+00:02:08,200 --> 00:02:12,340
+because it possibly has to go through many
+iterations until it learns a good fit.
+
+37
+00:02:12,340 --> 00:02:13,830
+Plus one to the weaknesses now.
+
+38
+00:02:15,270 --> 00:02:18,994
+Remember all the unobserved user item
+interactions we had in the prior tables?
+
+39
+00:02:18,994 --> 00:02:24,000
+Well, unfortunately, user item
+interaction data tends to be very sparse,
+
+40
+00:02:24,000 --> 00:02:26,990
+especially for problems with a large
+number of users and columns.
+
+41
+00:02:26,990 --> 00:02:30,180
+So we want an algorithm that can
+handle this lack of observations.
+
+42
+00:02:30,180 --> 00:02:33,610
+Unfortunately, SGD has
+a hard time handling these.
+
+43
+00:02:33,610 --> 00:02:35,400
+So that is another con for
+
+44
+00:02:35,400 --> 00:02:40,780
+SGD, bringing us to a total of
+two strengths and two weaknesses.
+
+45
+00:02:40,780 --> 00:02:45,412
+Another algorithm we can use is
+alternating least squares, or ALS, which
+
+46
+00:02:45,412 --> 00:02:51,460
+alternatively solves U holding V constant,
+and then solves for V holding U constant.
+
+47
+00:02:51,460 --> 00:02:53,580
+Let's look at the strengths and
+weaknesses of this method now.
+
+48
+00:02:55,210 --> 00:02:58,736
+Well, unfortunately, as the name suggests,
+this algorithm only works for
+
+49
+00:02:58,736 --> 00:03:00,380
+least squares problems.
+
+50
+00:03:00,380 --> 00:03:02,540
+So that is plus one for weaknesses.
+
+51
+00:03:02,540 --> 00:03:06,760
+However, luckily, for this particular
+problem, we have a least squares loss
+
+52
+00:03:06,760 --> 00:03:09,840
+that we are trying to minimize,
+so this is still a viable option.
+
+53
+00:03:11,000 --> 00:03:14,600
+Just like SGD,
+ALS is a paralyzable algorithm.
+
+54
+00:03:14,600 --> 00:03:18,110
+Therefore, we can also scale out our
+problem to handle much larger data
+
+55
+00:03:18,110 --> 00:03:19,700
+in a shorter amount of time.
+
+56
+00:03:19,700 --> 00:03:20,979
+Plus one to the strengths.
+
+57
+00:03:22,180 --> 00:03:26,090
+ALS is usually much faster
+at convergence than SGD.
+
+58
+00:03:26,090 --> 00:03:29,790
+This makes sense because SGD is
+a more of a generalist algorithm,
+
+59
+00:03:29,790 --> 00:03:31,550
+which gives it it's flexibility.
+
+60
+00:03:31,550 --> 00:03:35,380
+However, ALS is a specialist algorithm for
+least squares problems,
+
+61
+00:03:35,380 --> 00:03:40,320
+which this is, so it is somewhat optimized
+to solve these types of problems faster.
+
+62
+00:03:40,320 --> 00:03:42,980
+Another plus one for the strengths.
+
+63
+00:03:42,980 --> 00:03:47,000
+Lastly, unlike SGD, ALS or
+a close variant can
+
+64
+00:03:47,000 --> 00:03:51,050
+easily handle unobserved interaction
+pairs, which is great news because those
+
+65
+00:03:51,050 --> 00:03:54,260
+are usually extremely abundant
+in our interaction matrix.
+
+66
+00:03:54,260 --> 00:03:57,920
+That's another strength for ALS, bringing
+us to a total of three strengths and
+
+67
+00:03:57,920 --> 00:03:59,790
+only one weakness.
+
+68
+00:03:59,790 --> 00:04:03,220
+Now, exactly what happens to
+the unobserved interaction pairs?
+
+69
+00:04:03,220 --> 00:04:04,920
+Let's look at our earlier
+interaction matrix,
+
+70
+00:04:04,920 --> 00:04:07,700
+specifically, the implicit
+feedback version.
+
+71
+00:04:07,700 --> 00:04:11,480
+As you can see, we've replaced
+the check marks with 1s instead.
+
+72
+00:04:11,480 --> 00:04:15,670
+So how do the different algorithms treat
+the missing interaction pairs data?
+
+73
+00:04:17,250 --> 00:04:21,600
+One simple way to solve this is to
+perform the singular value decomposition,
+
+74
+00:04:21,600 --> 00:04:25,140
+as we did in the previous course for
+latent semantic analysis.
+
+75
+00:04:25,140 --> 00:04:26,800
+This matrix factorization method,
+
+76
+00:04:26,800 --> 00:04:31,470
+however, requires all real numbers
+in the matrix it is decomposing.
+
+77
+00:04:31,470 --> 00:04:35,388
+Therefore, the unobserved
+pairs are given values of 0.
+
+78
+00:04:35,388 --> 00:04:38,972
+You might think this is not significant,
+but it greatly changed what the data
+
+79
+00:04:38,972 --> 00:04:42,061
+means, because we were essentially
+making a large assumption and
+
+80
+00:04:42,061 --> 00:04:44,690
+imputing zeros wherever data was missing.
+
+81
+00:04:44,690 --> 00:04:47,740
+This can lead to poor performance
+in making recommendations.
+
+82
+00:04:47,740 --> 00:04:48,810
+What else can we try instead?
+
+83
+00:04:49,990 --> 00:04:51,530
+Using matrix factorization for
+
+84
+00:04:51,530 --> 00:04:55,900
+collaborative filtering such as ALS,
+we just ignore the missing values.
+
+85
+00:04:55,900 --> 00:04:58,042
+Notice that in the last formula,
+we were minimizing.
+
+86
+00:04:58,042 --> 00:05:01,330
+We are only summing
+the observed instances.
+
+87
+00:05:01,330 --> 00:05:03,000
+This deals in a great fix, but
+
+88
+00:05:03,000 --> 00:05:06,249
+with a minor tweak, we can obtain
+something that usually works very well.
+
+89
+00:05:07,690 --> 00:05:11,820
+What if instead of merely setting all
+unobserved pairs to 0, or ignoring them
+
+90
+00:05:11,820 --> 00:05:16,340
+completely, we assigned a weight for
+those interaction pairs that are missing?
+
+91
+00:05:16,340 --> 00:05:19,970
+We can think of this as not giving it
+an absolutely certain negative score, but
+
+92
+00:05:19,970 --> 00:05:22,440
+instead as a low confidence score.
+
+93
+00:05:22,440 --> 00:05:26,770
+This is called weighted alternating
+least squares, or WALS for short.
+
+94
+00:05:26,770 --> 00:05:30,930
+Notice that in the modified equation,
+we have the ALS term on the left and
+
+95
+00:05:30,930 --> 00:05:34,850
+a new term on the right that
+weights the unobserved entries.
+
+96
+00:05:34,850 --> 00:05:37,710
+This usually provides much
+better recommendations and
+
+97
+00:05:37,710 --> 00:05:39,130
+is the algorithm we will now focus on.
+
+98
+00:05:40,860 --> 00:05:44,080
+Now it's time to test your knowledge about
+the ways unobserved pairs are handled
+
+99
+00:05:44,080 --> 00:05:45,520
+by different algorithms.
+
+100
+00:05:45,520 --> 00:05:49,550
+There are many ways to handle unobserved
+user-interaction matrix pairs.
+
+101
+00:05:49,550 --> 00:05:52,690
+Blank explicitly sets all
+missing values to zero.
+
+102
+00:05:52,690 --> 00:05:55,500
+Blank simply ignores missing values.
+
+103
+00:05:55,500 --> 00:06:00,420
+Blank uses weights instead of zeros that
+can be thought of as representing blank.
+
+104
+00:06:00,420 --> 00:06:02,439
+Choose the answers that
+best fill in the blanks.
+
+105
+00:06:04,000 --> 00:06:06,030
+The correct answer is B.
+
+106
+00:06:06,030 --> 00:06:08,250
+In singular value decomposition, or SVD,
+
+107
+00:06:08,250 --> 00:06:11,610
+we explicitly set all
+machine values to zero.
+
+108
+00:06:11,610 --> 00:06:14,860
+This could be problematic because we
+are making a very large assumption and
+
+109
+00:06:14,860 --> 00:06:17,250
+imputing data that could
+have meaning when,
+
+110
+00:06:17,250 --> 00:06:21,040
+in fact, there was no data there,
+which can throw off our predictions.
+
+111
+00:06:21,040 --> 00:06:23,760
+The matrix factorization of
+a collaborative filtering algorithm,
+
+112
+00:06:23,760 --> 00:06:28,580
+alternating least squares or ALS,
+simply ignores missing values.
+
+113
+00:06:28,580 --> 00:06:32,680
+Weighted alternating least squares, or
+WALS, uses weights instead of zeros,
+
+114
+00:06:32,680 --> 00:06:35,620
+which can be thought of as
+representing low confidence.
+
+115
+00:06:35,620 --> 00:06:38,310
+WALS provides some of the best
+recommendation performance compared to
+
+116
+00:06:38,310 --> 00:06:40,860
+these other methods, and
+is what we will focus on using for
+
+117
+00:06:40,860 --> 00:06:41,660
+collaborative filtering.

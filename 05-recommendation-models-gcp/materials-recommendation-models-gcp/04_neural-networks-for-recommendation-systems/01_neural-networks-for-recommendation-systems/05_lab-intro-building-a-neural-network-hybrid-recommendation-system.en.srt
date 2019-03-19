@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:03,700
+Now it's time to see whether we can combine all of this together.
+
+2
+00:00:03,700 --> 00:00:04,800
+In this lab, we'll make
+
+3
+00:00:04,800 --> 00:00:09,720
+a Neural Network Hybrid Recommendation System using again Google Analytics data.
+
+4
+00:00:09,720 --> 00:00:13,785
+In this lab, we'll be completing the to-dos in the hybrid recommendations notebook.
+
+5
+00:00:13,785 --> 00:00:18,300
+We will need to create an input layer for our feature columns using our join datasets.
+
+6
+00:00:18,300 --> 00:00:22,215
+We will then need to connect this together with a deep neural network via layers.
+
+7
+00:00:22,215 --> 00:00:24,615
+Lastly, we'll need to create our output layer
+
+8
+00:00:24,615 --> 00:00:27,660
+with our labels so that we can make our recommendations.

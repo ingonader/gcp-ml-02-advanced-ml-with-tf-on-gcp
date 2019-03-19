@@ -1,0 +1,267 @@
+1
+00:00:00,000 --> 00:00:02,650
+When you're developing any recommendation system,
+
+2
+00:00:02,650 --> 00:00:05,580
+some common difficulties are helpful to keep in mind,
+
+3
+00:00:05,580 --> 00:00:07,920
+and some care must be taken to address them.
+
+4
+00:00:07,920 --> 00:00:11,625
+For example, looking again at the user item interaction matrix,
+
+5
+00:00:11,625 --> 00:00:15,745
+know that the user space and the product space are sparse and skewed.
+
+6
+00:00:15,745 --> 00:00:19,160
+We say the user item matrix is sparse because there are
+
+7
+00:00:19,160 --> 00:00:23,455
+potentially few interactions within the entire user item space.
+
+8
+00:00:23,455 --> 00:00:26,660
+There could be billions of users and millions of items,
+
+9
+00:00:26,660 --> 00:00:29,185
+and most of the entries in the matrix are zero.
+
+10
+00:00:29,185 --> 00:00:32,390
+Sparse matrices are problematic because they take
+
+11
+00:00:32,390 --> 00:00:35,120
+up a lot of memory and are slow to perform computations,
+
+12
+00:00:35,120 --> 00:00:39,930
+even though most of the computations are simply adding or multiplying by zero.
+
+13
+00:00:39,940 --> 00:00:44,695
+A typical person probably interacts with far less than one percent of your products.
+
+14
+00:00:44,695 --> 00:00:48,650
+On the other hand, most products are in the long tail of usage,
+
+15
+00:00:48,650 --> 00:00:53,090
+and probably rated by less than 0.1 percent of all users.
+
+16
+00:00:53,090 --> 00:00:55,895
+In addition, the matrix is skewed.
+
+17
+00:00:55,895 --> 00:00:58,545
+Some properties might be very popular.
+
+18
+00:00:58,545 --> 00:01:01,690
+Maybe that property is a resort with 1,000 cabins,
+
+19
+00:01:01,690 --> 00:01:04,870
+or there could be a few users that are very prolific.
+
+20
+00:01:04,870 --> 00:01:06,910
+Maybe they're motorcycling around the country
+
+21
+00:01:06,910 --> 00:01:09,280
+and staying in rental homes everyday of the year,
+
+22
+00:01:09,280 --> 00:01:12,425
+or maybe some users just like everything.
+
+23
+00:01:12,425 --> 00:01:16,040
+If you naively take all the ratings for all users,
+
+24
+00:01:16,040 --> 00:01:19,795
+you risk over emphasizing certain users or products.
+
+25
+00:01:19,795 --> 00:01:24,125
+In addition, a cold start can occur for both products and users.
+
+26
+00:01:24,125 --> 00:01:28,645
+This happens when there aren't enough interactions or information for users or items,
+
+27
+00:01:28,645 --> 00:01:31,810
+for example, when a new user is added to a system.
+
+28
+00:01:31,810 --> 00:01:33,520
+For a time, the recommender has
+
+29
+00:01:33,520 --> 00:01:37,520
+no past interactions with which to make new recommendations.
+
+30
+00:01:37,520 --> 00:01:41,160
+Consider when a new item is added to a catalog.
+
+31
+00:01:41,160 --> 00:01:44,825
+Because collaborative filtering relies on user item interactions,
+
+32
+00:01:44,825 --> 00:01:48,890
+without this information, reliable recommendations for users aren't generated.
+
+33
+00:01:48,890 --> 00:01:52,955
+In this situation, a content-based approach would be better.
+
+34
+00:01:52,955 --> 00:01:55,940
+Another problem to keep in mind is a lack of
+
+35
+00:01:55,940 --> 00:01:58,550
+explicit user feedback in the form of ratings,
+
+36
+00:01:58,550 --> 00:02:00,185
+or thumbs up or down.
+
+37
+00:02:00,185 --> 00:02:05,035
+Often we don't have explicit measures to feed to a recommender system.
+
+38
+00:02:05,035 --> 00:02:06,790
+In situations like this,
+
+39
+00:02:06,790 --> 00:02:09,695
+it is necessary to rely on implicit ratings.
+
+40
+00:02:09,695 --> 00:02:13,160
+For example, consider a YouTube video like this one.
+
+41
+00:02:13,160 --> 00:02:15,050
+Of the tens of thousands of views,
+
+42
+00:02:15,050 --> 00:02:18,580
+there're substantially fewer upvotes or downvotes.
+
+43
+00:02:18,580 --> 00:02:22,005
+Instead, implicit measures must be used.
+
+44
+00:02:22,005 --> 00:02:24,700
+Things like the portion of the video watched,
+
+45
+00:02:24,700 --> 00:02:26,230
+or the number of clicks,
+
+46
+00:02:26,230 --> 00:02:30,950
+play counts, or other information about the user interaction like site navigation,
+
+47
+00:02:30,950 --> 00:02:32,860
+or time spent on the page.
+
+48
+00:02:32,860 --> 00:02:37,730
+In practical scenarios, implicit feedback like this is much more readily available,
+
+49
+00:02:37,730 --> 00:02:41,470
+even though explicit user feedback is ground truth and preferred.
+
+50
+00:02:41,470 --> 00:02:45,170
+With enough data, you can train an initial model that uses
+
+51
+00:02:45,170 --> 00:02:48,545
+implicit user feedback to learn an explicit rating.
+
+52
+00:02:48,545 --> 00:02:51,980
+Essentially, the input layer takes implicit ratings,
+
+53
+00:02:51,980 --> 00:02:54,415
+and we use the explicit ratings as a label.
+
+54
+00:02:54,415 --> 00:02:56,780
+This explicit rating is what we want to use as
+
+55
+00:02:56,780 --> 00:02:59,450
+our input when developing the recommendation engine.
+
+56
+00:02:59,450 --> 00:03:03,080
+At inference time, in the absence of an explicit rating,
+
+57
+00:03:03,080 --> 00:03:05,420
+we use the trained initial model to infer
+
+58
+00:03:05,420 --> 00:03:09,055
+an explicit rating that we can then feed to the recommendation engine.
+
+59
+00:03:09,055 --> 00:03:10,830
+As we collect more data,
+
+60
+00:03:10,830 --> 00:03:13,840
+these signal scores can be improved.
+
+61
+00:03:13,840 --> 00:03:18,095
+Let's take a break for a quick quiz to check your understanding.
+
+62
+00:03:18,095 --> 00:03:21,950
+We've seen a couple of issues that can arise from building recommendation engines.
+
+63
+00:03:21,950 --> 00:03:28,055
+Which of these is not a problem that can arise? That's right.
+
+64
+00:03:28,055 --> 00:03:31,460
+These are all problems that can arise from developing a recommender system except for
+
+65
+00:03:31,460 --> 00:03:36,020
+D. It's unlikely that we'll have too much user rating data to use.
+
+66
+00:03:36,020 --> 00:03:38,480
+In fact, it's more likely that we'll have
+
+67
+00:03:38,480 --> 00:03:41,450
+a lack of these explicit user ratings to use at all.

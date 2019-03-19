@@ -1,0 +1,119 @@
+1
+00:00:00,000 --> 00:00:04,200
+Now that you're familiar with the cloud composer and apache airflow environments
+
+2
+00:00:04,200 --> 00:00:08,370
+and the basics of building a list of tasks for GCP services inside of your DAG,
+
+3
+00:00:08,370 --> 00:00:12,450
+it's time to discuss a really important topic, workflow scheduling.
+
+4
+00:00:12,450 --> 00:00:14,040
+As we hinted at earlier,
+
+5
+00:00:14,040 --> 00:00:16,260
+there are two different ways your workflow can be
+
+6
+00:00:16,260 --> 00:00:19,320
+ran without you manually sitting there and clicking and run DAG.
+
+7
+00:00:19,320 --> 00:00:20,865
+I've done it before, it doesn't work.
+
+8
+00:00:20,865 --> 00:00:26,325
+The first and most common is to set a schedule or a periodic run of the workflow,
+
+9
+00:00:26,325 --> 00:00:30,390
+like once a day at 6:00 AM or weekly on Saturday nights.
+
+10
+00:00:30,390 --> 00:00:33,040
+The second way is trigger based,
+
+11
+00:00:33,040 --> 00:00:37,230
+like if you wanted to run your workflow whenever a new CSV data file was loaded into
+
+12
+00:00:37,230 --> 00:00:42,720
+a GCS bucket or if new data came in from a pub sub topic you've subscribed to.
+
+13
+00:00:42,720 --> 00:00:45,135
+To view the schedules for your DAGs,
+
+14
+00:00:45,135 --> 00:00:48,815
+you first launch the airflow web server from whizzing cloud composer.
+
+15
+00:00:48,815 --> 00:00:51,025
+This is a great link to bookmark.
+
+16
+00:00:51,025 --> 00:00:53,540
+Navigate to the DAGs tab to view
+
+17
+00:00:53,540 --> 00:00:57,350
+the existing workflows that you have Python DAG files flow.
+
+18
+00:00:57,350 --> 00:00:59,840
+Here, you can see that we have two DAGs.
+
+19
+00:00:59,840 --> 00:01:04,495
+The bottom one, composer samples simple greeting has a daily schedule,
+
+20
+00:01:04,495 --> 00:01:07,530
+but why is this top DAG missing a schedule at all?
+
+21
+00:01:07,530 --> 00:01:09,255
+How does it ever get ran?
+
+22
+00:01:09,255 --> 00:01:14,315
+The answer is the fact that it's not on a set schedule at all, it's event-driven.
+
+23
+00:01:14,315 --> 00:01:19,815
+The driver of when this workflow runs is a cloud function that we're going to create.
+
+24
+00:01:19,815 --> 00:01:23,900
+In the next lesson, we'll actually create our own cloud function that watches
+
+25
+00:01:23,900 --> 00:01:29,090
+a GCS bucket that we specify for new CSV files that are dropped in.
+
+26
+00:01:29,090 --> 00:01:31,760
+If you wanted to go the regular schedule route,
+
+27
+00:01:31,760 --> 00:01:36,335
+you simply specify this schedule interval and your DAG code like what you see here.
+
+28
+00:01:36,335 --> 00:01:39,350
+By the way, clicking on this schedule of one day here in
+
+29
+00:01:39,350 --> 00:01:42,620
+the UI won't allow you to edit the schedule but instead,
+
+30
+00:01:42,620 --> 00:01:47,300
+it actually takes you to the history of all the runs for that particular workflow.

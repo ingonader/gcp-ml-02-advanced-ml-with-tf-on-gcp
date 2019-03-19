@@ -1,0 +1,623 @@
+1
+00:00:00,000 --> 00:00:01,860
+So, we've seen how to combine
+
+2
+00:00:01,860 --> 00:00:04,830
+the three main types of recommendation systems into a hybrid model,
+
+3
+00:00:04,830 --> 00:00:07,515
+but some of these were somewhat stateless piece of the data.
+
+4
+00:00:07,515 --> 00:00:10,440
+We don't know what is going on with someone who's interacting with
+
+5
+00:00:10,440 --> 00:00:13,700
+an item that could have changed how they felt about it.
+
+6
+00:00:13,700 --> 00:00:16,380
+The context that was experienced in matters,
+
+7
+00:00:16,380 --> 00:00:20,825
+if the context was different and the perception of enjoyment could be different as well.
+
+8
+00:00:20,825 --> 00:00:23,245
+This change perception affects sentiment,
+
+9
+00:00:23,245 --> 00:00:26,400
+which can change the feedback provided by the user about the item.
+
+10
+00:00:26,400 --> 00:00:30,450
+Therefore, an item is not just an item and the user is not just a user.
+
+11
+00:00:30,450 --> 00:00:32,400
+There is more nuance to them,
+
+12
+00:00:32,400 --> 00:00:34,515
+and that comes from context.
+
+13
+00:00:34,515 --> 00:00:36,370
+Context is not simple,
+
+14
+00:00:36,370 --> 00:00:40,040
+it is built up of many components that are users or membrane from the past,
+
+15
+00:00:40,040 --> 00:00:43,130
+experiencing the present, and looking forward to in the future.
+
+16
+00:00:43,130 --> 00:00:44,780
+Imagine watching a movie,
+
+17
+00:00:44,780 --> 00:00:46,565
+what is your mood of the time?
+
+18
+00:00:46,565 --> 00:00:50,720
+Are you super relaxed curled up on the couch with the bowl of ice cream?
+
+19
+00:00:50,720 --> 00:00:53,320
+Are you completely tired from a long day at work,
+
+20
+00:00:53,320 --> 00:00:54,920
+stressed from a long commute home,
+
+21
+00:00:54,920 --> 00:00:57,695
+and worried about finishing your project for the deadline tomorrow?
+
+22
+00:00:57,695 --> 00:01:01,625
+This problem makes a difference in how you perceive and enjoy the movie.
+
+23
+00:01:01,625 --> 00:01:04,990
+It also depends on who you're experiencing the item with.
+
+24
+00:01:04,990 --> 00:01:06,855
+Back to our movie example,
+
+25
+00:01:06,855 --> 00:01:09,725
+what if you were watching a movie with your kids on the couch?
+
+26
+00:01:09,725 --> 00:01:12,290
+What if instead it's on the couch with your partner?
+
+27
+00:01:12,290 --> 00:01:14,540
+What if instead it's brand-new and economy
+
+28
+00:01:14,540 --> 00:01:17,170
+seats on an airplane with a bunch of random strangers?
+
+29
+00:01:17,170 --> 00:01:21,080
+The experience will be totally different depending on who you are with,
+
+30
+00:01:21,080 --> 00:01:23,750
+and can affect how you would rate the item.
+
+31
+00:01:23,750 --> 00:01:26,345
+Location, location, location.
+
+32
+00:01:26,345 --> 00:01:29,725
+Where we experience things matters a lot when it comes to our perception.
+
+33
+00:01:29,725 --> 00:01:31,790
+Watching a movie at home is
+
+34
+00:01:31,790 --> 00:01:34,340
+a different experience from watching a movie at a movie theater,
+
+35
+00:01:34,340 --> 00:01:37,880
+watching a movie on a pop-up big screen under the stars campaign in
+
+36
+00:01:37,880 --> 00:01:41,570
+the desert is totally different and will affect our rating as well.
+
+37
+00:01:41,570 --> 00:01:45,050
+Time is also a factor in how we judge our experiences.
+
+38
+00:01:45,050 --> 00:01:49,250
+Imagine we can travel to the same place where we can go into winter or summer,
+
+39
+00:01:49,250 --> 00:01:51,859
+this can be drastically different experiences.
+
+40
+00:01:51,859 --> 00:01:54,920
+Let's say we stay at a bed and breakfast in
+
+41
+00:01:54,920 --> 00:01:58,220
+the hot summer and the air conditioning is broken the whole time,
+
+42
+00:01:58,220 --> 00:01:59,810
+so we give them a low rating.
+
+43
+00:01:59,810 --> 00:02:02,540
+However, if we chose to go in the cold winter,
+
+44
+00:02:02,540 --> 00:02:04,880
+we give it a high rating because they always provide
+
+45
+00:02:04,880 --> 00:02:09,245
+a delicious hot breakfast and the house was kept nice and cozy with a great furnace.
+
+46
+00:02:09,245 --> 00:02:12,710
+Even if the air conditioner had been broken in our winter example,
+
+47
+00:02:12,710 --> 00:02:15,770
+that component of the bed and breakfast we didn't interact with,
+
+48
+00:02:15,770 --> 00:02:19,180
+because it wasn't needed and therefore didn't influence our rating.
+
+49
+00:02:19,180 --> 00:02:22,705
+Same place, different times, different ratings.
+
+50
+00:02:22,705 --> 00:02:24,885
+Perhaps it is a special occasion,
+
+51
+00:02:24,885 --> 00:02:27,050
+special occasions can heighten our sensitivity to
+
+52
+00:02:27,050 --> 00:02:30,925
+experience because there are emotions, expectations et cetera.
+
+53
+00:02:30,925 --> 00:02:35,750
+Going to a restaurant for a quick lunch with a friend is highly different from going to
+
+54
+00:02:35,750 --> 00:02:37,820
+the same place for your wedding rehearsal dinner
+
+55
+00:02:37,820 --> 00:02:40,400
+with your entire family the night before the big day.
+
+56
+00:02:40,400 --> 00:02:43,265
+Even going to a restaurant on your birthday is a special event,
+
+57
+00:02:43,265 --> 00:02:45,725
+hence why a lot of restaurants offer free desserts,
+
+58
+00:02:45,725 --> 00:02:47,825
+come sing a birthday song, et cetera,
+
+59
+00:02:47,825 --> 00:02:49,955
+because they want you to have a good experience
+
+60
+00:02:49,955 --> 00:02:52,280
+especially because you're special occasion changes
+
+61
+00:02:52,280 --> 00:02:57,280
+your perception and you may be more likely to rate more strongly one way or the other.
+
+62
+00:02:57,280 --> 00:03:01,064
+Context-aware recommendation systems or CARS,
+
+63
+00:03:01,064 --> 00:03:04,880
+add an extra dimension to our usual collaborative filtering problem.
+
+64
+00:03:04,880 --> 00:03:09,110
+Traditional collaborative filtering recommendation systems use a rank two tensor,
+
+65
+00:03:09,110 --> 00:03:13,890
+a user-item interaction matrix containing explicit or implicit ratings.
+
+66
+00:03:13,890 --> 00:03:17,615
+Contextual collaborative filtering recommendation systems on the other hand,
+
+67
+00:03:17,615 --> 00:03:20,495
+use a multidimensional tensor,
+
+68
+00:03:20,495 --> 00:03:23,210
+but the user-item interaction matrix flow ratings
+
+69
+00:03:23,210 --> 00:03:26,060
+is stratified across multiple dimensions of context.
+
+70
+00:03:26,060 --> 00:03:29,705
+Here's an example of some user-item-context data for movies.
+
+71
+00:03:29,705 --> 00:03:35,395
+There is a user column that lists the user IDs and item column that lists the movie IDs,
+
+72
+00:03:35,395 --> 00:03:38,660
+a who column that list who the user watched the movie with,
+
+73
+00:03:38,660 --> 00:03:41,480
+a where column that list where the user watched the movie,
+
+74
+00:03:41,480 --> 00:03:45,695
+a when column that lists what the movie was watched on a weekday or weekend,
+
+75
+00:03:45,695 --> 00:03:50,050
+and lastly a rating column at list explicit rating left for that user.
+
+76
+00:03:50,050 --> 00:03:53,690
+As you can see, this data is much more complex than
+
+77
+00:03:53,690 --> 00:03:57,425
+just a typical user-item-rating matrix we are used to.
+
+78
+00:03:57,425 --> 00:04:00,465
+We might notice that this table is not complete.
+
+79
+00:04:00,465 --> 00:04:03,320
+We want to predict what user two will rate movie three,
+
+80
+00:04:03,320 --> 00:04:06,725
+if they see the movie with their partner at home on a weekday.
+
+81
+00:04:06,725 --> 00:04:08,280
+With the traditional method,
+
+82
+00:04:08,280 --> 00:04:10,310
+we would just want to predict what user two will rate
+
+83
+00:04:10,310 --> 00:04:13,285
+the item altogether not considering context,
+
+84
+00:04:13,285 --> 00:04:15,530
+but hopefully context here will allow us to better
+
+85
+00:04:15,530 --> 00:04:18,200
+predict how they would rate the movie within that situation.
+
+86
+00:04:18,200 --> 00:04:20,720
+Note, this particular rating could be different from
+
+87
+00:04:20,720 --> 00:04:23,990
+our rating period for the same user and item but with a different context.
+
+88
+00:04:23,990 --> 00:04:26,510
+For example, it could be a different rating for user two
+
+89
+00:04:26,510 --> 00:04:28,970
+for movie three with their partner at home,
+
+90
+00:04:28,970 --> 00:04:31,150
+but now on the weekend,
+
+91
+00:04:31,150 --> 00:04:33,295
+plus all the other permutations.
+
+92
+00:04:33,295 --> 00:04:35,605
+So, how does this work?
+
+93
+00:04:35,605 --> 00:04:39,250
+We should first look at the user of interests interaction history.
+
+94
+00:04:39,250 --> 00:04:43,040
+As you can see here, user two has also watched movies one and two,
+
+95
+00:04:43,040 --> 00:04:47,065
+movie one was with friends at home on the weekend and they give a rating of three,
+
+96
+00:04:47,065 --> 00:04:51,125
+movie two was with family at home on a weekday and they give a rating of four.
+
+97
+00:04:51,125 --> 00:04:54,260
+None of the contexts are exactly the same as our movie of interest,
+
+98
+00:04:54,260 --> 00:04:57,380
+but both are seen at home which matches our target location,
+
+99
+00:04:57,380 --> 00:05:01,180
+movie two was seen on a weekday just like our unit of interest.
+
+100
+00:05:01,180 --> 00:05:05,525
+We also should look at the item of interests user-interaction history.
+
+101
+00:05:05,525 --> 00:05:09,065
+We can see that both user one and user three have rated this movie,
+
+102
+00:05:09,065 --> 00:05:13,370
+user one was with your partner and an event on a weekday and gave it a rating of five,
+
+103
+00:05:13,370 --> 00:05:16,520
+user three watched the movie also with their partner but now at
+
+104
+00:05:16,520 --> 00:05:20,620
+home and now on the weekend and only give it a rating of one.
+
+105
+00:05:20,620 --> 00:05:25,340
+Once again, none of the contexts perfectly match to our target ratings contexts,
+
+106
+00:05:25,340 --> 00:05:28,460
+but individually all three are with their partners,
+
+107
+00:05:28,460 --> 00:05:30,470
+user two also saw the movie at home,
+
+108
+00:05:30,470 --> 00:05:33,130
+and user one also saw the movie on a weekday.
+
+109
+00:05:33,130 --> 00:05:35,420
+So, how do we algorithmically use
+
+110
+00:05:35,420 --> 00:05:38,000
+this data to predict ratings from other recommendations?
+
+111
+00:05:38,000 --> 00:05:41,765
+Now, that we've learned about how context can affect user-item interactions,
+
+112
+00:05:41,765 --> 00:05:43,505
+let's test our knowledge.
+
+113
+00:05:43,505 --> 00:05:47,485
+We learned that context can be important when thinking about user-item interactions.
+
+114
+00:05:47,485 --> 00:05:51,515
+Which is not an example of context for a user-item interaction?
+
+115
+00:05:51,515 --> 00:05:53,405
+Watching a movie at the theater,
+
+116
+00:05:53,405 --> 00:05:55,250
+watching a movie with family,
+
+117
+00:05:55,250 --> 00:06:00,020
+relaxing on the couch on the weekend with a movie, the length of a movie,
+
+118
+00:06:00,020 --> 00:06:01,955
+your mood while watching a movie,
+
+119
+00:06:01,955 --> 00:06:03,555
+watching a movie late at night,
+
+120
+00:06:03,555 --> 00:06:06,055
+or watching movie and a big watch party?
+
+121
+00:06:06,055 --> 00:06:08,240
+The correct answer is D,
+
+122
+00:06:08,240 --> 00:06:10,775
+the length of a movie is a property of the item itself,
+
+123
+00:06:10,775 --> 00:06:13,120
+not the context that experienced in.
+
+124
+00:06:13,120 --> 00:06:14,960
+That is not to say that context
+
+125
+00:06:14,960 --> 00:06:17,300
+can't have a role related to the length of the movie though.
+
+126
+00:06:17,300 --> 00:06:22,755
+Perhaps the user is relaxing on a weekend and they enjoy a very long movie, however,
+
+127
+00:06:22,755 --> 00:06:24,890
+if they were to have watched that same movie after
+
+128
+00:06:24,890 --> 00:06:28,100
+a stressful day at work and then you just start getting dinner ready for the family,
+
+129
+00:06:28,100 --> 00:06:31,810
+they might get frustrated of its length because I just want to get to the ending already.
+
+130
+00:06:31,810 --> 00:06:33,795
+The length itself isn't context,
+
+131
+00:06:33,795 --> 00:06:37,690
+it's component of the item that is evaluated differently based on context.
+
+132
+00:06:37,690 --> 00:06:40,935
+Watching a movie at the theater is a great example of location,
+
+133
+00:06:40,935 --> 00:06:42,755
+change the context of your experience.
+
+134
+00:06:42,755 --> 00:06:45,710
+Of course, the other factor is still come into play like,
+
+135
+00:06:45,710 --> 00:06:47,630
+who is also watching in the theater,
+
+136
+00:06:47,630 --> 00:06:49,145
+when the user wanted the theater,
+
+137
+00:06:49,145 --> 00:06:51,625
+was a special screening, et cetera.
+
+138
+00:06:51,625 --> 00:06:55,470
+Watching movie with family is mostly hidden on the who part of contexts,
+
+139
+00:06:55,470 --> 00:06:57,470
+but of course, where it's being watched at,
+
+140
+00:06:57,470 --> 00:06:59,920
+when, et cetera comes into play.
+
+141
+00:06:59,920 --> 00:07:04,640
+Relaxing on the weekend with a movie taps mainly on the when aspect of context,
+
+142
+00:07:04,640 --> 00:07:08,090
+but relaxing also hints that mood might be part of the context,
+
+143
+00:07:08,090 --> 00:07:11,645
+not to mention where the user's relaxing et cetera.
+
+144
+00:07:11,645 --> 00:07:15,960
+Your mood while watching a movie definitely changes the context is viewed in,
+
+145
+00:07:15,960 --> 00:07:18,155
+and lead to differences in perception as well as
+
+146
+00:07:18,155 --> 00:07:21,230
+all the other pieces of contexts going on during the movie.
+
+147
+00:07:21,230 --> 00:07:23,330
+Watching a movie late at night, once again,
+
+148
+00:07:23,330 --> 00:07:25,145
+mainly focuses on the context of time,
+
+149
+00:07:25,145 --> 00:07:26,900
+but where it's being watched, with who,
+
+150
+00:07:26,900 --> 00:07:29,845
+et cetera, can always affect the rating.
+
+151
+00:07:29,845 --> 00:07:33,920
+Lastly, watching movie at a big watch party maybe a special occasion,
+
+152
+00:07:33,920 --> 00:07:35,600
+hence, a very different contexts and as the movie
+
+153
+00:07:35,600 --> 00:07:37,600
+was watched with more typical conditions.
+
+154
+00:07:37,600 --> 00:07:42,350
+As you can see, there never really is just one facet of context going on at once,
+
+155
+00:07:42,350 --> 00:07:44,255
+all of them are happening simultaneously,
+
+156
+00:07:44,255 --> 00:07:47,350
+and all can affect how a user perceives an item.

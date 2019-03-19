@@ -1,0 +1,43 @@
+1
+00:00:00,260 --> 00:00:02,480
+Now it's time for you to give it a try.
+
+2
+00:00:02,480 --> 00:00:06,430
+In this lab, we'll build a content-based
+recommender using a neural network
+
+3
+00:00:06,430 --> 00:00:10,860
+to recommend the next article to read for
+visitors of the Courier website.
+
+4
+00:00:10,860 --> 00:00:14,360
+First, we'll see how to use big query
+to collect information from the Courier
+
+5
+00:00:14,360 --> 00:00:18,830
+website Google Analytics data and
+build our training and test sets.
+
+6
+00:00:18,830 --> 00:00:22,420
+Then you'll use this data to construct the
+feature columns that will feed into our
+
+7
+00:00:22,420 --> 00:00:26,200
+neural network, including cross columns
+combining some of our features.
+
+8
+00:00:27,300 --> 00:00:31,140
+We'll also create additional metrics to
+assess the performance of our model, and
+
+9
+00:00:31,140 --> 00:00:34,520
+pass this metric to TensorBoard so
+we can monitor our performance.

@@ -1,0 +1,463 @@
+1
+00:00:00,000 --> 00:00:03,180
+Okay. So, you've seen how content-based filtering
+
+2
+00:00:03,180 --> 00:00:06,300
+can be used to generate movie recommendations for a single user.
+
+3
+00:00:06,300 --> 00:00:08,670
+We'd like to scale this technique so you can
+
+4
+00:00:08,670 --> 00:00:11,820
+provide recommendations for multiple users at a time.
+
+5
+00:00:11,820 --> 00:00:14,835
+Here we have a user-movie rating matrix,
+
+6
+00:00:14,835 --> 00:00:18,605
+similar to the user-item interaction matrix we saw in the previous module.
+
+7
+00:00:18,605 --> 00:00:24,240
+Each row corresponds to a user and each column represents a movie in our database.
+
+8
+00:00:24,240 --> 00:00:27,410
+The value in row I and column J indicates
+
+9
+00:00:27,410 --> 00:00:31,550
+the rating from one to 10 that user I gave movie J.
+
+10
+00:00:31,550 --> 00:00:35,240
+Let's walk through the process we've previously implemented to see how
+
+11
+00:00:35,240 --> 00:00:39,510
+this would look in theory and how you would implement this in TensorFlow.
+
+12
+00:00:39,550 --> 00:00:45,575
+Here is our user-item rating matrix from earlier next to our item-feature matrix.
+
+13
+00:00:45,575 --> 00:00:47,900
+Remember, the item-feature matrix is
+
+14
+00:00:47,900 --> 00:00:51,860
+a K-hot encoding of the features we are using to describe our movies.
+
+15
+00:00:51,860 --> 00:00:54,470
+Each row corresponds to a single movie,
+
+16
+00:00:54,470 --> 00:00:58,730
+and a one indicates that the movie fits that genre.
+
+17
+00:00:58,730 --> 00:01:02,975
+We can initialize these as constants in TensorFlow by creating
+
+18
+00:01:02,975 --> 00:01:06,890
+constant tensor values for our movies and for our movie features.
+
+19
+00:01:06,890 --> 00:01:11,495
+To do that, we use tf.constant to rank two tensors
+
+20
+00:01:11,495 --> 00:01:13,805
+with the values for the user-item rating matrix
+
+21
+00:01:13,805 --> 00:01:16,980
+and the movie features from before hard-coded.
+
+22
+00:01:17,570 --> 00:01:22,430
+We want to scale the movie-feature matrix by their ratings given by each user.
+
+23
+00:01:22,430 --> 00:01:26,075
+This will give us a weighted feature matrix for each user.
+
+24
+00:01:26,075 --> 00:01:30,400
+For the first user, we will get this weighted feature matrix.
+
+25
+00:01:30,400 --> 00:01:32,855
+We repeat this process for the second user,
+
+26
+00:01:32,855 --> 00:01:35,525
+and the third, and so on.
+
+27
+00:01:35,525 --> 00:01:38,180
+Once we have this collection of matrices,
+
+28
+00:01:38,180 --> 00:01:44,320
+we can stack them together using tf.stack to get a complete weighted user feature tensor.
+
+29
+00:01:44,320 --> 00:01:48,935
+The previous operations can be done in TensorFlow in the following way.
+
+30
+00:01:48,935 --> 00:01:53,975
+We first build a list of the weighted feature matrices for each user,
+
+31
+00:01:53,975 --> 00:01:57,280
+then use tf.stack applied to this list,
+
+32
+00:01:57,280 --> 00:02:00,520
+setting the stack axis to be zero.
+
+33
+00:02:00,760 --> 00:02:04,250
+What is the shape of the tensor resulting from
+
+34
+00:02:04,250 --> 00:02:08,040
+stacking together all of the weighted feature matrices?
+
+35
+00:02:08,140 --> 00:02:11,195
+The resulting tensor is rank three.
+
+36
+00:02:11,195 --> 00:02:13,730
+So, we can immediately discard option A.
+
+37
+00:02:13,730 --> 00:02:16,880
+Because we stack the weighted feature matrices on axis zero,
+
+38
+00:02:16,880 --> 00:02:21,410
+the shape of this tensor is number of users by number of movies by number of features,
+
+39
+00:02:21,410 --> 00:02:24,780
+or in this case four by five by five.
+
+40
+00:02:24,890 --> 00:02:27,435
+To find the user feature tensor,
+
+41
+00:02:27,435 --> 00:02:30,355
+we sum across the feature columns just as before,
+
+42
+00:02:30,355 --> 00:02:34,190
+and individually normalize each of the resulting vectors.
+
+43
+00:02:34,190 --> 00:02:37,610
+To normalize a user's movies features tensor,
+
+44
+00:02:37,610 --> 00:02:43,115
+we first sum each column using tf.reduce_sum and setting the axis equal to one.
+
+45
+00:02:43,115 --> 00:02:45,460
+The resulting tensor would then be ranked two,
+
+46
+00:02:45,460 --> 00:02:49,870
+where each row represents the sum of the feature values for each user.
+
+47
+00:02:49,870 --> 00:02:52,695
+Next, we find the total for each user,
+
+48
+00:02:52,695 --> 00:02:55,890
+again using tf.reduce_sum with axis set to one.
+
+49
+00:02:55,890 --> 00:02:58,790
+The normalization is then just the result of dividing
+
+50
+00:02:58,790 --> 00:03:01,645
+the feature sum by the feature totals for each user.
+
+51
+00:03:01,645 --> 00:03:03,830
+In the end, we stack the resulting tensors
+
+52
+00:03:03,830 --> 00:03:06,860
+together to get the final users features tensor.
+
+53
+00:03:06,860 --> 00:03:09,155
+This results in a user feature tensor,
+
+54
+00:03:09,155 --> 00:03:13,600
+where each row corresponds to a specific user feature vector.
+
+55
+00:03:13,600 --> 00:03:16,910
+To find the inferred movie rankings for our users,
+
+56
+00:03:16,910 --> 00:03:18,545
+we compute the dot product between
+
+57
+00:03:18,545 --> 00:03:22,225
+each user feature vector and each movie feature vector.
+
+58
+00:03:22,225 --> 00:03:26,090
+In short, we're seeing how similar each user is with respect to
+
+59
+00:03:26,090 --> 00:03:30,110
+each movie as measured across these five feature dimensions.
+
+60
+00:03:30,110 --> 00:03:32,765
+For example, for our first user,
+
+61
+00:03:32,765 --> 00:03:35,830
+the dot product with Star Wars gives 0.6.
+
+62
+00:03:35,830 --> 00:03:39,135
+The dot product with the Dark Knight is 0.5.
+
+63
+00:03:39,135 --> 00:03:44,730
+For Shrek, we get 0.4 and so on for the fourth movie, and our last movie.
+
+64
+00:03:44,730 --> 00:03:47,085
+We do the same thing for user two,
+
+65
+00:03:47,085 --> 00:03:50,235
+for user three, and finally user four.
+
+66
+00:03:50,235 --> 00:03:52,680
+To achieve this in TensorFlow,
+
+67
+00:03:52,680 --> 00:03:54,765
+we can use the map function.
+
+68
+00:03:54,765 --> 00:03:58,700
+The TensorFlow map function is similar to map function in NumPy.
+
+69
+00:03:58,700 --> 00:04:03,655
+It repeatedly apply some callable function on a sequence of elements from first to last.
+
+70
+00:04:03,655 --> 00:04:06,515
+Here, we represent that function with Lambda.
+
+71
+00:04:06,515 --> 00:04:11,075
+It's simply the dot product of each user feature vector with each movie feature vector.
+
+72
+00:04:11,075 --> 00:04:14,480
+So, the variable user ratings holds the list
+
+73
+00:04:14,480 --> 00:04:18,055
+of the resulting movie ratings for each user and each movie.
+
+74
+00:04:18,055 --> 00:04:23,555
+We stack them together to get a tensor of all the users and their movie ratings.
+
+75
+00:04:23,555 --> 00:04:26,150
+Once we had the user-movie ranking matrix,
+
+76
+00:04:26,150 --> 00:04:28,790
+we can compare it with the original user-movie matrix
+
+77
+00:04:28,790 --> 00:04:31,835
+to see which movies to recommend to wish user.
+
+78
+00:04:31,835 --> 00:04:35,375
+Because our users have already seen and rated some of our movies,
+
+79
+00:04:35,375 --> 00:04:38,420
+we want to mask the ranking for previously rated movies and
+
+80
+00:04:38,420 --> 00:04:42,235
+focus only on unrated or unseen movies for each user.
+
+81
+00:04:42,235 --> 00:04:46,010
+Which TensorFlow operation could be used to mask
+
+82
+00:04:46,010 --> 00:04:49,475
+the previously rated movies in our user-movie ranking matrix?
+
+83
+00:04:49,475 --> 00:04:54,575
+So, we only focus on previously unrated movies when providing recommendations.
+
+84
+00:04:54,575 --> 00:04:59,540
+Look to the TensorFlow documentation to see which operation you could use here.
+
+85
+00:04:59,540 --> 00:05:03,935
+That's right. Tf.where operates like NumPy's where operation.
+
+86
+00:05:03,935 --> 00:05:07,535
+It returns elements based on the value of a condition.
+
+87
+00:05:07,535 --> 00:05:12,160
+What condition will be used to mask out movies that do not have a rating?
+
+88
+00:05:12,160 --> 00:05:15,620
+Think about it. We'll see the answer on the next slide.
+
+89
+00:05:16,020 --> 00:05:18,280
+As we saw in the quiz,
+
+90
+00:05:18,280 --> 00:05:20,975
+we can accomplish this with tf.where.
+
+91
+00:05:20,975 --> 00:05:23,615
+Here, the condition variable is a Boolean,
+
+92
+00:05:23,615 --> 00:05:26,960
+and tf.where will return either the tensor x or y,
+
+93
+00:05:26,960 --> 00:05:29,045
+depending on the value of the condition.
+
+94
+00:05:29,045 --> 00:05:31,070
+By setting a condition to be where
+
+95
+00:05:31,070 --> 00:05:34,265
+the user-item interaction matrix does not have any values,
+
+96
+00:05:34,265 --> 00:05:38,735
+we can return only those rankings for previously unrated movies.
+
+97
+00:05:38,735 --> 00:05:42,745
+This results in this user ranking matrix.
+
+98
+00:05:42,745 --> 00:05:45,520
+Finally, we can use the similarity rankings we've
+
+99
+00:05:45,520 --> 00:05:49,130
+computed here to suggest new movies for each user.
+
+100
+00:05:49,130 --> 00:05:51,585
+For example, for user one,
+
+101
+00:05:51,585 --> 00:05:54,850
+the Incredibles has a higher similarity score than Blue,
+
+102
+00:05:54,850 --> 00:05:58,960
+and so our new movie recommendation list for user one looks like this.
+
+103
+00:05:58,960 --> 00:06:02,995
+We can also do the same thing for all the other users.
+
+104
+00:06:02,995 --> 00:06:06,790
+Before we move on, let's take a closer look at our second user.
+
+105
+00:06:06,790 --> 00:06:10,615
+She's a rating of zero for the Dark Knight. Why is that?
+
+106
+00:06:10,615 --> 00:06:13,900
+If we look at the original user-movie rating matrix
+
+107
+00:06:13,900 --> 00:06:17,090
+and compare it with the movie feature matrix, we can see why.
+
+108
+00:06:17,090 --> 00:06:21,714
+Because this user has not rated anything containing action or sci-fi,
+
+109
+00:06:21,714 --> 00:06:25,210
+and the features of the Dark Knight are solely action and sci-fi,
+
+110
+00:06:25,210 --> 00:06:28,700
+our recommender system will infer a rating of zero for that movie.
+
+111
+00:06:28,700 --> 00:06:32,690
+This actually highlights one of the drawbacks of content-based recommender systems.
+
+112
+00:06:32,690 --> 00:06:36,110
+It can be difficult to expand the interest of a user.
+
+113
+00:06:36,110 --> 00:06:40,145
+If the user hasn't rated movies within one of our predefined features,
+
+114
+00:06:40,145 --> 00:06:44,130
+our recommender won't suggest new movies in that genre.
+
+115
+00:06:44,130 --> 00:06:47,240
+In this sense, content-based recommenders aren't
+
+116
+00:06:47,240 --> 00:06:50,990
+good at expanding the interest of users to new domains.

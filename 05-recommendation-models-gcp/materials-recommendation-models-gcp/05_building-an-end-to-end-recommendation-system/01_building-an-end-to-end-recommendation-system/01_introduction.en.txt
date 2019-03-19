@@ -1,0 +1,57 @@
+Hi, I'm Evan, a technical curriculum
+developer for Google Cloud. In this module, we're going to put together all the pieces
+to build a smart end-to-end work flow for your newly built WALS recommendation
+model for news articles. In this module, we'll review the overall
+architecture of a recommendation system. Although the content for your own recommendation system may be
+different than what you practice in these labs, your architecture is likely
+to look something similar. Speaking of architecture, the glue that
+we're going to use to bring all of our refresh data and ML pieces together will
+be a Cloud Composer orchestration layer. Cloud composer is a fully managed Apache
+Airflow instance, which is an open source tool for orchestrating complex workflows
+and data processing pipelines. Our first goal once we have
+the work flow environment set up, is to address the challenge of getting
+new data into our ML training data cell. You'll see how we'll approach this from
+a periodic data pull job for BigQuery running at a set interval to more advanced
+event-triggered workflow, like updating a BigQuery dataset whenever a new CSV
+file is loaded into Google Cloud Storage. Once the data's refreshed,
+we need to then periodically retrain and redeploy our recommendation model and
+serve it via an API endpoint. The two primary pieces of GCP we'll
+use here will be Cloud ML Engine, where we'll submit training jobs to,
+and App Engine where we'll deploy and redeploy our recommendation models for
+serving. Lastly, you'll practice this all
+yourself using the same news article data source and WALS recommendation
+model you previously built and TensorFlow as part of this course. Recall that you previously built the ML
+model that recommends news articles on the Kurier website. You saw different methods for
+building recommendation models using collaborative filtering and
+deep neural networks. You then deployed those models for
+serving, and hopefully were pretty impressed with the
+recommendations the models predicted for news articles for your users. But here's the challenge. What about when new news articles come in? Our ML model needs to keep up to
+date with fresh recommendations. Imagine if YouTube didn't show you
+the latest videos from a creator that you really liked or
+similar content that was just released? Your ML model might have been great
+when it was first deployed, but now your recommendations are stale. And you noticed few users coming
+back to your site again and again. So let's address the problem
+of fresh recommendations. We need to periodically refresh our data,
+retrain our model, and then redeploy it. And we need a smart way
+to do this automatically. Here's an added challenge. How much should you trust
+the pipeline of your upstream data? In this case, it's new news articles. Say on Monday,
+it provides us with 10,000 articles or user behavior interactions
+through Google Analytics. But Tuesday that same upstream data source
+gives a zero when we were expecting many more. Now that we have a living and breathing
+recommendation model that's periodically retrained, we need to
+protect it from bad data. We'll look at a few cool ways that you
+can arm your workflows with health checks a bit later. At a high level, this is the architecture
+that we're going to build for an end-to-end recommendation system. The pieces should all
+look pretty familiar. Data comes in from Google Analytics into
+BigQuery, which is exported to GCS for training as a CSV. Our TensorFlow code for the model is run on Cloud ML Engine,
+which is deployed to App Engine as an API. As you might have guessed, the glue that
+holds this entire workflow together is Cloud Composer as an overall
+orchestration layer. And we'll spend lots of time discussing
+the inner workings of Cloud Composer and how you can schedule, call and
+send tasks to other GCP services. The end result for our particular use
+case, which is serving up relevant news articles for visitors visiting our
+website, will look something like this. We can make a simple API request to App
+Engine for a particular user and specify how many articles we want to recommend,
+and end up giving those articles back. Now that you've seen the end state,
+next we'll walk through each component of the architecture in greater detail, so
+you know the basics before your first lab.

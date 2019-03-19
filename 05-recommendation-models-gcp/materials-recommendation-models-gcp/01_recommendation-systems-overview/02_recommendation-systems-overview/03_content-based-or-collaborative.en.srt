@@ -1,0 +1,467 @@
+1
+00:00:00,000 --> 00:00:06,090
+A Content-based method uses attributes of the items to recommend new items to a user.
+
+2
+00:00:06,090 --> 00:00:09,810
+It doesn't take into account the behavior or ratings of other users.
+
+3
+00:00:09,810 --> 00:00:14,505
+For example, if a user has rented and liked a lot of vacation homes on the beach,
+
+4
+00:00:14,505 --> 00:00:18,730
+this method will suggest other similar homes that are also on the beach.
+
+5
+00:00:18,730 --> 00:00:22,460
+This is often done by hand engineering features for the items and
+
+6
+00:00:22,460 --> 00:00:26,920
+learning how much a single user aligns with each of those features.
+
+7
+00:00:26,920 --> 00:00:30,320
+Using that feature representation of the user is
+
+8
+00:00:30,320 --> 00:00:35,220
+impossible to extrapolate how a given user would rank unseen items.
+
+9
+00:00:35,300 --> 00:00:40,985
+A collaborative filtering model works with the entire user item interaction matrix.
+
+10
+00:00:40,985 --> 00:00:42,770
+They consider all users,
+
+11
+00:00:42,770 --> 00:00:45,950
+all items, and all user item ratings.
+
+12
+00:00:45,950 --> 00:00:51,145
+Loosely speaking, they work with the idea that similar users will like similar items.
+
+13
+00:00:51,145 --> 00:00:53,960
+That is, they use similarities between the users
+
+14
+00:00:53,960 --> 00:00:57,065
+and the items simultaneously to provide recommendations.
+
+15
+00:00:57,065 --> 00:01:00,565
+This can allow for seemingly serendipitous recommendations.
+
+16
+00:01:00,565 --> 00:01:02,330
+Meaning, they can recommend an item to
+
+17
+00:01:02,330 --> 00:01:06,535
+a user A based only on the interests of a similar user B.
+
+18
+00:01:06,535 --> 00:01:08,660
+Another useful advantage is that
+
+19
+00:01:08,660 --> 00:01:11,270
+the feature representations can be learned automatically.
+
+20
+00:01:11,270 --> 00:01:13,820
+So, you don't have to rely on hand engineering
+
+21
+00:01:13,820 --> 00:01:17,805
+specific features as you would for a content-based filtering method.
+
+22
+00:01:17,805 --> 00:01:21,245
+This process often involves matrix factorization
+
+23
+00:01:21,245 --> 00:01:24,140
+and behaves similarly to a Content-basec approach,
+
+24
+00:01:24,140 --> 00:01:27,990
+but does not rely on previously constructed features.
+
+25
+00:01:28,100 --> 00:01:31,190
+Knowledge-based recommender systems are based on
+
+26
+00:01:31,190 --> 00:01:33,470
+explicit knowledge about the user's preferences,
+
+27
+00:01:33,470 --> 00:01:36,320
+items, and or recommendation criteria.
+
+28
+00:01:36,320 --> 00:01:39,320
+They're especially useful when alternative approaches such as
+
+29
+00:01:39,320 --> 00:01:42,910
+collaborative filtering or content-based methods cannot be applied.
+
+30
+00:01:42,910 --> 00:01:46,790
+This occurs in situations where items are not purchased very often.
+
+31
+00:01:46,790 --> 00:01:50,180
+For example, if instead of renting a vacation house,
+
+32
+00:01:50,180 --> 00:01:54,070
+suppose we want to build a recommendation engine for buying a vacation house.
+
+33
+00:01:54,070 --> 00:01:56,800
+Because most people don't buy houses often,
+
+34
+00:01:56,800 --> 00:02:00,154
+we probably wouldn't have enough previous house buying information
+
+35
+00:02:00,154 --> 00:02:04,060
+to use either a content-based or collaborative filtering approach.
+
+36
+00:02:04,060 --> 00:02:07,040
+In this scenario, knowledge-based systems will
+
+37
+00:02:07,040 --> 00:02:09,860
+often explicitly ask users for their preferences,
+
+38
+00:02:09,860 --> 00:02:13,510
+and then use that information to begin making recommendations.
+
+39
+00:02:13,510 --> 00:02:16,910
+Often, there is value in combining different types of
+
+40
+00:02:16,910 --> 00:02:19,970
+recommendation models into a single hybrid approach.
+
+41
+00:02:19,970 --> 00:02:21,860
+This can be done in several ways.
+
+42
+00:02:21,860 --> 00:02:23,825
+For example, we could develop
+
+43
+00:02:23,825 --> 00:02:28,130
+a few recommenders and then use one or the other depending on the scenario.
+
+44
+00:02:28,130 --> 00:02:31,385
+If a user has already rated a large number of items,
+
+45
+00:02:31,385 --> 00:02:34,265
+perhaps we can rely on a content-based method.
+
+46
+00:02:34,265 --> 00:02:37,910
+However, if the user has rated only a few items,
+
+47
+00:02:37,910 --> 00:02:41,570
+we may instead prefer to use a collaborative filtering approach.
+
+48
+00:02:41,570 --> 00:02:44,600
+This way, we can fully leverage the information we have about
+
+49
+00:02:44,600 --> 00:02:48,830
+other users and their interactions with items in our database,
+
+50
+00:02:48,830 --> 00:02:51,625
+to gain some insight into what we can recommend.
+
+51
+00:02:51,625 --> 00:02:54,260
+Of course, if we have no information about
+
+52
+00:02:54,260 --> 00:02:59,135
+a user's previous item interactions or we like any information about a given user,
+
+53
+00:02:59,135 --> 00:03:02,215
+we may instead want to rely on a knowledge-based approach,
+
+54
+00:03:02,215 --> 00:03:04,490
+and ask the user directly for their preferences
+
+55
+00:03:04,490 --> 00:03:07,880
+via a survey before making recommendations.
+
+56
+00:03:07,880 --> 00:03:11,060
+Another way to create a hybrid model is to
+
+57
+00:03:11,060 --> 00:03:14,335
+simply combine the outcomes of more than one of these models.
+
+58
+00:03:14,335 --> 00:03:17,360
+The multiple outcomes could then form the input to
+
+59
+00:03:17,360 --> 00:03:19,160
+a more sophisticated model that makes
+
+60
+00:03:19,160 --> 00:03:22,600
+the final recommendation that we then serve to the user.
+
+61
+00:03:22,600 --> 00:03:26,060
+The idea is that the more sophisticated model,
+
+62
+00:03:26,060 --> 00:03:30,665
+we'll learn a more nuanced relationship between the query and the various model outcomes,
+
+63
+00:03:30,665 --> 00:03:32,875
+and we'll have a much better recommendation.
+
+64
+00:03:32,875 --> 00:03:35,390
+In fact, some research suggests that
+
+65
+00:03:35,390 --> 00:03:38,300
+a hybrid approach combining multiple outcomes like this,
+
+66
+00:03:38,300 --> 00:03:42,160
+can provide more accurate recommendations in a single approach on its own.
+
+67
+00:03:42,160 --> 00:03:44,280
+In addition to content-based,
+
+68
+00:03:44,280 --> 00:03:47,110
+collaborative filtering and knowledge-based approaches,
+
+69
+00:03:47,110 --> 00:03:50,840
+deep learning models can also be used when building a recommendation system.
+
+70
+00:03:50,840 --> 00:03:53,330
+Deep neural networks work well because they are
+
+71
+00:03:53,330 --> 00:03:56,225
+flexible and can be trained to have varying outcomes,
+
+72
+00:03:56,225 --> 00:03:57,710
+such as predicting ratings,
+
+73
+00:03:57,710 --> 00:04:00,100
+interactions, or even next items.
+
+74
+00:04:00,100 --> 00:04:03,965
+For example, suppose we wanted to recommend videos to our users,
+
+75
+00:04:03,965 --> 00:04:07,175
+we could approach this from a deep learning point of view by taking
+
+76
+00:04:07,175 --> 00:04:10,605
+attributes of the user's behavior input, for example,
+
+77
+00:04:10,605 --> 00:04:14,375
+a sequence of their previously watched videos embedded into some latent space,
+
+78
+00:04:14,375 --> 00:04:16,070
+combined with video attributes,
+
+79
+00:04:16,070 --> 00:04:19,720
+either genre or artists information for a given video.
+
+80
+00:04:19,720 --> 00:04:22,730
+These user and item attributes are combined
+
+81
+00:04:22,730 --> 00:04:25,250
+into a single dense layer of a neural network,
+
+82
+00:04:25,250 --> 00:04:27,500
+and then again to another fully-connected layer
+
+83
+00:04:27,500 --> 00:04:30,305
+until a single value is ultimately produced,
+
+84
+00:04:30,305 --> 00:04:32,120
+with the objective function comparing
+
+85
+00:04:32,120 --> 00:04:35,235
+the difference with the users rating for the given video.
+
+86
+00:04:35,235 --> 00:04:38,390
+At inference time, we can apply this model to rate
+
+87
+00:04:38,390 --> 00:04:42,950
+previously unseen videos and recommend to the user the video with the highest score.
+
+88
+00:04:42,950 --> 00:04:46,130
+Deep learning models like this are flexible enough to easily
+
+89
+00:04:46,130 --> 00:04:49,400
+incorporate all kinds of query features and item features into
+
+90
+00:04:49,400 --> 00:04:52,280
+the input layer of the network to help capture the specific interests
+
+91
+00:04:52,280 --> 00:04:55,730
+of a user or to improve the relevance of the recommendations.
+
+92
+00:04:55,730 --> 00:05:00,170
+Let's do a quick quiz. Suppose we have built a recommendation engine,
+
+93
+00:05:00,170 --> 00:05:02,735
+suggest new Apps from our App store.
+
+94
+00:05:02,735 --> 00:05:05,585
+Our model recommends a Hiking App to a user
+
+95
+00:05:05,585 --> 00:05:09,015
+because they recently installed a running App and I have been using it a lot.
+
+96
+00:05:09,015 --> 00:05:12,730
+What kind of recommendation approach is this an example of?
+
+97
+00:05:12,730 --> 00:05:16,740
+Would it be content-based filtering, collaborative filtering,
+
+98
+00:05:16,740 --> 00:05:21,960
+a deep neural network approach or perhaps a hybrid or more than one of these?
+
+99
+00:05:22,070 --> 00:05:26,380
+That's right. This would be an example of content-based filtering.
+
+100
+00:05:26,380 --> 00:05:29,870
+We're told that the Hiking App suggestion is a result of the user
+
+101
+00:05:29,870 --> 00:05:33,940
+recently installing and using a similar App for tracking their runs.
+
+102
+00:05:33,940 --> 00:05:36,390
+Because the content of these two Apps is similar,
+
+103
+00:05:36,390 --> 00:05:38,795
+we expect that this user will appreciate both,
+
+104
+00:05:38,795 --> 00:05:41,690
+hence the name content-based filtering.
+
+105
+00:05:41,690 --> 00:05:45,140
+This wouldn't be collaborative filtering because the recommendation does
+
+106
+00:05:45,140 --> 00:05:48,025
+not rely on the behaviors and item interactions of other users.
+
+107
+00:05:48,025 --> 00:05:52,130
+Its recommendation is based only on that user's previous behavior.
+
+108
+00:05:52,130 --> 00:05:56,695
+This is what sets content-based filtering apart from collaborative filtering.
+
+109
+00:05:56,695 --> 00:05:59,060
+And although it's possible that
+
+110
+00:05:59,060 --> 00:06:01,955
+this recommendation came from a neural network or a hybrid approach,
+
+111
+00:06:01,955 --> 00:06:04,070
+it doesn't sound like it from the question.
+
+112
+00:06:04,070 --> 00:06:06,500
+The recommendation was made based on the similarity of
+
+113
+00:06:06,500 --> 00:06:08,965
+features and content of the two Apps.
+
+114
+00:06:08,965 --> 00:06:11,525
+In fact, the features that related to Apps and the user
+
+115
+00:06:11,525 --> 00:06:14,165
+are likely hand engineered by some software engineer,
+
+116
+00:06:14,165 --> 00:06:16,760
+and they aren't learnt solely for the data.
+
+117
+00:06:16,760 --> 00:06:19,950
+We'll see more about how this works in the coming modules.

@@ -1,0 +1,219 @@
+Let's remind ourselves
+what our first goal is. We need to feed our recommendation model
+the freshest data that we have available. Ideally neither you nor I are sitting
+by a computer manually hitting the refresh button in GCS,
+a repeat low job in BigQuery. That's no fun. As you saw, Cloud Composer will command
+the GCP services that we need to run. But Cloud Composer is simply
+a serverless environment on which an open source
+work flow tool runs. That work flow tool is
+called Apache Airflow. I feel like between Tensor Flow, Dialog
+Flow, Data Flow and Airflow, if you're going to be working on the ML package,
+it's likely to end in something flow. Anyways, bad joke. How Airflow works is you write
+up an ordered set of tasks as part of what's called a DAG. More on that in a minute. And then you watch as Airflow invokes
+those other GCP services like the BigQuery GCS export job here. Or a new cloud ML engine training job has
+kicked off here or deployment of a newly retrained or trained model, the app
+engine, for serving as the API endpoint. Just a few of the great features of
+these airflow DAGs that you're going to build are the tolerances for failure,
+automatic retrying of failed jobs, and those data health checks that
+I alluded to a little bit earlier that you can program
+directly into your workflow. Now the heart of any workflow,
+and by the way I use workflow, pipeline and DAG a little bit
+interchangeably, is that DAG. A DAG, or directed acyclic graph,
+is a set of tasks and special operators that allow
+you to programmatically and periodically schedule
+cool stuff to happen. Directed means that there's
+a specified dependency flow. First do this task,
+then task B, then task C. And acyclic means it can't be a feedback
+loop into itself like a circle. Acyclic means non circular. The stuff that's happening in this
+particular DAG are four tasks that update our training data, export it,
+retrain our model and then redeploy it. I'm purposely being ambiguous
+by using the word stuff. Because you can tell your DAG to pretty
+much do anything that you need it to do. Here it's sending tasks to a Big Query,
+GCS, and Cloud MLM engine. But another DAG could send email
+notification when it launches a cloud dataflow job, or
+spin up a Google Kubernetes cluster, or run multiple ad hoc queries
+against a Big Query data set. And you could even trigger
+a completely separate DAG based on the results of the first
+one running and completing. Before we go too far into
+Cloud Composer specifics, I wanted to share this useful analogy. Cloud Composer is to Apache Airflow as Cloud Machine Learning Engine
+is to TensorFlow. Both cloud composer and
+CMLU are serverless and fully managed integration layers
+to the Google Cloud Platform. So, you don't have to worry about
+what hardware expects your Airflow or TensorFlow code is running on. Building any workflow in Cloud Composer
+consists of these four steps and building an ML workflow for
+recommendation engine is no different. We'll start by previewing the actual
+Cloud Composer environment. Once you use the command line or GCP web
+UI to launch a Cloud Composer instance, you'll be met with a screen like this. Keep in mind that you can have multiple
+Cloud Composer environments and within each environment, you can have
+a separate Apache Airflow instance that can have zero to
+many DAGs inside of it. An important note here is that
+sometimes you'll be required to edit environmental variables for your workflows, like specifying
+your specific GCP project account. Normally, you would not do that at the
+cloud composer level, but instead, do it at the actual Apache Airflow level, which
+is what we'll show you in the next demo. Again, generally I'm only on
+the Cloud Composer page here to create new environments before I launch directly
+into the Apache Airflow webserver. To access the Airflow admin UI where
+you can monitor and interact with your workflows, you'll click on the link
+underneath the Airflow webserver. The second box you see
+here is the DAGs folder which is where the code of your
+actual workflows will be stored. The DAGs folder for each airflow
+instance is simply a GCS bucket that's automatically created for you when you
+launch your cloud composer instance. Here's where you're going to upload your
+DAG files, which you're going to write in Python, and bring your first workflow
+to life visually inside of Airflow. Let's take a quick look at
+a demo of what the simplest DAG looks like inside of the Airflow UI. So now I get to see what
+Cloud Composer looks like. And we'll run a very simple DAG that's
+going to do a little bit of a work for us inside of GCP. So, this is the Cloud Composer
+environment. How you actually get here is
+through the Navigation menu. All the way at the bottom. You're already familiar with
+all the big data products. Maybe Cloud Composer is new to you. And you can see the little icon there is
+just putting all the pieces together. I thought for a while, like what
+is the T suppose to represent, but it's a different puzzle pieces. That'll take you here. In your lab, you're not going to have
+any of these managed Apaches Airflow environments created yet. So the first thing as you'd imagine
+you want to do is go to Create. And of course there's a corresponding
+shell command line you can actually run using the CLI to actually create this,
+but you can use the UI as well. So here we just give
+the Composer environment a name. You can specify the number of nodes, again this is all running
+Kubernetes behind the scenes. Mandatory that you specify a location. You want closest to you,
+optionally a zone. And I leave the rest of
+the infrastructure blank here. Now you can specify environmental
+variables or other labels. I also leave those the default values. Now the big, aha moment is currently,
+at the time of this recording each Composer instance takes
+about 10 or 15 minutes to spin up. Here is where you can look
+through the rest of the lab, the rest of the documentation, that's why I have a few of these other
+environments available for us to demo in. So I am actually going to look at the demo
+Composer environment I created a little bit earlier. As you saw before, you've got the actual web server
+to take you into the Airflow UI. You've got the folder to the DAGs. So the first thing that we want to do
+is actually take a look at the DAGs. Which again, is just a GCS bucket,
+there's no objects in there already. And the DAG, what we're actually going to
+be creating is part of our workflow today, is just going to be a BigQuery related DAG
+for the top 100 Stack Overflow posts for a certain time period. And that's actually just an example
+I took from the documentation for a cloud data flow. So here, you can see it's
+just a simple bq notify.py. And it is actually this one is set up to
+send an email summary based on the results of the BigQuery query showing what's
+the most popular Stack Overflow post. So we have our bucket,
+again this is auto-generated GCS bucket, uploading the files. I've got samples_dag.py. Once that's uploaded,
+we head back into our environment. You can click on the web server or
+click on the actual name. If you click on the name, it will give you a little bit more of
+the metadata about the environment. So, you can see this is
+the Cloud Composer's name, demo-composer. And you can see that here is
+the actual GKE cluster ID. But the two links that were also on
+the previous page that are really, really important is
+the link to the GCS bucket, where we can start uploading
+those Python DAG files. And we'll go into much more great detail
+on how to create those DAG files. But the one you want to really
+bookmark is the Airflow web UI. And after we authenticate, you'll
+see it's thinking, and maybe refresh a few times and it will realize that hey,
+there's DAGs inside of the DAG folder. Now, here's the interesting part, as I
+mentioned before, you might be putting environmental variables that
+are referenced by your code. For example, this says sample_dag.py is
+expecting something called a gcs_bucket. And it's essentially a parameter for
+whatever you're gcs_bucket is going to be. So in order to satisfy this and
+get the DAG to show up, we're going to go to Admin > Variables. And here's where you can create
+environmental variables, that can be referenced by one or
+all of your DAG's. Here we specify gcs_bucket. I'm going to go ahead and
+just create a very simple one. Create a new bucket. Call this one just something unique. Create the bucket. Bucket's created. Now we go back in here, specify that. Now it's vital to understand
+depending upon, this is again, this is a variable name. Depending upon your code, sometimes
+you're going to have to put the gs google storage slash slash there. But I just know offhand that
+this one already cacatonates in that as part of the dag. So, I'm going to leave that alone. And we're going to save that. And we're going to see what other
+environmental variables are required by going to dags. And then we have another one that
+says e-mail does not exists, maybe this is the e-mail that
+has sent in the summary to. So, we again and go to Admin > Variables, create, e-mail and
+then we can just do whatever your e-mail is when you're
+actually creating e-mails. And I'll tell you why I'm just doing
+a bogus email when we get into actually running the DAG. Now let's go back in the DAG,
+see if there's any other parameters. We need the GCS bucket. Our project, GCS project, of course,
+we can just get from our home screen. For your Qwiklabs accounts is going to
+be your Qwiklabs projects Id. And that's where we're actually going to
+be running this work low within. Boom, after all three of those you will
+see that your DAG will now appear. This is the composer_sample_bq_notify. A couple of different things about
+the UI you can plus your DAG from automatically running. If you have an automatic scheduler set
+up we'll go into the different types of schedules you can automatically set up. And then what I do is you
+give it about a minute or 30 seconds then when you refresh this,
+you'll see the acute notification message. But then you'll also see all
+the links that are available to you. So you can say this looks like
+it's running once a month. We can take a look, what I'd like to
+do is take a look at the code first. So you can click into the DAG, different
+ways of representing it, the graph view. This is the directed basic graph. So, you can see that it's
+doing a lot of things. Making a BigQuery dataset, querying it,
+exporting the questions that GCS. E-mailing out the summary while
+in tandem it's querying BigQuery, getting the most popular question queried. And then reading that out and including
+that in the email summary as well. So that the DAG view here is great. Also, you can just check
+out the code view. So you can see that at the very
+top of this code, it highlights. Hey, by the way, you're going to
+have to specify these three environmental variables. So if you wanted to avoid the attack
+of the pop up notifications. You could have just read here and
+see that it actually relied on these three environmental variables
+instead of air flow. This is the DAG, again you can see just
+a little bit of what's going on here. Where it's actually different parts
+of the different tasks are running. This is the actual query, which queries
+the public Stack Overflow posts. Don't worry about too much
+of the DAG structure. I'm going to that in much greater detail. But this is just essentially a Python file
+with a list of dependencies at the end, for what tasks get run first. So now if actually wanted to run this, one of the things we can do is go back
+to our DAGs, all the way on the right. If we don't want to wait for
+it to run within 28 days. We're going to trigger the DAG
+with this little icon here. So trigger it. Are you sure you want to run it? Yes, let's go ahead and run it. And then quickly, what I like to
+do is I'll go back into the DAG. I'll go into the Graph View. And I'll start refreshing like crazy. So you want to look for the colored
+border in the status or the states. You're hovering over it and
+you see the state in queue. It doesn't refresh automatically. So when you're refreshing this,
+you can see, immediately, lighter green means it's running. So it's making a BigQuery data set. And if you're following
+along very quickly, I just have BigQuery opened here for
+my particular project. I'm going to refresh that and
+see if it actually created it. Boom, there's the BigQuery
+data set it just created. So we've got no tables in there yet, or
+else you'd have a little arrow here. This is the airflow_bq_notify_dataset
+with this suffix of a particular date. So let's go back, let's refresh this,
+let's see where it is now. So now the BigQuery data set
+has been created as we saw. It's running the bq,
+one of those SQL queries that looks for the recent Stack Overflow posts. And it's going to be populating those
+into two separate tables into BigQuery. So as you can see that just
+finished because again, it's just a simple call to BigQuery and
+BigQuery is going to run it really fast. Now we're going to go ahead and
+refresh BigQuery. We're going to see how many tables do we
+have, actually, in there stored, if any. Boom, just two queries have ran and
+now have results. The most popular post for
+Stack Overflow for that time period is this article
+title with over 340,000 views. And then here are some
+of the recent questions. As you can see, the most popular
+it just takes the top one. That's what we have our same title here, and the rest as you can see
+in that view count there. So immediately we have BigQuery data
+set that didn't exist before and we just ran some ad hoc
+SQL queries against it. So let's go back into Airflow and
+see what we're doing. It's export recent questions to GTS, so
+it's dumping them to the bucket as well. And as you can see, we have green,
+green, green, green. Dark green means all of
+those nodes have completed. And then, if you notice, there's a yellow
+retry all the way at the end for the e-mail summary. So it looks like maybe it failed or
+something that's going on with it. And I'll tell you. And the reason why I did tests, you might
+be thinking that this is failing because you did an improper e-mail
+test at test dot com. And that's not actually the case. You can expect these things. And clicking on a particular node, I'm clicking on View Log and
+you can actually see the error. So it's saying hey there's no module or
+utility named sendgrid or it's going to give you
+an unauthorized email error. And that's because you
+need to actually set up, in order to send e-mails out of GCP. This is something new that happened
+in the last year to prevent spam from folks creating these bots. Is you need to create
+an API key with SendGrid, which is one of the partners that we have. So unfortunately, we're not going to
+be getting any e-mails, which is fine. The e-mail body would have
+just simply been this. I'll show you. All the way at the bottom you can see,
+hey we analysed Stack Overflow posts from this date which is parameterized from
+this date which and has this view count. And then the most popular
+question was this. It's pulling this from the GCS bucket,
+the file that was dumped into there. But again if you wanted to actually get
+that e-mail, you sign up to SendGrid and put in the API there as well. But the big success as you can see is
+it it very quickly created this data set inside of BigQuery, with the two
+tables as you see populated there. So it's got this BigQuery operators going. And then the cool part is if
+we exit out of the code here, you can go back to the schedule and
+you can see. All right, well every 28 days or
+about every month, this work flow is just going to run, and
+it's going to dump in a table inside a big query with the most popular posts,
+and you don't have to do anything else. It will just run automatically
+behind the scenes. And then, if you put in an e-mail, if the work flow every fails you can
+actually have it send a failure e-mail. We're going to go through how to
+actually create those DAG files. How do you set up recurring schedule or
+an event-triggered schedule. But all you need to know of the basics of
+this so far is just upload a Python file. Deal with any dependencies for those environmental variables that'll
+give you those notifications. And then you actually get the name of your
+DAG showing up here, one DAG per line. And then you can interact with it
+with some of the quick links here. All right that's the Cloud Composer
+of the very fast demo. Stay tuned for just much more granularity
+for everything that you see here

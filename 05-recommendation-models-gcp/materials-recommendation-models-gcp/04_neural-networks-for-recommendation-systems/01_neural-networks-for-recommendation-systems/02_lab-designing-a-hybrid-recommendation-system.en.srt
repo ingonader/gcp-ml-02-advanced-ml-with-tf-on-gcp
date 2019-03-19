@@ -1,0 +1,539 @@
+1
+00:00:00,000 --> 00:00:02,295
+Now it's our turn. In this lab,
+
+2
+00:00:02,295 --> 00:00:06,480
+we're going to design a hybrid recommendation system to recommend movies to users.
+
+3
+00:00:06,480 --> 00:00:08,160
+We'll come up with some useful data sets,
+
+4
+00:00:08,160 --> 00:00:09,975
+that we think are important to collect.
+
+5
+00:00:09,975 --> 00:00:12,150
+There are many ways to connect things together,
+
+6
+00:00:12,150 --> 00:00:15,750
+so experimentation will help find one of the better combinations.
+
+7
+00:00:15,750 --> 00:00:19,500
+In this lab, we want to have a fun thought experiment on how we can best
+
+8
+00:00:19,500 --> 00:00:23,115
+recommend movies to users by using a hybrid recommendation system.
+
+9
+00:00:23,115 --> 00:00:27,120
+Think of several data sets that would be useful for each recommendation system type,
+
+10
+00:00:27,120 --> 00:00:30,495
+content-based, collaborative filtering, and knowledge-based.
+
+11
+00:00:30,495 --> 00:00:33,330
+Remember, there are both structured and unstructured data sources
+
+12
+00:00:33,330 --> 00:00:34,815
+we can use from our website,
+
+13
+00:00:34,815 --> 00:00:38,560
+as well as both explicit and implicit types of feedback.
+
+14
+00:00:38,560 --> 00:00:41,180
+First, we're going to look at what data sets
+
+15
+00:00:41,180 --> 00:00:43,400
+would be important to best recommend movies to users,
+
+16
+00:00:43,400 --> 00:00:45,470
+for content-based recommendation models.
+
+17
+00:00:45,470 --> 00:00:49,565
+Think about what type of data would be available on a movies page or on its website.
+
+18
+00:00:49,565 --> 00:00:54,555
+Remember, it can be both structured and unstructured, also it's content-base.
+
+19
+00:00:54,555 --> 00:00:56,515
+So, it shouldn't really involve the users,
+
+20
+00:00:56,515 --> 00:01:00,020
+but should be from experts with domain knowledge about the item.
+
+21
+00:01:00,020 --> 00:01:02,300
+So now, take a moment and think,
+
+22
+00:01:02,300 --> 00:01:04,295
+right down or discuss with your colleagues
+
+23
+00:01:04,295 --> 00:01:07,160
+what data sets we could use for content-based recommendations,
+
+24
+00:01:07,160 --> 00:01:09,545
+and then, we'll go through some of the ones we came up with.
+
+25
+00:01:09,545 --> 00:01:12,635
+All right. Let's see some of the ideas we came up with.
+
+26
+00:01:12,635 --> 00:01:17,780
+A simple structured piece of data on a movies page could be the genre of the movie.
+
+27
+00:01:17,780 --> 00:01:20,780
+Note, that there could be multiple genres labeled per movie,
+
+28
+00:01:20,780 --> 00:01:24,995
+so you might create an nha encoded for each genre per movie.
+
+29
+00:01:24,995 --> 00:01:27,290
+Users often enjoy specific genres,
+
+30
+00:01:27,290 --> 00:01:29,285
+therefore if we know the ones that they like,
+
+31
+00:01:29,285 --> 00:01:31,255
+we can recommend more of that type.
+
+32
+00:01:31,255 --> 00:01:33,010
+Because this is content-based,
+
+33
+00:01:33,010 --> 00:01:35,030
+we're going to be making safe genre recommendations,
+
+34
+00:01:35,030 --> 00:01:39,440
+because we're basing them on each user's personal genre bubble and embedding a space,
+
+35
+00:01:39,440 --> 00:01:42,035
+and therefore, probably want to explore outside of it.
+
+36
+00:01:42,035 --> 00:01:46,860
+Collaborative filtering will help make up for that by looking across other users too.
+
+37
+00:01:46,860 --> 00:01:49,790
+We could also extract the theme of the movie,
+
+38
+00:01:49,790 --> 00:01:51,020
+and just like with genre,
+
+39
+00:01:51,020 --> 00:01:52,190
+there could be more than one,
+
+40
+00:01:52,190 --> 00:01:54,370
+so we should nha encode these too.
+
+41
+00:01:54,370 --> 00:01:58,820
+Maybe people think genres and themes are the same thing or at least they're related,
+
+42
+00:01:58,820 --> 00:02:02,480
+but the cross between the two does create some nodes with differentiation.
+
+43
+00:02:02,480 --> 00:02:06,125
+Perhaps a user like Sci-Fi and also likes the hero journey,
+
+44
+00:02:06,125 --> 00:02:10,610
+the underdog good guys triumph over the empower bad guys, and hope themes.
+
+45
+00:02:10,610 --> 00:02:12,905
+Now, all sci-fi movies have those themes
+
+46
+00:02:12,905 --> 00:02:15,560
+and those themes exist in other genres outside of sci-fi,
+
+47
+00:02:15,560 --> 00:02:19,880
+therefore, it can help provide another layer of insight into what other movies recommend.
+
+48
+00:02:19,880 --> 00:02:22,310
+Also, just as with genres,
+
+49
+00:02:22,310 --> 00:02:23,765
+because this is content-based,
+
+50
+00:02:23,765 --> 00:02:28,070
+recommendations probably won't be far outside user's thematic comfort zones.
+
+51
+00:02:28,070 --> 00:02:33,305
+Another type of structured data we could use is the actors and directors involved.
+
+52
+00:02:33,305 --> 00:02:38,090
+This also could be nha encoded for each actor and director that attached the movie.
+
+53
+00:02:38,090 --> 00:02:40,145
+Many people have favorite actors and directors
+
+54
+00:02:40,145 --> 00:02:42,020
+and specifically choose movies based on that,
+
+55
+00:02:42,020 --> 00:02:44,570
+due to their personality, style, et cetera.
+
+56
+00:02:44,570 --> 00:02:47,570
+For instance, maybe a user watches movies all with the same actor in them,
+
+57
+00:02:47,570 --> 00:02:50,375
+but train many varied roles across multiple genres.
+
+58
+00:02:50,375 --> 00:02:53,360
+There's a good likelihood that other movies of that star,
+
+59
+00:02:53,360 --> 00:02:55,910
+that actor would also be enjoyed by the user.
+
+60
+00:02:55,910 --> 00:02:57,650
+Because this is content-based,
+
+61
+00:02:57,650 --> 00:03:01,165
+there won't be many movies recommended that don't have their favorite people in it.
+
+62
+00:03:01,165 --> 00:03:04,730
+But fortunately because most movies have an ensemble of talent,
+
+63
+00:03:04,730 --> 00:03:07,730
+at least the user will be exposed to them too and might find they
+
+64
+00:03:07,730 --> 00:03:11,810
+like or dislike some other people as well, while they watch.
+
+65
+00:03:11,810 --> 00:03:14,210
+We could have also come up with the idea to tap in
+
+66
+00:03:14,210 --> 00:03:16,565
+professional ratings from critics and paid reviewers.
+
+67
+00:03:16,565 --> 00:03:19,070
+But wait, just one moment.
+
+68
+00:03:19,070 --> 00:03:22,055
+Aren't ratings supposed to be for collaborative filtering?
+
+69
+00:03:22,055 --> 00:03:25,760
+Well, yes, but those are ratings from users interacting with the items.
+
+70
+00:03:25,760 --> 00:03:27,350
+So, we can use both the similarity between
+
+71
+00:03:27,350 --> 00:03:30,535
+users and items to find the best recommendations.
+
+72
+00:03:30,535 --> 00:03:32,140
+In this case, however,
+
+73
+00:03:32,140 --> 00:03:34,490
+these professionals are not users,
+
+74
+00:03:34,490 --> 00:03:37,070
+or at least they aren't posting from their personal user accounts,
+
+75
+00:03:37,070 --> 00:03:41,255
+and probably have a separate professional opinion area that they enter their ratings in.
+
+76
+00:03:41,255 --> 00:03:44,080
+It is interesting to think about how these can be used.
+
+77
+00:03:44,080 --> 00:03:47,330
+Perhaps a user usually likes movies that the critics rate highly,
+
+78
+00:03:47,330 --> 00:03:49,310
+whereas other users might actually enjoy movies that
+
+79
+00:03:49,310 --> 00:03:51,650
+get low ratings from the mainstream critics,
+
+80
+00:03:51,650 --> 00:03:53,210
+and everything in between.
+
+81
+00:03:53,210 --> 00:03:54,830
+Because this is content-based,
+
+82
+00:03:54,830 --> 00:03:58,705
+you will likely just get more of the same professional ratings-wise at least.
+
+83
+00:03:58,705 --> 00:04:00,820
+There's also a massive amount of
+
+84
+00:04:00,820 --> 00:04:03,070
+unstructured data that we could use from the movie web page.
+
+85
+00:04:03,070 --> 00:04:06,220
+One example could be taking the movie description, synopsis,
+
+86
+00:04:06,220 --> 00:04:09,640
+and full plot summary and performing natural language processing on it,
+
+87
+00:04:09,640 --> 00:04:11,540
+to develop a meaningful embedding.
+
+88
+00:04:11,540 --> 00:04:15,025
+This could get it somewhat more than nuance of what people enjoy about a movie,
+
+89
+00:04:15,025 --> 00:04:17,740
+in addition to box and labels such as genre and theme.
+
+90
+00:04:17,740 --> 00:04:20,230
+If all the movies a user has watched contain
+
+91
+00:04:20,230 --> 00:04:22,780
+a bunch of references to car chases in the plot summary,
+
+92
+00:04:22,780 --> 00:04:24,025
+they probably enjoy them,
+
+93
+00:04:24,025 --> 00:04:25,670
+or at least movies that contain them.
+
+94
+00:04:25,670 --> 00:04:28,125
+Therefore, because this is content-based,
+
+95
+00:04:28,125 --> 00:04:29,590
+by using this data we could provide
+
+96
+00:04:29,590 --> 00:04:32,770
+recommendations that are more likely to have car chases.
+
+97
+00:04:32,770 --> 00:04:34,630
+In addition to using the text,
+
+98
+00:04:34,630 --> 00:04:37,865
+we can also use promotional images and stills from the movie.
+
+99
+00:04:37,865 --> 00:04:41,565
+This is yet another route to hopefully understand what users like about a movie.
+
+100
+00:04:41,565 --> 00:04:43,520
+We'd have to process the images first,
+
+101
+00:04:43,520 --> 00:04:45,955
+through an image model to create some structure.
+
+102
+00:04:45,955 --> 00:04:48,950
+For instance, perhaps a user likes movies that happen to have images with
+
+103
+00:04:48,950 --> 00:04:53,310
+action scenes and another user likes movies that have a lot of images of space scenes,
+
+104
+00:04:53,310 --> 00:04:55,820
+we can use these to recommend more of the same,
+
+105
+00:04:55,820 --> 00:04:58,750
+but this time based on images attached to the movies.
+
+106
+00:04:58,750 --> 00:05:00,645
+Why do just text and image,
+
+107
+00:05:00,645 --> 00:05:03,965
+when the great thing about movies is they are quite literally video,
+
+108
+00:05:03,965 --> 00:05:06,425
+which we can use in a content-based model?
+
+109
+00:05:06,425 --> 00:05:09,460
+Conveniently, most movies these days have multiple trailers,
+
+110
+00:05:09,460 --> 00:05:11,915
+teaser trailers, and commercials attached to them.
+
+111
+00:05:11,915 --> 00:05:14,170
+We can extract the audio, frames,
+
+112
+00:05:14,170 --> 00:05:16,670
+and video level information and use that to compare
+
+113
+00:05:16,670 --> 00:05:19,535
+across other movies to recommend similar ones to users.
+
+114
+00:05:19,535 --> 00:05:23,405
+Perhaps, the audio of movies a user likes contains a lot of laughing,
+
+115
+00:05:23,405 --> 00:05:25,060
+so maybe they enjoy comedies,
+
+116
+00:05:25,060 --> 00:05:27,800
+or maybe there's a lot of screaming and running, so they enjoy horror.
+
+117
+00:05:27,800 --> 00:05:30,170
+The same can be done with a video of chase scenes,
+
+118
+00:05:30,170 --> 00:05:31,880
+long dialogue scenes, nature scenes,
+
+119
+00:05:31,880 --> 00:05:34,165
+hospital scenes, et cetera.
+
+120
+00:05:34,165 --> 00:05:38,585
+Lastly, for content-base, we might have thought about using professional reviews,
+
+121
+00:05:38,585 --> 00:05:40,055
+posted on the movies web page.
+
+122
+00:05:40,055 --> 00:05:41,990
+These, unlike the professional ratings,
+
+123
+00:05:41,990 --> 00:05:43,880
+are unstructured and first need to have
+
+124
+00:05:43,880 --> 00:05:46,415
+natural language processing applied to create some structure,
+
+125
+00:05:46,415 --> 00:05:48,820
+then we can use these in our content-based model.
+
+126
+00:05:48,820 --> 00:05:51,055
+Remember, as with the professional ratings,
+
+127
+00:05:51,055 --> 00:05:52,925
+these reviews are not written by users,
+
+128
+00:05:52,925 --> 00:05:54,980
+so this is not collaborative filtering.
+
+129
+00:05:54,980 --> 00:05:58,190
+Furthermore, users who like certain movies could agree or
+
+130
+00:05:58,190 --> 00:06:01,430
+disagree with professional reviews and because it's content-based,
+
+131
+00:06:01,430 --> 00:06:04,350
+they will be recommended more the same in that dimension.
+
+132
+00:06:04,350 --> 00:06:08,585
+Of course, we could have thought of many more places of data we could use,
+
+133
+00:06:08,585 --> 00:06:10,880
+like language of the movie, et cetera.
+
+134
+00:06:10,880 --> 00:06:12,065
+This is enough for now,
+
+135
+00:06:12,065 --> 00:06:14,490
+for content-based recommendation systems.

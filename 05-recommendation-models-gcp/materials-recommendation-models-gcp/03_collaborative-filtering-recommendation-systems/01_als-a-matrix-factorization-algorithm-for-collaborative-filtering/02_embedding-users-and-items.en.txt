@@ -1,0 +1,184 @@
+Content based recommendations
+used embedding spaces for items only, whereas now for collaborative
+filtering we're learning where users and items fit within a common embedding space
+along dimensions they have in common. We can choose a number of
+dimensions to represent them in either using human derived features or
+using latent features that are under the hood of our preferences,
+which we'll learn how to find very soon. Each item has a vector within its
+embedding space that describes the items amount of expression of each dimension. Each user also has a vector
+within its embedding space that describes how strong their
+preference is for each dimension. For now, let's keep things simple and keep things just one
+dimension looking at items. And we'll get back to multi-dimensional
+embeddings later, and how users fit in. We'll start simple and
+then build ourselves up. We could organize items, let's say movies
+by similarity in one dimension, for example, of where they fall
+on the spectrum of movies for children to movies for adults. Let's say we have the movie Shrek, we want to know where it falls on this
+children to adult movie spectrum. Using our own built up knowledge
+we would say that Shrek would probably go to the far left because it's
+an animated movie mainly for children. What about the movie
+The Dark Knight Rises? Where do we think it goes along our axis? Well The Dark Knight Rises, we know, is
+definitely a more adult movie than Shrek, so it should go to the right
+of Shrek on the spectrum. Now that we have two movies placed, things start to get a bit harder because
+we have three choices to decide from. Here we have Harry Potter that we
+want to place along our spectrum. Does it go to the left of Shrek,
+to the right of The Dark Knight Rises or somewhere in between? From our internal
+representations of these movies, we can guess that Harry Potter goes
+between Shrek and The Dark Knight Rises. It definitely has more adult themes than
+Shrek, but still not as much violence or adult themes as The Dark Knight Rises. Exactly where in between it
+should go we will get to soon. All right, three movies placed,
+more to go. We now have four choices of where
+to place the movie Memento. What to do? Memento has some very adult themes, and our knowledge would probably place it even
+farther right than The Dark Knight Rises. Lastly, we want to place
+the Triplets of Belleville. As you can see, every time we add a movie,
+the number of positions we can place it in relative to the other
+movies increases by one. Imagine if we had thousands and
+thousands of movies. The Triplets of Belleville is pretty far
+along the children's movie scale, but not quite as much as Shrek, so
+this is where we will put it. However, this is all very qualitative, with just some unknown relative
+position along a number line. Can we make this a little more
+quantitative, maybe with some numbers? We've now added values on where we think
+these movies lie along our number line, high negative values are considered
+very much children's movies, and high positive values
+are considered very adult. Movies close to zero
+are basically half way between, what we'd say is a very a childish and
+very adult. We've essentially created a 1D embedding
+space with our coordinate system and our five points could have these values, indicating where they sit on the
+children's movie, adult movie spectrum. Now, you can calculate
+similarities by distance matrix, between the points in
+our coordinate system. Those that are closer, or
+have a smaller distance, are more similar, at least with respect
+to this children adult factor we chose. Based on these values, along this axis,
+The Dark Knight Rises and Memento are the most similar movies. However, even if two movies are very close
+in this one-dimensional projection using child-adult spectrum, in other projections
+using other features of the movies, they could be extremely far apart. Let's now add a second dimension to
+calculate similarities between movies, for example, where movies fall on
+the art house, blockbuster spectrum. Not only have we arranged
+the movies along the children, adult movie spectrum, they are now
+spread out along the second dimension. As we add dimensions our embedding spaces
+grow exponentially larger and become sparser and sparser with large voids
+between points in the embedding space. In this 2D embedding space
+coordinate system we created, our five points could have these values
+indicating where they sit on both a children's movie adult movie spectrum,
+and the arthouse blockbuster spectrums. As we can see, the movies points in our
+two-dimensional embedding space have the same coordinate values as along our
+original children adult spectrum, however, they have now been spread out over our
+new arthouse blockbuster spectrum. The points haven't changed at all,
+but our coordinate system has. Coordinate systems are important, they are just a way to
+describe points within space. Based on these values in our new
+two-dimensional embedding space, The Dark Rises and
+Memento are no longer the closest, or most similar movies, at least not
+using the dot product distance metric, the two closest are now Harry Potter and
+Shrek. In fact, our previous closest
+aren't now even the second closest, which goes to Harry Potter and
+The Dark Knight Rises. This is due to how close these three
+movies are along the blockbuster axis, which is dominating in
+the dot product calculation. So how do we apply these embeddings to
+the user-item interaction matrix so that we can infer how unknown
+interactions can be rated? Well, we've already talked about the item
+embedding space on the two dimensions that we choose, children adult, and
+art house blockbuster spectrums. But what about the user embeddings? Let's say we knew where a user could
+be placed along both of our dimensions, giving us their coordinate
+values in our embedding space. Each user would have a two-dimensional
+coordinate, and each item would also have a two-dimensional
+coordinate within our space. To find out the interaction
+value between users and items, we simply take the dot
+product between each user item pair. The IJth interaction value is the inner
+product of the I th user barrier and the Jth item vector. Let's see how that looks
+in our embedding space. Going back to our coordinate
+system plot from before, we have our movies plotted in the two
+dimensional embedding space at their coordinate values, based on where they
+fall within the two vectors we chos. We've also now added the users
+at their respective coordinates. So, what should we
+recommendation to each user? Let's look at the leftmost user. To find the answer to what movie
+the leftmost user should watch, all we need to do is take the dot
+product between the user and each movie. In this example, we chose to
+return the top two highest movies, which end up being Shrek and The Triplets
+of Belleville because they had the two highest dot products for
+that user across all the other movies. Now this might seem obvious
+from looking at this graph, however it is not as easy for a computer
+to see this, because our trained eyes and the neural networks in our brains have
+had decades of experience to see. Yet, this is only with two dimensions and
+with few items. If we were to increase the dimensionality, we humans would have a very difficult time
+discerning which movies are the closest. We would probably stop inspecting and
+just take the doubt product. The same can be done for items. Let's say we want to see what
+movies closest to Shrek are. Instead of taking the dot product
+between a user and all the items, we take an item of interest and take
+the dot product with all the other items. In the example,
+we once again are returning the top two, which turns out to be Harry Potter and
+The Triplets of Belleville. You do the exact same to find users
+similar to users of interest by taking a dot product between users. So as we can see, users and items can be represented as d-dimensional
+points within an embedding space. In our example, we choose some
+human experience based factors for each of our two dimensions, and
+humans manually scored each movie, giving it a value for
+each dimension along its axis. We did the same for evaluating each user's
+coordinates in our embedding space. Well, this works great for toy examples
+with four users and five items, but it quickly becomes unscalable as more
+users and items are added to the system. Furthermore, as we saw in the last course,
+when psychologists used what they thought would be good features for embedding,
+it turned out not to be that great. Here are human-derived features
+may not be the best choice. So how can we choose then? Fortunately for us,
+the embeddings can be learned from data. Instead of defining the factors that we
+will assign values along our coordinate system, we will use the user item
+interaction data to learn the latent factors that best factorize the user
+item interaction matrix into a user factor embedding and
+item factor embedding. We are essentially compressing the data,
+our very sparse interaction matrix, and relying on the generalities within,
+which are the latent factors. You might be reminded of PCA, SVD, or
+other dimensionality reduction techniques, like we covered in the last course,
+for reusable embeddings. The user interaction matrix factorization
+splits this very large user by item matrix into two smaller matrices of row factors,
+which are users in this case, and column factors,
+which are movies in this case. You can think of these two factor matrices
+as essentially user and item embeddings. Now, you might be wondering why matrix U
+has two columns and matrix V has two rows. Well, this is simply dimensionality
+of our learned embedding space of our latent features. Remember, a latent feature is a feature
+that we are not directly observing or defining, but are instead inferring
+through our model from the other variables that are directly observed,
+namely the user item interaction pairs. Just like for other dimensionality
+reduction techniques like PCA and SBD, the number of latent features is
+a hyperparameter that we can use as a knob for the tradeoff between more
+information compression and more reconstruction error from
+our approximated matrices. Just how much space are we saving? Let's say there are u users and i items, which gives our user item
+interaction matrix a, a size of u by i. If our website has 50 million users and 10 thousand movies, that's already
+500 billion interaction pairs. On the other hand,
+if we can have k laden features, then u will be u by k elements and
+v will have k by i elements. The total space is just the number
+of users plus the number of movies times the number
+of latent features. Even with 10 latent features in this case, it is still a thousand times
+less space than before. As long as the number of latent features
+is less than half the harmonic mean of the number of users and
+the number of items, this will save space. For this hypothetical website, that
+would be almost 10,000 latent features, 9,998 to be precise, which is almost as
+if we hadn't embedded the movies at all, since there were 10,000
+movies to begin with. Each movie is essentially
+it's own feature. To make a prediction,
+we simply take the dot product of a user with the item factors or
+an item with the user factors, and we will get a prediction value for
+that particular rating. In this example,
+we want to predict the rating for user four for the movie Shrek,
+which is the third column. So we multiply 0.1 with 1, and
+1 with a -1, to get a value of -0.9. Harry Potter gets a prediction of -0.11,
+and The Triplets of Belleville also
+gets a prediction of a -0.9. If we were recommending the highest
+predicted unwatched movie to user four out of the movies shown, that would be Harry Potter because
+it has the highest predicted score. Now it's time to test your knowledge about
+finding the best recommendations based on user and item similarities. Based on this user item
+interaction matrix of users and movies, which movie should user 4 watch? The correct answer is A. To find this answer, we should have
+calculated all the dot products between user four's user factor vector and
+all the movie factor vectors. User four's predicted rating for Harry
+Potter by the dot product is a -0.11. The Triplets of Belleville and
+Shrek are both a -0.9. The Dark Knight Rises is 1 and
+Memento is 0.91. Remember we are just recommending
+the top one movies in this question, so we should return the max dot
+product between user four's,user factor vectors of 0.1 and 1,
+with all the movie factor vectors. So, why is the answer Harry Potter when
+The Dark Knight Rises has the highest dot product out of all the movies? The reason is because the user has
+already rated The Dark Knight Rises, implicitly in this example, and
+thus we don't want to recommend that the user watch a movie they've
+already seen, because most users know whether they liked something in the past,
+and instead, want to watch something new. Therefore, we must filter out all off the
+movies that have already been rated, and then from the resulting subset,
+choose the top one. This results in Harry Potter,
+although the negative dot product, which means that the movie is predicted
+to be below neutral sentiment, but has the highest dot product value
+out of the unwatched movies.

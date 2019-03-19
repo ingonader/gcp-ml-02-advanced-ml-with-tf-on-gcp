@@ -1,0 +1,303 @@
+1
+00:00:00,160 --> 00:00:01,570
+Now that we've had the overview,
+
+2
+00:00:01,570 --> 00:00:05,430
+let's take a deeper dive into each of the
+two neural networks used for the YouTube
+
+3
+00:00:05,430 --> 00:00:09,590
+video recommendation system, starting
+with the candidate generation network.
+
+4
+00:00:09,590 --> 00:00:13,570
+Just as we did with our design lab and
+neural network lab, hybrid models require
+
+5
+00:00:13,570 --> 00:00:17,680
+intelligently assembling many other
+machine learning models into a pipeline.
+
+6
+00:00:17,680 --> 00:00:19,370
+These use multiple datasets and
+
+7
+00:00:19,370 --> 00:00:22,390
+model types to help get
+the best recommendations.
+
+8
+00:00:22,390 --> 00:00:25,780
+The first step for candidate generation
+is see the item embeddings for
+
+9
+00:00:25,780 --> 00:00:27,910
+instance from a trained WALS model.
+
+10
+00:00:27,910 --> 00:00:31,190
+We then find the last 10
+videos watched by the user and
+
+11
+00:00:31,190 --> 00:00:35,320
+use the embeddings to get their
+vectors within embedding space.
+
+12
+00:00:35,320 --> 00:00:38,510
+Next, we average the embeddings
+of those 10 videos, so we'll have
+
+13
+00:00:38,510 --> 00:00:42,310
+a resultant single embedding that is the
+average along each embedding dimension.
+
+14
+00:00:43,560 --> 00:00:45,270
+This becomes the watch vector,
+
+15
+00:00:45,270 --> 00:00:47,800
+which will be one of the features
+to our deep neural network.
+
+16
+00:00:47,800 --> 00:00:51,560
+We would do the same thing
+with past search queries.
+
+17
+00:00:51,560 --> 00:00:52,520
+Collaborative filtering for
+
+18
+00:00:52,520 --> 00:00:55,580
+next search term is a collaborative
+filtering model that is similar to
+
+19
+00:00:55,580 --> 00:00:58,810
+the user history based collaborative
+filter we talked about earlier.
+
+20
+00:00:58,810 --> 00:01:01,800
+Essentially, this is like doing to
+word to vec on pairs of search terms.
+
+21
+00:01:01,800 --> 00:01:05,990
+We will find an average search in Benin
+and this will become our search vector.
+
+22
+00:01:05,990 --> 00:01:08,090
+Another input feature to
+our deep neural network.
+
+23
+00:01:09,420 --> 00:01:12,090
+We also should add any knowledge
+we have about the user.
+
+24
+00:01:12,090 --> 00:01:15,080
+Location is important so
+you just conceive localised videos and
+
+25
+00:01:15,080 --> 00:01:16,038
+also because of language.
+
+26
+00:01:16,038 --> 00:01:21,160
+Gender may be important because there are
+differences in preference based on that.
+
+27
+00:01:21,160 --> 00:01:24,970
+All of these are features added as
+inputs to our deep neural network.
+
+28
+00:01:24,970 --> 00:01:30,210
+We also should add example age, because we
+don't want to over emphasis older videos.
+
+29
+00:01:30,210 --> 00:01:31,800
+Why do we care about this?
+
+30
+00:01:31,800 --> 00:01:36,619
+Well, older videos have more likes and
+more user interactions in general.
+
+31
+00:01:36,619 --> 00:01:38,561
+You want the model to learn to account for
+
+32
+00:01:38,561 --> 00:01:42,404
+the fact that older videos are more likely
+to have been watched or searched for.
+
+33
+00:01:42,404 --> 00:01:45,930
+Hence, the need to add
+example age as an input.
+
+34
+00:01:45,930 --> 00:01:49,250
+Remember, this is example age,
+not user age.
+
+35
+00:01:49,250 --> 00:01:52,130
+These are all a subset of the many
+features that feed into our candidate
+
+36
+00:01:52,130 --> 00:01:53,470
+generation neural network.
+
+37
+00:01:54,790 --> 00:01:57,330
+Next, we want to train a DNN Classifier.
+
+38
+00:01:57,330 --> 00:02:00,250
+Now, why would we want this model type?
+
+39
+00:02:00,250 --> 00:02:03,990
+When you think of a DNN Classifier's
+output, it becomes pretty obvious.
+
+40
+00:02:03,990 --> 00:02:07,230
+The output will be a probability
+that this video will be watched.
+
+41
+00:02:07,230 --> 00:02:10,960
+So taking the top n of these
+videos is probably what we want.
+
+42
+00:02:10,960 --> 00:02:16,280
+These come out of a soft max for training,
+but there are two other considerations.
+
+43
+00:02:16,280 --> 00:02:18,640
+There's also a benefit to
+finding the closest users and
+
+44
+00:02:18,640 --> 00:02:21,030
+generating those candidates as well.
+
+45
+00:02:21,030 --> 00:02:22,980
+This is the way that
+viral videos are created,
+
+46
+00:02:22,980 --> 00:02:25,530
+videos that a lot of people
+like us are watching.
+
+47
+00:02:25,530 --> 00:02:27,800
+Therefore, we can treat the last but
+one layer, or
+
+48
+00:02:27,800 --> 00:02:30,310
+the layer right before
+softmax as a user embedding.
+
+49
+00:02:31,340 --> 00:02:34,370
+This is also a benefit to
+finding videos related
+
+50
+00:02:34,370 --> 00:02:37,500
+content wise to the video
+you are currently watching.
+
+51
+00:02:37,500 --> 00:02:41,860
+Therefore, we can use the output of
+the DNN Classifier as video vectors.
+
+52
+00:02:41,860 --> 00:02:44,450
+This compounded with the last
+relayer as the user embeddings
+
+53
+00:02:44,450 --> 00:02:46,900
+generates candidates during serving, so
+
+54
+00:02:46,900 --> 00:02:50,830
+nearest neighbors consist of neighboring
+users and neighboring videos.
+
+55
+00:02:50,830 --> 00:02:54,320
+We now know the magic behind YouTube's
+candidate generation neural network, so
+
+56
+00:02:54,320 --> 00:02:55,860
+let's see what we've learned.
+
+57
+00:02:55,860 --> 00:02:58,190
+During training of the candidate
+generation network,
+
+58
+00:02:58,190 --> 00:03:01,529
+what output layer should we be using, and
+what should we be predicting with it?
+
+59
+00:03:02,840 --> 00:03:04,832
+The correct answer is E.
+
+60
+00:03:04,832 --> 00:03:08,890
+We are trying to generate candidate
+videos to send onto the ranking network,
+
+61
+00:03:08,890 --> 00:03:11,230
+half of our hybrid recommendation system.
+
+62
+00:03:11,230 --> 00:03:15,030
+Therefore, by using a Softmax, we can
+get probabilities of which video will be
+
+63
+00:03:15,030 --> 00:03:18,060
+watched, and
+we can then take the highest ones and
+
+64
+00:03:18,060 --> 00:03:20,930
+send those as our candidate
+videos to the ranking network.

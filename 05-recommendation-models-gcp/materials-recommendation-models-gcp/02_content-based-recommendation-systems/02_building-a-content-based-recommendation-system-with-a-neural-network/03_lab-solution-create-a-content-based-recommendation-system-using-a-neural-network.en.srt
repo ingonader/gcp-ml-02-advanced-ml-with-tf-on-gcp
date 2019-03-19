@@ -1,0 +1,2155 @@
+1
+00:00:00,000 --> 00:00:01,980
+In this lab, we're going to build
+
+2
+00:00:01,980 --> 00:00:05,730
+a content-based recommendation engine using a neural network.
+
+3
+00:00:05,730 --> 00:00:11,220
+The idea is that we'll use features of the current article being read by a user on
+
+4
+00:00:11,220 --> 00:00:16,710
+the career website to model what the next article is that user would want to read.
+
+5
+00:00:16,710 --> 00:00:18,210
+So say another way,
+
+6
+00:00:18,210 --> 00:00:19,815
+what we're going to be doing is creating
+
+7
+00:00:19,815 --> 00:00:22,560
+a classification model with a multi-output label.
+
+8
+00:00:22,560 --> 00:00:26,910
+The input of our model is going to be the features of the current article with
+
+9
+00:00:26,910 --> 00:00:31,980
+a possible output being any of the other articles in the career database.
+
+10
+00:00:31,980 --> 00:00:34,980
+This lab is going to consist of two notebooks.
+
+11
+00:00:34,980 --> 00:00:40,070
+The Create Datasets notebook is going to build up our training and test datasets,
+
+12
+00:00:40,070 --> 00:00:41,870
+and the actual building of
+
+13
+00:00:41,870 --> 00:00:47,100
+the neural network will be in the content-based filtering notebook.
+
+14
+00:00:48,050 --> 00:00:53,140
+Let's get started with the Create Datasets notebook first.
+
+15
+00:00:53,390 --> 00:00:56,280
+It says here, the notebook builds the data that we're going
+
+16
+00:00:56,280 --> 00:00:58,350
+to use for our content-based model,
+
+17
+00:00:58,350 --> 00:01:00,935
+and we have a couple to-dos in this lab.
+
+18
+00:01:00,935 --> 00:01:04,560
+Let's read through the lab and film the to-dos as we go.
+
+19
+00:01:07,160 --> 00:01:14,405
+Our first cell inputs the necessary libraries that we've been using.
+
+20
+00:01:14,405 --> 00:01:16,309
+We'll import OS library,
+
+21
+00:01:16,309 --> 00:01:18,755
+of course we're going to use TensorFlow and NumPy,
+
+22
+00:01:18,755 --> 00:01:20,600
+another one we're going to use is
+
+23
+00:01:20,600 --> 00:01:23,480
+the Google Datalab BigQuery library since
+
+24
+00:01:23,480 --> 00:01:26,825
+we'll be pulling the Google Analytics data from the career website.
+
+25
+00:01:26,825 --> 00:01:33,400
+You'll want to change your project and bucket values to your project ID and bucket.
+
+26
+00:01:33,400 --> 00:01:37,475
+Here we just set those values to be global environment variables.
+
+27
+00:01:37,475 --> 00:01:46,070
+Let's do that now, and we set these for our G Cloud configuration.
+
+28
+00:01:46,070 --> 00:01:48,590
+In this lab, we'll be writing to disk
+
+29
+00:01:48,590 --> 00:01:51,680
+the various information that we're collecting from the BigQuery table.
+
+30
+00:01:51,680 --> 00:01:55,970
+So we're going to start by defining a helper function called write_list_to_disk.
+
+31
+00:01:55,970 --> 00:01:58,415
+It takes a list and a file name,
+
+32
+00:01:58,415 --> 00:02:02,640
+and simply writes that list to specify the file name.
+
+33
+00:02:03,970 --> 00:02:06,070
+In the next block of code,
+
+34
+00:02:06,070 --> 00:02:10,380
+we're going to pull the relevant information from the career dataset in BigQuery.
+
+35
+00:02:11,510 --> 00:02:15,010
+The first part sets up where the SQL Query should be,
+
+36
+00:02:15,010 --> 00:02:17,150
+and to make more sense of this query,
+
+37
+00:02:17,150 --> 00:02:20,030
+I think it's helpful to go back and look at the original table.
+
+38
+00:02:20,030 --> 00:02:23,315
+If we grab the table name here,
+
+39
+00:02:23,315 --> 00:02:25,890
+we'll grab just this part,
+
+40
+00:02:26,210 --> 00:02:32,045
+we can go to BigQuery and we can have a look at what this table actually looks like.
+
+41
+00:02:32,045 --> 00:02:36,750
+We'll compose a query, we'll
+
+42
+00:02:36,750 --> 00:02:39,370
+select everything to start just to get an idea of everything looks like,
+
+43
+00:02:39,370 --> 00:02:43,565
+and we'll limit our query just to be a few rows.
+
+44
+00:02:43,565 --> 00:02:48,110
+Change this to standard SQL, we'll run the query.
+
+45
+00:02:50,300 --> 00:02:55,240
+Then here we can see the data is actually collected from the career websites.
+
+46
+00:02:55,240 --> 00:02:58,250
+One thing I noticed right away is that we have some nested columns.
+
+47
+00:02:58,250 --> 00:03:04,085
+Each one of these rows indicates a single visitor's traffic on the career website.
+
+48
+00:03:04,085 --> 00:03:05,895
+If we scroll a bit further,
+
+49
+00:03:05,895 --> 00:03:09,535
+we can get some information about which article that user was reading,
+
+50
+00:03:09,535 --> 00:03:13,820
+and that's contained in this hits custom dimensions table here.
+
+51
+00:03:13,820 --> 00:03:17,095
+Looking here, we see that we have information about the author,
+
+52
+00:03:17,095 --> 00:03:18,880
+the date, the day,
+
+53
+00:03:18,880 --> 00:03:24,010
+the article title, the category,
+
+54
+00:03:24,010 --> 00:03:25,330
+in this case it's news,
+
+55
+00:03:25,330 --> 00:03:27,830
+and some other information.
+
+56
+00:03:27,980 --> 00:03:32,550
+Index 10 here refers to the content ID of the article,
+
+57
+00:03:32,550 --> 00:03:36,285
+that's a unique identifier for each article in the career database,
+
+58
+00:03:36,285 --> 00:03:39,830
+and looking back to the SQL Query in our data lab,
+
+59
+00:03:39,830 --> 00:03:43,110
+we can see that that's what we're pulling in our first cell.
+
+60
+00:03:43,220 --> 00:03:45,310
+Looking back to the query,
+
+61
+00:03:45,310 --> 00:03:49,715
+we can see that we're taking the index 10 which corresponds to the content_id.
+
+62
+00:03:49,715 --> 00:03:53,580
+That's the article ID from the career database.
+
+63
+00:03:53,630 --> 00:03:59,075
+We also specify they were only interested in hits that are of
+
+64
+00:03:59,075 --> 00:04:04,040
+type page visits and we want to make sure that the content_id exists,
+
+65
+00:04:04,040 --> 00:04:06,350
+so we're using a where clause saying that we want
+
+66
+00:04:06,350 --> 00:04:10,170
+to make sure that that content_id is nominal.
+
+67
+00:04:11,860 --> 00:04:15,710
+The final group by leaves us with a column
+
+68
+00:04:15,710 --> 00:04:19,265
+containing each unique content_id in the database.
+
+69
+00:04:19,265 --> 00:04:24,470
+We'll use the BigQuery library to execute that SQL command, so we're doing that here.
+
+70
+00:04:26,390 --> 00:04:28,905
+We'll execute the SQL command,
+
+71
+00:04:28,905 --> 00:04:31,410
+save the result, write it to a data frame,
+
+72
+00:04:31,410 --> 00:04:35,335
+and pull up the content_id values that we created,
+
+73
+00:04:35,335 --> 00:04:39,740
+and then we're going to save it as a variable called content_ids_list.
+
+74
+00:04:39,740 --> 00:04:42,470
+The next line just writes that list to disk,
+
+75
+00:04:42,470 --> 00:04:47,525
+it's writing that list we create above to a file called content_ids.text.
+
+76
+00:04:47,525 --> 00:04:52,010
+The last two commands just print some of the sample content_ids and then tell us
+
+77
+00:04:52,010 --> 00:04:57,180
+the total number of articles that we're working with here. So we can have a look at that.
+
+78
+00:04:57,860 --> 00:05:01,290
+We have a few content_ids, just a sample,
+
+79
+00:05:01,290 --> 00:05:06,570
+and we see that the total number of articles that we're working with is about 15,000.
+
+80
+00:05:07,030 --> 00:05:11,010
+The next cell has a to-do for us to complete.
+
+81
+00:05:13,210 --> 00:05:17,210
+The idea here is that we can just simply modify the SQL query
+
+82
+00:05:17,210 --> 00:05:20,600
+above to get the category value from the table.
+
+83
+00:05:20,600 --> 00:05:22,625
+Let's see how that might look.
+
+84
+00:05:22,625 --> 00:05:23,990
+We can use a lot of this query,
+
+85
+00:05:23,990 --> 00:05:26,370
+so I'm going to grab a lot of this here,
+
+86
+00:05:27,790 --> 00:05:31,050
+and I'll replace this.
+
+87
+00:05:35,240 --> 00:05:38,460
+So instead of grabbing the index 10,
+
+88
+00:05:38,460 --> 00:05:45,470
+what we want to do here is grab the category which corresponded to index seven.
+
+89
+00:05:45,470 --> 00:05:48,835
+Here, we'll set index to be seven,
+
+90
+00:05:48,835 --> 00:05:50,540
+and here also the index to be seven,
+
+91
+00:05:50,540 --> 00:05:52,760
+and instead of calling it content_id, of course,
+
+92
+00:05:52,760 --> 00:05:55,410
+we'll call it category,
+
+93
+00:05:58,630 --> 00:06:04,560
+and we'll group by category as well.
+
+94
+00:06:11,450 --> 00:06:14,660
+Just as before, we'll want to execute that query,
+
+95
+00:06:14,660 --> 00:06:19,655
+we can use a similar command that we saw for the content_ids over places to do with that.
+
+96
+00:06:19,655 --> 00:06:21,650
+Instead of grabbing the content_id,
+
+97
+00:06:21,650 --> 00:06:24,870
+now, of course, I'm pulling the category.
+
+98
+00:06:25,220 --> 00:06:30,350
+The next two commands write that categories list to
+
+99
+00:06:30,350 --> 00:06:36,270
+a file and then we're going to print some of that categories list.
+
+100
+00:06:41,540 --> 00:06:44,165
+Here, our categories list is pretty small.
+
+101
+00:06:44,165 --> 00:06:45,800
+It really just contains the 'News',
+
+102
+00:06:45,800 --> 00:06:48,270
+'Stars & Kultur', and 'Lifestyle'.
+
+103
+00:06:48,670 --> 00:06:51,680
+We're going to do the same thing in this next SQL query.
+
+104
+00:06:51,680 --> 00:06:54,815
+Let's just read through it. Here, we're creating our author list.
+
+105
+00:06:54,815 --> 00:06:57,620
+We're pulling information from index two,
+
+106
+00:06:57,620 --> 00:06:59,180
+we're saving it as first author,
+
+107
+00:06:59,180 --> 00:07:01,190
+same kind of group by as before,
+
+108
+00:07:01,190 --> 00:07:05,900
+this BigQuery command is similar to what we saw above,
+
+109
+00:07:05,900 --> 00:07:08,330
+where we're executing the SQL query
+
+110
+00:07:08,330 --> 00:07:11,225
+and pulling up the first author and saving it to a list,
+
+111
+00:07:11,225 --> 00:07:14,680
+which would then write into a file called authors.txt.
+
+112
+00:07:14,680 --> 00:07:17,600
+Again, we can print some of the authors and we can see
+
+113
+00:07:17,600 --> 00:07:21,690
+how many total authors we have in our database that we're working with.
+
+114
+00:07:26,690 --> 00:07:33,530
+Here we see some of the authors and we see that the total number of authors is about 385.
+
+115
+00:07:35,870 --> 00:07:39,925
+Lastly, we're ready to create our train and test splits.
+
+116
+00:07:39,925 --> 00:07:41,740
+This is a pretty big query,
+
+117
+00:07:41,740 --> 00:07:44,485
+let's just look through it briefly to see what's happening.
+
+118
+00:07:44,485 --> 00:07:48,405
+It starts off with a common table expression.
+
+119
+00:07:48,405 --> 00:07:52,240
+Again, we can see this looks like in BigQuery by just grabbing
+
+120
+00:07:52,240 --> 00:07:57,530
+this entire thing and moving over to BigQuery and having a look at it.
+
+121
+00:08:01,190 --> 00:08:05,460
+Really it looks a lot like the table we had before, just cleaned up a bit.
+
+122
+00:08:05,460 --> 00:08:08,940
+Really all we have now are the visitor_id, the content_id,
+
+123
+00:08:08,940 --> 00:08:11,370
+the category, the title of the article,
+
+124
+00:08:11,370 --> 00:08:12,870
+the author for the article.
+
+125
+00:08:12,870 --> 00:08:14,960
+We're keeping here the month and
+
+126
+00:08:14,960 --> 00:08:17,720
+the year in which the article was published, and then again,
+
+127
+00:08:17,720 --> 00:08:21,770
+this next custom dimensions table has a lot of the information relevant to
+
+128
+00:08:21,770 --> 00:08:26,990
+the article like the category and the content_id and the title,
+
+129
+00:08:26,990 --> 00:08:29,970
+things that we're going to be using for our model down the road.
+
+130
+00:08:34,320 --> 00:08:39,850
+So, from that table, we're going to select the necessary columns, these.
+
+131
+00:08:39,850 --> 00:08:42,565
+This last bit is computing the date difference.
+
+132
+00:08:42,565 --> 00:08:47,710
+So, we're looking at the time in which the article was published,
+
+133
+00:08:47,710 --> 00:08:50,140
+given the start of the newspaper,
+
+134
+00:08:50,140 --> 00:08:54,760
+and we're going to be saving that as a variable called months_since_epoch.
+
+135
+00:08:55,230 --> 00:09:02,780
+We use this where clause to select out where the index 10 is not null,
+
+136
+00:09:04,200 --> 00:09:06,700
+and then we come to our TODO.
+
+137
+00:09:06,700 --> 00:09:12,100
+So, here, what we're asked to do is to use a farm fingerprint on the catenated values of
+
+138
+00:09:12,100 --> 00:09:14,620
+visitor ID and content ID to create
+
+139
+00:09:14,620 --> 00:09:18,070
+a training set that contains about 90 percent of the data.
+
+140
+00:09:18,070 --> 00:09:20,080
+So, we've seen farm fingerprints before.
+
+141
+00:09:20,080 --> 00:09:23,420
+Let's fill that out and see how that might look.
+
+142
+00:09:26,010 --> 00:09:30,115
+So, to start, what we want to do is to create
+
+143
+00:09:30,115 --> 00:09:39,170
+a concatenation of the visitor ID and the content ID,
+
+144
+00:09:41,850 --> 00:09:45,370
+and then we'll apply a farm fingerprint to that.
+
+145
+00:09:45,370 --> 00:09:49,820
+So, farm fingerprint,
+
+146
+00:09:50,160 --> 00:09:57,610
+which will take the absolute value of,
+
+147
+00:09:57,610 --> 00:10:07,750
+and then we'll mod this by 10 and ask that we take those values that are less than nine.
+
+148
+00:10:07,750 --> 00:10:10,180
+So, if we're using a mod of 10
+
+149
+00:10:10,180 --> 00:10:12,460
+and we're taking the values of those modulus that are less than nine,
+
+150
+00:10:12,460 --> 00:10:15,230
+this should give us about 90 percent of the data.
+
+151
+00:10:15,240 --> 00:10:18,835
+The rest of this cell executes that SQL query.
+
+152
+00:10:18,835 --> 00:10:21,760
+It captures the result and saves it to a local data frame,
+
+153
+00:10:21,760 --> 00:10:26,960
+and then we can write it to a file called training_set.csv.
+
+154
+00:10:27,630 --> 00:10:33,350
+We'll also going to print out the head of that data frame just to see what it looks like.
+
+155
+00:10:36,060 --> 00:10:39,730
+So, here, we can see what our training data looks like.
+
+156
+00:10:39,730 --> 00:10:41,920
+We have our visitor ID, our content ID,
+
+157
+00:10:41,920 --> 00:10:45,355
+our category, the title for that article, the author,
+
+158
+00:10:45,355 --> 00:10:47,440
+the months_since_epoch, which remember was
+
+159
+00:10:47,440 --> 00:10:50,485
+just when the article was published more or less,
+
+160
+00:10:50,485 --> 00:10:52,300
+and the next content ID.
+
+161
+00:10:52,300 --> 00:10:57,955
+So, the next content ID indicates the next article read from that one visitor.
+
+162
+00:10:57,955 --> 00:11:00,970
+That's what each row of our training dataset looks like.
+
+163
+00:11:00,970 --> 00:11:02,815
+So, in this next cell,
+
+164
+00:11:02,815 --> 00:11:07,810
+we're going to execute a similar SQL query to create our test set.
+
+165
+00:11:07,810 --> 00:11:10,315
+So, if you look at the two, they're actually exactly the same.
+
+166
+00:11:10,315 --> 00:11:11,590
+If you scroll a bit further,
+
+167
+00:11:11,590 --> 00:11:13,150
+we come to another TODO.
+
+168
+00:11:13,150 --> 00:11:15,505
+So, what we're asked to do here is to pull out
+
+169
+00:11:15,505 --> 00:11:19,375
+the remaining 10 percent that we're going to use as our test set.
+
+170
+00:11:19,375 --> 00:11:20,545
+So, let's get rid of this,
+
+171
+00:11:20,545 --> 00:11:26,960
+and I can cheat a bit and use the previous line that I had up here.
+
+172
+00:11:27,180 --> 00:11:31,945
+Now, instead of asking that I want my modulus to be less than nine,
+
+173
+00:11:31,945 --> 00:11:35,000
+I'll just ask that it's greater than or equal to nine.
+
+174
+00:11:36,420 --> 00:11:40,090
+So, now, we can see what our test set looks like.
+
+175
+00:11:40,090 --> 00:11:43,780
+So, each row corresponds to a single visit to the courier website.
+
+176
+00:11:43,780 --> 00:11:46,690
+We have the visitor ID, we have the content ID, the category,
+
+177
+00:11:46,690 --> 00:11:48,505
+the title before the author,
+
+178
+00:11:48,505 --> 00:11:53,420
+and again what we're trying to do is predict what the next content ID should be.
+
+179
+00:11:53,910 --> 00:11:57,010
+The final two cells of this notebook are really just a way
+
+180
+00:11:57,010 --> 00:11:59,710
+of double-checking the work that we did above.
+
+181
+00:11:59,710 --> 00:12:02,020
+So, first, what we'll do is just do
+
+182
+00:12:02,020 --> 00:12:04,390
+a line count for both of our training set and our test set.
+
+183
+00:12:04,390 --> 00:12:08,410
+So, we wanted to pull out about 90 percent of our total files.
+
+184
+00:12:08,410 --> 00:12:15,400
+If you look at this, we have about 258,000 articles and to get 90 percent,
+
+185
+00:12:15,400 --> 00:12:18,790
+we have about 232 elements in our training set.
+
+186
+00:12:18,790 --> 00:12:20,545
+That seems to work out okay.
+
+187
+00:12:20,545 --> 00:12:24,910
+We can also have a quick look at what the heads of both of these files look like.
+
+188
+00:12:24,910 --> 00:12:28,360
+So, here's the start of our test set CSV file,
+
+189
+00:12:28,360 --> 00:12:31,045
+and here's the start of our training set CSV file.
+
+190
+00:12:31,045 --> 00:12:33,985
+Again, we know what each one of these features relates to,
+
+191
+00:12:33,985 --> 00:12:39,325
+and what we'll then do is use these CSV files to build our model in the next notebook.
+
+192
+00:12:39,325 --> 00:12:43,195
+So, here we are back in the folder which has our notebooks for this lab.
+
+193
+00:12:43,195 --> 00:12:45,430
+We just executed the create datasets notebook,
+
+194
+00:12:45,430 --> 00:12:47,635
+and you can see now we have these extra files.
+
+195
+00:12:47,635 --> 00:12:51,010
+The text files for our authors are categories and our content IDs,
+
+196
+00:12:51,010 --> 00:12:54,770
+but also the CSV files for our training in our test set.
+
+197
+00:12:55,170 --> 00:13:00,620
+It actually build our model, then we'll go to our content-based filtering notebook.
+
+198
+00:13:00,690 --> 00:13:03,985
+So, here we are in the content-based filtering notebook.
+
+199
+00:13:03,985 --> 00:13:08,110
+So, one thing to note is that this needs to be run with the Python 3 kernel,
+
+200
+00:13:08,110 --> 00:13:10,810
+and you can verify that you're in Python 3 kernel here.
+
+201
+00:13:10,810 --> 00:13:13,040
+So, we're all set.
+
+202
+00:13:14,250 --> 00:13:18,370
+Another thing to note is that this lab uses a TensorFlow Hub.
+
+203
+00:13:18,370 --> 00:13:22,780
+So, we need to make sure that it's installed on this VM before we continue,
+
+204
+00:13:22,780 --> 00:13:25,120
+and so we can do that by doing a pip freeze
+
+205
+00:13:25,120 --> 00:13:28,300
+and grabbing out any values that have the word tensor.
+
+206
+00:13:28,300 --> 00:13:29,530
+So, we can see we have TensorBoard,
+
+207
+00:13:29,530 --> 00:13:31,705
+we have TensorFlow, but there's no Tensor Hub.
+
+208
+00:13:31,705 --> 00:13:34,480
+So, if that's the case for you,
+
+209
+00:13:34,480 --> 00:13:38,260
+then you want to uncomment out this neck cells,
+
+210
+00:13:38,260 --> 00:13:41,780
+and do a pip install of TensorFlow Hub.
+
+211
+00:13:43,740 --> 00:13:47,320
+That's installed now, and we can again go back to the previous cell and
+
+212
+00:13:47,320 --> 00:13:50,560
+double-check and make sure that that's there now, it is.
+
+213
+00:13:50,560 --> 00:13:53,305
+In this next cell, we import the usual libraries.
+
+214
+00:13:53,305 --> 00:13:55,060
+So, we have our OS library,
+
+215
+00:13:55,060 --> 00:13:57,100
+our TensorFlow and NumPy libraries.
+
+216
+00:13:57,100 --> 00:13:59,380
+You'll notice we're also importing TensorFlow Hub,
+
+217
+00:13:59,380 --> 00:14:00,700
+since we'll be using that later,
+
+218
+00:14:00,700 --> 00:14:03,280
+and our shell utility library.
+
+219
+00:14:03,280 --> 00:14:07,135
+You'll want to change the project and buckets to your project and bucket,
+
+220
+00:14:07,135 --> 00:14:10,250
+and then we're setting those environment variables here,
+
+221
+00:14:11,490 --> 00:14:15,950
+same with our gcloud configurations.
+
+222
+00:14:16,080 --> 00:14:18,730
+This next block of code, what we're doing is
+
+223
+00:14:18,730 --> 00:14:20,785
+building up the feature columns for the model.
+
+224
+00:14:20,785 --> 00:14:24,400
+So, to start, we're just going load the lists for the categories,
+
+225
+00:14:24,400 --> 00:14:28,945
+the authors, the article IDs that we created previously in the create datasets notebook.
+
+226
+00:14:28,945 --> 00:14:32,680
+So, we're creating a variable called categories list, authors lists,
+
+227
+00:14:32,680 --> 00:14:38,180
+content IDs list, and then we're setting the mean_months_since _epoch to be 523.
+
+228
+00:14:38,220 --> 00:14:42,175
+So, in this cell, we come to our first batch of TODOs.
+
+229
+00:14:42,175 --> 00:14:44,980
+What we want to do here is create all the feature columns that we're going to be
+
+230
+00:14:44,980 --> 00:14:48,295
+using for our model. Let's look at the first one.
+
+231
+00:14:48,295 --> 00:14:53,245
+So, the first feature column we're asked to create is an embedding column for the title,
+
+232
+00:14:53,245 --> 00:14:55,150
+and what we want to do is use
+
+233
+00:14:55,150 --> 00:14:59,485
+the TensorFlow Hub module to create a text embedding for the article title.
+
+234
+00:14:59,485 --> 00:15:03,280
+So, to see which hub module is most useful,
+
+235
+00:15:03,280 --> 00:15:06,475
+we can go to the website here.
+
+236
+00:15:06,475 --> 00:15:07,990
+We're doing text embedding.
+
+237
+00:15:07,990 --> 00:15:09,070
+So, we'll choose embedding,
+
+238
+00:15:09,070 --> 00:15:11,290
+and these articles are in German.
+
+239
+00:15:11,290 --> 00:15:13,075
+So, we'll specify the German language,
+
+240
+00:15:13,075 --> 00:15:15,640
+and we're going to use this TensorFlow Hub here.
+
+241
+00:15:15,640 --> 00:15:17,875
+So, this actually gives us the location of
+
+242
+00:15:17,875 --> 00:15:19,930
+the TensorFlow Hub module that we'll
+
+243
+00:15:19,930 --> 00:15:23,180
+use for embedding the titles. So, let's go back here.
+
+244
+00:15:23,430 --> 00:15:26,365
+To actually create the feature column,
+
+245
+00:15:26,365 --> 00:15:30,890
+we'll use a hub.text_embedding_column.
+
+246
+00:15:34,020 --> 00:15:41,750
+We'll set the key to be the title,
+
+247
+00:15:42,450 --> 00:15:46,520
+and we'll set the module_spec
+
+248
+00:15:47,010 --> 00:15:55,340
+to be the module that we just grabbed.
+
+249
+00:15:58,550 --> 00:16:03,900
+We'll set the trainable value to be false.
+
+250
+00:16:03,900 --> 00:16:06,990
+This is the default and it just says that we won't
+
+251
+00:16:06,990 --> 00:16:11,085
+relearn the way to the embedding as we train.
+
+252
+00:16:11,085 --> 00:16:13,810
+So, I can get rid of this to do.
+
+253
+00:16:16,430 --> 00:16:21,179
+Next, we'll create our content ID column.
+
+254
+00:16:21,179 --> 00:16:23,280
+So, for this, we want to do is to create
+
+255
+00:16:23,280 --> 00:16:26,640
+an embedded categorical feature column for the article ID,
+
+256
+00:16:26,640 --> 00:16:28,620
+what we're calling the Content ID.
+
+257
+00:16:28,620 --> 00:16:30,615
+Let's see how that might look.
+
+258
+00:16:30,615 --> 00:16:32,130
+As we mentioned in the lecture,
+
+259
+00:16:32,130 --> 00:16:33,990
+since we know the number of content IDs,
+
+260
+00:16:33,990 --> 00:16:35,685
+but not necessarily their values,
+
+261
+00:16:35,685 --> 00:16:39,435
+what we'll do is we'll use a categorical column with a hash bucket.
+
+262
+00:16:39,435 --> 00:16:41,100
+So, in TensorFlow that looks like this.
+
+263
+00:16:41,100 --> 00:16:43,570
+We'll use a TF feature column.
+
+264
+00:16:46,310 --> 00:16:52,570
+It's going to be a categorical column with a hash bucket.
+
+265
+00:16:53,450 --> 00:17:03,760
+The key will be the Content ID and hash bucket size.
+
+266
+00:17:06,020 --> 00:17:08,895
+We'll use the length of
+
+267
+00:17:08,895 --> 00:17:18,100
+the content IDs list plus one just to be on the safe side.
+
+268
+00:17:19,160 --> 00:17:22,815
+Next, we'll use a feature column to embed these values.
+
+269
+00:17:22,815 --> 00:17:25,290
+So, you can either do this by just wrapping
+
+270
+00:17:25,290 --> 00:17:28,380
+the variable we just did in a TF feature column.
+
+271
+00:17:28,380 --> 00:17:31,650
+Embedding column, but it might be more readable if we create
+
+272
+00:17:31,650 --> 00:17:35,100
+a new variable that's our embedding column.
+
+273
+00:17:35,100 --> 00:17:38,280
+So, to do that, we'll create a new variable called in
+
+274
+00:17:38,280 --> 00:17:45,070
+embedded content column and that will be again a feature column
+
+275
+00:17:45,740 --> 00:17:50,560
+that is embedding column
+
+276
+00:17:51,530 --> 00:17:59,980
+and feed it this as my categorical column.
+
+277
+00:18:03,830 --> 00:18:07,690
+We also specify the dimension.
+
+278
+00:18:07,790 --> 00:18:11,040
+So, a good rule of thumb you will see is that,
+
+279
+00:18:11,040 --> 00:18:15,165
+you take the fourth root of the number of elements in the feature.
+
+280
+00:18:15,165 --> 00:18:16,620
+So, if you remember, we had about
+
+281
+00:18:16,620 --> 00:18:20,760
+250,000 total elements in the fourth root of that is about 12.
+
+282
+00:18:20,760 --> 00:18:23,590
+So, we'll just use ten here.
+
+283
+00:18:25,940 --> 00:18:30,610
+Okay. So, that should take care of this to do.
+
+284
+00:18:31,130 --> 00:18:34,395
+Moving on, we'll do the same for the author.
+
+285
+00:18:34,395 --> 00:18:37,600
+It's also a categorical column with a hash bucket.
+
+286
+00:18:38,330 --> 00:18:43,185
+So, we use a feature column.
+
+287
+00:18:43,185 --> 00:18:46,300
+That's a categorical column, the hash bucket.
+
+288
+00:18:50,750 --> 00:18:55,155
+Now, the key will be author,
+
+289
+00:18:55,155 --> 00:19:07,060
+and our hash bucket size will be the length of the author's list plus one.
+
+290
+00:19:08,360 --> 00:19:19,230
+As before, will create an embedded column for the author which
+
+291
+00:19:19,230 --> 00:19:28,150
+is just an embedding column
+
+292
+00:19:29,960 --> 00:19:34,420
+where we specify the category column.
+
+293
+00:19:35,540 --> 00:19:38,250
+As this author column which is created here.
+
+294
+00:19:38,250 --> 00:19:40,300
+So, it looks like this,
+
+295
+00:19:42,560 --> 00:19:47,910
+and again we set the dimension here using similar logic.
+
+296
+00:19:47,910 --> 00:19:49,990
+We can set to be equal to three.
+
+297
+00:19:53,450 --> 00:19:57,615
+Okay. So, for our next do,
+
+298
+00:19:57,615 --> 00:20:04,440
+we want to create a category column for the category.
+
+299
+00:20:04,440 --> 00:20:06,120
+So, we only had a few categories.
+
+300
+00:20:06,120 --> 00:20:07,485
+If you remember we only had three.
+
+301
+00:20:07,485 --> 00:20:11,040
+So, we can use a categorical column with vocabulary lists here.
+
+302
+00:20:11,040 --> 00:20:15,640
+So, what we'll do is we'll use TF feature column again.
+
+303
+00:20:19,430 --> 00:20:24,760
+Category column this time with a vocabulary list.
+
+304
+00:20:26,900 --> 00:20:33,135
+The key will be the category and we pass it
+
+305
+00:20:33,135 --> 00:20:37,980
+the vocabulary lists which is
+
+306
+00:20:37,980 --> 00:20:44,235
+just our categories list that we created above.
+
+307
+00:20:44,235 --> 00:20:49,320
+We can also specify the number of out of
+
+308
+00:20:49,320 --> 00:20:55,140
+value buckets for any values that come along that may not be in our categories list.
+
+309
+00:20:55,140 --> 00:20:57,404
+We only had three. You don't anticipate.
+
+310
+00:20:57,404 --> 00:20:59,760
+There being new categories down the road, but there could be.
+
+311
+00:20:59,760 --> 00:21:02,260
+So, we'll just use one here.
+
+312
+00:21:07,670 --> 00:21:10,365
+To finish off this feature column,
+
+313
+00:21:10,365 --> 00:21:13,575
+we'll then wrap that category column.
+
+314
+00:21:13,575 --> 00:21:16,095
+That's categorical into an indicator column.
+
+315
+00:21:16,095 --> 00:21:23,235
+So, finally will have category column which will be given by a feature column,
+
+316
+00:21:23,235 --> 00:21:32,440
+that's an indicator column and we'll just pass it this variable that we just created.
+
+317
+00:21:33,830 --> 00:21:43,320
+Okay. So, next, we want to create a bucketize column four months since epic feature.
+
+318
+00:21:43,320 --> 00:21:46,380
+To do this, we can use the bucketize feature column.
+
+319
+00:21:46,380 --> 00:21:48,210
+Will first indicated TensorFlow that this is
+
+320
+00:21:48,210 --> 00:21:50,970
+a numeric feature column in the following way.
+
+321
+00:21:50,970 --> 00:21:58,455
+We'll go here and we can say,
+
+322
+00:21:58,455 --> 00:22:01,470
+this is going to be a feature column.
+
+323
+00:22:01,470 --> 00:22:11,700
+Let's say a numeric column and the key is going to be months since epic.
+
+324
+00:22:11,700 --> 00:22:14,760
+To create a bucketize feature column,
+
+325
+00:22:14,760 --> 00:22:17,640
+we have to specify then the source column and the boundaries.
+
+326
+00:22:17,640 --> 00:22:20,655
+We have a bit of a hint here because the boundaries are given to us.
+
+327
+00:22:20,655 --> 00:22:22,050
+The code it would look like this.
+
+328
+00:22:22,050 --> 00:22:25,485
+We can use months since epic bucketize.
+
+329
+00:22:25,485 --> 00:22:28,720
+It's going to be a feature columns before.
+
+330
+00:22:29,900 --> 00:22:33,760
+It's a bucketize column.
+
+331
+00:22:36,950 --> 00:22:41,430
+The source column will be the months since epic column we just created.
+
+332
+00:22:41,430 --> 00:22:48,720
+This numeric column, and for the boundaries between just specify,
+
+333
+00:22:48,720 --> 00:22:51,520
+we can use the boundaries that were given to us here.
+
+334
+00:22:57,170 --> 00:23:01,420
+Okay. Now, we're to our last to do in the cell.
+
+335
+00:23:01,460 --> 00:23:09,070
+We want to create a cross column for the months and the category.
+
+336
+00:23:09,650 --> 00:23:13,680
+We can do this using a cross column feature.
+
+337
+00:23:13,680 --> 00:23:16,950
+So, for that, we'll pass the two features we want to cross,
+
+338
+00:23:16,950 --> 00:23:20,700
+his keys and the number of cross buckets as our hash bucket size.
+
+339
+00:23:20,700 --> 00:23:24,490
+So, we can use a feature column as before.
+
+340
+00:23:27,020 --> 00:23:29,940
+For the keys, will pass a list of
+
+341
+00:23:29,940 --> 00:23:34,470
+the category column and the bucketize months since epic.
+
+342
+00:23:34,470 --> 00:23:43,770
+So, here, pass
+
+343
+00:23:43,770 --> 00:23:45,705
+our categorical column
+
+344
+00:23:45,705 --> 00:23:51,040
+and then also the months since epic bucketize.
+
+345
+00:23:54,530 --> 00:23:58,750
+Next, we specify what the hash bucket size should be.
+
+346
+00:24:00,980 --> 00:24:07,810
+So, what we'll do is we'll take the length of our months since
+
+347
+00:24:07,910 --> 00:24:14,205
+epic boundaries and we'll multiply that
+
+348
+00:24:14,205 --> 00:24:21,940
+by the length of our categories list plus one.
+
+349
+00:24:32,210 --> 00:24:50,030
+We'll then wrap this in a indicator column to
+
+350
+00:24:50,030 --> 00:24:53,210
+create our final crossed months since category column.
+
+351
+00:24:53,210 --> 00:24:56,390
+Okay. So, with all of our feature columns set up,
+
+352
+00:24:56,390 --> 00:24:58,895
+we can then create a list called feature columns which has
+
+353
+00:24:58,895 --> 00:25:02,790
+each of the variables that we created above. We execute that now.
+
+354
+00:25:08,310 --> 00:25:10,630
+So, continuing on.
+
+355
+00:25:10,630 --> 00:25:14,440
+The next section of this code will be building on the input function.
+
+356
+00:25:14,440 --> 00:25:16,660
+So, most of the input function here is
+
+357
+00:25:16,660 --> 00:25:19,135
+actually already written for us. In fact, all of it it is.
+
+358
+00:25:19,135 --> 00:25:22,585
+Let's just look through it quickly and see what's going on.
+
+359
+00:25:22,585 --> 00:25:26,600
+So, it starts off by setting up some variables that we'll need later,
+
+360
+00:25:26,600 --> 00:25:29,145
+then we come to the read dataset function.
+
+361
+00:25:29,145 --> 00:25:31,440
+So, this takes three inputs: the file name, the mode,
+
+362
+00:25:31,440 --> 00:25:34,200
+and the batch size. So, continuing on.
+
+363
+00:25:34,200 --> 00:25:38,865
+What this will do is it will return this underscore input function,
+
+364
+00:25:38,865 --> 00:25:41,780
+which is ultimately just a dataset.
+
+365
+00:25:41,780 --> 00:25:48,415
+To do that, we'll have this helper function to decode the CSV files,
+
+366
+00:25:48,415 --> 00:25:50,245
+and this probably looks familiar to you.
+
+367
+00:25:50,245 --> 00:25:54,010
+So, we decode the CSV to create our columns,
+
+368
+00:25:54,010 --> 00:25:58,030
+and here we use the record defaults.
+
+369
+00:25:58,030 --> 00:26:01,210
+When we call a tf.decode_csv,
+
+370
+00:26:01,210 --> 00:26:03,910
+we pull out the features as a dictionary by zipping
+
+371
+00:26:03,910 --> 00:26:06,925
+together the column keys and the values.
+
+372
+00:26:06,925 --> 00:26:08,455
+Here, the column key is above,
+
+373
+00:26:08,455 --> 00:26:10,540
+and then we pop off the label.
+
+374
+00:26:10,540 --> 00:26:14,875
+So, our label key is given above as the next content ID.
+
+375
+00:26:14,875 --> 00:26:16,630
+So, moving along.
+
+376
+00:26:16,630 --> 00:26:23,260
+The next part of the code, it creates a file list of file names that we've passed above,
+
+377
+00:26:23,260 --> 00:26:26,800
+and then we create a dataset using the dataset API,
+
+378
+00:26:26,800 --> 00:26:31,120
+and what this will do is it'll run through that file list that we created and use
+
+379
+00:26:31,120 --> 00:26:36,200
+the decode_csv function above to decode each one of the files.
+
+380
+00:26:37,080 --> 00:26:39,130
+When we're in train mode,
+
+381
+00:26:39,130 --> 00:26:41,920
+we'll set the epochs to be equal to none and we'll control
+
+382
+00:26:41,920 --> 00:26:45,970
+the training duration by setting the number of steps to a finite number later,
+
+383
+00:26:45,970 --> 00:26:47,605
+and when we're not in train mode,
+
+384
+00:26:47,605 --> 00:26:50,335
+we'll set the number of epochs equal to 1.
+
+385
+00:26:50,335 --> 00:26:53,545
+This will be what happens during validation.
+
+386
+00:26:53,545 --> 00:26:57,295
+So, we'll pass this information to the data set genre that we've created,
+
+387
+00:26:57,295 --> 00:26:59,750
+and that's our input function.
+
+388
+00:27:01,860 --> 00:27:05,590
+Next, we come to building the actual model.
+
+389
+00:27:05,590 --> 00:27:07,450
+So, the model function is here.
+
+390
+00:27:07,450 --> 00:27:09,385
+It takes features, labels,
+
+391
+00:27:09,385 --> 00:27:12,595
+the mode and any additional parameters that we may need.
+
+392
+00:27:12,595 --> 00:27:15,775
+So, we'll use all of these to build our custom model,
+
+393
+00:27:15,775 --> 00:27:18,970
+and in the end, what it will return is an EstimatorSpec.
+
+394
+00:27:18,970 --> 00:27:23,170
+So, what we'll return at the end is this EstimatorSpec.
+
+395
+00:27:23,170 --> 00:27:27,445
+So, reading through our model function.
+
+396
+00:27:27,445 --> 00:27:30,610
+On the first line, we set up our input layer.
+
+397
+00:27:30,610 --> 00:27:32,410
+So here, we're using a feature called an input layer,
+
+398
+00:27:32,410 --> 00:27:36,445
+where we're passing the features and the parameters that we need for our feature columns.
+
+399
+00:27:36,445 --> 00:27:40,330
+This next for loop is just going to create the architecture around neural network.
+
+400
+00:27:40,330 --> 00:27:43,825
+We can replace this net value with
+
+401
+00:27:43,825 --> 00:27:48,170
+the dense layer for the number of elements in our hidden units.
+
+402
+00:27:49,020 --> 00:27:53,935
+In the end, we pass everything through a fully dense layer and compute the logits.
+
+403
+00:27:53,935 --> 00:28:01,240
+So, we determine the predicted class here by taking the largest value of the logits.
+
+404
+00:28:01,240 --> 00:28:04,945
+To make our predictions dictionary here,
+
+405
+00:28:04,945 --> 00:28:07,360
+we'll want to return the article name,
+
+406
+00:28:07,360 --> 00:28:08,920
+not just the content ID.
+
+407
+00:28:08,920 --> 00:28:13,840
+So, above here, we use tf.gather, again,
+
+408
+00:28:13,840 --> 00:28:16,585
+to determine what the predicted class names will be,
+
+409
+00:28:16,585 --> 00:28:21,260
+and we'll add these to our final predictions dictionary here.
+
+410
+00:28:21,840 --> 00:28:23,920
+If we go down a bit further,
+
+411
+00:28:23,920 --> 00:28:26,725
+we can see the loss that we're using to train the model.
+
+412
+00:28:26,725 --> 00:28:31,540
+Here, it's a sparse_softmax_cross_entropy.
+
+413
+00:28:31,540 --> 00:28:34,420
+We're passing it the labels and our logits,
+
+414
+00:28:34,420 --> 00:28:36,580
+and for the performance metrics,
+
+415
+00:28:36,580 --> 00:28:38,725
+we compute the accuracy for our model.
+
+416
+00:28:38,725 --> 00:28:41,455
+So, that's computed here, and then we come to our TODO.
+
+417
+00:28:41,455 --> 00:28:46,840
+So, what we're asked to do here is to compute a top 10 accuracy for the model.
+
+418
+00:28:46,840 --> 00:28:50,410
+Again, we can do this using the libraries within TensorFlow,
+
+419
+00:28:50,410 --> 00:28:53,590
+and there's actually already an in_top_k function.
+
+420
+00:28:53,590 --> 00:29:00,350
+So, what this would look like is we can use tf.nn.in_top_k.
+
+421
+00:29:00,960 --> 00:29:04,045
+We pass the predictions,
+
+422
+00:29:04,045 --> 00:29:06,925
+which are our logits that we computed above,
+
+423
+00:29:06,925 --> 00:29:09,610
+and we pass the targets,
+
+424
+00:29:09,610 --> 00:29:11,050
+which are our labels.
+
+425
+00:29:11,050 --> 00:29:13,495
+We also specify what k should be,
+
+426
+00:29:13,495 --> 00:29:15,865
+and so here it would asking that k is equal to 10.
+
+427
+00:29:15,865 --> 00:29:19,315
+So, what this means is that we're computing an accuracy, which says,
+
+428
+00:29:19,315 --> 00:29:23,035
+"Looking at our top 10 articles that we would predict,
+
+429
+00:29:23,035 --> 00:29:27,680
+does the actual target lie anywhere in those top 10?"
+
+430
+00:29:29,100 --> 00:29:31,360
+To find the accuracy,
+
+431
+00:29:31,360 --> 00:29:38,335
+we'll wrap this in_top_k with a metrics mean.
+
+432
+00:29:38,335 --> 00:29:42,145
+Okay. So, this computes our top 10 accuracy.
+
+433
+00:29:42,145 --> 00:29:44,200
+Looking a bit further down,
+
+434
+00:29:44,200 --> 00:29:47,440
+we can see that we want to add this new metric to our metrics dictionary.
+
+435
+00:29:47,440 --> 00:29:51,985
+So, to do that, we just add in a key name.
+
+436
+00:29:51,985 --> 00:29:56,815
+So, we'll call it top 10 accuracy,
+
+437
+00:29:56,815 --> 00:30:03,125
+and we'll pass it the value that we've computed here as the value.
+
+438
+00:30:03,125 --> 00:30:05,805
+So, let's just get that to do.
+
+439
+00:30:05,805 --> 00:30:12,415
+Going a bit further, we want to add this metric to our TensorBoard summary.
+
+440
+00:30:12,415 --> 00:30:19,405
+So, to do that, we can just tack this on by using tf.summary.scalar.
+
+441
+00:30:19,405 --> 00:30:22,750
+We're passing it the top 10 accuracy,
+
+442
+00:30:22,750 --> 00:30:25,150
+and the value it's going to use to return that
+
+443
+00:30:25,150 --> 00:30:28,910
+will be our top 10 accuracy that we computed above.
+
+444
+00:30:34,080 --> 00:30:37,930
+So, the rest of the cell just sets up the training job.
+
+445
+00:30:37,930 --> 00:30:40,240
+It sets up our optimizer,
+
+446
+00:30:40,240 --> 00:30:42,010
+and the training operation,
+
+447
+00:30:42,010 --> 00:30:45,280
+and then returns the estimator along with the mode,
+
+448
+00:30:45,280 --> 00:30:48,370
+and the loss that we're using and the training opt that we defined above.
+
+449
+00:30:48,370 --> 00:30:52,960
+So, let's evaluate that. Okay. So, this next cell
+
+450
+00:30:52,960 --> 00:30:55,675
+carries out our train and evaluate steps.
+
+451
+00:30:55,675 --> 00:30:58,790
+Here, we define our output directory,
+
+452
+00:31:00,300 --> 00:31:02,650
+and next we clear out
+
+453
+00:31:02,650 --> 00:31:05,695
+the output directory just in case it isn't our first time to do training,
+
+454
+00:31:05,695 --> 00:31:07,930
+and then we define our estimator
+
+455
+00:31:07,930 --> 00:31:12,685
+using the estimator API and the model function that we created above.
+
+456
+00:31:12,685 --> 00:31:16,435
+Also, here, we can set the parameters of our model.
+
+457
+00:31:16,435 --> 00:31:19,450
+Right now, it's set to have three layers with 200,
+
+458
+00:31:19,450 --> 00:31:22,464
+100 and 500 nodes each respectively.
+
+459
+00:31:22,464 --> 00:31:26,725
+This can easily be changed to make the network larger or smaller as we wish.
+
+460
+00:31:26,725 --> 00:31:28,780
+Also, the number of classes is set.
+
+461
+00:31:28,780 --> 00:31:33,055
+So, the number of classes is gotten by taking the length of our content IDs list.
+
+462
+00:31:33,055 --> 00:31:36,430
+Next, we set up the training spec using the train and input
+
+463
+00:31:36,430 --> 00:31:40,345
+function and setting the finite number of steps for training here,
+
+464
+00:31:40,345 --> 00:31:43,090
+and then also the eval_spec using
+
+465
+00:31:43,090 --> 00:31:46,030
+the read dataset function for the input function as before,
+
+466
+00:31:46,030 --> 00:31:48,940
+and here we can set the steps to be equal to none because above,
+
+467
+00:31:48,940 --> 00:31:52,780
+if you remember, we saw the number of epochs to be just one.
+
+468
+00:31:52,780 --> 00:31:55,765
+Lastly, we train and evaluate,
+
+469
+00:31:55,765 --> 00:31:59,560
+passing the estimator and the train_spec and the eval_spec that we
+
+470
+00:31:59,560 --> 00:32:03,535
+just defined above. So, that gets started.
+
+471
+00:32:03,535 --> 00:32:06,085
+It takes a little bit of time to train.
+
+472
+00:32:06,085 --> 00:32:11,750
+What we'll do is we'll go over to our solutions and see what the result looks like.
+
+473
+00:32:11,910 --> 00:32:16,765
+Okay. So, this has been training for some time and we can see what the results look like.
+
+474
+00:32:16,765 --> 00:32:19,045
+We asked for 2,000 steps, which is quite of a lot.
+
+475
+00:32:19,045 --> 00:32:20,380
+But if we scroll to the end,
+
+476
+00:32:20,380 --> 00:32:22,705
+we see that for our last step,
+
+477
+00:32:22,705 --> 00:32:25,465
+our loss was about 4.9.
+
+478
+00:32:25,465 --> 00:32:26,800
+Our accuracy wasn't very high,
+
+479
+00:32:26,800 --> 00:32:29,965
+but our top 10 accuracy was much better, as you would expect.
+
+480
+00:32:29,965 --> 00:32:32,740
+It's about 30 percent for the top 10 accuracy.
+
+481
+00:32:32,740 --> 00:32:37,390
+So, to finish with this lab, let's go back to our previous lab,
+
+482
+00:32:37,390 --> 00:32:40,315
+and we'll complete the rest of TODOs.
+
+483
+00:32:40,315 --> 00:32:45,835
+Okay. So, lastly, what we want to do is to make predictions with our model.
+
+484
+00:32:45,835 --> 00:32:49,450
+So, to do that, we'll pull out just five records from the training set and
+
+485
+00:32:49,450 --> 00:32:53,020
+create a new file called first_5_content_ids,
+
+486
+00:32:53,020 --> 00:32:56,170
+contain just the article IDs for those articles.
+
+487
+00:32:56,170 --> 00:32:58,430
+So, you can see that being done here.
+
+488
+00:33:00,750 --> 00:33:04,839
+This is what the first_5.csv looks like and
+
+489
+00:33:04,839 --> 00:33:11,870
+the first_5_content_ids pulls out the content ID for each one of these entries.
+
+490
+00:33:12,150 --> 00:33:15,400
+Continuing along, we see one final to do,
+
+491
+00:33:15,400 --> 00:33:17,410
+and then here what we're asked to do is to use
+
+492
+00:33:17,410 --> 00:33:21,880
+the predict method to make predictions on the model that we just trained.
+
+493
+00:33:21,880 --> 00:33:25,525
+So, let's see how that would do.
+
+494
+00:33:25,525 --> 00:33:28,615
+We want to make predictions for all of the examples contained
+
+495
+00:33:28,615 --> 00:33:38,650
+in the first_5.csv file.
+
+496
+00:33:38,650 --> 00:33:41,545
+To do that, we call the predict method on our estimator.
+
+497
+00:33:41,545 --> 00:33:48,375
+So, we have our estimator.predict.
+
+498
+00:33:48,375 --> 00:33:51,340
+For our input function,
+
+499
+00:33:51,750 --> 00:33:57,235
+we'll pass our read dataset function,
+
+500
+00:33:57,235 --> 00:34:03,370
+and we'll read just the first five values.
+
+501
+00:34:03,370 --> 00:34:06,470
+So, we'll pass first_5.csv,
+
+502
+00:34:06,900 --> 00:34:09,745
+and let me specify the mode.
+
+503
+00:34:09,745 --> 00:34:13,675
+Here, we're going to be in predict mode.
+
+504
+00:34:13,675 --> 00:34:20,480
+So, I set my mode keys to be predict.
+
+505
+00:34:24,000 --> 00:34:27,400
+We want to make a list of these predictions.
+
+506
+00:34:27,400 --> 00:34:30,370
+So, we'll wrap this in a call to
+
+507
+00:34:30,370 --> 00:34:40,100
+list and it makes the predictions on the elements in first_5.csv.
+
+508
+00:34:40,110 --> 00:34:43,480
+To compare predictions with the actual articles,
+
+509
+00:34:43,480 --> 00:34:45,145
+we'll go back to BigQuery.
+
+510
+00:34:45,145 --> 00:34:46,810
+So, what this cell does is we use
+
+511
+00:34:46,810 --> 00:34:50,395
+our NumPy library to create our recommended content IDs,
+
+512
+00:34:50,395 --> 00:34:55,210
+which will decode each of the elements in our output list that we created above,
+
+513
+00:34:55,210 --> 00:34:57,670
+and then we'll also pull out the content IDs from
+
+514
+00:34:57,670 --> 00:35:01,850
+the first_5_content_ids file that we made previously.
+
+515
+00:35:05,940 --> 00:35:08,830
+This next cell has two queries;
+
+516
+00:35:08,830 --> 00:35:12,925
+one using the recommended article ID and one using the current title ID.
+
+517
+00:35:12,925 --> 00:35:14,320
+Looking through the query,
+
+518
+00:35:14,320 --> 00:35:16,840
+what they do is they return either the current title
+
+519
+00:35:16,840 --> 00:35:19,345
+or the recommended title from the courier database.
+
+520
+00:35:19,345 --> 00:35:23,110
+So, our first query,
+
+521
+00:35:23,110 --> 00:35:24,475
+does the queries before,
+
+522
+00:35:24,475 --> 00:35:30,760
+only we're asking that the ID is the recommended content ID here,
+
+523
+00:35:30,760 --> 00:35:34,270
+by passing that first value as argument here,
+
+524
+00:35:34,270 --> 00:35:38,365
+and then on our current title SQL query, looks very similar,
+
+525
+00:35:38,365 --> 00:35:44,200
+only now we're passing the first content ID into our argument of our [inaudible].
+
+526
+00:35:44,200 --> 00:35:47,930
+This will return the recommended title and the current title.
+
+527
+00:35:49,020 --> 00:35:51,710
+So, when we execute that cell,
+
+528
+00:35:51,710 --> 00:35:55,440
+what we'll get back is the current title the person's reading and what
+
+529
+00:35:55,440 --> 00:36:00,550
+our recommended model would suggest as the next article to read.
+
+530
+00:36:00,860 --> 00:36:04,800
+The last thing we can do is monitor TensorBoard to see
+
+531
+00:36:04,800 --> 00:36:08,040
+how our accuracy and the top 10 accuracy performs through training.
+
+532
+00:36:08,040 --> 00:36:11,080
+So, we'll execute this cell,
+
+533
+00:36:11,540 --> 00:36:14,780
+and we can click here to look at TensorBoard,
+
+534
+00:36:14,780 --> 00:36:21,400
+and what we see is the evaluation metric for the accuracy and our training,
+
+535
+00:36:21,400 --> 00:36:23,650
+even though trains a little bit more wobbly, we'd expect that.
+
+536
+00:36:23,650 --> 00:36:25,435
+They're both increasing over time,
+
+537
+00:36:25,435 --> 00:36:28,435
+and down here we can see our top 10 accuracy.
+
+538
+00:36:28,435 --> 00:36:31,270
+It also improves with more training.
+
+539
+00:36:31,270 --> 00:36:36,910
+Okay. So, that wraps up the content-based filtering lab.

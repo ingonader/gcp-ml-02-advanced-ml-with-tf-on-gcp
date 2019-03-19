@@ -1,0 +1,455 @@
+1
+00:00:00,000 --> 00:00:03,030
+Normally, during each half of the all training loop,
+
+2
+00:00:03,030 --> 00:00:07,260
+we'd feed the ALS algorithm whole rows or columns at a time.
+
+3
+00:00:07,260 --> 00:00:09,765
+But since it's hard to know which stage it's in,
+
+4
+00:00:09,765 --> 00:00:11,279
+we'll just feed both instead,
+
+5
+00:00:11,279 --> 00:00:15,180
+so that it always has the right data regardless of what stage it's in.
+
+6
+00:00:15,180 --> 00:00:20,175
+Remember, this will be fed in batches of rows and columns from the ratings matrix.
+
+7
+00:00:20,175 --> 00:00:24,915
+Hopefully, we will go through the matrix multiple times so things will go even out,
+
+8
+00:00:24,915 --> 00:00:28,715
+and you'll end up processing all the rows and columns.
+
+9
+00:00:28,715 --> 00:00:32,750
+It might be important to make sure that batch size doesn't clearly divide data
+
+10
+00:00:32,750 --> 00:00:36,740
+set length so the rollover offset causes different groupings in the batch,
+
+11
+00:00:36,740 --> 00:00:39,835
+so the same batches don't continually repeat themselves.
+
+12
+00:00:39,835 --> 00:00:43,515
+Graphically, going off of our user movie example,
+
+13
+00:00:43,515 --> 00:00:45,740
+we have our user by movie matrix R,
+
+14
+00:00:45,740 --> 00:00:49,460
+that we are hoping to factorize into our user factors matrix U and our
+
+15
+00:00:49,460 --> 00:00:53,875
+movie factors matrix would V made up of k latent factors.
+
+16
+00:00:53,875 --> 00:00:57,605
+We iterate alternately until convergence fixing V,
+
+17
+00:00:57,605 --> 00:00:59,420
+computing U, then fixing U,
+
+18
+00:00:59,420 --> 00:01:01,670
+computing V, and so on.
+
+19
+00:01:01,670 --> 00:01:04,100
+Coming back to the training input function,
+
+20
+00:01:04,100 --> 00:01:07,685
+remember we read in batches of rows and columns at the same time,
+
+21
+00:01:07,685 --> 00:01:09,875
+and they are stored in a SparseTensor,
+
+22
+00:01:09,875 --> 00:01:12,725
+which we will discuss the details in the next section.
+
+23
+00:01:12,725 --> 00:01:16,260
+Remember, we don't need labels because due to the alternation,
+
+24
+00:01:16,260 --> 00:01:19,925
+the labels come from the features we are not currently solving for.
+
+25
+00:01:19,925 --> 00:01:25,585
+Okay. So, we need rows and columns of a radius matrix and then we can continue?
+
+26
+00:01:25,585 --> 00:01:29,210
+Well, most data warehouse for systems of millions of users,
+
+27
+00:01:29,210 --> 00:01:32,720
+with millions of items don't store the complete Cartesian product.
+
+28
+00:01:32,720 --> 00:01:37,085
+There will be a huge waste of space because that matrix is extremely sparse.
+
+29
+00:01:37,085 --> 00:01:39,660
+Instead, ratings data is usually
+
+30
+00:01:39,660 --> 00:01:43,825
+stored when there is an interaction that becomes a record or row.
+
+31
+00:01:43,825 --> 00:01:46,700
+There may be an interaction timestamp and most definitely,
+
+32
+00:01:46,700 --> 00:01:50,150
+there will be a column that contains an identifier of the user of that interaction,
+
+33
+00:01:50,150 --> 00:01:53,240
+another column the item that the user interacted with,
+
+34
+00:01:53,240 --> 00:01:55,170
+and then a column for the actual interaction data.
+
+35
+00:01:55,170 --> 00:01:56,975
+Whether that is the number of stars,
+
+36
+00:01:56,975 --> 00:02:00,025
+like or dislike, or the duration of the interaction.
+
+37
+00:02:00,025 --> 00:02:03,650
+However, these are usually represented as tables and that has
+
+38
+00:02:03,650 --> 00:02:09,415
+actual matrices that have row indices and column indices. Let's look at an example.
+
+39
+00:02:09,415 --> 00:02:14,059
+In this example, visitor ID contains a unique user identifier
+
+40
+00:02:14,059 --> 00:02:18,785
+and content ID contains a unique item ID which are the video IDs.
+
+41
+00:02:18,785 --> 00:02:22,260
+The actual interaction data in this example is session duration,
+
+42
+00:02:22,260 --> 00:02:24,920
+which is probably going to be used as implicit feedback,
+
+43
+00:02:24,920 --> 00:02:26,480
+where we infer that.
+
+44
+00:02:26,480 --> 00:02:29,585
+If a user has a longer session they are more
+
+45
+00:02:29,585 --> 00:02:33,005
+likely to like that content than with shorter sessions.
+
+46
+00:02:33,005 --> 00:02:35,830
+Notice anything unusual with this table?
+
+47
+00:02:35,830 --> 00:02:39,680
+Now, unless there are row indices or the users of the entire galaxy,
+
+48
+00:02:39,680 --> 00:02:42,695
+those are some really large numbers for visitor ID,
+
+49
+00:02:42,695 --> 00:02:45,365
+many magnitudes more than all the people on earth.
+
+50
+00:02:45,365 --> 00:02:48,560
+Same goes for content ID even though 100 million is much
+
+51
+00:02:48,560 --> 00:02:51,875
+more believable than the 73 quintillion visitors.
+
+52
+00:02:51,875 --> 00:02:55,745
+Remember, these two columns need to map to a contiguous matrix,
+
+53
+00:02:55,745 --> 00:02:59,830
+so that these should be the indices of those rows and columns.
+
+54
+00:02:59,830 --> 00:03:04,610
+Also, it would help if we scale session duration to be a small number.
+
+55
+00:03:04,610 --> 00:03:07,490
+What we need to create is a mapping.
+
+56
+00:03:07,490 --> 00:03:10,115
+We'll map visitor ID to user ID,
+
+57
+00:03:10,115 --> 00:03:12,905
+contact ID to item ID,
+
+58
+00:03:12,905 --> 00:03:15,075
+and session duration to rating.
+
+59
+00:03:15,075 --> 00:03:16,990
+This mapping needs to be saved to
+
+60
+00:03:16,990 --> 00:03:21,025
+persistent storage because one need to map input values to the map values,
+
+61
+00:03:21,025 --> 00:03:22,465
+not just during training,
+
+62
+00:03:22,465 --> 00:03:24,174
+but also during inference.
+
+63
+00:03:24,174 --> 00:03:27,700
+This way, you can quickly take any visitor ID, content ID,
+
+64
+00:03:27,700 --> 00:03:33,170
+and session duration, and get the corresponding map values used as output by the model.
+
+65
+00:03:33,170 --> 00:03:36,005
+Speaking of inference, when making predictions,
+
+66
+00:03:36,005 --> 00:03:37,975
+you need access at time of prediction.
+
+67
+00:03:37,975 --> 00:03:39,280
+Not just to these mappings,
+
+68
+00:03:39,280 --> 00:03:40,975
+but to the entire input dataset,
+
+69
+00:03:40,975 --> 00:03:43,420
+because you may want to filter out any previously
+
+70
+00:03:43,420 --> 00:03:45,915
+interacted with items such as the previous purchase,
+
+71
+00:03:45,915 --> 00:03:50,660
+view, or rating to provide the top k recommendations of new items.
+
+72
+00:03:50,660 --> 00:03:53,720
+Should you recommend an already rated item to a user?
+
+73
+00:03:53,720 --> 00:03:55,820
+For some problems, users don't want to be
+
+74
+00:03:55,820 --> 00:03:58,625
+recommended things they've already bought or saw like a movie.
+
+75
+00:03:58,625 --> 00:04:00,525
+However for our restaurant they liked,
+
+76
+00:04:00,525 --> 00:04:02,175
+they may want to return.
+
+77
+00:04:02,175 --> 00:04:04,820
+Also, we can distribute our data instead of sending
+
+78
+00:04:04,820 --> 00:04:07,850
+a whole rows and columns and our input function to one worker.
+
+79
+00:04:07,850 --> 00:04:11,680
+Each worker's minibatch consists of a subset of rows of the matrix.
+
+80
+00:04:11,680 --> 00:04:15,260
+The training step computes the new values for the corresponding row factors.
+
+81
+00:04:15,260 --> 00:04:18,720
+However, the update depends on the full column factor,
+
+82
+00:04:18,720 --> 00:04:21,425
+which would be costly to fetch each step.
+
+83
+00:04:21,425 --> 00:04:24,850
+So, we use a trick where we compute a Grammy and G,
+
+84
+00:04:24,850 --> 00:04:29,020
+which is just the determinant of the matrix inner product x transpose x.
+
+85
+00:04:29,020 --> 00:04:33,560
+Given G, the worker now only need to look at a subset of rows of V,
+
+86
+00:04:33,560 --> 00:04:38,065
+those corresponding to non-zero entries in the input to compute the update.
+
+87
+00:04:38,065 --> 00:04:40,940
+Now, we can use gather and scatter to perform fetches and
+
+88
+00:04:40,940 --> 00:04:44,590
+updates and use custom C++ kernels for the compute.
+
+89
+00:04:44,590 --> 00:04:47,975
+This is much easier to distribute and scale.
+
+90
+00:04:47,975 --> 00:04:50,075
+When using the wall's estimator,
+
+91
+00:04:50,075 --> 00:04:52,555
+it is important to have the inputs in the correct format.
+
+92
+00:04:52,555 --> 00:04:54,770
+What should we do with the table here in
+
+93
+00:04:54,770 --> 00:04:57,500
+the input function before it is used by the estimator?
+
+94
+00:04:57,500 --> 00:05:00,380
+Do we map client ID to integers in the range
+
+95
+00:05:00,380 --> 00:05:04,190
+zero inclusive to the number of clients exclusive?
+
+96
+00:05:04,190 --> 00:05:06,755
+Do we want to map product ID to integers in the range
+
+97
+00:05:06,755 --> 00:05:10,055
+zero inclusive to the number of products exclusive?
+
+98
+00:05:10,055 --> 00:05:14,075
+Do we want to map sentiment from a string representation to numeric representation,
+
+99
+00:05:14,075 --> 00:05:16,285
+or maybe some combination?
+
+100
+00:05:16,285 --> 00:05:18,795
+The correct answer is F.
+
+101
+00:05:18,795 --> 00:05:22,330
+The client ID is represented as an alphanumeric string in this data.
+
+102
+00:05:22,330 --> 00:05:26,840
+So, we need to map each string into an integer representing that client's user index.
+
+103
+00:05:26,840 --> 00:05:29,600
+The product ID at least isn't a string,
+
+104
+00:05:29,600 --> 00:05:33,710
+but it is a long integer that is not representative of the actual matrix index.
+
+105
+00:05:33,710 --> 00:05:37,780
+So, we need to map each to an integer representing that products item index.
+
+106
+00:05:37,780 --> 00:05:39,160
+As for the rating,
+
+107
+00:05:39,160 --> 00:05:41,855
+we probably have an example of explicit feedback.
+
+108
+00:05:41,855 --> 00:05:43,450
+However, it is a string,
+
+109
+00:05:43,450 --> 00:05:45,920
+so we will need an ordinal mapping perhaps from
+
+110
+00:05:45,920 --> 00:05:48,650
+the lowest sentiment to highest sentiment by integers,
+
+111
+00:05:48,650 --> 00:05:52,570
+and we can even scale that to be between zero or one or some other range.
+
+112
+00:05:52,570 --> 00:05:56,435
+The main goal is to eventually get the radians into a numeric format.
+
+113
+00:05:56,435 --> 00:05:59,840
+Therefore, we had to create all three mappings and save them in
+
+114
+00:05:59,840 --> 00:06:03,790
+persistent storage to be used for future training and inference.

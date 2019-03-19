@@ -1,0 +1,2591 @@
+1
+00:00:00,000 --> 00:00:01,755
+All right, welcome back.
+
+2
+00:00:01,755 --> 00:00:05,280
+Now, we're going to combine the labs before,
+
+3
+00:00:05,280 --> 00:00:09,525
+where we did content-based and collaborative filtering-based recommendations
+
+4
+00:00:09,525 --> 00:00:13,290
+combined it together with the neural network in a hybrid recommendation system,
+
+5
+00:00:13,290 --> 00:00:15,690
+using once again the Google Analytics Data.
+
+6
+00:00:15,690 --> 00:00:18,420
+First, we're going to preprocess our data to combine this
+
+7
+00:00:18,420 --> 00:00:22,060
+together and then we're going to create our combined model.
+
+8
+00:00:22,060 --> 00:00:25,080
+First we're going to preprocess our data using BigQuery and
+
+9
+00:00:25,080 --> 00:00:27,390
+Cloud Dataflow to be used later in
+
+10
+00:00:27,390 --> 00:00:30,960
+our neural network hybrid recommendation model in the next notebook.
+
+11
+00:00:30,960 --> 00:00:33,720
+Apache Beam only works in Python 2 at the moment,
+
+12
+00:00:33,720 --> 00:00:35,730
+so we're going to switch to Python 2 kernel.
+
+13
+00:00:35,730 --> 00:00:37,650
+In the above menu, click the drop down arrow,
+
+14
+00:00:37,650 --> 00:00:39,640
+and select Python 2.
+
+15
+00:00:39,640 --> 00:00:43,714
+We're going to first switch into our Python 2 environment,
+
+16
+00:00:43,714 --> 00:00:47,180
+uninstall Cloud Dataflow, reinstall Apache Beam here.
+
+17
+00:00:47,180 --> 00:00:50,690
+[inaudible] once you're done with this step to reset
+
+18
+00:00:50,690 --> 00:00:52,490
+the notebook session kernel
+
+19
+00:00:52,490 --> 00:00:55,520
+so that way all of this can be pulled into the current session.
+
+20
+00:00:55,520 --> 00:01:00,020
+As always, we're going to import our OS and
+
+21
+00:01:00,020 --> 00:01:05,365
+our cloud train demos here for our projects and our bucket,
+
+22
+00:01:05,365 --> 00:01:09,485
+and we're going to have that such our environment variables change as needed.
+
+23
+00:01:09,485 --> 00:01:12,530
+We're going to set our project in our compute region
+
+24
+00:01:12,530 --> 00:01:15,965
+and now we're going to create our ML dataset using Dataflow.
+
+25
+00:01:15,965 --> 00:01:22,520
+Remember here, we're going to be combining the user and item embeddings learned from
+
+26
+00:01:22,520 --> 00:01:27,065
+the WALS Matrix Factorization Collaborative Filtering lab that were extracted
+
+27
+00:01:27,065 --> 00:01:29,360
+from our estimator and we're going to combine that with
+
+28
+00:01:29,360 --> 00:01:31,835
+our content-based features such as title,
+
+29
+00:01:31,835 --> 00:01:34,295
+author, category for instance.
+
+30
+00:01:34,295 --> 00:01:38,275
+Okay? We've created our hybrid dataset query here,
+
+31
+00:01:38,275 --> 00:01:42,070
+using a couple of CTE tables to do little bit of the work for us.
+
+32
+00:01:42,070 --> 00:01:45,290
+We're pulling out the full visitor ID here,
+
+33
+00:01:45,290 --> 00:01:48,515
+the content ID, the category, the title,
+
+34
+00:01:48,515 --> 00:01:55,260
+the author's in array here of when users looked at this content,
+
+35
+00:01:55,260 --> 00:01:59,540
+years and months, and any other customer dimensions.
+
+36
+00:01:59,540 --> 00:02:03,890
+From there, we're going to process this a little bit within BigQuery.
+
+37
+00:02:03,890 --> 00:02:06,795
+Remember, you can do preprocessing within BigQuery itself.
+
+38
+00:02:06,795 --> 00:02:08,650
+We're going to use as our label,
+
+39
+00:02:08,650 --> 00:02:11,040
+because remember that's the neural network, it's supervised learning,
+
+40
+00:02:11,040 --> 00:02:13,640
+we need to have a label, something to predict,
+
+41
+00:02:13,640 --> 00:02:17,150
+and we're going to be using this next content ID to predict.
+
+42
+00:02:17,150 --> 00:02:20,030
+We're going to try to predict the next thing that this user
+
+43
+00:02:20,030 --> 00:02:24,230
+will- should read and for training what they actually did.
+
+44
+00:02:24,230 --> 00:02:28,955
+So, that'll be our label and then some of our input features can be visitor ID,
+
+45
+00:02:28,955 --> 00:02:31,430
+content ID, the category,
+
+46
+00:02:31,430 --> 00:02:32,580
+the title, the author,
+
+47
+00:02:32,580 --> 00:02:34,985
+and then the month since the epoch.
+
+48
+00:02:34,985 --> 00:02:37,955
+Epochs usually started from January 1st,1970.
+
+49
+00:02:37,955 --> 00:02:41,810
+Just to try to get some kind of date range because of contexts,
+
+50
+00:02:41,810 --> 00:02:43,280
+what possibly could have been going on at
+
+51
+00:02:43,280 --> 00:02:45,240
+the time in the world when these people were reading?
+
+52
+00:02:45,240 --> 00:02:48,334
+Maybe that's going to give some variance
+
+53
+00:02:48,334 --> 00:02:51,900
+on why people chose what they did read. All right.
+
+54
+00:02:51,900 --> 00:02:56,705
+From there, we have our final function where we're going to pull all that in and make
+
+55
+00:02:56,705 --> 00:02:58,985
+sure that's all the right data types and
+
+56
+00:02:58,985 --> 00:03:01,850
+replace any nulls because it hazes any strange nulls.
+
+57
+00:03:01,850 --> 00:03:05,895
+We're all going to combine this with our the user factors and our item factors.
+
+58
+00:03:05,895 --> 00:03:07,910
+When I trained this,
+
+59
+00:03:07,910 --> 00:03:10,669
+I train this using a number of embedding dimensions,
+
+60
+00:03:10,669 --> 00:03:12,620
+my latent factors as 10.
+
+61
+00:03:12,620 --> 00:03:15,230
+So that's why I have 10 for users and 10 for items here.
+
+62
+00:03:15,230 --> 00:03:16,460
+But if you chose a different memory,
+
+63
+00:03:16,460 --> 00:03:18,720
+you'll have a different number of things to bring in.
+
+64
+00:03:18,720 --> 00:03:25,550
+Okay? I also am going to create a hash ID here so that I can do good sampling on to get
+
+65
+00:03:25,550 --> 00:03:31,130
+a good reproducable or repeatable results and either join with my user factors that I
+
+66
+00:03:31,130 --> 00:03:33,545
+pulled out of my estimator and I import it into
+
+67
+00:03:33,545 --> 00:03:37,085
+BigQuery and likewise with my item factors.
+
+68
+00:03:37,085 --> 00:03:41,825
+Okay? So, let's look at what some of these look like.
+
+69
+00:03:41,825 --> 00:03:43,190
+As you can see,
+
+70
+00:03:43,190 --> 00:03:46,580
+I'm dumping this BigQuery query and putting
+
+71
+00:03:46,580 --> 00:03:48,560
+a little limit on here so I don't have millions
+
+72
+00:03:48,560 --> 00:03:51,095
+and millions of records going into my Data lab.
+
+73
+00:03:51,095 --> 00:03:52,910
+I'm going to put it to dataframe,
+
+74
+00:03:52,910 --> 00:03:55,565
+and you can see here's my label and that's content ID.
+
+75
+00:03:55,565 --> 00:03:57,320
+Once again, it's a big integer.
+
+76
+00:03:57,320 --> 00:03:59,465
+Visitor ID: A really big integer.
+
+77
+00:03:59,465 --> 00:04:02,375
+Content ID: The current content that run.
+
+78
+00:04:02,375 --> 00:04:06,070
+So it's the current content reviewing and this is the next thing that person viewed.
+
+79
+00:04:06,070 --> 00:04:08,775
+The category: News et cetera.
+
+80
+00:04:08,775 --> 00:04:12,050
+The title: These all look to be in German,
+
+81
+00:04:12,050 --> 00:04:16,640
+so that'll add a little bit of complexity for those Non-German speakers out there.
+
+82
+00:04:16,640 --> 00:04:19,410
+The author, of that article they read.
+
+83
+00:04:19,410 --> 00:04:20,670
+The months since epochs,
+
+84
+00:04:20,670 --> 00:04:23,010
+so that way we can tie a little together in time,
+
+85
+00:04:23,010 --> 00:04:26,005
+so perhaps what was going on in the world at that time when there were reading it.
+
+86
+00:04:26,005 --> 00:04:30,430
+Then our user factors and our item factors.
+
+87
+00:04:30,430 --> 00:04:36,425
+Okay. Do it describes if we can kind of see some of the statistics of this.
+
+88
+00:04:36,425 --> 00:04:37,820
+Are the averages enrolled.
+
+89
+00:04:37,820 --> 00:04:39,800
+These are just have our numeric columns as you can see,
+
+90
+00:04:39,800 --> 00:04:41,240
+just our user factors,
+
+91
+00:04:41,240 --> 00:04:43,600
+okay? Our item factors.
+
+92
+00:04:43,600 --> 00:04:46,909
+I'm going to call Apache Beam to do some more pre-processing.
+
+93
+00:04:46,909 --> 00:04:51,040
+I want to create sharded files in this case, CSV files.
+
+94
+00:04:51,040 --> 00:04:53,640
+So to do that, I'm going to create my CSV column names,
+
+95
+00:04:53,640 --> 00:04:54,765
+so it'll be next content ID,
+
+96
+00:04:54,765 --> 00:04:56,910
+my label and then my features,
+
+97
+00:04:56,910 --> 00:04:59,565
+visitor ID, content ID, category,
+
+98
+00:04:59,565 --> 00:05:03,615
+title, author and the months since the epoch.
+
+99
+00:05:03,615 --> 00:05:05,400
+Then my factor columns,
+
+100
+00:05:05,400 --> 00:05:06,540
+I'm going to create a list of these.
+
+101
+00:05:06,540 --> 00:05:08,860
+This list comprehension, two of them in fact,
+
+102
+00:05:08,860 --> 00:05:11,705
+one for user factors and then for item factors,
+
+103
+00:05:11,705 --> 00:05:13,750
+looping across all 10 of them for each.
+
+104
+00:05:13,750 --> 00:05:17,590
+Remember, this 10 will be a different number for you if you use a different latent number
+
+105
+00:05:17,590 --> 00:05:21,850
+of factors in your collaborator filtering model using WALS.
+
+106
+00:05:21,850 --> 00:05:24,920
+So, I'm going to write out the rows for each of my inputs.
+
+107
+00:05:24,920 --> 00:05:28,160
+So I do have to be careful here of my encoding since I
+
+108
+00:05:28,160 --> 00:05:31,820
+do have some German characters in there, that might be special.
+
+109
+00:05:31,820 --> 00:05:34,835
+So I need to use a UTF-8 encoding here.
+
+110
+00:05:34,835 --> 00:05:36,560
+Otherwise just cast it into string,
+
+111
+00:05:36,560 --> 00:05:44,120
+you might get some errors and same goes for doing my other features from factor columns.
+
+112
+00:05:44,120 --> 00:05:49,280
+When that's all done, I have one long string with commas deliminating everything
+
+113
+00:05:49,280 --> 00:05:51,620
+and I'm going to yield it all out into
+
+114
+00:05:51,620 --> 00:05:56,370
+one big string for every table row that gets pulled in for this row dictionary.
+
+115
+00:05:56,740 --> 00:05:59,120
+Alright. Now I'm going to call
+
+116
+00:05:59,120 --> 00:06:02,885
+my pre-process function and I'm going to pass in whether I'm in test mode to use
+
+117
+00:06:02,885 --> 00:06:09,105
+local preprocessing or not in test mode to use the full power of the cloud,
+
+118
+00:06:09,105 --> 00:06:12,855
+autoscale, elastic, take advantage of that.
+
+119
+00:06:12,855 --> 00:06:16,695
+Look at a job name and I'm going to determine where I put these things.
+
+120
+00:06:16,695 --> 00:06:17,970
+Map directory for local,
+
+121
+00:06:17,970 --> 00:06:21,230
+will be local to my Datalab whereas if it's not
+
+122
+00:06:21,230 --> 00:06:24,560
+a local training and I'm using power of Cloud Dataflow,
+
+123
+00:06:24,560 --> 00:06:27,880
+I'm going to have it put into Google Cloud Storage.
+
+124
+00:06:27,880 --> 00:06:33,845
+Alright? Set some options here and then I'm going to say if in test mode,
+
+125
+00:06:33,845 --> 00:06:36,905
+direct runner, Else; dataflow runner.
+
+126
+00:06:36,905 --> 00:06:40,520
+Alright? I initialize a beam pipeline here
+
+127
+00:06:40,520 --> 00:06:44,645
+using my options and the runner that I designated here.
+
+128
+00:06:44,645 --> 00:06:47,360
+I'm going to pull my query and my query is going to be the hybrid
+
+129
+00:06:47,360 --> 00:06:49,790
+dataset from above where those CTE tables in
+
+130
+00:06:49,790 --> 00:06:55,000
+that final feature set with my label of next content ID.
+
+131
+00:06:55,000 --> 00:06:58,700
+If in test mode, I'm going to concatenate on a limit here so I
+
+132
+00:06:58,700 --> 00:07:02,135
+don't pull in too much data and then I'm going to create a loop.
+
+133
+00:07:02,135 --> 00:07:04,100
+So, for training and evaluation,
+
+134
+00:07:04,100 --> 00:07:06,140
+I'm making both datasets right now.
+
+135
+00:07:06,140 --> 00:07:07,445
+So, if I'm training,
+
+136
+00:07:07,445 --> 00:07:12,815
+I want to take the modulo of the absolute value, the hash ID.
+
+137
+00:07:12,815 --> 00:07:15,620
+Remember we have to take to modulo positive numbers here.
+
+138
+00:07:15,620 --> 00:07:20,060
+So, since the foreign fingerprint can create negative numbers,
+
+139
+00:07:20,060 --> 00:07:21,995
+I want to be able to get absolute value of that.
+
+140
+00:07:21,995 --> 00:07:24,035
+I'm going to break it into 10 buckets.
+
+141
+00:07:24,035 --> 00:07:26,390
+I did some analysis beforehand just to verify this is
+
+142
+00:07:26,390 --> 00:07:30,490
+a good sampling and each bucket was approximately 10 percent the data.
+
+143
+00:07:30,490 --> 00:07:33,960
+So, therefore I can take less than nine,
+
+144
+00:07:33,960 --> 00:07:37,575
+so I'll get values zero through eight and for the last bucket,
+
+145
+00:07:37,575 --> 00:07:39,675
+my 10 percent, I'm going to put in eval.
+
+146
+00:07:39,675 --> 00:07:42,530
+You can choose obviously different splitting,
+
+147
+00:07:42,530 --> 00:07:46,340
+maybe you do an 80 20 split rather than 90 10 split, it's up to you.
+
+148
+00:07:46,340 --> 00:07:50,240
+So now I take it to the initial pipeline I created for each training
+
+149
+00:07:50,240 --> 00:07:53,780
+and eval as you can see here when I pass in the step from
+
+150
+00:07:53,780 --> 00:07:57,790
+this list that I'm enumerating through and I'm going to read from
+
+151
+00:07:57,790 --> 00:08:02,370
+my BigQuery source using my query, using standard sql.
+
+152
+00:08:02,370 --> 00:08:05,010
+From there, I'm going to call my flatmap to
+
+153
+00:08:05,010 --> 00:08:08,850
+CSP and then I'm going to write out my CSV from
+
+154
+00:08:08,850 --> 00:08:15,545
+memory for each of the work announced into my file at the output directory I designated.
+
+155
+00:08:15,545 --> 00:08:17,535
+That's it. I'm going to run the job
+
+156
+00:08:17,535 --> 00:08:20,590
+and I'm going to call my pre-process to call that entire
+
+157
+00:08:20,590 --> 00:08:22,270
+functional and it'll create
+
+158
+00:08:22,270 --> 00:08:26,210
+my graphing Cloud Dataflow and create all these features for me.
+
+159
+00:08:26,210 --> 00:08:29,710
+As you can see here, I want to move it over just to do
+
+160
+00:08:29,710 --> 00:08:33,830
+some some local checking here and let's look inside.
+
+161
+00:08:33,830 --> 00:08:36,630
+As you can see, I have three rows,
+
+162
+00:08:36,630 --> 00:08:42,165
+I'm doing a head on this and you can see that I have- here is the next content ID,
+
+163
+00:08:42,165 --> 00:08:44,805
+user ID, current content ID,
+
+164
+00:08:44,805 --> 00:08:49,280
+the category, the title, the author.
+
+165
+00:08:49,280 --> 00:08:51,470
+Could be none in case there's no author.
+
+166
+00:08:51,470 --> 00:08:53,615
+The months since epoch.
+
+167
+00:08:53,615 --> 00:08:56,210
+So, since 503 months, since January,
+
+168
+00:08:56,210 --> 00:09:03,240
+1st 1970 and then the 10 user embeddings and ten item embedding values.
+
+169
+00:09:03,240 --> 00:09:08,945
+Alright? That's the same for eval and all the trained shorted files we have here.
+
+170
+00:09:08,945 --> 00:09:11,010
+We made three of them in this case.
+
+171
+00:09:11,010 --> 00:09:15,455
+All right, I also want to create vocabulary is using Dataflow.
+
+172
+00:09:15,455 --> 00:09:17,945
+So, I'm going to read from BigQuery,
+
+173
+00:09:17,945 --> 00:09:20,945
+do some pre-processing and write it out to CSV files.
+
+174
+00:09:20,945 --> 00:09:24,850
+Okay, so we're going to write out vocabulary files for our categorical features.
+
+175
+00:09:24,850 --> 00:09:27,220
+So, here I'm going to create a query.
+
+176
+00:09:27,220 --> 00:09:29,995
+I've put some values in here that I can then
+
+177
+00:09:29,995 --> 00:09:34,795
+replace depending on the vocabulary I want to generate.
+
+178
+00:09:34,795 --> 00:09:38,270
+And I'm going to do a group by on there so I get a unique list.
+
+179
+00:09:38,270 --> 00:09:42,505
+I'm going to create another Apache Beam job.
+
+180
+00:09:42,505 --> 00:09:45,655
+I'm pulling this in where I'm going to do group by as you can see.
+
+181
+00:09:45,655 --> 00:09:47,785
+That's what this is going to be named as, Group By.
+
+182
+00:09:47,785 --> 00:09:50,015
+So it's my column name. All right.
+
+183
+00:09:50,015 --> 00:09:52,765
+So, I'm going to do that and make sure you get the encodings again,
+
+184
+00:09:52,765 --> 00:09:57,875
+because in case you have any weird things and category or title or author,
+
+185
+00:09:57,875 --> 00:10:01,175
+any of these other features we could possibly find vocabularies of,
+
+186
+00:10:01,175 --> 00:10:06,200
+we want to be able to handle those unique characters outside the standard set.
+
+187
+00:10:06,300 --> 00:10:10,660
+All right, I'm going to call our pre-process as before except
+
+188
+00:10:10,660 --> 00:10:14,345
+now we're going to our vocabs folders since this is not our features,
+
+189
+00:10:14,345 --> 00:10:15,785
+these are our vocabularies.
+
+190
+00:10:15,785 --> 00:10:19,135
+And I'm going to call as before my BigQuery.
+
+191
+00:10:19,135 --> 00:10:24,355
+I'm going to write it up to my text file above using my function I created up here,
+
+192
+00:10:24,355 --> 00:10:27,080
+and this will create my vocabulary list.
+
+193
+00:10:27,080 --> 00:10:29,785
+And then I write it out to my text files,
+
+194
+00:10:29,785 --> 00:10:32,725
+with the associated name that gets passed in.
+
+195
+00:10:32,725 --> 00:10:37,265
+To look at how I call this vocab list I pass the index.
+
+196
+00:10:37,265 --> 00:10:40,055
+This index goes here up in the query,
+
+197
+00:10:40,055 --> 00:10:43,615
+right up here, so it replaces that index value.
+
+198
+00:10:43,615 --> 00:10:47,590
+So, that way I get the correct piece of content from this nested table.
+
+199
+00:10:47,590 --> 00:10:49,420
+Content ID is number 10,
+
+200
+00:10:49,420 --> 00:10:52,930
+category is going to be number seven and author has an index of two.
+
+201
+00:10:52,930 --> 00:10:54,880
+All right, so these are the three vocabularies I'm going to
+
+202
+00:10:54,880 --> 00:10:57,635
+generate to get each unique one.
+
+203
+00:10:57,635 --> 00:11:01,780
+Also aligning the vocabulary counts from the length of vocabularies.
+
+204
+00:11:01,780 --> 00:11:05,994
+To do this I can get to count to text, for counts,
+
+205
+00:11:05,994 --> 00:11:08,020
+that way I can count the number of unique words in
+
+206
+00:11:08,020 --> 00:11:11,695
+each vocabulary and also I might want to get some aggregates like means,
+
+207
+00:11:11,695 --> 00:11:15,205
+or medians or maxes, mins for instance.
+
+208
+00:11:15,205 --> 00:11:19,705
+So, I can create a mean to texts that write out the mean value from a query.
+
+209
+00:11:19,705 --> 00:11:23,230
+Okay, everything else is pretty much the same except now I'm putting
+
+210
+00:11:23,230 --> 00:11:27,010
+it into a vocab counts folder instead of vocabs,
+
+211
+00:11:27,010 --> 00:11:30,295
+but everything is more or less the same here.
+
+212
+00:11:30,295 --> 00:11:35,230
+I create a function called vocab count where I pass the index of the thing I
+
+213
+00:11:35,230 --> 00:11:40,075
+want to count or aggregate, and then the column name.
+
+214
+00:11:40,075 --> 00:11:42,265
+So, that way I can create that in the file name.
+
+215
+00:11:42,265 --> 00:11:44,615
+I create a query here where's the simple for
+
+216
+00:11:44,615 --> 00:11:47,920
+vocab counts is a simple count star as count number so,
+
+217
+00:11:47,920 --> 00:11:51,725
+I'm grouping by over the entire table and just counting all the rows for
+
+218
+00:11:51,725 --> 00:11:56,530
+that vocabulary that I passed in right here.
+
+219
+00:11:56,530 --> 00:12:01,595
+Okay, as before I write out to a text file vocab count where I
+
+220
+00:12:01,595 --> 00:12:06,670
+replace depending on if it's category or content ID or author I place that there.
+
+221
+00:12:06,670 --> 00:12:09,320
+Also if I want the global column mean,
+
+222
+00:12:09,320 --> 00:12:13,195
+here it's very similar except instead of doing a count star I'm doing an average,
+
+223
+00:12:13,195 --> 00:12:18,095
+where I'm casting as a float for instance if it's my mean,
+
+224
+00:12:18,095 --> 00:12:24,520
+my mean epic months I can figure that out by replacing these right here with my format.
+
+225
+00:12:24,520 --> 00:12:28,915
+Call off the beam job and does its thing,
+
+226
+00:12:28,915 --> 00:12:31,690
+down here if you want to do vocab count I'm going to call
+
+227
+00:12:31,690 --> 00:12:34,595
+that function with the index for content ID,
+
+228
+00:12:34,595 --> 00:12:37,585
+the index for category and the index for author.
+
+229
+00:12:37,585 --> 00:12:41,470
+To get the global column mean I want that for months since epic so,
+
+230
+00:12:41,470 --> 00:12:46,090
+I'm going to use this later on as my my default value in case there's a
+
+231
+00:12:46,090 --> 00:12:48,980
+null for months since epic
+
+232
+00:12:48,980 --> 00:12:52,615
+I will use this value rather than setting it to zero or something else.
+
+233
+00:12:52,615 --> 00:12:54,585
+I'll create my job,
+
+234
+00:12:54,585 --> 00:12:57,325
+run it and then I'll call all of that
+
+235
+00:12:57,325 --> 00:13:00,490
+all above my pre-process call and I'm going to do false,
+
+236
+00:13:00,490 --> 00:13:05,545
+so therefore I'm going to launch a cloud dataflow job to create the whole graph,
+
+237
+00:13:05,545 --> 00:13:08,680
+autoscale all that great stuff to build these things.
+
+238
+00:13:08,680 --> 00:13:12,655
+As you can see here, I can pull those in and look at the head of these. Here's my vocabs.
+
+239
+00:13:12,655 --> 00:13:15,250
+So, here's the top three things my vocab for author.
+
+240
+00:13:15,250 --> 00:13:17,950
+Here are the three authors names.
+
+241
+00:13:17,950 --> 00:13:21,310
+I also have it for categories,
+
+242
+00:13:21,310 --> 00:13:23,345
+so it looks like there's three categories listed here.
+
+243
+00:13:23,345 --> 00:13:25,970
+Lifestyle, stars and culture news,
+
+244
+00:13:25,970 --> 00:13:28,885
+and also three of the content IDs.
+
+245
+00:13:28,885 --> 00:13:32,170
+My counts here will tell me how many I have of each of those.
+
+246
+00:13:32,170 --> 00:13:38,675
+So, it looks like my vocabulary for authors only 1103 unique authors,
+
+247
+00:13:38,675 --> 00:13:40,210
+and category is only three.
+
+248
+00:13:40,210 --> 00:13:44,335
+So,this was apparently all of the categories in the table.
+
+249
+00:13:44,335 --> 00:13:52,490
+Content ID looks like there's 15,634 unique piece of the content in my data set.
+
+250
+00:13:52,490 --> 00:13:59,570
+Then lastly the months since epic mean it looks the average is 573.6.
+
+251
+00:13:59,570 --> 00:14:02,030
+So, we'll use this in the next notebook
+
+252
+00:14:02,030 --> 00:14:06,655
+to train our model now that we have all of our data pre-processed.
+
+253
+00:14:06,655 --> 00:14:09,275
+Moving to that notebook,
+
+254
+00:14:09,275 --> 00:14:13,235
+we're going to now do our build our model and we're going to train it.
+
+255
+00:14:13,235 --> 00:14:15,520
+We're going to train locally,
+
+256
+00:14:15,520 --> 00:14:17,650
+we're going to make a module and train it locally again to
+
+257
+00:14:17,650 --> 00:14:19,825
+check the models correct and then once that set,
+
+258
+00:14:19,825 --> 00:14:22,825
+we're going to send it off to the cloud do a small training,
+
+259
+00:14:22,825 --> 00:14:25,745
+and then we can create some hyperparameter tuning to then
+
+260
+00:14:25,745 --> 00:14:28,675
+try to find the best values for some of the things that we're going to use,
+
+261
+00:14:28,675 --> 00:14:31,315
+and then lastly now that we know the best hyperparameters,
+
+262
+00:14:31,315 --> 00:14:36,905
+we're going to plug that in and do a really big cloud job to have a good training model.
+
+263
+00:14:36,905 --> 00:14:40,755
+All right, for this since we're going to be using titles,
+
+264
+00:14:40,755 --> 00:14:41,800
+we're going to embed this.
+
+265
+00:14:41,800 --> 00:14:43,390
+So, we're going to use rather than trying to
+
+266
+00:14:43,390 --> 00:14:45,645
+learn our own embeddings or pull them in another way.
+
+267
+00:14:45,645 --> 00:14:47,415
+We're going to use TensorFlow Hub.
+
+268
+00:14:47,415 --> 00:14:50,035
+Makes it much easier just to point to
+
+269
+00:14:50,035 --> 00:14:52,585
+an embedded and we'll load it in and we can train from that.
+
+270
+00:14:52,585 --> 00:14:55,765
+Okay, so first we're going to install that and make sure you
+
+271
+00:14:55,765 --> 00:14:59,095
+have your kernel to three now because we're no longer using Apache Beam.
+
+272
+00:14:59,095 --> 00:15:01,270
+We want to use back to Python 3,
+
+273
+00:15:01,270 --> 00:15:04,370
+since that's where things are going.
+
+274
+00:15:04,370 --> 00:15:08,050
+Okay. So, make sure you save that and reset the notebook after you did the pip
+
+275
+00:15:08,050 --> 00:15:11,845
+install to make sure that it's all inside in this current environment now.
+
+276
+00:15:11,845 --> 00:15:15,490
+Import everything set your project bucket region,
+
+277
+00:15:15,490 --> 00:15:17,875
+put that into your environment variables.
+
+278
+00:15:17,875 --> 00:15:20,080
+Don't forget to import TensorFlow hub,
+
+279
+00:15:20,080 --> 00:15:21,800
+since we'll be using that.
+
+280
+00:15:21,800 --> 00:15:24,715
+Set your project and your compute region of course.
+
+281
+00:15:24,715 --> 00:15:27,190
+And now we can get to actually building our model.
+
+282
+00:15:27,190 --> 00:15:29,680
+So, the first things first we want to pull in
+
+283
+00:15:29,680 --> 00:15:32,270
+some of our global variables for counts for instance.
+
+284
+00:15:32,270 --> 00:15:36,220
+So, with that we can import a file I/O from
+
+285
+00:15:36,220 --> 00:15:43,760
+TensorFlow's library to do that we can point to our vocabulary count, files and means.
+
+286
+00:15:43,760 --> 00:15:45,970
+So, here's kind of an ID rating it in,
+
+287
+00:15:45,970 --> 00:15:50,480
+great we now have it within scope the actual number 15,000 something.
+
+288
+00:15:50,480 --> 00:15:54,290
+Same for categories, so now we have three and author.
+
+289
+00:15:54,290 --> 00:15:57,340
+We have the 1100 and here and then here's our mean.
+
+290
+00:15:57,340 --> 00:15:59,015
+Our mean months since epic.
+
+291
+00:15:59,015 --> 00:16:01,015
+It's going to be 573.
+
+292
+00:16:01,015 --> 00:16:04,720
+So, now we're going to determine our CSV and our label columns here.
+
+293
+00:16:04,720 --> 00:16:07,900
+So, we have our non-factor columns,
+
+294
+00:16:07,900 --> 00:16:11,635
+this is our non-user factors and factors from collaborative filtering.
+
+295
+00:16:11,635 --> 00:16:16,345
+This is essentially going to be our labels and our content-based features.
+
+296
+00:16:16,345 --> 00:16:20,125
+So, here's our label next content ID which we set down here as well.
+
+297
+00:16:20,125 --> 00:16:23,885
+Our visitor ID, our content ID, the category,
+
+298
+00:16:23,885 --> 00:16:27,055
+the title of the content,
+
+299
+00:16:27,055 --> 00:16:31,070
+the author of the content and the months since epic that this was interacted with.
+
+300
+00:16:31,070 --> 00:16:32,800
+That's a little bit of context.
+
+301
+00:16:32,800 --> 00:16:35,050
+We also create our factor columns here.
+
+302
+00:16:35,050 --> 00:16:37,360
+Okay, so we're going to have our user factors,
+
+303
+00:16:37,360 --> 00:16:41,655
+all 10 of them and also our 10 item factors.
+
+304
+00:16:41,655 --> 00:16:46,700
+Our CSV columns would be the combination of a non-factor and our factor columns.
+
+305
+00:16:46,700 --> 00:16:50,810
+We also need to set our default values for each CSV column in
+
+306
+00:16:50,810 --> 00:16:55,055
+case we don't have the values for them when read them in.
+
+307
+00:16:55,055 --> 00:16:56,600
+Remember it's a list of lists.
+
+308
+00:16:56,600 --> 00:16:58,655
+So, for each one of these, these are all strings.
+
+309
+00:16:58,655 --> 00:17:00,830
+So, this would be called unknown and mean months
+
+310
+00:17:00,830 --> 00:17:05,195
+since epic we're going to read in from above right here.
+
+311
+00:17:05,195 --> 00:17:08,480
+So, we'll replace it with the mean rather than with zero.
+
+312
+00:17:08,480 --> 00:17:11,180
+Our factor defaults are going to be
+
+313
+00:17:11,180 --> 00:17:13,520
+a list of lists and we're going to create a list comprehension
+
+314
+00:17:13,520 --> 00:17:19,385
+here to do a little fancy condensed way for users and for items.
+
+315
+00:17:19,385 --> 00:17:21,875
+Just like before with the actual keys,
+
+316
+00:17:21,875 --> 00:17:25,414
+we are going to concatenate the non-factor default
+
+317
+00:17:25,414 --> 00:17:30,620
+that list with this factor defaults list to get all features in there.
+
+318
+00:17:30,620 --> 00:17:34,100
+So, we have our standard CSV input function,
+
+319
+00:17:34,100 --> 00:17:36,785
+not much to go through here.
+
+320
+00:17:36,785 --> 00:17:38,780
+So, we have decoding,
+
+321
+00:17:38,780 --> 00:17:40,235
+creating our features dictionary,
+
+322
+00:17:40,235 --> 00:17:45,710
+creating our single label tensor that gets called by first getting our file names,
+
+323
+00:17:45,710 --> 00:17:51,980
+creating a data set that we're then going to map our decode CSV function onto.
+
+324
+00:17:51,980 --> 00:17:53,750
+If the mode is training,
+
+325
+00:17:53,750 --> 00:17:56,330
+you're going to have an indefinite number of epics.
+
+326
+00:17:56,330 --> 00:18:00,020
+We're going to actually use our train steps to determine
+
+327
+00:18:00,020 --> 00:18:03,830
+how many times we train rather than how often we read and of
+
+328
+00:18:03,830 --> 00:18:07,220
+course we want to do a shuffle so that way things are nicely split and we won't end up in
+
+329
+00:18:07,220 --> 00:18:11,810
+any strange area parameter space over tuned in that respect.
+
+330
+00:18:11,810 --> 00:18:15,635
+Elsewhere, and at one epic and no shuffle if we're doing evaluation.
+
+331
+00:18:15,635 --> 00:18:17,720
+We're going to repeat and we're going to batch it up,
+
+332
+00:18:17,720 --> 00:18:19,025
+so that way we can return,
+
+333
+00:18:19,025 --> 00:18:20,675
+and then return our input function.
+
+334
+00:18:20,675 --> 00:18:23,270
+So, here are some new stuff we're going to create
+
+335
+00:18:23,270 --> 00:18:27,515
+our feature columns using our read and features from our input functions.
+
+336
+00:18:27,515 --> 00:18:31,550
+So, we're going to create our column ID or content item ID column here.
+
+337
+00:18:31,550 --> 00:18:33,650
+It's going to be categorical with a hash bucket.
+
+338
+00:18:33,650 --> 00:18:37,130
+Just in case there's any new content IDs that might come about,
+
+339
+00:18:37,130 --> 00:18:38,855
+we want to be able to have some room for there.
+
+340
+00:18:38,855 --> 00:18:41,150
+So, we're going to increase that size.
+
+341
+00:18:41,150 --> 00:18:42,905
+We also might want to embed this.
+
+342
+00:18:42,905 --> 00:18:44,585
+So, remember this is a deep neural network.
+
+343
+00:18:44,585 --> 00:18:47,120
+So, we need to make sure we have dense columns here.
+
+344
+00:18:47,120 --> 00:18:48,965
+We cannot have sparse columns going through there.
+
+345
+00:18:48,965 --> 00:18:50,745
+Not only is it not allow but,
+
+346
+00:18:50,745 --> 00:18:52,735
+too many zeros could end up killing our network
+
+347
+00:18:52,735 --> 00:18:55,060
+since there would be too many zero activations and therefore
+
+348
+00:18:55,060 --> 00:18:57,490
+the gradients would also becomes zero and
+
+349
+00:18:57,490 --> 00:19:00,225
+therefore our model will just not train and that's not good.
+
+350
+00:19:00,225 --> 00:19:02,540
+So, we're going to embed it. We're going to pass in
+
+351
+00:19:02,540 --> 00:19:05,825
+our category column here and we're going to give it the dimensions,
+
+352
+00:19:05,825 --> 00:19:11,030
+basically how many dimensions we have that we want to set a command line.
+
+353
+00:19:11,030 --> 00:19:14,480
+We're going also create our category feature column here.
+
+354
+00:19:14,480 --> 00:19:18,320
+It's going to be categorical. It's going to use our vocabulary file from before.
+
+355
+00:19:18,320 --> 00:19:21,710
+So, it's going to read in the full vocabulary and we're going to have
+
+356
+00:19:21,710 --> 00:19:25,205
+an auto-vocabulary bucket here just in case new vocabulary come along,
+
+357
+00:19:25,205 --> 00:19:27,335
+they can end up in that bucket.
+
+358
+00:19:27,335 --> 00:19:30,230
+We have to convert it once again into a dense column.
+
+359
+00:19:30,230 --> 00:19:32,195
+So that's what we're going to do with the indicator column here.
+
+360
+00:19:32,195 --> 00:19:34,430
+So, it's going to pass the categorical we created
+
+361
+00:19:34,430 --> 00:19:38,165
+and call indicator to create our indicator column.
+
+362
+00:19:38,165 --> 00:19:40,565
+Next feature is title.
+
+363
+00:19:40,565 --> 00:19:42,485
+So, title's going to be using TF hub.
+
+364
+00:19:42,485 --> 00:19:44,690
+So, we're going to call TF hub.
+
+365
+00:19:44,690 --> 00:19:46,310
+It could be a text embedding column here.
+
+366
+00:19:46,310 --> 00:19:49,085
+We're trying to embed the title text.
+
+367
+00:19:49,085 --> 00:19:51,110
+The key is going to tireless,
+
+368
+00:19:51,110 --> 00:19:52,790
+our raw data key,
+
+369
+00:19:52,790 --> 00:19:54,275
+the module spec here,
+
+370
+00:19:54,275 --> 00:19:56,450
+I'm pulling in this model here it's going to be
+
+371
+00:19:56,450 --> 00:19:59,270
+using German because this are German titles.
+
+372
+00:19:59,270 --> 00:20:05,345
+Otherwise it'd be EN for English or other things ES for Spanish such stuff.
+
+373
+00:20:05,345 --> 00:20:07,460
+Used to be a 50-dimensional embeddings,
+
+374
+00:20:07,460 --> 00:20:09,905
+there's also 128 dimensional one.
+
+375
+00:20:09,905 --> 00:20:11,900
+Don't want to go too big, you might over fit but
+
+376
+00:20:11,900 --> 00:20:13,760
+don't go too small because it might be under fit.
+
+377
+00:20:13,760 --> 00:20:15,575
+Say to find what works best for you.
+
+378
+00:20:15,575 --> 00:20:20,630
+I'm going to have with normalization here to try to get better training.
+
+379
+00:20:20,630 --> 00:20:22,610
+We're going to set this to false trainable so that way
+
+380
+00:20:22,610 --> 00:20:24,560
+these will be fixed and we're going to use
+
+381
+00:20:24,560 --> 00:20:26,330
+these embeddings to convert our titles into
+
+382
+00:20:26,330 --> 00:20:29,375
+numbers rather than trying to fine tune these at all.
+
+383
+00:20:29,375 --> 00:20:31,565
+But if you wanted to and enough data,
+
+384
+00:20:31,565 --> 00:20:34,850
+you can set this to true to try to get some better results.
+
+385
+00:20:34,850 --> 00:20:36,770
+We're going to take our author columns,
+
+386
+00:20:36,770 --> 00:20:40,880
+it's going to be category column with a hash bucket and you use a author as our key from
+
+387
+00:20:40,880 --> 00:20:42,890
+our row and our number of authors and we're
+
+388
+00:20:42,890 --> 00:20:45,185
+going to add one and hearing case author is none,
+
+389
+00:20:45,185 --> 00:20:47,555
+in case we had a missing author.
+
+390
+00:20:47,555 --> 00:20:49,520
+But remember that's categorical,
+
+391
+00:20:49,520 --> 00:20:51,230
+so we need to embed it into
+
+392
+00:20:51,230 --> 00:20:56,135
+a lower dimensional representation that's specifically dense that can go into a DNA.
+
+393
+00:20:56,135 --> 00:20:59,000
+We're going to do that using embedding column here with a number of
+
+394
+00:20:59,000 --> 00:21:02,645
+author embedding dimensions that you create at command line.
+
+395
+00:21:02,645 --> 00:21:06,785
+We're also going to create some boundaries for a month since epic boundaries.
+
+396
+00:21:06,785 --> 00:21:08,855
+So, we're going to go 400 as our min,
+
+397
+00:21:08,855 --> 00:21:12,725
+700 as our max and we're going to move in steps of 20 for our buckets.
+
+398
+00:21:12,725 --> 00:21:14,660
+So, we're going to pull it in raw.
+
+399
+00:21:14,660 --> 00:21:15,920
+It's going to be numeric column.
+
+400
+00:21:15,920 --> 00:21:18,485
+It's a float so we're going to use numeric column.
+
+401
+00:21:18,485 --> 00:21:22,685
+But we're going to bucketize that using our boundaries that we created.
+
+402
+00:21:22,685 --> 00:21:25,400
+So, here's our source feature column
+
+403
+00:21:25,400 --> 00:21:28,865
+now and here's our boundaries you created using that list.
+
+404
+00:21:28,865 --> 00:21:31,460
+We also might want to cross some of these.
+
+405
+00:21:31,460 --> 00:21:35,510
+So, we want to across our category column with our bucketize months because perhaps
+
+406
+00:21:35,510 --> 00:21:38,270
+certain categories were more used during
+
+407
+00:21:38,270 --> 00:21:41,630
+certain months because certain things were happening in the news.
+
+408
+00:21:41,630 --> 00:21:43,805
+So, it might be a useful feature.
+
+409
+00:21:43,805 --> 00:21:47,315
+So, we'll use a cross column on these two categorical features.
+
+410
+00:21:47,315 --> 00:21:51,590
+They both have to be sparse and we're going to have a hash bucket size of the number
+
+411
+00:21:51,590 --> 00:21:54,710
+of boundaries possible with
+
+412
+00:21:54,710 --> 00:21:58,115
+a number of categories plus one in case there's any out of vocabulary.
+
+413
+00:21:58,115 --> 00:22:00,635
+But remember, this right here is sparse,
+
+414
+00:22:00,635 --> 00:22:03,485
+so we have to create a dense layer.
+
+415
+00:22:03,485 --> 00:22:05,690
+So, we're going to use an indicator column to
+
+416
+00:22:05,690 --> 00:22:08,375
+basically create dense out of this crossing.
+
+417
+00:22:08,375 --> 00:22:11,870
+Last but not least, we can't forget about our train
+
+418
+00:22:11,870 --> 00:22:15,335
+walls model that created our user and item embeddings.
+
+419
+00:22:15,335 --> 00:22:17,030
+So, we're going to read this ionist as numeric columns,
+
+420
+00:22:17,030 --> 00:22:20,705
+we're going to use them as floats and that's as much as to it.
+
+421
+00:22:20,705 --> 00:22:23,600
+Finally we're going to create our total feature column lists,
+
+422
+00:22:23,600 --> 00:22:27,245
+all these features combine together as well as our user
+
+423
+00:22:27,245 --> 00:22:32,370
+items factors and our item factors and we'll return that from a function.
+
+424
+00:22:32,710 --> 00:22:36,875
+Now that we have that, we're going to create our model function.
+
+425
+00:22:36,875 --> 00:22:39,665
+So, from here the to do that you're supposed to have done,
+
+426
+00:22:39,665 --> 00:22:42,305
+you need to create an input layer to your neural network,
+
+427
+00:22:42,305 --> 00:22:47,810
+create hidden layers of your neural network and also create your output layer of
+
+428
+00:22:47,810 --> 00:22:50,840
+your neural network all using the correct things and
+
+429
+00:22:50,840 --> 00:22:54,320
+linking to our labels correctly which will be next Content ID.
+
+430
+00:22:54,320 --> 00:22:57,980
+To do that simply would pass in as a parameter here.
+
+431
+00:22:57,980 --> 00:23:02,675
+Remember in custom estimators you want to use the parameters as essentially your window,
+
+432
+00:23:02,675 --> 00:23:04,940
+your portal into the model function.
+
+433
+00:23:04,940 --> 00:23:08,630
+So, it's a dictionary so I can pass in many things.
+
+434
+00:23:08,630 --> 00:23:11,705
+So, for instance feature columns that we created above,
+
+435
+00:23:11,705 --> 00:23:15,140
+I'll pass in and I'll use that in my input layer.
+
+436
+00:23:15,140 --> 00:23:20,120
+These were my features. To create my hidden units,
+
+437
+00:23:20,120 --> 00:23:23,420
+I'm going to loop through the hidden units that are passed by
+
+438
+00:23:23,420 --> 00:23:27,050
+command line and create a loop and don't worry about renaming,
+
+439
+00:23:27,050 --> 00:23:29,330
+these will automatically orienting themselves to net zero,
+
+440
+00:23:29,330 --> 00:23:30,845
+net one, net two.
+
+441
+00:23:30,845 --> 00:23:34,745
+So that way we don't have to worry about any collisions here.
+
+442
+00:23:34,745 --> 00:23:37,940
+It'll pull the units out of the list that I've provided and of
+
+443
+00:23:37,940 --> 00:23:41,240
+course we want non linearity so user Rilu.
+
+444
+00:23:41,240 --> 00:23:45,770
+Use other things if you want incase you're having problems like you lose et cetera.
+
+445
+00:23:45,770 --> 00:23:50,435
+Lastly, our final layer is going to be the dense layer.
+
+446
+00:23:50,435 --> 00:23:54,470
+Where we are going to take the final hidden layer as our input.
+
+447
+00:23:54,470 --> 00:24:00,395
+The number of classes since we're trying to predict which next content you should read.
+
+448
+00:24:00,395 --> 00:24:03,965
+So, it's really the number of pieces of content from that vocabulary
+
+449
+00:24:03,965 --> 00:24:07,520
+and we'd have no activation here because there are all logits.
+
+450
+00:24:07,520 --> 00:24:09,215
+We'll get to predictions in a moment.
+
+451
+00:24:09,215 --> 00:24:11,300
+Now that we have our logits,
+
+452
+00:24:11,300 --> 00:24:15,890
+were going to find the predicted class indices based on the highest logit which you
+
+453
+00:24:15,890 --> 00:24:20,375
+can think of if I squash it down with a Sigmoid or softmax,
+
+454
+00:24:20,375 --> 00:24:23,585
+it's going to be the same value regardless if I use logics or not.
+
+455
+00:24:23,585 --> 00:24:29,420
+So, I find the arg max of my longits along the final access.
+
+456
+00:24:29,420 --> 00:24:31,070
+We don't want to X equals zero because that's going to be
+
+457
+00:24:31,070 --> 00:24:33,770
+batch size and we don't want to choose that.
+
+458
+00:24:33,770 --> 00:24:38,520
+So, this will find us our predicted classes for each example in the batch.
+
+459
+00:24:38,560 --> 00:24:45,455
+Then we are going to read in our content ID vocab to get our content ID names.
+
+460
+00:24:45,455 --> 00:24:49,070
+We're going to gather the names with indices.
+
+461
+00:24:49,070 --> 00:24:52,475
+So, this TFI gather using the parameters of the column ID names,
+
+462
+00:24:52,475 --> 00:24:57,350
+we're essentially just creating a mapping from predicted class index to the name.
+
+463
+00:24:57,350 --> 00:25:00,650
+Therefore, we can return the names which might be more useful to
+
+464
+00:25:00,650 --> 00:25:05,280
+a user rather than some random enumerated content ID.
+
+465
+00:25:05,280 --> 00:25:08,015
+Okay. If in prediction mode,
+
+466
+00:25:08,015 --> 00:25:12,700
+we're going to create a predictions dictionary returning the class IDs, the class names,
+
+467
+00:25:12,700 --> 00:25:14,740
+the probabilities which come from a softmax,
+
+468
+00:25:14,740 --> 00:25:16,465
+that way they're normalized probabilities,
+
+469
+00:25:16,465 --> 00:25:20,365
+so the sum of them all should equal one, and the logits.
+
+470
+00:25:20,365 --> 00:25:25,360
+From there, we create also expert outputs so that way in case we want to
+
+471
+00:25:25,360 --> 00:25:28,180
+actually create an exporter and
+
+472
+00:25:28,180 --> 00:25:31,475
+a certain input function to send it out which we will be doing soon,
+
+473
+00:25:31,475 --> 00:25:34,180
+we can actually serve predictions
+
+474
+00:25:34,180 --> 00:25:36,790
+to those model and have predictions get passed back to us.
+
+475
+00:25:36,790 --> 00:25:39,515
+All right, if we're all done with predictions,
+
+476
+00:25:39,515 --> 00:25:43,720
+we can return the estimator spec with the current mode which to be predict,
+
+477
+00:25:43,720 --> 00:25:47,215
+the dictionary we created here for predictions, there should be no loss,
+
+478
+00:25:47,215 --> 00:25:48,835
+no training, no eval,
+
+479
+00:25:48,835 --> 00:25:51,475
+remember this a prediction mode here, okay.
+
+480
+00:25:51,475 --> 00:25:54,595
+Then our export outputs. All right.
+
+481
+00:25:54,595 --> 00:25:56,500
+So that was an early return,
+
+482
+00:25:56,500 --> 00:25:58,285
+if you have survived this far,
+
+483
+00:25:58,285 --> 00:25:59,800
+you are not in prediction mode,
+
+484
+00:25:59,800 --> 00:26:01,569
+you're either training or evaluation.
+
+485
+00:26:01,569 --> 00:26:03,235
+So let's see what we do from here.
+
+486
+00:26:03,235 --> 00:26:05,435
+So, we're going to create a lookup table using
+
+487
+00:26:05,435 --> 00:26:08,165
+our content ID vocabulary that we pulled in from before.
+
+488
+00:26:08,165 --> 00:26:11,990
+Okay, so we're first going to pull in our content ID vocabulary
+
+489
+00:26:11,990 --> 00:26:16,090
+and create our vocabulary file to be used in our index table.
+
+490
+00:26:16,090 --> 00:26:19,480
+Okay, from here, we can quickly look up the mapping
+
+491
+00:26:19,480 --> 00:26:23,980
+between the indices and the actual names of the content,
+
+492
+00:26:23,980 --> 00:26:26,885
+the content ID which is that long integer.
+
+493
+00:26:26,885 --> 00:26:34,390
+Okay. To do that we use table.lookup and the keys are going to be our labels. All right?
+
+494
+00:26:34,390 --> 00:26:36,790
+So, now we're going to compute the loss on
+
+495
+00:26:36,790 --> 00:26:40,480
+this using the sparse softmax cross entropy since this it's
+
+496
+00:26:40,480 --> 00:26:43,270
+classification and our labels which are
+
+497
+00:26:43,270 --> 00:26:47,320
+the content ID indices and our probabilities are mutually exclusive.
+
+498
+00:26:47,320 --> 00:26:48,640
+So now that we have this,
+
+499
+00:26:48,640 --> 00:26:52,480
+we can use sparse softmax cross entropy because we
+
+500
+00:26:52,480 --> 00:26:56,560
+are going to choose our labels which is going to be mutually exclusive,
+
+501
+00:26:56,560 --> 00:27:00,820
+so it has to be either I read this content or I read this one.
+
+502
+00:27:00,820 --> 00:27:02,845
+You couldn't have read a mix of the two,
+
+503
+00:27:02,845 --> 00:27:05,320
+so that's why we can use sparse here because this label is
+
+504
+00:27:05,320 --> 00:27:10,070
+just an index of the ID which came from our table lookup here.
+
+505
+00:27:10,070 --> 00:27:13,600
+All right, we're going to create some accuracy metrics here,
+
+506
+00:27:13,600 --> 00:27:16,085
+accuracy and also the top k accuracy so
+
+507
+00:27:16,085 --> 00:27:19,090
+that way we can see how accurate the top 10 predictions were,
+
+508
+00:27:19,090 --> 00:27:22,060
+some email metrics, some scalars, right?
+
+509
+00:27:22,060 --> 00:27:23,160
+This a custom estimator,
+
+510
+00:27:23,160 --> 00:27:25,455
+so if you want to be able to see those things in tensor board,
+
+511
+00:27:25,455 --> 00:27:27,880
+you can always look at custom scalars, so we'll write these out.
+
+512
+00:27:27,880 --> 00:27:31,280
+All right, and if we're in evaluation mode,
+
+513
+00:27:31,280 --> 00:27:34,180
+we're going to write out an estimator spec with the mode,
+
+514
+00:27:34,180 --> 00:27:37,595
+no predictions, a loss, no train,
+
+515
+00:27:37,595 --> 00:27:39,175
+this is evaluation mode,
+
+516
+00:27:39,175 --> 00:27:42,010
+the eval metrics and no exports in this case.
+
+517
+00:27:42,010 --> 00:27:43,795
+That's another early return.
+
+518
+00:27:43,795 --> 00:27:47,045
+So, if you're still with me at this point,
+
+519
+00:27:47,045 --> 00:27:50,380
+we're now going to be doing training because that's all that's left,
+
+520
+00:27:50,380 --> 00:27:52,180
+we've already filtered out the prediction mode
+
+521
+00:27:52,180 --> 00:27:54,580
+and the eval modes, now were in training mode.
+
+522
+00:27:54,580 --> 00:27:57,120
+So just to make sure we're going to have an assert here to make sure
+
+523
+00:27:57,120 --> 00:27:59,410
+we're in training mode before we do any changing,
+
+524
+00:27:59,410 --> 00:28:02,345
+so we don't want to change accidentally the weights that we've
+
+525
+00:28:02,345 --> 00:28:06,425
+trained of our neural network by accident by being in the wrong mode.
+
+526
+00:28:06,425 --> 00:28:09,160
+So, we're going to create an optimizer here.
+
+527
+00:28:09,160 --> 00:28:11,720
+Deep neural networks are at a ground works great,
+
+528
+00:28:11,720 --> 00:28:16,340
+you try Adam or other things and we'll pass it our learning rate.
+
+529
+00:28:16,340 --> 00:28:19,720
+Finally, now that we have our train up created,
+
+530
+00:28:19,720 --> 00:28:23,350
+we're going to minimize our loss that we said above and set our global step.
+
+531
+00:28:23,350 --> 00:28:26,890
+We're going to return the training estimator spec or a pass mode,
+
+532
+00:28:26,890 --> 00:28:29,805
+no predictions, the loss, train op.
+
+533
+00:28:29,805 --> 00:28:34,130
+Since we're in training, there's no eval metrics and there is no export outputs.
+
+534
+00:28:34,130 --> 00:28:37,060
+There we are, that's our custom model function.
+
+535
+00:28:37,060 --> 00:28:42,175
+Now, if we do want to be able to serve for those model on Cloud ML Engine,
+
+536
+00:28:42,175 --> 00:28:45,235
+we're going to need a serving input function then we can put in our exporter.
+
+537
+00:28:45,235 --> 00:28:48,940
+To do that, we're going to have our feature placeholders, okay,
+
+538
+00:28:48,940 --> 00:28:52,955
+using our column name and strings and we're going to go through our non-factor columns.
+
+539
+00:28:52,955 --> 00:28:57,265
+Remember, we're going to skip the zeroeth index here because that's our label,
+
+540
+00:28:57,265 --> 00:28:58,550
+our next content ID,
+
+541
+00:28:58,550 --> 00:28:59,930
+and at prediction time,
+
+542
+00:28:59,930 --> 00:29:02,365
+you shouldn't have that because that's the whole point of predicting,
+
+543
+00:29:02,365 --> 00:29:04,420
+we're trying to predict what that value is.
+
+544
+00:29:04,420 --> 00:29:06,995
+We go to a negative one here because we're not going to
+
+545
+00:29:06,995 --> 00:29:12,220
+include the months since epoch because that's a float, not a string.
+
+546
+00:29:12,220 --> 00:29:15,150
+To add that in, we're going to create a new key called months
+
+547
+00:29:15,150 --> 00:29:17,585
+since epoch and that one will be a float and that
+
+548
+00:29:17,585 --> 00:29:22,720
+will finish off our feature placeholders for our non-factor columns.
+
+549
+00:29:22,720 --> 00:29:25,355
+For our factor columns, they're all floats,
+
+550
+00:29:25,355 --> 00:29:29,230
+so we're going to have a simple list to add those columns,
+
+551
+00:29:29,230 --> 00:29:32,005
+those features to our feature placeholder dictionary.
+
+552
+00:29:32,005 --> 00:29:36,250
+For the actual features, we want to expand dims so that way rather than being scalars,
+
+553
+00:29:36,250 --> 00:29:38,350
+they are going to be now vectors.
+
+554
+00:29:38,350 --> 00:29:40,120
+If you were to print out the shape here,
+
+555
+00:29:40,120 --> 00:29:41,680
+I'd be question mark,
+
+556
+00:29:41,680 --> 00:29:44,440
+comma, so they're vectors of that size.
+
+557
+00:29:44,440 --> 00:29:48,740
+We're going to return our input receiver and we're done with our serving input function.
+
+558
+00:29:48,740 --> 00:29:50,910
+Now that all the pieces are assembled,
+
+559
+00:29:50,910 --> 00:29:53,665
+let's create and run our train and evaluate loop.
+
+560
+00:29:53,665 --> 00:29:57,360
+To do that, let's set our login verbosity to
+
+561
+00:29:57,360 --> 00:30:01,410
+info so we can see some interesting things printed out as it trains.
+
+562
+00:30:01,410 --> 00:30:05,305
+We're going to have your train and evaluate, where we had the number,
+
+563
+00:30:05,305 --> 00:30:08,480
+the argument dictionary coming in here which gets passed from
+
+564
+00:30:08,480 --> 00:30:13,295
+our task.py file from command line.
+
+565
+00:30:13,295 --> 00:30:15,360
+We're going to create our estimator here,
+
+566
+00:30:15,360 --> 00:30:18,040
+it is going to be a custom estimator, so estimator.Estimator.
+
+567
+00:30:18,040 --> 00:30:19,830
+There are customer model function,
+
+568
+00:30:19,830 --> 00:30:23,940
+our output directory is going to be passed
+
+569
+00:30:23,940 --> 00:30:28,240
+here and then our parameters are going to be passed through that window,
+
+570
+00:30:28,240 --> 00:30:29,485
+that portal that we created,
+
+571
+00:30:29,485 --> 00:30:31,810
+feature columns, hidden units,
+
+572
+00:30:31,810 --> 00:30:34,495
+number of classes which will be the number of content IDs,
+
+573
+00:30:34,495 --> 00:30:36,830
+learning rate, the top k,
+
+574
+00:30:36,830 --> 00:30:38,390
+and then the bucket.
+
+575
+00:30:38,390 --> 00:30:41,650
+Okay, that's going to be our Google Cloud storage bucket.
+
+576
+00:30:41,650 --> 00:30:44,470
+All right, we also create our training spec,
+
+577
+00:30:44,470 --> 00:30:47,140
+right here, press in our training input function.
+
+578
+00:30:47,140 --> 00:30:49,195
+So therefore we're going to have our train data pass,
+
+579
+00:30:49,195 --> 00:30:51,520
+the train key, okay,
+
+580
+00:30:51,520 --> 00:30:54,555
+and then our max number of steps which will also come from the command line.
+
+581
+00:30:54,555 --> 00:30:57,880
+Our eval specs are going to be using our eval input function,
+
+582
+00:30:57,880 --> 00:31:00,070
+so make sure you have your eval data paths here.
+
+583
+00:31:00,070 --> 00:31:01,745
+And I have no eval steps,
+
+584
+00:31:01,745 --> 00:31:04,085
+so it will just do the entire file.
+
+585
+00:31:04,085 --> 00:31:06,530
+Since number of epochs was sent to one,
+
+586
+00:31:06,530 --> 00:31:08,410
+we're going to have these pulled in from
+
+587
+00:31:08,410 --> 00:31:14,355
+our command line and our exporter is going to be here.
+
+588
+00:31:14,355 --> 00:31:17,185
+Okay, so it's about our latest exports or every time I make a check point,
+
+589
+00:31:17,185 --> 00:31:19,265
+we're going to export a saved model.
+
+590
+00:31:19,265 --> 00:31:22,535
+There we go, we call our train and evaluate loop using our estimator,
+
+591
+00:31:22,535 --> 00:31:25,205
+our train spec our eval spec as usual.
+
+592
+00:31:25,205 --> 00:31:30,125
+Great. Now we can run the train and evaluate function.
+
+593
+00:31:30,125 --> 00:31:32,110
+So, we're going to first set
+
+594
+00:31:32,110 --> 00:31:34,630
+our output directory where you want to train it locally and we are going to
+
+595
+00:31:34,630 --> 00:31:37,295
+remove that file tree so that way we don't have
+
+596
+00:31:37,295 --> 00:31:41,380
+any collisions or any problems and I'm going to create my arguments dictionary.
+
+597
+00:31:41,380 --> 00:31:43,900
+So enormous would come in from our tasks.py from
+
+598
+00:31:43,900 --> 00:31:47,330
+command line but in this case we're doing it locally before the module.
+
+599
+00:31:47,330 --> 00:31:50,755
+So we're just going to create this so it's nice and all collected together,
+
+600
+00:31:50,755 --> 00:31:53,515
+and we're going to call our function and it will train.
+
+601
+00:31:53,515 --> 00:31:55,525
+Now that that has worked,
+
+602
+00:31:55,525 --> 00:31:57,895
+you can run the module locally.
+
+603
+00:31:57,895 --> 00:31:59,710
+So in red are our requirements,
+
+604
+00:31:59,710 --> 00:32:02,440
+we want to make sure that TensorFlow hub is installed.
+
+605
+00:32:02,440 --> 00:32:06,120
+Otherwise we're getting an error when it tries using it and then we're going to call
+
+606
+00:32:06,120 --> 00:32:10,210
+our module here our task.py and our model.py.
+
+607
+00:32:10,210 --> 00:32:12,855
+Okay, so I'm going to point to our module,
+
+608
+00:32:12,855 --> 00:32:17,500
+our folder and I'm going to point to our preProcess features for training and
+
+609
+00:32:17,500 --> 00:32:23,875
+evaluation and set all of our hyperparameters as we had above in addition.
+
+610
+00:32:23,875 --> 00:32:26,305
+Once that has worked and you got no errors,
+
+611
+00:32:26,305 --> 00:32:28,030
+now you can take full advantage or run on
+
+612
+00:32:28,030 --> 00:32:31,255
+Google Cloud ML Engine to get the full power of cloud,
+
+613
+00:32:31,255 --> 00:32:33,410
+scale out as many workers as you want.
+
+614
+00:32:33,410 --> 00:32:36,250
+As before, we're going to call an output directory,
+
+615
+00:32:36,250 --> 00:32:37,840
+it can be our small trained model here,
+
+616
+00:32:37,840 --> 00:32:39,445
+so we will do a bigger one later.
+
+617
+00:32:39,445 --> 00:32:41,620
+We're going to make sure you start off fresh.
+
+618
+00:32:41,620 --> 00:32:43,810
+I'm going to submit a cloud training job.
+
+619
+00:32:43,810 --> 00:32:46,750
+We're going to have our region, our module name where
+
+620
+00:32:46,750 --> 00:32:49,465
+our module save that so can branch to cloud,
+
+621
+00:32:49,465 --> 00:32:52,745
+the package path where our scale tier.
+
+622
+00:32:52,745 --> 00:32:54,910
+So how big do you want to make this?
+
+623
+00:32:54,910 --> 00:32:59,735
+And then the current TF version and then all of our normal hyperparameters as before.
+
+624
+00:32:59,735 --> 00:33:02,659
+So, if you want to add some hyperparameter tuning,
+
+625
+00:33:02,659 --> 00:33:04,510
+you can write a yaml file.
+
+626
+00:33:04,510 --> 00:33:10,265
+So for instance, I might want to maximize my accuracy for instance here,
+
+627
+00:33:10,265 --> 00:33:15,010
+you can change the number of trials and parallel trials and
+
+628
+00:33:15,010 --> 00:33:19,675
+the parameters here for instance batch size or might do a linear scale here for instance.
+
+629
+00:33:19,675 --> 00:33:22,830
+Maybe my learning rate is every floats doubles.
+
+630
+00:33:22,830 --> 00:33:25,060
+So I have a linear scale, categorical,
+
+631
+00:33:25,060 --> 00:33:27,290
+I want to try different sets,
+
+632
+00:33:27,290 --> 00:33:32,865
+different permutations of hidden units for my DNN portion of the model.
+
+633
+00:33:32,865 --> 00:33:37,560
+Likewise with my content ID embedding dimensions and author embedding dimensions.
+
+634
+00:33:37,560 --> 00:33:40,180
+You might have thought, oh, maybe perhaps 10 was
+
+635
+00:33:40,180 --> 00:33:43,115
+a great idea but maybe actually it was 17.
+
+636
+00:33:43,115 --> 00:33:46,765
+So therefore by using Cloud ML Engine with a hyperparameter training,
+
+637
+00:33:46,765 --> 00:33:51,115
+we can actually find the much better values for that. Now, okay.
+
+638
+00:33:51,115 --> 00:33:54,680
+Moving on, you call off your hyperparameter tuning job.
+
+639
+00:33:54,680 --> 00:33:58,810
+Don't forget to include your hyperparameter yaml that we have here,
+
+640
+00:33:58,810 --> 00:34:03,760
+okay, and it will reset all those values and be able to figure out the best ones.
+
+641
+00:34:03,760 --> 00:34:05,905
+Now that you know your best hyperparameters,
+
+642
+00:34:05,905 --> 00:34:08,740
+now we can run the big trained model
+
+643
+00:34:08,740 --> 00:34:11,920
+and that will run our module and pull it in and usually you want to
+
+644
+00:34:11,920 --> 00:34:18,890
+use a bigger number of steps using the best hyperparameters that were found before.
+
+645
+00:34:19,380 --> 00:34:22,125
+That is pretty much it.
+
+646
+00:34:22,125 --> 00:34:27,000
+That is how you will do a hybrid recommendation system using
+
+647
+00:34:27,000 --> 00:34:32,985
+content-based and collaborative filtering embeddings that we've been trained using walls,
+
+648
+00:34:32,985 --> 00:34:37,720
+and put it all together you get even a more powerful model that each one separately.

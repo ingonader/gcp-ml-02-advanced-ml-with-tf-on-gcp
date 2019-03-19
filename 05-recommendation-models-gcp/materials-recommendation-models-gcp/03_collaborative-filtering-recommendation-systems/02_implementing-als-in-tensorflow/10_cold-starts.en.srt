@@ -1,0 +1,479 @@
+1
+00:00:00,000 --> 00:00:03,255
+So, now that we've learned a lot of details of collaborative filtering,
+
+2
+00:00:03,255 --> 00:00:04,950
+it sure seems powerful.
+
+3
+00:00:04,950 --> 00:00:07,830
+However, it is not without its drawbacks.
+
+4
+00:00:07,830 --> 00:00:11,325
+It's great that no domain knowledge, is really required.
+
+5
+00:00:11,325 --> 00:00:13,850
+We are just using the explicit or implicit feedback
+
+6
+00:00:13,850 --> 00:00:16,530
+of the interactions between users and items.
+
+7
+00:00:16,530 --> 00:00:18,150
+There's also serendipity.
+
+8
+00:00:18,150 --> 00:00:20,190
+Imagine that you are on a movie site,
+
+9
+00:00:20,190 --> 00:00:22,170
+and only watch Sci-Fi movies,
+
+10
+00:00:22,170 --> 00:00:23,715
+because you like them.
+
+11
+00:00:23,715 --> 00:00:26,135
+Instead of always recommending Sci-Fi movies do you,
+
+12
+00:00:26,135 --> 00:00:27,875
+which might get a bit repetitive,
+
+13
+00:00:27,875 --> 00:00:32,210
+by looking at what other users who watch Sci-Fi also watch,
+
+14
+00:00:32,210 --> 00:00:35,600
+the site might recommend a couple of fantasy movies or maybe some action movies,
+
+15
+00:00:35,600 --> 00:00:38,995
+because those other users also like those types of movies.
+
+16
+00:00:38,995 --> 00:00:41,870
+Collaborative filtering is also a great starting point,
+
+17
+00:00:41,870 --> 00:00:44,300
+to get a baseline model and then iterate,
+
+18
+00:00:44,300 --> 00:00:48,865
+add more interaction types and move on to hybrid recommendation systems.
+
+19
+00:00:48,865 --> 00:00:52,155
+However, collaborative filtering can have a problem,
+
+20
+00:00:52,155 --> 00:00:56,360
+when recommending items to new users or recommending users to brand new items.
+
+21
+00:00:56,360 --> 00:00:58,375
+This is the cold start problem.
+
+22
+00:00:58,375 --> 00:01:00,620
+If there is an interaction data through
+
+23
+00:01:00,620 --> 00:01:03,530
+other users with that item or other items with that user,
+
+24
+00:01:03,530 --> 00:01:06,065
+is hard to make similarity measures between them.
+
+25
+00:01:06,065 --> 00:01:11,045
+Also, basic collaborative filtering only uses interaction data to find latent factors,
+
+26
+00:01:11,045 --> 00:01:12,485
+for users and items within it,
+
+27
+00:01:12,485 --> 00:01:15,665
+that we can use to make recommendations based on similarity.
+
+28
+00:01:15,665 --> 00:01:19,355
+However, we are not able to add contextual features,
+
+29
+00:01:19,355 --> 00:01:23,140
+that we might know are important or at our expert knowledge.
+
+30
+00:01:23,140 --> 00:01:26,075
+This would lead us to need hybrid recommendation systems,
+
+31
+00:01:26,075 --> 00:01:27,800
+that use all three.
+
+32
+00:01:27,800 --> 00:01:29,630
+The cold-start problem, users,
+
+33
+00:01:29,630 --> 00:01:33,005
+or items with a low number of or no interactions,
+
+34
+00:01:33,005 --> 00:01:35,035
+is a major drawback of collaborative filtering.
+
+35
+00:01:35,035 --> 00:01:38,720
+To fix this, we can do a hybrid of content-based and collaborative filtering,
+
+36
+00:01:38,720 --> 00:01:40,430
+depending on statistics for the data,
+
+37
+00:01:40,430 --> 00:01:42,205
+as seen in this flowchart.
+
+38
+00:01:42,205 --> 00:01:46,610
+For instance, if the total number of user ratings is less than or equal to 100,
+
+39
+00:01:46,610 --> 00:01:48,260
+we don't have enough interaction data to
+
+40
+00:01:48,260 --> 00:01:50,225
+make good collaborative filtering recommendations.
+
+41
+00:01:50,225 --> 00:01:52,850
+So, we will use content-based recommendations
+
+42
+00:01:52,850 --> 00:01:55,765
+using data about the items that we hopefully do have.
+
+43
+00:01:55,765 --> 00:01:58,130
+If there are enough tot user ratings,
+
+44
+00:01:58,130 --> 00:01:59,930
+we can move on to our next decision point.
+
+45
+00:01:59,930 --> 00:02:03,470
+In this case, does this current user have more than ten ratings.
+
+46
+00:02:03,470 --> 00:02:05,870
+If not, then we should use users
+
+47
+00:02:05,870 --> 00:02:08,780
+similar to our user for the items we are trying to score.
+
+48
+00:02:08,780 --> 00:02:11,450
+Otherwise, if our user does have enough ratings,
+
+49
+00:02:11,450 --> 00:02:13,070
+we can use them for these items.
+
+50
+00:02:13,070 --> 00:02:15,465
+This is a very simplified approach,
+
+51
+00:02:15,465 --> 00:02:16,890
+and we'll see in the next module,
+
+52
+00:02:16,890 --> 00:02:19,500
+how we can use neural networks combining content-based,
+
+53
+00:02:19,500 --> 00:02:21,720
+collaborative filtering, and knowledge based,
+
+54
+00:02:21,720 --> 00:02:24,530
+all into one powerful hybrid model.
+
+55
+00:02:24,530 --> 00:02:28,610
+So far, we've seen most of the walls matrix factorization estimator.
+
+56
+00:02:28,610 --> 00:02:32,515
+Let's now take a look at the serving input function in more detail.
+
+57
+00:02:32,515 --> 00:02:35,555
+Our solution and serving input function to give back
+
+58
+00:02:35,555 --> 00:02:38,455
+user factors for all items, given a user ID.
+
+59
+00:02:38,455 --> 00:02:41,930
+We read one integer into the user ID placeholder.
+
+60
+00:02:41,930 --> 00:02:45,230
+We then create an enumerated range of all items,
+
+61
+00:02:45,230 --> 00:02:47,030
+which will be the item indices.
+
+62
+00:02:47,030 --> 00:02:51,355
+We then tile the past user ID across all of the item indices.
+
+63
+00:02:51,355 --> 00:02:54,860
+We create our ratings tensor with a rating for every item.
+
+64
+00:02:54,860 --> 00:02:57,575
+These are just dummy values, and will be ignored.
+
+65
+00:02:57,575 --> 00:03:01,265
+We just need to have the right format for the input SparseTensor.
+
+66
+00:03:01,265 --> 00:03:05,330
+We stack the users and items tensors along columns.
+
+67
+00:03:05,330 --> 00:03:06,860
+So, that will be a rank two matrix,
+
+68
+00:03:06,860 --> 00:03:08,375
+with our input user ID,
+
+69
+00:03:08,375 --> 00:03:11,200
+being propagated for every item ID.
+
+70
+00:03:11,200 --> 00:03:14,720
+We then create our Sparse Tensor using the rows as indices,
+
+71
+00:03:14,720 --> 00:03:16,580
+and our dummy ratings as our values.
+
+72
+00:03:16,580 --> 00:03:20,675
+Notice that our tensor shape is number of users by number of items.
+
+73
+00:03:20,675 --> 00:03:22,280
+Our input rows then,
+
+74
+00:03:22,280 --> 00:03:23,960
+is the SparseTensor we just made,
+
+75
+00:03:23,960 --> 00:03:26,095
+and the input columns will be ignored.
+
+76
+00:03:26,095 --> 00:03:29,640
+Remember, we're serving predictions here, not training.
+
+77
+00:03:29,640 --> 00:03:34,835
+How does our wall solution handle giving back item factors given an item ID.
+
+78
+00:03:34,835 --> 00:03:37,805
+It checks whether user ID is less than zero.
+
+79
+00:03:37,805 --> 00:03:39,910
+If it is, it uses item ID.
+
+80
+00:03:39,910 --> 00:03:41,895
+Otherwise, uses user ID.
+
+81
+00:03:41,895 --> 00:03:44,910
+It does this using a conditional, tf.code.
+
+82
+00:03:44,910 --> 00:03:47,800
+Check out the code again to see for yourself,
+
+83
+00:03:47,800 --> 00:03:49,575
+and there we have it.
+
+84
+00:03:49,575 --> 00:03:52,460
+We've explored most of the walls matrix factorization estimator.
+
+85
+00:03:52,460 --> 00:03:55,190
+Obviously, there is still a lot left we could talk about,
+
+86
+00:03:55,190 --> 00:03:58,205
+such as passing the estimator row and column weight tensors.
+
+87
+00:03:58,205 --> 00:04:00,680
+But for now, we already have seen how it can
+
+88
+00:04:00,680 --> 00:04:03,160
+power collaborative filtering recommendation systems.
+
+89
+00:04:03,160 --> 00:04:05,855
+Walls is thus a way to get user and item embeddings,
+
+90
+00:04:05,855 --> 00:04:07,370
+that are trained simultaneously,
+
+91
+00:04:07,370 --> 00:04:09,080
+and then can be used for inference.
+
+92
+00:04:09,080 --> 00:04:11,870
+These embeddings are created solely from user behavior.
+
+93
+00:04:11,870 --> 00:04:15,140
+We didn't create any special features or expert knowledge,
+
+94
+00:04:15,140 --> 00:04:17,155
+we just use what users interact with.
+
+95
+00:04:17,155 --> 00:04:20,395
+However, it would be nice to also use knowledge about the item,
+
+96
+00:04:20,395 --> 00:04:22,075
+like properties of its content,
+
+97
+00:04:22,075 --> 00:04:24,830
+and knowledge for the user, which is knowledge based.
+
+98
+00:04:24,830 --> 00:04:27,665
+How would we combine multiple predictors?
+
+99
+00:04:27,665 --> 00:04:31,400
+Well, we will see the next module that we can use a neural network,
+
+100
+00:04:31,400 --> 00:04:35,115
+which is a much better solution than the flowchart we saw previously.
+
+101
+00:04:35,115 --> 00:04:37,420
+Now, let's test your knowledge.
+
+102
+00:04:37,420 --> 00:04:40,820
+If we want a recommendation system that uses collaborative filtering,
+
+103
+00:04:40,820 --> 00:04:45,390
+what are some strategies to get around the cold-start problem of fresh users and items?
+
+104
+00:04:45,390 --> 00:04:48,880
+The correct answer is E. If we have a fresh user,
+
+105
+00:04:48,880 --> 00:04:52,070
+we could use averages of all the items to show the most popular,
+
+106
+00:04:52,070 --> 00:04:54,820
+until that user interacts with items and generate some data.
+
+107
+00:04:54,820 --> 00:04:56,160
+If we have a fresh item,
+
+108
+00:04:56,160 --> 00:04:57,975
+you could use averages of all the other users,
+
+109
+00:04:57,975 --> 00:04:59,955
+to give the item and estimated rating,
+
+110
+00:04:59,955 --> 00:05:03,305
+until users eventually interact with the item and generate some data.
+
+111
+00:05:03,305 --> 00:05:06,130
+If we have a fresh user and a fresh item,
+
+112
+00:05:06,130 --> 00:05:09,430
+we could use the global average rating between all users and items.
+
+113
+00:05:09,430 --> 00:05:13,265
+We can also use item information to create a content based model
+
+114
+00:05:13,265 --> 00:05:17,065
+and or use information to create a knowledge based model,
+
+115
+00:05:17,065 --> 00:05:19,170
+which can be combined with a collaborator filtering model
+
+116
+00:05:19,170 --> 00:05:21,305
+to create a hybrid recommendation system.
+
+117
+00:05:21,305 --> 00:05:24,725
+Additionally, we could use other user item interaction data.
+
+118
+00:05:24,725 --> 00:05:27,715
+Many systems have multiple ways users can interact with items.
+
+119
+00:05:27,715 --> 00:05:29,560
+So, if one way has missing data,
+
+120
+00:05:29,560 --> 00:05:33,180
+we can use the other slices of data to fill in some of the gaps.

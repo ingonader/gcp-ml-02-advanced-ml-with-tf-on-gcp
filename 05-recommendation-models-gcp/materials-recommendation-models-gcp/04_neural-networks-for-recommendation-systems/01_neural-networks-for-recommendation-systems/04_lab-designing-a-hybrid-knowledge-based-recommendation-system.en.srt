@@ -1,0 +1,459 @@
+1
+00:00:00,000 --> 00:00:01,410
+Lastly, we can use knowledge
+
+2
+00:00:01,410 --> 00:00:05,280
+based recommendation systems to help find our users the best movies.
+
+3
+00:00:05,280 --> 00:00:06,840
+Remember, to be mindful of
+
+4
+00:00:06,840 --> 00:00:10,305
+privacy concerns because this is user data that we're talking about here.
+
+5
+00:00:10,305 --> 00:00:14,430
+Let's take a moment to think of what user-centric data sets we could get from,
+
+6
+00:00:14,430 --> 00:00:19,105
+our movie website, that would help us make a great knowledge based recommendation system.
+
+7
+00:00:19,105 --> 00:00:20,940
+Now, let's take a moment to think about
+
+8
+00:00:20,940 --> 00:00:23,430
+what data sets we could use for knowledge recommendations,
+
+9
+00:00:23,430 --> 00:00:26,070
+and then we'll see what ideas we came up with.
+
+10
+00:00:26,070 --> 00:00:29,100
+All right, let's see some of the ideas we came up with.
+
+11
+00:00:29,100 --> 00:00:31,710
+The most obvious user data we could use for our knowledge
+
+12
+00:00:31,710 --> 00:00:34,590
+based recommendation system is probably demographic information.
+
+13
+00:00:34,590 --> 00:00:37,350
+Simple things like age, gender et cetera.
+
+14
+00:00:37,350 --> 00:00:41,130
+Basically, any dimensions that could possibly have enough variance to differentiate
+
+15
+00:00:41,130 --> 00:00:44,930
+users from each other so that we don't just recommend the same movies to everyone.
+
+16
+00:00:44,930 --> 00:00:46,700
+What point of the model is that?
+
+17
+00:00:46,700 --> 00:00:50,995
+These are probably be restructured and bucketed into categories, for example,
+
+18
+00:00:50,995 --> 00:00:52,305
+people with a very young age,
+
+19
+00:00:52,305 --> 00:00:53,535
+in other words children,
+
+20
+00:00:53,535 --> 00:00:55,790
+probably enjoy watching what other children watch,
+
+21
+00:00:55,790 --> 00:00:57,500
+and that's something that an adult might like.
+
+22
+00:00:57,500 --> 00:00:59,300
+There may be exceptions to these patterns
+
+23
+00:00:59,300 --> 00:01:01,225
+but that is just what happens in machine learning.
+
+24
+00:01:01,225 --> 00:01:03,800
+We need to be careful though, that we aren't stereotyping
+
+25
+00:01:03,800 --> 00:01:06,274
+and always recommending certain movies with certain demographics,
+
+26
+00:01:06,274 --> 00:01:09,035
+including other data dimension should help balance this out,
+
+27
+00:01:09,035 --> 00:01:12,925
+especially if demographics aren't very predictive and the other features are.
+
+28
+00:01:12,925 --> 00:01:16,940
+Another possible dataset that we could use for a knowledge based recommendation systems,
+
+29
+00:01:16,940 --> 00:01:19,595
+is user locations, countries or languages.
+
+30
+00:01:19,595 --> 00:01:21,655
+This can be important for localization.
+
+31
+00:01:21,655 --> 00:01:26,075
+We can also use languages of feature because if a user doesn't speak Spanish,
+
+32
+00:01:26,075 --> 00:01:28,220
+they may not enjoy watching Spanish movie,
+
+33
+00:01:28,220 --> 00:01:29,915
+even if it has subtitles.
+
+34
+00:01:29,915 --> 00:01:31,230
+But as with all machine learning,
+
+35
+00:01:31,230 --> 00:01:33,545
+we need to be mindful that we don't go too far.
+
+36
+00:01:33,545 --> 00:01:36,140
+Perhaps someone who speaks English and lives in United States,
+
+37
+00:01:36,140 --> 00:01:39,020
+learned French at university and really enjoys French movies.
+
+38
+00:01:39,020 --> 00:01:41,030
+Therefore, it's always a good idea to have
+
+39
+00:01:41,030 --> 00:01:44,150
+other features and let the model learn what features are important,
+
+40
+00:01:44,150 --> 00:01:48,379
+and which ones aren't, and to balance itself out of such situations.
+
+41
+00:01:48,379 --> 00:01:52,160
+Another possibly great feature we could use to try to improve our knowledge
+
+42
+00:01:52,160 --> 00:01:55,490
+based recommendation system is user entered genre preferences.
+
+43
+00:01:55,490 --> 00:01:58,910
+This way we know what users feel are important to them, genre wise,
+
+44
+00:01:58,910 --> 00:02:02,605
+and we can use that to recommend the genres they have listed as their favorite.
+
+45
+00:02:02,605 --> 00:02:05,660
+Because this is knowledge based only for now,
+
+46
+00:02:05,660 --> 00:02:07,910
+they will only get movies of the genres they have listed.
+
+47
+00:02:07,910 --> 00:02:09,670
+But if paired with collaborative filtering,
+
+48
+00:02:09,670 --> 00:02:12,990
+they might receive some more serendipitous recommendations.
+
+49
+00:02:12,990 --> 00:02:15,590
+Furthermore, building off of that,
+
+50
+00:02:15,590 --> 00:02:17,930
+global filters set by users could be used as
+
+51
+00:02:17,930 --> 00:02:20,975
+another data set for our knowledge based recommendation system.
+
+52
+00:02:20,975 --> 00:02:24,280
+These somewhat take the genre preferences a step further.
+
+53
+00:02:24,280 --> 00:02:26,205
+Because when we choose to filter things out,
+
+54
+00:02:26,205 --> 00:02:28,265
+we are choosing for some things to remain.
+
+55
+00:02:28,265 --> 00:02:32,510
+For instance, beyond just wanting only certain genres and photographed the others,
+
+56
+00:02:32,510 --> 00:02:35,180
+we can apply other user chosen filters such as,
+
+57
+00:02:35,180 --> 00:02:38,000
+they only want movies with an average rating of four or higher,
+
+58
+00:02:38,000 --> 00:02:41,185
+or movies that have been nominated or have won in Academy Award.
+
+59
+00:02:41,185 --> 00:02:44,275
+This is essentially just keyword logic to apply these filters.
+
+60
+00:02:44,275 --> 00:02:45,990
+But they do do the job,
+
+61
+00:02:45,990 --> 00:02:48,905
+because you won't be recommended what you filtered out.
+
+62
+00:02:48,905 --> 00:02:50,570
+As for unstructured data,
+
+63
+00:02:50,570 --> 00:02:52,790
+a website may have an About Me page,
+
+64
+00:02:52,790 --> 00:02:57,110
+for users to enter free text about themselves and their interest in movies.
+
+65
+00:02:57,110 --> 00:02:59,869
+We can apply natural language processing to this text,
+
+66
+00:02:59,869 --> 00:03:03,565
+and then compare those word embeddings against others users word embeddings.
+
+67
+00:03:03,565 --> 00:03:05,800
+However, there could be sparsely problems if
+
+68
+00:03:05,800 --> 00:03:08,545
+not enough users fill out their About Me page.
+
+69
+00:03:08,545 --> 00:03:11,620
+So, we've gone through over 20 possible datasets
+
+70
+00:03:11,620 --> 00:03:13,870
+using the three broad forms recommendation systems.
+
+71
+00:03:13,870 --> 00:03:16,480
+We went over some of the possible issues that could arise
+
+72
+00:03:16,480 --> 00:03:19,615
+if we were only looking at each data sets model independently.
+
+73
+00:03:19,615 --> 00:03:22,825
+Fortunately, these issues tend to go away if in constant with
+
+74
+00:03:22,825 --> 00:03:26,305
+other datasets using the other types of recommendation systems.
+
+75
+00:03:26,305 --> 00:03:28,595
+This leads us to the hybrid model.
+
+76
+00:03:28,595 --> 00:03:31,735
+You can think of each independent data set model as being a feature
+
+77
+00:03:31,735 --> 00:03:35,275
+to our hybrid model connected via a deep neural network.
+
+78
+00:03:35,275 --> 00:03:37,480
+It can take the embeddings from collaborative filters
+
+79
+00:03:37,480 --> 00:03:39,040
+and combine them with content information,
+
+80
+00:03:39,040 --> 00:03:40,480
+and knowledge about the user.
+
+81
+00:03:40,480 --> 00:03:43,300
+Deep learning for product recommendations is a great way to
+
+82
+00:03:43,300 --> 00:03:46,135
+build upon a traditional stand alone recommendation system.
+
+83
+00:03:46,135 --> 00:03:49,645
+There are no new concepts that need to be learned or to implement.
+
+84
+00:03:49,645 --> 00:03:52,355
+We can just use the building blocks we already made,
+
+85
+00:03:52,355 --> 00:03:54,400
+it's just a structured data model which we
+
+86
+00:03:54,400 --> 00:03:56,935
+have had a lot of practice working with already.
+
+87
+00:03:56,935 --> 00:03:58,915
+As we saw from the design lab,
+
+88
+00:03:58,915 --> 00:04:00,445
+there's a lot of data to bring together.
+
+89
+00:04:00,445 --> 00:04:03,880
+This is a good thing, because the data is the fuel for machine learning.
+
+90
+00:04:03,880 --> 00:04:06,190
+The more ways we can figure out to take advantage of it,
+
+91
+00:04:06,190 --> 00:04:09,145
+the more likely you will have a powerful final model.
+
+92
+00:04:09,145 --> 00:04:12,250
+Therefore, you will need multiple machine-learning models tied
+
+93
+00:04:12,250 --> 00:04:15,700
+together in machinery pipeline to make the greatest impact.
+
+94
+00:04:15,700 --> 00:04:19,015
+Let's now test our knowledge about hybrid recommendation systems.
+
+95
+00:04:19,015 --> 00:04:22,780
+What is important to have when making a hybrid recommendation system?
+
+96
+00:04:22,780 --> 00:04:26,005
+Creating your data collection with recommendation systems in mind,
+
+97
+00:04:26,005 --> 00:04:28,789
+having made different datasets from different sources,
+
+98
+00:04:28,789 --> 00:04:31,250
+having more than one recommendation model type,
+
+99
+00:04:31,250 --> 00:04:35,690
+having a machine-learning model pipeline or all of the above.
+
+100
+00:04:35,690 --> 00:04:39,620
+The correct answer is E. Hybrid recommendation systems
+
+101
+00:04:39,620 --> 00:04:43,355
+work best when they have a lot of data from multiple sources.
+
+102
+00:04:43,355 --> 00:04:45,305
+This includes user-entered data,
+
+103
+00:04:45,305 --> 00:04:49,835
+data entered by multiple product extracts for items and user item interaction data.
+
+104
+00:04:49,835 --> 00:04:53,900
+Therefore, it is important in designing a website, servers et cetera,
+
+105
+00:04:53,900 --> 00:04:56,360
+that you keep all this in mind so that when you have
+
+106
+00:04:56,360 --> 00:04:59,340
+the data available when creating your recommendation system.
+
+107
+00:04:59,340 --> 00:05:01,340
+This is a lot better than making
+
+108
+00:05:01,340 --> 00:05:04,925
+a recommendation system and not having the data ready to make it come to life.
+
+109
+00:05:04,925 --> 00:05:08,075
+It's also important to have more than one recommendation model type.
+
+110
+00:05:08,075 --> 00:05:12,770
+Each type comes with its own pros and cons and by using a combination of them,
+
+111
+00:05:12,770 --> 00:05:16,070
+you can eliminate or at least mitigate most of the cons.
+
+112
+00:05:16,070 --> 00:05:17,900
+These multiple models being fed by
+
+113
+00:05:17,900 --> 00:05:21,380
+multiple data sources should be arranged into a machine learning model pipeline,
+
+114
+00:05:21,380 --> 00:05:23,180
+that uses a deep neural network to combine them in
+
+115
+00:05:23,180 --> 00:05:26,590
+the best way to give great recommendations.

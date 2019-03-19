@@ -1,0 +1,339 @@
+1
+00:00:00,000 --> 00:00:02,325
+So, that was content-based,
+
+2
+00:00:02,325 --> 00:00:03,780
+but what about datasets that could create for
+
+3
+00:00:03,780 --> 00:00:06,120
+the movie web pages that use collaborative filtering?
+
+4
+00:00:06,120 --> 00:00:09,590
+Just with content-based, this could be structured or unstructured,
+
+5
+00:00:09,590 --> 00:00:12,315
+and also be explicit feedback or implicit feedback.
+
+6
+00:00:12,315 --> 00:00:14,295
+Of course, for collaborative filtering to work,
+
+7
+00:00:14,295 --> 00:00:16,200
+it requires users to interact with items.
+
+8
+00:00:16,200 --> 00:00:19,230
+Otherwise, we can have a cold-start or sparsity problem.
+
+9
+00:00:19,230 --> 00:00:23,490
+Let's say if this hypothetical example that there's abundant user item interaction.
+
+10
+00:00:23,490 --> 00:00:26,340
+So, now let's pause again while we think about
+
+11
+00:00:26,340 --> 00:00:29,760
+what datasets we could use for collaborative filtering recommendations,
+
+12
+00:00:29,760 --> 00:00:33,045
+and then we'll go through some of the ones we came up with. All right.
+
+13
+00:00:33,045 --> 00:00:35,160
+Let's see some of the ideas we came up with.
+
+14
+00:00:35,160 --> 00:00:39,975
+The most obvious thing to use for collaborative filtering is of course user ratings.
+
+15
+00:00:39,975 --> 00:00:44,130
+Now, this website might not have a way for users to leave explicit ratings,
+
+16
+00:00:44,130 --> 00:00:46,790
+and we'd have to resort to more implicit means a feedback,
+
+17
+00:00:46,790 --> 00:00:48,380
+but for this hypothetical example,
+
+18
+00:00:48,380 --> 00:00:50,200
+let's assume there are ratings.
+
+19
+00:00:50,200 --> 00:00:51,895
+As we know with collaborative filtering,
+
+20
+00:00:51,895 --> 00:00:54,770
+these ratings will be used to create user and item factors within
+
+21
+00:00:54,770 --> 00:00:59,705
+a rating embedding space of latent features that we can then use to make recommendations.
+
+22
+00:00:59,705 --> 00:01:03,385
+We can also use implicit feedback such as user views.
+
+23
+00:01:03,385 --> 00:01:06,860
+We can assume that a user ended up on a movies web page for a reason,
+
+24
+00:01:06,860 --> 00:01:09,230
+that some interests led them there.
+
+25
+00:01:09,230 --> 00:01:12,980
+Perhaps, instead of just a flag if a user has visited movies web page,
+
+26
+00:01:12,980 --> 00:01:15,740
+we can keep track of the number of times they visited the page.
+
+27
+00:01:15,740 --> 00:01:19,625
+This goes with the assumption that if a user visits movies page more frequently,
+
+28
+00:01:19,625 --> 00:01:24,490
+they have more interests for movie pages that they don't visit frequently or at all.
+
+29
+00:01:24,490 --> 00:01:28,425
+There's also the user wishlist/ cart history that we could use.
+
+30
+00:01:28,425 --> 00:01:30,310
+This is an interesting dataset.
+
+31
+00:01:30,310 --> 00:01:32,014
+Think about the wishlist.
+
+32
+00:01:32,014 --> 00:01:36,229
+It is implicit because it's not explicitly saying that a user likes the movie,
+
+33
+00:01:36,229 --> 00:01:39,620
+but that they think they might like it enough to add to their list.
+
+34
+00:01:39,620 --> 00:01:42,755
+Also, the cart history is another step further.
+
+35
+00:01:42,755 --> 00:01:44,480
+The user has actually now selected the movie for
+
+36
+00:01:44,480 --> 00:01:46,525
+purchase and they just need to check out.
+
+37
+00:01:46,525 --> 00:01:48,150
+As a lot of us do though,
+
+38
+00:01:48,150 --> 00:01:49,495
+putting something new at cart,
+
+39
+00:01:49,495 --> 00:01:50,900
+doesn't mean we'll buy it,
+
+40
+00:01:50,900 --> 00:01:52,490
+but it is just another interaction,
+
+41
+00:01:52,490 --> 00:01:55,670
+another signal that this user might like this particular movie.
+
+42
+00:01:55,670 --> 00:01:57,185
+Going one step further,
+
+43
+00:01:57,185 --> 00:02:00,100
+we can use the user's purchase history as implicit feedback,
+
+44
+00:02:00,100 --> 00:02:02,975
+because we still don't know whether they like or dislike the movie,
+
+45
+00:02:02,975 --> 00:02:04,780
+but it isn't interaction.
+
+46
+00:02:04,780 --> 00:02:09,890
+However, we were able to also use a users return history as a proxy for dislike.
+
+47
+00:02:09,890 --> 00:02:12,530
+Because there's probably more likely that someone will return a movie that they don't
+
+48
+00:02:12,530 --> 00:02:16,580
+like or potentially other reasons that are more rare like the movie has broken,
+
+49
+00:02:16,580 --> 00:02:19,060
+wrong language version set, et cetera.
+
+50
+00:02:19,060 --> 00:02:23,165
+There's also unstructured data that we can use for a collaborative filtering model.
+
+51
+00:02:23,165 --> 00:02:25,685
+One type is user reviews.
+
+52
+00:02:25,685 --> 00:02:27,410
+These will be free text that we can apply
+
+53
+00:02:27,410 --> 00:02:31,265
+natural language processing too in order to gain some idea of sentiment.
+
+54
+00:02:31,265 --> 00:02:34,110
+Unlike content-base professional reviews,
+
+55
+00:02:34,110 --> 00:02:35,700
+these are written by users.
+
+56
+00:02:35,700 --> 00:02:40,030
+Users that we can find similarities too in order to make recommendations from.
+
+57
+00:02:40,030 --> 00:02:42,620
+We can also try using user answered
+
+58
+00:02:42,620 --> 00:02:45,200
+questions as data for a collaborative filtering model.
+
+59
+00:02:45,200 --> 00:02:46,820
+This can be a little bit tricky.
+
+60
+00:02:46,820 --> 00:02:49,705
+A user answering a question doesn't mean that they liked the movie.
+
+61
+00:02:49,705 --> 00:02:52,850
+In fact, their answer to a question could indicate they don't like the movie.
+
+62
+00:02:52,850 --> 00:02:55,790
+So, you could just use a yes or no flag,
+
+63
+00:02:55,790 --> 00:02:59,435
+or the number of questions answered for each user for that movie is implicit feedback,
+
+64
+00:02:59,435 --> 00:03:01,670
+because answering is an interaction,
+
+65
+00:03:01,670 --> 00:03:04,180
+similar to using user views.
+
+66
+00:03:04,180 --> 00:03:06,760
+We could also run sentiment analysis the answers.
+
+67
+00:03:06,760 --> 00:03:09,245
+And although most would probably be flagged as neutral,
+
+68
+00:03:09,245 --> 00:03:11,660
+summation was positive and others negative,
+
+69
+00:03:11,660 --> 00:03:14,785
+which might be enough extra signal to improve recommendations.
+
+70
+00:03:14,785 --> 00:03:17,780
+There could also be user-submitted photos for some movies.
+
+71
+00:03:17,780 --> 00:03:19,820
+This might apply more to people buying an item from
+
+72
+00:03:19,820 --> 00:03:22,360
+somebody who pictures item all assembled et cetera.
+
+73
+00:03:22,360 --> 00:03:25,880
+However, perhaps people show how the movie looks on their brand
+
+74
+00:03:25,880 --> 00:03:27,800
+new TV or they take pictures of themselves in
+
+75
+00:03:27,800 --> 00:03:30,680
+a movie viewing party with their friends and their home theatre.
+
+76
+00:03:30,680 --> 00:03:33,050
+All these scenarios or data that may or may
+
+77
+00:03:33,050 --> 00:03:35,590
+not add some signal to improve recommendations.
+
+78
+00:03:35,590 --> 00:03:38,480
+We can use the fact that someone uploaded a photo at all or
+
+79
+00:03:38,480 --> 00:03:41,465
+the number of photos they uploaded as a form of implicit feedback.
+
+80
+00:03:41,465 --> 00:03:43,340
+We could also use an image model to crate
+
+81
+00:03:43,340 --> 00:03:46,250
+train labels that might convey some former sentiment.
+
+82
+00:03:46,250 --> 00:03:48,950
+The same goes for user-submitted videos,
+
+83
+00:03:48,950 --> 00:03:52,040
+where we can use the fact that they interacted as implicit feedback and
+
+84
+00:03:52,040 --> 00:03:53,465
+work-in-process that video with
+
+85
+00:03:53,465 --> 00:03:56,750
+other machine learning algorithms and use that now structured interaction data.

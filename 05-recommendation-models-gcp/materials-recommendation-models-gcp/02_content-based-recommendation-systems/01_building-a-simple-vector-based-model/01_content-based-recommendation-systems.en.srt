@@ -1,0 +1,123 @@
+1
+00:00:00,020 --> 00:00:04,665
+In the last module, we mentioned a few common types of recommendation systems.
+
+2
+00:00:04,665 --> 00:00:06,630
+In this module, we'll go a bit deeper in
+
+3
+00:00:06,630 --> 00:00:09,975
+exploring how content-based recommendation engines work.
+
+4
+00:00:09,975 --> 00:00:13,230
+Content-based filtering methods use item features to
+
+5
+00:00:13,230 --> 00:00:16,725
+recommend new items that are similar to the user has already liked,
+
+6
+00:00:16,725 --> 00:00:19,740
+based on their previous actions or explicit feedback.
+
+7
+00:00:19,740 --> 00:00:24,180
+They don't rely on information about other users or other user item interactions.
+
+8
+00:00:24,180 --> 00:00:26,730
+For example, consider the following scenario.
+
+9
+00:00:26,730 --> 00:00:29,475
+We have a user who has seen and rated a few movies.
+
+10
+00:00:29,475 --> 00:00:32,415
+Some she liked and gave it a thumbs up and some she didn't.
+
+11
+00:00:32,415 --> 00:00:36,355
+We would like to know which movie in our database to recommend next.
+
+12
+00:00:36,355 --> 00:00:41,750
+Which of the remaining unrated unseen movies should we recommend to this user?
+
+13
+00:00:41,750 --> 00:00:44,510
+Based on the ratings we currently have,
+
+14
+00:00:44,510 --> 00:00:47,795
+which of the remaining unrated movies should we recommend to this user?
+
+15
+00:00:47,795 --> 00:00:49,490
+The Dark Knight Rises,
+
+16
+00:00:49,490 --> 00:00:52,330
+The Incredibles, or Bleu?
+
+17
+00:00:52,520 --> 00:00:57,335
+That's right. We would likely want to recommend The Incredibles.
+
+18
+00:00:57,335 --> 00:00:59,705
+Given a list of all movies in the corpus,
+
+19
+00:00:59,705 --> 00:01:03,320
+if one movie is similar to another movie that the user ranked highly,
+
+20
+00:01:03,320 --> 00:01:05,215
+then we'll recommend that one.
+
+21
+00:01:05,215 --> 00:01:08,630
+We don't have a lot of information to base our recommendation on here.
+
+22
+00:01:08,630 --> 00:01:12,835
+But this user seems to enjoy cartoon movies and not any of the others.
+
+23
+00:01:12,835 --> 00:01:14,400
+Based on the positive rating,
+
+24
+00:01:14,400 --> 00:01:18,335
+this user gave to Shrek and the similarity between Shrek and The Incredibles.
+
+25
+00:01:18,335 --> 00:01:21,845
+Perhaps, we should recommend The Incredibles to watch next.
+
+26
+00:01:21,845 --> 00:01:24,740
+In this module, we'll learn how to measure
+
+27
+00:01:24,740 --> 00:01:28,270
+the similarity of pairs of elements in an embedding space.
+
+28
+00:01:28,270 --> 00:01:30,110
+We'll discuss the mechanics of
+
+29
+00:01:30,110 --> 00:01:33,785
+content-based recommendation systems and really see how they work.
+
+30
+00:01:33,785 --> 00:01:37,490
+We'll see how to build our own content-based recommendation systems.
+
+31
+00:01:37,490 --> 00:01:40,870
+One to recommend movies and one to recommend articles.

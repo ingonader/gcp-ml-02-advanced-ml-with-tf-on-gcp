@@ -1,0 +1,1187 @@
+1
+00:00:00,000 --> 00:00:01,695
+Hi, I'm Ryan.
+
+2
+00:00:01,695 --> 00:00:03,210
+I'm Machine Learning scientist at Google,
+
+3
+00:00:03,210 --> 00:00:05,250
+and I love applying math and Machine Learning
+
+4
+00:00:05,250 --> 00:00:07,800
+to big data to better make sense of the world.
+
+5
+00:00:07,800 --> 00:00:09,465
+In the previous modules,
+
+6
+00:00:09,465 --> 00:00:11,550
+we learned how both content-based and
+
+7
+00:00:11,550 --> 00:00:14,115
+collaborative filtering forums recommender systems work.
+
+8
+00:00:14,115 --> 00:00:16,680
+In this module, we will take advantage of the power of
+
+9
+00:00:16,680 --> 00:00:19,130
+neural networks to create hybrid recommendation systems,
+
+10
+00:00:19,130 --> 00:00:23,850
+using all that we have learned so far about recommendation systems put together.
+
+11
+00:00:23,850 --> 00:00:27,315
+In this module, we will learn how to combine content-based,
+
+12
+00:00:27,315 --> 00:00:31,290
+knowledge-based, and collaborative filtering recommendation systems.
+
+13
+00:00:31,290 --> 00:00:36,105
+We'll learn how do this by using neural networks to make hybrid recommendation systems.
+
+14
+00:00:36,105 --> 00:00:39,125
+We've already learned several types of recommendation systems.
+
+15
+00:00:39,125 --> 00:00:40,865
+However, we use each in a vacuum,
+
+16
+00:00:40,865 --> 00:00:44,815
+taking advantage of different types of data to try to make the best recommendations.
+
+17
+00:00:44,815 --> 00:00:46,315
+We saw in module two,
+
+18
+00:00:46,315 --> 00:00:48,905
+how to build content-based recommendation systems.
+
+19
+00:00:48,905 --> 00:00:51,335
+This involve taking properties as items.
+
+20
+00:00:51,335 --> 00:00:53,840
+This could have been unstructured data such as the genre
+
+21
+00:00:53,840 --> 00:00:56,440
+of movies as seen in our earlier examples.
+
+22
+00:00:56,440 --> 00:01:00,275
+It could also have been embeddings of the text description, images,
+
+23
+00:01:00,275 --> 00:01:04,570
+or even audio, and/or video preprocessed through sequence files.
+
+24
+00:01:04,570 --> 00:01:06,835
+We take this matrix of item properties,
+
+25
+00:01:06,835 --> 00:01:08,810
+and multiply it with the user vector,
+
+26
+00:01:08,810 --> 00:01:12,005
+to give that users representation in the item embedding space.
+
+27
+00:01:12,005 --> 00:01:15,079
+We then can use when a multiple similarity measures,
+
+28
+00:01:15,079 --> 00:01:18,875
+to recommend similar items that that user would like.
+
+29
+00:01:18,875 --> 00:01:22,490
+Content-based recommendation systems have many pros.
+
+30
+00:01:22,490 --> 00:01:25,520
+First, there is no need for data about other users.
+
+31
+00:01:25,520 --> 00:01:27,980
+We just need the data about the user of interest,
+
+32
+00:01:27,980 --> 00:01:32,425
+and then we can use that to recommend similar items from the learning embedding space.
+
+33
+00:01:32,425 --> 00:01:37,880
+Also, we can recommend niche items because we know about our user specific tastes,
+
+34
+00:01:37,880 --> 00:01:39,960
+which might not be shared amongst other users,
+
+35
+00:01:39,960 --> 00:01:42,905
+and therefore we can recommend to meet those users interest.
+
+36
+00:01:42,905 --> 00:01:46,795
+However, content-based recommendation systems have their cons.
+
+37
+00:01:46,795 --> 00:01:48,465
+There needs to be domain knowledge.
+
+38
+00:01:48,465 --> 00:01:50,855
+A human has to label the movie genres.
+
+39
+00:01:50,855 --> 00:01:53,750
+A human has to enter the text description of the items.
+
+40
+00:01:53,750 --> 00:01:56,210
+A human has to post the item picture.
+
+41
+00:01:56,210 --> 00:01:59,720
+A human has to create the audio or video clip attached to the item.
+
+42
+00:01:59,720 --> 00:02:02,300
+As you can see, there's a lot of involvement by
+
+43
+00:02:02,300 --> 00:02:05,450
+expert humans who know their items very well.
+
+44
+00:02:05,450 --> 00:02:11,075
+Also, content-based recommendation systems tend to make only safe recommendations.
+
+45
+00:02:11,075 --> 00:02:14,545
+They stay within a user's safe bubble of the embedding space.
+
+46
+00:02:14,545 --> 00:02:18,650
+If a user has never expanded beyond this bubble within that space,
+
+47
+00:02:18,650 --> 00:02:21,860
+content-based recommendation systems will only recommend similar things,
+
+48
+00:02:21,860 --> 00:02:25,520
+which will invariably end up being within the bubble, or near the edge.
+
+49
+00:02:25,520 --> 00:02:27,140
+There isn't any information in
+
+50
+00:02:27,140 --> 00:02:30,230
+a purely content- based recommendation system that can push
+
+51
+00:02:30,230 --> 00:02:32,750
+a user outside the usual boundaries to explore
+
+52
+00:02:32,750 --> 00:02:35,975
+items that they didn't know they might actually like.
+
+53
+00:02:35,975 --> 00:02:38,060
+We learned in module three,
+
+54
+00:02:38,060 --> 00:02:41,570
+how we can use wall's matrix factorization or collaborative filtering,
+
+55
+00:02:41,570 --> 00:02:44,270
+to make recommendations based on user item interactions.
+
+56
+00:02:44,270 --> 00:02:48,215
+It essentially takes those interactions and learns the latent factors within them,
+
+57
+00:02:48,215 --> 00:02:50,105
+to best generalizes interactions.
+
+58
+00:02:50,105 --> 00:02:53,030
+These latent factors create a D-dimensional embedding space,
+
+59
+00:02:53,030 --> 00:02:56,245
+where a user and item embedding are solved for simultaneously.
+
+60
+00:02:56,245 --> 00:02:58,670
+Not only create recommend items for users,
+
+61
+00:02:58,670 --> 00:03:01,685
+but we can target users for items because we had the two embeddings.
+
+62
+00:03:01,685 --> 00:03:05,615
+Collaborative filtering is very powerful because it requires no domain knowledge.
+
+63
+00:03:05,615 --> 00:03:07,310
+The data generated itself,
+
+64
+00:03:07,310 --> 00:03:09,175
+simply by users interacting with items.
+
+65
+00:03:09,175 --> 00:03:11,300
+Now, we can harness that information to predict
+
+66
+00:03:11,300 --> 00:03:15,850
+other favourable user item interactions through recommending and targeting.
+
+67
+00:03:15,850 --> 00:03:18,575
+Remember, this can be either explicit feedback,
+
+68
+00:03:18,575 --> 00:03:20,405
+such as the number of stars, thumbs up,
+
+69
+00:03:20,405 --> 00:03:21,845
+or like dislike button,
+
+70
+00:03:21,845 --> 00:03:24,680
+or it could be implicit feedback such as page views,
+
+71
+00:03:24,680 --> 00:03:26,365
+duration watched, et cetera.
+
+72
+00:03:26,365 --> 00:03:30,110
+Some systems will have multiple layers of user interaction that it
+
+73
+00:03:30,110 --> 00:03:33,740
+can take advantage of because in addition to the classical rating we normally think of,
+
+74
+00:03:33,740 --> 00:03:35,255
+there can be other interactions.
+
+75
+00:03:35,255 --> 00:03:39,350
+An example could be user comments that can be data mined for sentiment analysis,
+
+76
+00:03:39,350 --> 00:03:42,170
+often different types of interaction data can fill the gaps
+
+77
+00:03:42,170 --> 00:03:45,190
+between each other to make a much better overall system.
+
+78
+00:03:45,190 --> 00:03:49,580
+Collaborative filtering can also solve the problem of only safe recommendations,
+
+79
+00:03:49,580 --> 00:03:52,355
+that is inherent in content-based recommendation systems.
+
+80
+00:03:52,355 --> 00:03:54,950
+This is because not only can collaborative filter and
+
+81
+00:03:54,950 --> 00:03:57,350
+see the user of interest points in embedding space,
+
+82
+00:03:57,350 --> 00:04:01,070
+it can also tune in to other users points in embedding space,
+
+83
+00:04:01,070 --> 00:04:02,800
+and find similarities between them.
+
+84
+00:04:02,800 --> 00:04:05,660
+For instance, user A might love Sci-Fi,
+
+85
+00:04:05,660 --> 00:04:09,245
+but it's never even thought about seeing anything outside their genre bubble.
+
+86
+00:04:09,245 --> 00:04:13,085
+With collaborative filtering, user A is found to be very similar
+
+87
+00:04:13,085 --> 00:04:16,970
+to user B and user C due to their shared passionate for Sci-Fi.
+
+88
+00:04:16,970 --> 00:04:21,890
+However, user B and C also both love fantasy and action movies.
+
+89
+00:04:21,890 --> 00:04:26,780
+So, even though those may be far outside of user A's bubble and embedding space,
+
+90
+00:04:26,780 --> 00:04:29,575
+those might be good recommendations for them to check out.
+
+91
+00:04:29,575 --> 00:04:32,190
+Collaborative filtering is also a great starting point.
+
+92
+00:04:32,190 --> 00:04:34,700
+With just a little user item interaction data,
+
+93
+00:04:34,700 --> 00:04:36,350
+we can create a quick baseline model,
+
+94
+00:04:36,350 --> 00:04:38,510
+that we can then check against other models.
+
+95
+00:04:38,510 --> 00:04:42,595
+It can help us find gaps to fill by using other recommendation systems,
+
+96
+00:04:42,595 --> 00:04:45,105
+such as content-based to make up for the lack of data.
+
+97
+00:04:45,105 --> 00:04:46,695
+Just like the rest of machine learning,
+
+98
+00:04:46,695 --> 00:04:47,835
+is important to experiment,
+
+99
+00:04:47,835 --> 00:04:49,870
+and find out what works best.
+
+100
+00:04:49,870 --> 00:04:53,480
+Just like most things, collaborative filtering isn't a perfect method,
+
+101
+00:04:53,480 --> 00:04:55,069
+and does have drawbacks.
+
+102
+00:04:55,069 --> 00:04:57,410
+It mainly suffers from the cold start problem.
+
+103
+00:04:57,410 --> 00:05:00,680
+This happens when we have fresh items, or fresh users.
+
+104
+00:05:00,680 --> 00:05:03,670
+For instance, when an item is interacted with a lot of users,
+
+105
+00:05:03,670 --> 00:05:07,415
+you'll have a very good idea of what type of users will like that item.
+
+106
+00:05:07,415 --> 00:05:10,190
+When there's little to no interaction data for that item,
+
+107
+00:05:10,190 --> 00:05:12,050
+we don't really have a great idea because
+
+108
+00:05:12,050 --> 00:05:15,005
+the user sample size is so small or nonexistent.
+
+109
+00:05:15,005 --> 00:05:17,570
+We can hopefully use the item embeddings to look
+
+110
+00:05:17,570 --> 00:05:20,240
+nearby and see if those users sharing similarities,
+
+111
+00:05:20,240 --> 00:05:22,985
+but a lack of interaction data could be there too.
+
+112
+00:05:22,985 --> 00:05:25,020
+Same goes for a new user.
+
+113
+00:05:25,020 --> 00:05:26,780
+If they have to interact with a lot of items,
+
+114
+00:05:26,780 --> 00:05:28,795
+it is hard to make accurate recommendations.
+
+115
+00:05:28,795 --> 00:05:31,330
+We can use averages of other users, or items,
+
+116
+00:05:31,330 --> 00:05:34,855
+or even the global average if there is very little overall interaction data.
+
+117
+00:05:34,855 --> 00:05:36,320
+Better yet, we can tap into
+
+118
+00:05:36,320 --> 00:05:40,960
+the other recommendation system types like content-based to help fill in the gaps.
+
+119
+00:05:40,960 --> 00:05:43,625
+This leads right into the problem sparsity.
+
+120
+00:05:43,625 --> 00:05:46,550
+Remember, matrix factorization collaborative filtering
+
+121
+00:05:46,550 --> 00:05:48,845
+takes our user item interaction matrix A,
+
+122
+00:05:48,845 --> 00:05:51,890
+and factorizes it into two hopefully smaller matrices,
+
+123
+00:05:51,890 --> 00:05:54,095
+U for users, and V for items,
+
+124
+00:05:54,095 --> 00:05:56,590
+each with a dimension of the number of latent factors.
+
+125
+00:05:56,590 --> 00:06:00,905
+It is not as easy to tell when looking at toy problems with very few users and items,
+
+126
+00:06:00,905 --> 00:06:02,330
+but as these both increase,
+
+127
+00:06:02,330 --> 00:06:05,105
+the number of interactions between them become very sparse.
+
+128
+00:06:05,105 --> 00:06:08,560
+Imagine millions of users and thousands or millions of items.
+
+129
+00:06:08,560 --> 00:06:12,350
+Even the most active users will interact with only a small sample of items,
+
+130
+00:06:12,350 --> 00:06:14,360
+and even the most popular items will usually be
+
+131
+00:06:14,360 --> 00:06:16,850
+interacted with by a small subset of users.
+
+132
+00:06:16,850 --> 00:06:19,855
+This can lead to scalability problems later on as well.
+
+133
+00:06:19,855 --> 00:06:23,060
+Lastly, when a collaborative filtering is pros,
+
+134
+00:06:23,060 --> 00:06:24,680
+also leads to one of its cons.
+
+135
+00:06:24,680 --> 00:06:27,020
+It's great that no domain knowledge is needed,
+
+136
+00:06:27,020 --> 00:06:28,910
+but then we have no domain knowledge in our model,
+
+137
+00:06:28,910 --> 00:06:30,530
+which can usually be pretty useful.
+
+138
+00:06:30,530 --> 00:06:32,990
+This lack of context features can reduce
+
+139
+00:06:32,990 --> 00:06:35,210
+the performance for collaborative filtering models,
+
+140
+00:06:35,210 --> 00:06:37,535
+and usually leads us to combining our model with
+
+141
+00:06:37,535 --> 00:06:40,345
+others like content-based recommendation systems.
+
+142
+00:06:40,345 --> 00:06:44,060
+We also learned in module one about knowledge based recommendations,
+
+143
+00:06:44,060 --> 00:06:46,160
+where we either take data from user surveys,
+
+144
+00:06:46,160 --> 00:06:49,385
+or entered users settings that show users preferences.
+
+145
+00:06:49,385 --> 00:06:51,170
+One way of doing this,
+
+146
+00:06:51,170 --> 00:06:53,720
+assuming it is legal and ethical for your model,
+
+147
+00:06:53,720 --> 00:06:57,185
+to use user-entered data such as where they live, their age,
+
+148
+00:06:57,185 --> 00:06:58,895
+their gender, et cetera,
+
+149
+00:06:58,895 --> 00:07:01,315
+we use these to try to find similarities.
+
+150
+00:07:01,315 --> 00:07:03,530
+For example, with age, most children will be
+
+151
+00:07:03,530 --> 00:07:06,050
+more likely to prefer what other children prefer,
+
+152
+00:07:06,050 --> 00:07:07,905
+rather than what the elderly enjoy.
+
+153
+00:07:07,905 --> 00:07:10,065
+We can also ask users.
+
+154
+00:07:10,065 --> 00:07:12,375
+When building knowledge-based recommendation systems,
+
+155
+00:07:12,375 --> 00:07:16,230
+we should keep this in mind when designing them and the point of entry of data.
+
+156
+00:07:16,230 --> 00:07:18,810
+This could be asking users what type of movies they enjoy,
+
+157
+00:07:18,810 --> 00:07:19,995
+what types of food they like,
+
+158
+00:07:19,995 --> 00:07:22,200
+what activities they like doing, et cetera.
+
+159
+00:07:22,200 --> 00:07:24,600
+This could also be asking users what they don't like,
+
+160
+00:07:24,600 --> 00:07:26,385
+so we can filter that out.
+
+161
+00:07:26,385 --> 00:07:29,310
+A great benefit of knowledge-based recommendation systems
+
+162
+00:07:29,310 --> 00:07:31,770
+is not needing to have user item interaction data.
+
+163
+00:07:31,770 --> 00:07:35,700
+We simply can rely on user-centric data to link users with other users,
+
+164
+00:07:35,700 --> 00:07:38,415
+and recommend similar things that those users liked.
+
+165
+00:07:38,415 --> 00:07:42,060
+This also doesn't require human-generated information about the items,
+
+166
+00:07:42,060 --> 00:07:44,445
+which is usually expensive and hard to generate well,
+
+167
+00:07:44,445 --> 00:07:47,610
+while substantial help of many domain knowledge experts.
+
+168
+00:07:47,610 --> 00:07:51,705
+Also, knowledge-based recommendations use data that is of high fidelity,
+
+169
+00:07:51,705 --> 00:07:55,305
+because the user of interest has self-reported their information and preferences,
+
+170
+00:07:55,305 --> 00:07:58,460
+and we can fairly safely assume that those are true.
+
+171
+00:07:58,460 --> 00:08:00,620
+This gives us a much more trust in the data
+
+172
+00:08:00,620 --> 00:08:03,375
+because rather than implicitly like some other data,
+
+173
+00:08:03,375 --> 00:08:07,080
+users are explicitly telling us the things they like and don't like.
+
+174
+00:08:07,080 --> 00:08:09,995
+Unfortunately, knowledge-based systems don't work well
+
+175
+00:08:09,995 --> 00:08:12,680
+if users don't select their preferences or set their properties.
+
+176
+00:08:12,680 --> 00:08:14,085
+Just like all machine learning,
+
+177
+00:08:14,085 --> 00:08:17,145
+a model is going to really struggle if there's a major lack of data.
+
+178
+00:08:17,145 --> 00:08:18,930
+The lack of user data, however,
+
+179
+00:08:18,930 --> 00:08:21,689
+can motivate how we design our collection processes.
+
+180
+00:08:21,689 --> 00:08:25,710
+Perhaps, we were asking users the wrong questions or weren't asking the right ones.
+
+181
+00:08:25,710 --> 00:08:27,350
+Maybe we didn't create enough fields in
+
+182
+00:08:27,350 --> 00:08:29,750
+the profile page for users to fill out their information.
+
+183
+00:08:29,750 --> 00:08:32,760
+Maybe users don't feel comfortable sharing their preferences with us,
+
+184
+00:08:32,760 --> 00:08:34,360
+and we have a messaging problem.
+
+185
+00:08:34,360 --> 00:08:37,175
+As you can see, there can be a myriad of problems,
+
+186
+00:08:37,175 --> 00:08:39,760
+but there are many possible solutions as well.
+
+187
+00:08:39,760 --> 00:08:44,165
+As mentioned before, a lack of user data can be due to privacy concerns.
+
+188
+00:08:44,165 --> 00:08:45,440
+As with all machine learning,
+
+189
+00:08:45,440 --> 00:08:49,200
+we should all act as responsible data stewards and not just have the right messaging,
+
+190
+00:08:49,200 --> 00:08:51,540
+but also the right actions to back that up.
+
+191
+00:08:51,540 --> 00:08:53,610
+Sometimes, privacy concerns are too great,
+
+192
+00:08:53,610 --> 00:08:58,100
+and it may be easier to try recommendation methods other than knowledge-based.
+
+193
+00:08:58,100 --> 00:09:00,450
+After going through all the strengths and weaknesses
+
+194
+00:09:00,450 --> 00:09:02,405
+of these three recommendation system types,
+
+195
+00:09:02,405 --> 00:09:04,175
+the next question is obvious,
+
+196
+00:09:04,175 --> 00:09:07,470
+how can we keep the strengths and get rid of the weaknesses?
+
+197
+00:09:07,470 --> 00:09:10,280
+Well, fortunately, there's solution for that.
+
+198
+00:09:10,280 --> 00:09:13,770
+That solution is using hybrid recommendation systems.
+
+199
+00:09:13,770 --> 00:09:16,890
+These might sound more intimidating than they actually are.
+
+200
+00:09:16,890 --> 00:09:20,135
+They don't have to be super complex and can be rather simple.
+
+201
+00:09:20,135 --> 00:09:23,175
+Imagine training content-based, collaborative filtering,
+
+202
+00:09:23,175 --> 00:09:25,800
+and knowledge-based recommendation systems that each
+
+203
+00:09:25,800 --> 00:09:28,925
+make a recommendation for an item for a user.
+
+204
+00:09:28,925 --> 00:09:32,895
+All three of these models might recommend different items,
+
+205
+00:09:32,895 --> 00:09:36,880
+and some predictions maybe better than others due to things like data size,
+
+206
+00:09:36,880 --> 00:09:38,855
+quality, and model properties.
+
+207
+00:09:38,855 --> 00:09:42,210
+A simple way to create a hybrid model is to just take things
+
+208
+00:09:42,210 --> 00:09:45,645
+from each of the models and combine them all in a neural network.
+
+209
+00:09:45,645 --> 00:09:49,880
+The idea is that the independent errors within each mile will cancel out,
+
+210
+00:09:49,880 --> 00:09:52,155
+and we'll have much better recommendations.
+
+211
+00:09:52,155 --> 00:09:55,295
+We will soon see several examples of this.
+
+212
+00:09:55,295 --> 00:09:57,840
+Let's now test our knowledge.
+
+213
+00:09:57,840 --> 00:10:00,650
+We've refreshed ourselves about three popular types
+
+214
+00:10:00,650 --> 00:10:03,470
+of recommendation systems and the pros and cons of each.
+
+215
+00:10:03,470 --> 00:10:07,440
+We've also touched on how hybrid models can use a combination of
+
+216
+00:10:07,440 --> 00:10:11,865
+them to produce even better recommendations than each separate model could on its own.
+
+217
+00:10:11,865 --> 00:10:17,265
+If we have only the following data to recommend items for users to buy,
+
+218
+00:10:17,265 --> 00:10:20,565
+what type of recommendation system should we use?
+
+219
+00:10:20,565 --> 00:10:23,720
+User ratings of item between one to five stars,
+
+220
+00:10:23,720 --> 00:10:26,025
+user comments about experience with item,
+
+221
+00:10:26,025 --> 00:10:28,185
+user answered questions about item,
+
+222
+00:10:28,185 --> 00:10:31,750
+and the number of times user added item to cart.
+
+223
+00:10:31,750 --> 00:10:34,445
+The correct answer is B.
+
+224
+00:10:34,445 --> 00:10:37,545
+Most people probably jump straight to answer G,
+
+225
+00:10:37,545 --> 00:10:40,710
+thinking that a hybrid model is always the answer.
+
+226
+00:10:40,710 --> 00:10:45,255
+That's usually true, but that might not be possible in this hypothetical example.
+
+227
+00:10:45,255 --> 00:10:47,670
+Let's go over the reasoning behind this.
+
+228
+00:10:47,670 --> 00:10:49,775
+Let's look at our first dataset.
+
+229
+00:10:49,775 --> 00:10:53,685
+We have user ratings of items that are scores between one to five stars.
+
+230
+00:10:53,685 --> 00:10:57,410
+Well, this is explicit feedback of user item interactions.
+
+231
+00:10:57,410 --> 00:11:00,365
+So, the very first thing that comes to mind is collaborative filtering,
+
+232
+00:11:00,365 --> 00:11:02,530
+which can use a matrix factorization algorithm like
+
+233
+00:11:02,530 --> 00:11:06,490
+Weighted Alternating Least Squares or WALS to train.
+
+234
+00:11:06,490 --> 00:11:11,880
+This isn't content-based because this dataset is not metadata about the item,
+
+235
+00:11:11,880 --> 00:11:17,385
+and it's not knowledge-based because it isn't any personal user or user preference data.
+
+236
+00:11:17,385 --> 00:11:19,845
+Now, onto the second dataset,
+
+237
+00:11:19,845 --> 00:11:22,395
+user reviews about experience with item.
+
+238
+00:11:22,395 --> 00:11:24,435
+Well, we might first think,
+
+239
+00:11:24,435 --> 00:11:26,120
+"Yes, it is text,
+
+240
+00:11:26,120 --> 00:11:30,430
+so we could embed the text and use a content-based recommendation system on that."
+
+241
+00:11:30,430 --> 00:11:34,585
+Because based on the first dataset in a collaborative filtering and the answer is,
+
+242
+00:11:34,585 --> 00:11:37,160
+of course, use a hybrid model.
+
+243
+00:11:37,160 --> 00:11:39,380
+We need to stop and think more closely.
+
+244
+00:11:39,380 --> 00:11:42,890
+This isn't a description or something written by a product expert,
+
+245
+00:11:42,890 --> 00:11:45,370
+but from a user who has interacted with it.
+
+246
+00:11:45,370 --> 00:11:49,960
+It's starting to sound less like content-based and more like collaborative filtering,
+
+247
+00:11:49,960 --> 00:11:53,005
+but this time, using unstructured data.
+
+248
+00:11:53,005 --> 00:11:56,310
+We can indeed put this into an embedding and use that,
+
+249
+00:11:56,310 --> 00:11:58,670
+or perform sentiment analysis on it and then
+
+250
+00:11:58,670 --> 00:12:01,705
+create a user item interaction matrix out of that.
+
+251
+00:12:01,705 --> 00:12:04,980
+It also is still not knowledge-based because the data doesn't
+
+252
+00:12:04,980 --> 00:12:08,775
+contain any user centric or global user preference information.
+
+253
+00:12:08,775 --> 00:12:12,595
+So, the third dataset has user answered questions about
+
+254
+00:12:12,595 --> 00:12:16,550
+items that other users can read when judging whether to purchase an item.
+
+255
+00:12:16,550 --> 00:12:20,325
+It looks very similar to the previous dataset by being free text.
+
+256
+00:12:20,325 --> 00:12:23,895
+However, this feedback is quite a bit less explicit.
+
+257
+00:12:23,895 --> 00:12:26,375
+If we were to perform sentiment analysis,
+
+258
+00:12:26,375 --> 00:12:30,900
+most of the answers might be neutral because users are just being factual about the item.
+
+259
+00:12:30,900 --> 00:12:36,815
+Of course, some users might slip in some praise or dislike into their answers,
+
+260
+00:12:36,815 --> 00:12:38,865
+but it might not be enough to go on.
+
+261
+00:12:38,865 --> 00:12:42,300
+We can, however, use this as an implicit feedback.
+
+262
+00:12:42,300 --> 00:12:45,620
+Because we would assume that if a person is responding about an item,
+
+263
+00:12:45,620 --> 00:12:47,810
+they have one or more of their own,
+
+264
+00:12:47,810 --> 00:12:50,160
+and like it enough to answer questions for others.
+
+265
+00:12:50,160 --> 00:12:52,780
+Remember, implicit feedback usually involves
+
+266
+00:12:52,780 --> 00:12:55,415
+an assumption which can turn out to be wrong.
+
+267
+00:12:55,415 --> 00:12:59,010
+Perhaps, users dislike the items so much that they go out of
+
+268
+00:12:59,010 --> 00:13:03,045
+their way to warn people in their answers to their questions.
+
+269
+00:13:03,045 --> 00:13:07,360
+This still probably isn't content-based because it is a user clarifying
+
+270
+00:13:07,360 --> 00:13:09,450
+the product details to the best of their ability
+
+271
+00:13:09,450 --> 00:13:13,305
+and not a product expert who definitely should know the ground truth.
+
+272
+00:13:13,305 --> 00:13:17,975
+Once again, this is not knowledge-based because there's no user-centric data.
+
+273
+00:13:17,975 --> 00:13:19,585
+Last but not least,
+
+274
+00:13:19,585 --> 00:13:23,780
+we have a dataset the number of times users edit items to their online shopping cart.
+
+275
+00:13:23,780 --> 00:13:26,915
+Once again, this is user item interaction data,
+
+276
+00:13:26,915 --> 00:13:28,695
+so we'll use collaborative filtering.
+
+277
+00:13:28,695 --> 00:13:31,970
+However, let's analyze the type of feedback it is.
+
+278
+00:13:31,970 --> 00:13:35,475
+So, the first thought that jumps out at us is that it's implicit feedback,
+
+279
+00:13:35,475 --> 00:13:37,325
+because it's not explicit rating.
+
+280
+00:13:37,325 --> 00:13:41,580
+The user is not explicitly telling us how much they liked or disliked the item,
+
+281
+00:13:41,580 --> 00:13:43,680
+therefore, it must be implicit feedback.
+
+282
+00:13:43,680 --> 00:13:46,295
+This is true, but it could also be
+
+283
+00:13:46,295 --> 00:13:50,385
+explicit feedback if this dataset includes whether users checked out.
+
+284
+00:13:50,385 --> 00:13:55,720
+We can make the assumption that if users add an item to their cart and then purchase it,
+
+285
+00:13:55,720 --> 00:13:57,975
+not just once but multiple times,
+
+286
+00:13:57,975 --> 00:14:00,575
+they must like or at least need the item.
+
+287
+00:14:00,575 --> 00:14:05,205
+There are probably not many users continually buying items they don't want or need.
+
+288
+00:14:05,205 --> 00:14:10,190
+Again, this isn't content-based because it's not metadata about the item.
+
+289
+00:14:10,190 --> 00:14:13,140
+There's still no user, only information in this dataset,
+
+290
+00:14:13,140 --> 00:14:15,990
+so there's not a knowledge-based solution.
+
+291
+00:14:15,990 --> 00:14:19,395
+Of course, if we had data about the items themselves,
+
+292
+00:14:19,395 --> 00:14:21,000
+and data about our users,
+
+293
+00:14:21,000 --> 00:14:22,830
+and/or their self-reported preferences,
+
+294
+00:14:22,830 --> 00:14:25,710
+a hybrid approach would probably give us the best results.
+
+295
+00:14:25,710 --> 00:14:29,165
+We still wouldn't choose answer E because it excludes collaborative filtering,
+
+296
+00:14:29,165 --> 00:14:32,145
+which assuming our four given datasets are good,
+
+297
+00:14:32,145 --> 00:14:35,290
+we definitely would use in a hybrid model.

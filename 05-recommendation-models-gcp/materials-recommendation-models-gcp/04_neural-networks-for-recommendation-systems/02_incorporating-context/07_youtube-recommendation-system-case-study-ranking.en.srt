@@ -1,0 +1,235 @@
+1
+00:00:00,000 --> 00:00:03,929
+Great. We've narrowed down our original huge dataset of videos,
+
+2
+00:00:03,929 --> 00:00:05,670
+to only hundreds of candidates.
+
+3
+00:00:05,670 --> 00:00:09,105
+Now, let's deep dive into the ranking neural network.
+
+4
+00:00:09,105 --> 00:00:11,490
+Now that we have are hundreds of candidate videos,
+
+5
+00:00:11,490 --> 00:00:14,820
+that have been optimized for high precision to ensure high relevance,
+
+6
+00:00:14,820 --> 00:00:15,900
+the ranking network uses
+
+7
+00:00:15,900 --> 00:00:19,095
+more tailored features to make sure that user will like the videos.
+
+8
+00:00:19,095 --> 00:00:22,365
+The first step, is to take the video suggest to the user.
+
+9
+00:00:22,365 --> 00:00:26,145
+These get combined with the videos watched by the user,
+
+10
+00:00:26,145 --> 00:00:30,020
+these both get used as individual video embeddings,
+
+11
+00:00:30,020 --> 00:00:31,550
+and as an average embedding.
+
+12
+00:00:31,550 --> 00:00:35,360
+Both of which are used as input features to our ranking neural network.
+
+13
+00:00:35,360 --> 00:00:37,400
+We then add hundreds of features,
+
+14
+00:00:37,400 --> 00:00:40,040
+including language embeddings and user behavior.
+
+15
+00:00:40,040 --> 00:00:44,570
+Why use a language embedding of both user language and video language?
+
+16
+00:00:44,570 --> 00:00:47,015
+The reason to use this language embedding,
+
+17
+00:00:47,015 --> 00:00:49,025
+is to consider language pairs.
+
+18
+00:00:49,025 --> 00:00:52,670
+For instance, Germans tend to watch English videos,
+
+19
+00:00:52,670 --> 00:00:54,685
+but not vice versa.
+
+20
+00:00:54,685 --> 00:00:58,565
+By having this embedding, we're able to capture this difference.
+
+21
+00:00:58,565 --> 00:01:02,810
+These input features all feed through the ranking neural networks layers,
+
+22
+00:01:02,810 --> 00:01:05,930
+the output of the DNN classifier is the ranking.
+
+23
+00:01:05,930 --> 00:01:09,455
+During training time, the output is a weighted logistic function,
+
+24
+00:01:09,455 --> 00:01:12,500
+whereas during serving, it as just a logistic.
+
+25
+00:01:12,500 --> 00:01:15,640
+Serving uses logistic regression for scoring the videos and
+
+26
+00:01:15,640 --> 00:01:18,735
+is optimized for expected watch time from the training labels.
+
+27
+00:01:18,735 --> 00:01:20,800
+This is used instead of expected click,
+
+28
+00:01:20,800 --> 00:01:22,555
+because then the recommendations could favor
+
+29
+00:01:22,555 --> 00:01:26,140
+clickbait videos over actual good recommendations.
+
+30
+00:01:26,140 --> 00:01:29,680
+Remember, it is important to not only use the right model architecture,
+
+31
+00:01:29,680 --> 00:01:31,435
+but also use the right data,
+
+32
+00:01:31,435 --> 00:01:33,425
+which includes the labels.
+
+33
+00:01:33,425 --> 00:01:36,850
+For training because we are using the expected watch time,
+
+34
+00:01:36,850 --> 00:01:38,845
+we use the weighted logistic instead.
+
+35
+00:01:38,845 --> 00:01:42,340
+The watch time is used as the weight for positive interactions,
+
+36
+00:01:42,340 --> 00:01:44,930
+and negative interactions just get a unit weight.
+
+37
+00:01:44,930 --> 00:01:47,200
+Because the number of positive impressions compared to
+
+38
+00:01:47,200 --> 00:01:49,915
+the total is small, this works pretty well.
+
+39
+00:01:49,915 --> 00:01:51,880
+Now that we have gone through the second half,
+
+40
+00:01:51,880 --> 00:01:53,245
+the ranking neural network,
+
+41
+00:01:53,245 --> 00:01:54,805
+let's test your knowledge.
+
+42
+00:01:54,805 --> 00:01:56,550
+For the ranking neural network,
+
+43
+00:01:56,550 --> 00:01:59,320
+why do we use a weighted logistic regression?
+
+44
+00:01:59,320 --> 00:02:01,230
+For training. Is that
+
+45
+00:02:01,230 --> 00:02:04,190
+the loss function is more numerically stable than a normal logistic?
+
+46
+00:02:04,190 --> 00:02:07,910
+Is it that positive and negative impressions need to be weighted differently?
+
+47
+00:02:07,910 --> 00:02:11,015
+Maybe the probability is going to be formatted in special ways,
+
+48
+00:02:11,015 --> 00:02:13,315
+maybe it reduces user noise better,
+
+49
+00:02:13,315 --> 00:02:15,720
+or maybe it's just none of the above.
+
+50
+00:02:15,720 --> 00:02:17,835
+The correct answer is B.
+
+51
+00:02:17,835 --> 00:02:20,210
+Because the labels are expected watch time,
+
+52
+00:02:20,210 --> 00:02:24,430
+we want to wait videos based on their watch time and also based on their impressions.
+
+53
+00:02:24,430 --> 00:02:28,175
+For positive impressions, we weigh the output probabilities by watch time,
+
+54
+00:02:28,175 --> 00:02:31,535
+and for negative impressions, we weigh the output probabilities by unit weight.
+
+55
+00:02:31,535 --> 00:02:33,110
+We don't do this during serving,
+
+56
+00:02:33,110 --> 00:02:36,185
+because our model has already been trained unexpected watch time.
+
+57
+00:02:36,185 --> 00:02:38,980
+Furthermore, because these are new videos,
+
+58
+00:02:38,980 --> 00:02:40,335
+the user hasn't watched them.
+
+59
+00:02:40,335 --> 00:02:44,620
+So, we don't have the actual watch time to weight the probabilities with.

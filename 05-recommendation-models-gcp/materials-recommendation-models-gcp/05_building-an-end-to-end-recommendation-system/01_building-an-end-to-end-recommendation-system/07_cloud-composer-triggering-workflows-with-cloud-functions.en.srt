@@ -1,0 +1,283 @@
+1
+00:00:00,000 --> 00:00:02,130
+As you saw earlier in this course,
+
+2
+00:00:02,130 --> 00:00:05,310
+there are two general patterns for ETL workflows.
+
+3
+00:00:05,310 --> 00:00:07,770
+Event triggered, aka push,
+
+4
+00:00:07,770 --> 00:00:13,035
+as in I push a new file to GCS and then my workflow kicks off, or pull,
+
+5
+00:00:13,035 --> 00:00:16,230
+which is where airflow at a set time could look in
+
+6
+00:00:16,230 --> 00:00:18,900
+your GCS folder and take all the contents
+
+7
+00:00:18,900 --> 00:00:22,095
+that are found there for its scheduled workflow run.
+
+8
+00:00:22,095 --> 00:00:27,360
+We can use Cloud Functions to create our event-driven or push architecture workflow.
+
+9
+00:00:27,360 --> 00:00:30,750
+I mentioned triggering on events within a GCS bucket,
+
+10
+00:00:30,750 --> 00:00:33,810
+but you can also trigger them based on HTTP requests,
+
+11
+00:00:33,810 --> 00:00:36,359
+pub/sub topics, Firestore, Firebase,
+
+12
+00:00:36,359 --> 00:00:37,875
+and more as you see here.
+
+13
+00:00:37,875 --> 00:00:40,010
+Generally, push technology is
+
+14
+00:00:40,010 --> 00:00:43,385
+great when you want to distribute transactions as they happen.
+
+15
+00:00:43,385 --> 00:00:45,260
+Things like stock tickers and other types of
+
+16
+00:00:45,260 --> 00:00:49,565
+financial institution transactions are very important when it comes to push technology.
+
+17
+00:00:49,565 --> 00:00:52,130
+How about disasters or other notification?
+
+18
+00:00:52,130 --> 00:00:53,695
+Again, push is important.
+
+19
+00:00:53,695 --> 00:00:58,445
+For ML workflows where your upstream data doesn't arrive at a regular pace,
+
+20
+00:00:58,445 --> 00:01:01,160
+like get all the transactions at the end of each day,
+
+21
+00:01:01,160 --> 00:01:03,665
+consider experimenting with a push architecture.
+
+22
+00:01:03,665 --> 00:01:08,120
+Your final lab, since it's based on regular Google Analytics news article data,
+
+23
+00:01:08,120 --> 00:01:09,875
+will be a pull architecture.
+
+24
+00:01:09,875 --> 00:01:12,830
+But I've added in an optional lab for you to get practice with
+
+25
+00:01:12,830 --> 00:01:16,545
+Cloud Functions and event-driven workflows for those interested.
+
+26
+00:01:16,545 --> 00:01:19,195
+So, let's talk through some of those more pieces now.
+
+27
+00:01:19,195 --> 00:01:25,220
+For example, let's assume we have a CSV file or a set of files loaded to GCS,
+
+28
+00:01:25,220 --> 00:01:28,535
+so we'll choose a Cloud Storage trigger for our function.
+
+29
+00:01:28,535 --> 00:01:30,850
+Then, we specify an event type.
+
+30
+00:01:30,850 --> 00:01:33,515
+Here is we finalize or create new files.
+
+31
+00:01:33,515 --> 00:01:35,705
+Then, a bucket to watch.
+
+32
+00:01:35,705 --> 00:01:38,270
+As part of a cloud function, well,
+
+33
+00:01:38,270 --> 00:01:40,340
+we need to create an actual function,
+
+34
+00:01:40,340 --> 00:01:43,790
+which is written in JavaScript and that's what we want to called.
+
+35
+00:01:43,790 --> 00:01:48,095
+The good news is that most of this code for triggering automatic airflow dags
+
+36
+00:01:48,095 --> 00:01:52,835
+in a function is all boilerplate for you to copy from as a starting point.
+
+37
+00:01:52,835 --> 00:01:56,935
+Here, we specify a name for our function called triggerDag.
+
+38
+00:01:56,935 --> 00:02:00,995
+Then, we tell it where your airflow environment is to be triggered,
+
+39
+00:02:00,995 --> 00:02:03,935
+and which dag in that airflow environment.
+
+40
+00:02:03,935 --> 00:02:09,190
+In this case, is looking for a dag called GcsToBigQueryTriggered.
+
+41
+00:02:09,190 --> 00:02:11,990
+Keep in mind, you could have multiple workflows or
+
+42
+00:02:11,990 --> 00:02:14,645
+multiple dags in a single airflow environment.
+
+43
+00:02:14,645 --> 00:02:18,145
+So, be sure you trigger the correct dag name.
+
+44
+00:02:18,145 --> 00:02:22,970
+Then, we have a few constants that are provided which construct the airflow URL,
+
+45
+00:02:22,970 --> 00:02:25,460
+then we're going to trigger a post request too,
+
+46
+00:02:25,460 --> 00:02:27,200
+as well as who's making the request,
+
+47
+00:02:27,200 --> 00:02:29,675
+and what the body of the request is.
+
+48
+00:02:29,675 --> 00:02:32,450
+Lastly, the trigger dag function makes
+
+49
+00:02:32,450 --> 00:02:37,865
+the actual request against the airflow server to kick off your workflow dag run.
+
+50
+00:02:37,865 --> 00:02:41,900
+Once you've got the cloud function code ready inside your index.js
+
+51
+00:02:41,900 --> 00:02:45,785
+file and the metadata about that function inside of package.json,
+
+52
+00:02:45,785 --> 00:02:49,250
+which by the way just contains your code dependency and versioning information,
+
+53
+00:02:49,250 --> 00:02:50,870
+you still need to specify in
+
+54
+00:02:50,870 --> 00:02:54,380
+your Cloud Function which function you actually want executed.
+
+55
+00:02:54,380 --> 00:02:57,950
+In this case, we created one called triggerDag.
+
+56
+00:02:57,950 --> 00:02:59,780
+So, you just copy that down.
+
+57
+00:02:59,780 --> 00:03:02,840
+I'll save you about 20 minutes of frustration and tell you
+
+58
+00:03:02,840 --> 00:03:05,840
+that the function to execute box is case sensitive,
+
+59
+00:03:05,840 --> 00:03:11,735
+so the capital letters D-A-G is a different function than capital D, lowercase a,
+
+60
+00:03:11,735 --> 00:03:15,470
+lowercase g. There are several advanced options that you can
+
+61
+00:03:15,470 --> 00:03:17,420
+specify for your cloud function like
+
+62
+00:03:17,420 --> 00:03:20,000
+adjusting the default timeout for the function trigger to be made.
+
+63
+00:03:20,000 --> 00:03:23,195
+If you want your function to automatically retry in code failure.
+
+64
+00:03:23,195 --> 00:03:25,735
+For next lab, we'll just leave these at the default values.
+
+65
+00:03:25,735 --> 00:03:28,460
+Generally, you'd only want to turn on retry on failure.
+
+66
+00:03:28,460 --> 00:03:32,690
+If you have some short-lived to transient bugs in your function code,
+
+67
+00:03:32,690 --> 00:03:37,100
+like if your function was dependent on a less than stable outside system.
+
+68
+00:03:37,100 --> 00:03:40,390
+There you have it, your Cloud Function has been created,
+
+69
+00:03:40,390 --> 00:03:44,045
+and it's actively watching your GCS bucket for file uploads.
+
+70
+00:03:44,045 --> 00:03:46,970
+But how can you be sure that everything's working as intended?
+
+71
+00:03:46,970 --> 00:03:51,090
+For that, check out our next topic on monitoring and logging.

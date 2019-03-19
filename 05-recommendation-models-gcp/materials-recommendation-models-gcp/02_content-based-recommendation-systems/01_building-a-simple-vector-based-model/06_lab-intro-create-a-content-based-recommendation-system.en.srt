@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:04,020
+Now that we have learned the basic implementation of content-based filtering,
+
+2
+00:00:04,020 --> 00:00:05,820
+let's turn knowledge into action.
+
+3
+00:00:05,820 --> 00:00:09,750
+This lab demonstrates how to build a content-based recommender using TensorFlow.
+
+4
+00:00:09,750 --> 00:00:13,590
+We'll put code to the multiple user method we just discussed,
+
+5
+00:00:13,590 --> 00:00:15,795
+using most of the code we just saw.
+
+6
+00:00:15,795 --> 00:00:20,200
+You'll see how this can all be done using only low-level TensorFlow operations.

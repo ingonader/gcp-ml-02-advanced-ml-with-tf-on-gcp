@@ -1,0 +1,235 @@
+1
+00:00:00,000 --> 00:00:01,950
+In the quiz we had earlier,
+
+2
+00:00:01,950 --> 00:00:05,085
+we had some idea that The Incredibles and Shrek were similar.
+
+3
+00:00:05,085 --> 00:00:07,890
+But what does it mean for two movies to be similar?
+
+4
+00:00:07,890 --> 00:00:11,035
+We can try to answer this question in a number of ways.
+
+5
+00:00:11,035 --> 00:00:15,735
+One way is to consider the different genres or themes a movie has.
+
+6
+00:00:15,735 --> 00:00:19,260
+If there's a lot of overlapping themes between the two movies,
+
+7
+00:00:19,260 --> 00:00:21,750
+then perhaps we can say the movies are similar.
+
+8
+00:00:21,750 --> 00:00:25,860
+In the same way, we can ask what it means for two users to be similar.
+
+9
+00:00:25,860 --> 00:00:28,800
+We could try to use the same genre analysis or
+
+10
+00:00:28,800 --> 00:00:32,700
+another reasonable approach would be to consider the movies they've liked in the past.
+
+11
+00:00:32,700 --> 00:00:35,505
+If two users liked all the same movies,
+
+12
+00:00:35,505 --> 00:00:38,235
+we can say that those two users are similar.
+
+13
+00:00:38,235 --> 00:00:40,140
+To do machine learning,
+
+14
+00:00:40,140 --> 00:00:42,410
+we want to compare movies and users.
+
+15
+00:00:42,410 --> 00:00:45,650
+So, we need to make this notion of similarity more rigorous.
+
+16
+00:00:45,650 --> 00:00:50,120
+This is often done by thinking of properties or features of items and
+
+17
+00:00:50,120 --> 00:00:55,490
+users in the same embedding space where we can then compare how similar they are.
+
+18
+00:00:55,490 --> 00:00:59,000
+An embedding is a map from our collection of items
+
+19
+00:00:59,000 --> 00:01:02,105
+or users to some finite dimensional vector space,
+
+20
+00:01:02,105 --> 00:01:04,580
+it provides a way of giving a finite vector valued
+
+21
+00:01:04,580 --> 00:01:08,195
+representation of the items and users in our data set.
+
+22
+00:01:08,195 --> 00:01:12,760
+Embeddings are commonly used to represent input features and machine learning problems.
+
+23
+00:01:12,760 --> 00:01:14,690
+In fact, we've already seen how embeddings can
+
+24
+00:01:14,690 --> 00:01:17,435
+arise and some of the examples from previous modules.
+
+25
+00:01:17,435 --> 00:01:19,880
+Here's a visualization of the MNIST data set of
+
+26
+00:01:19,880 --> 00:01:22,630
+handwritten images embedded into 3-dimensions.
+
+27
+00:01:22,630 --> 00:01:23,985
+If you look closely,
+
+28
+00:01:23,985 --> 00:01:26,360
+this embedding show us all the ones lie in
+
+29
+00:01:26,360 --> 00:01:30,350
+the same general area and other tools like together as well and so on.
+
+30
+00:01:30,350 --> 00:01:32,840
+Lets go back to our movie example and consider
+
+31
+00:01:32,840 --> 00:01:35,410
+a two dimensional embedding for the elements in our data set.
+
+32
+00:01:35,410 --> 00:01:40,535
+That is, supposed we described our movies using just two genres or dimensions.
+
+33
+00:01:40,535 --> 00:01:42,560
+Say drama and fantasy.
+
+34
+00:01:42,560 --> 00:01:46,535
+We put drama on the x-axis and fantasy on the y-axis.
+
+35
+00:01:46,535 --> 00:01:48,860
+A movie like Momento scores high in
+
+36
+00:01:48,860 --> 00:01:52,670
+the drama genre but has a relatively low value for fantasy,
+
+37
+00:01:52,670 --> 00:01:57,655
+whereas Harry Potter measures high for fantasy but only medium for drama.
+
+38
+00:01:57,655 --> 00:02:00,950
+A new movie like Star Wars might appear to be closer to
+
+39
+00:02:00,950 --> 00:02:04,295
+Harry Potter and it's embedded space, but how close?
+
+40
+00:02:04,295 --> 00:02:08,720
+To make this precise, consider the following embedding values for the movies here.
+
+41
+00:02:08,720 --> 00:02:12,470
+A similarity measure is just a metric that defines exactly
+
+42
+00:02:12,470 --> 00:02:16,100
+how similar are close to items are in the embedding space.
+
+43
+00:02:16,100 --> 00:02:20,085
+One commonly used similarity measure is the dot product.
+
+44
+00:02:20,085 --> 00:02:22,670
+To compute the dot product of two vectors,
+
+45
+00:02:22,670 --> 00:02:26,435
+we compute the sum of the product wise components of each vector.
+
+46
+00:02:26,435 --> 00:02:29,405
+Because 26 is greater than 19,
+
+47
+00:02:29,405 --> 00:02:33,320
+Star Wars is more similar to Harry Potter than it is to Memento,
+
+48
+00:02:33,320 --> 00:02:35,820
+which confirms our intuition.
+
+49
+00:02:35,870 --> 00:02:40,460
+The cosine similarity is another popularly used similarity measure,
+
+50
+00:02:40,460 --> 00:02:45,005
+it's similar to the dot product that scaled with a norm of the movie feature vectors.
+
+51
+00:02:45,005 --> 00:02:49,655
+Note the similarity is still greatest between Harry Potter and Star Wars.
+
+52
+00:02:49,655 --> 00:02:53,840
+Lets have a quick quiz to check our understanding of similarity measures.
+
+53
+00:02:53,840 --> 00:02:56,810
+Compute the cosine similarity between Star Wars and
+
+54
+00:02:56,810 --> 00:02:59,704
+Shrek and between Harry Potter and The Incredibles,
+
+55
+00:02:59,704 --> 00:03:03,040
+which pair of movies is more similar?
+
+56
+00:03:03,040 --> 00:03:06,260
+That's right. Star Wars and Shrek are more
+
+57
+00:03:06,260 --> 00:03:09,815
+similar because the cosine similarity measure between them is greater.
+
+58
+00:03:09,815 --> 00:03:12,350
+Check that these are the values you found when
+
+59
+00:03:12,350 --> 00:03:16,050
+computing the cosine similarity between these pairs of movies.

@@ -1,0 +1,49 @@
+Now that we've had the overview, let's take a deeper dive into each of the
+two neural networks used for the YouTube video recommendation system, starting
+with the candidate generation network. Just as we did with our design lab and
+neural network lab, hybrid models require intelligently assembling many other
+machine learning models into a pipeline. These use multiple datasets and model types to help get
+the best recommendations. The first step for candidate generation
+is see the item embeddings for instance from a trained WALS model. We then find the last 10
+videos watched by the user and use the embeddings to get their
+vectors within embedding space. Next, we average the embeddings
+of those 10 videos, so we'll have a resultant single embedding that is the
+average along each embedding dimension. This becomes the watch vector, which will be one of the features
+to our deep neural network. We would do the same thing
+with past search queries. Collaborative filtering for next search term is a collaborative
+filtering model that is similar to the user history based collaborative
+filter we talked about earlier. Essentially, this is like doing to
+word to vec on pairs of search terms. We will find an average search in Benin
+and this will become our search vector. Another input feature to
+our deep neural network. We also should add any knowledge
+we have about the user. Location is important so
+you just conceive localised videos and also because of language. Gender may be important because there are
+differences in preference based on that. All of these are features added as
+inputs to our deep neural network. We also should add example age, because we
+don't want to over emphasis older videos. Why do we care about this? Well, older videos have more likes and
+more user interactions in general. You want the model to learn to account for the fact that older videos are more likely
+to have been watched or searched for. Hence, the need to add
+example age as an input. Remember, this is example age,
+not user age. These are all a subset of the many
+features that feed into our candidate generation neural network. Next, we want to train a DNN Classifier. Now, why would we want this model type? When you think of a DNN Classifier's
+output, it becomes pretty obvious. The output will be a probability
+that this video will be watched. So taking the top n of these
+videos is probably what we want. These come out of a soft max for training,
+but there are two other considerations. There's also a benefit to
+finding the closest users and generating those candidates as well. This is the way that
+viral videos are created, videos that a lot of people
+like us are watching. Therefore, we can treat the last but
+one layer, or the layer right before
+softmax as a user embedding. This is also a benefit to
+finding videos related content wise to the video
+you are currently watching. Therefore, we can use the output of
+the DNN Classifier as video vectors. This compounded with the last
+relayer as the user embeddings generates candidates during serving, so nearest neighbors consist of neighboring
+users and neighboring videos. We now know the magic behind YouTube's
+candidate generation neural network, so let's see what we've learned. During training of the candidate
+generation network, what output layer should we be using, and
+what should we be predicting with it? The correct answer is E. We are trying to generate candidate
+videos to send onto the ranking network, half of our hybrid recommendation system. Therefore, by using a Softmax, we can
+get probabilities of which video will be watched, and
+we can then take the highest ones and send those as our candidate
+videos to the ranking network.

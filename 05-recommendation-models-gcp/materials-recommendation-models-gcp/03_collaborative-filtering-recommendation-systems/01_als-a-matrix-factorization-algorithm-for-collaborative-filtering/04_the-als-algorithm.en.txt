@@ -1,0 +1,75 @@
+So how do we create
+a TensorFlow model to use WALS? Well, fortunately,
+there's a WALS Estimator. Using this, we simply just need to
+structure the inputs correctly, so we feed in the estimator, and
+it takes care of most of the rest. This begins with
+the training_input function, where we simply define our features. But wait, aren't they usually labels? In this case, we are alternating
+some of our features has labels, that is where the alternating
+comes from in alternating squares. We fixed the rows and install for
+the columns, and it takes the columns and install for the rows. The rows might begin as our features,
+where we're predicting the columns, and compare it with the actual column values
+as our labels from the radia matrix, and vice versa when alternating. Also, remember the W in WALS is for
+Weighted. That means we can customize our problem,
+it's not just for managing missing observations. We can add weights for
+specific entries if we want. One reason might be to encode our profit
+margin on items and use that as a weight. This way, more profitable items
+will be recommended more. We're ignoring this, here. But if you wanted to, it's just another the key in the features
+dictionary that you can add. Note here that input rows and
+input columns are both from a batch. Not all the rows. We'll dive deeper into this later, but now, let's take a look
+at the ALS algorithm. Here is the pseudocode for
+the alternating least squares algorithm. Remember, with matrix factorization,
+we iteratively learn U and V, which are multiplied together, hopefully
+reconstructs a close approximation to our original user item interaction matrix,
+however, it won't be perfect. With alternating least squares,
+we can get very close, though. Let's walk through it a bit to
+build a deeper intuition of what is happening under the hood. First, we initialize the u and
+v factor matrices. These are our learned row and
+column factors, which based on our previous examples,
+could be the users u and movies for v. Just as how we would
+normally treat an embedding, these start of as typically random,
+normal noise. Our goal is to calculate these
+two embeddings simultaneously. Next, we're going to enter a loop
+that will run until we reach the law's conversion,
+usually within some tolerance. This is our alternation loop. Let's enter and see just exactly
+what is alternating back and forth. In the first phase of the alternation,
+we are solving for the row factors u by looping through all the rows,
+which in our example, would be the users. Does the equation look familiar? Well, of course. It's the ordinary least
+squares normal equation with L-curve regularization added,
+with regularization constant lambda. We are used to seeing this with x's and
+y's, but it's essentially the same. This means that the Ui's we are solving
+for are analogous to the coefficients, or weight factor learned
+from linear regression. The normal equation's gram matrix is using
+v, our column factors, instead of x. Admini auto regularization,
+we then take the inverse, as usual, which gives us the inverse
+regularized grand matrix. Last but not the least, we multiply by the
+moment matrix to find out weight factors. As before, our usual access from
+a place for the column factors B, and instead of our labels, y, we had the ithro
+of the radiance matrix, r, as our labels. Now that we have solved for all the row factors using
+the column factors as features, and the ready matrix rows as our labels, we're
+going to alternate gears and do the same. But now, we will iterate over
+all the columns and solve for all the column factors using the row
+factors that we have just solved for as our features, and
+the radiance matrix columns as our labels. ALS is an alternating
+least squares algorithm. In ordinary least squares, we have the
+analytic solution of the normal equation. Beta equals the inverse of X transpose X,
+plus lambda, times the identity matrix,
+all multiplied by X transpose Y. In ALS, during the row-factor solving
+phase, where we fix column-factors, row factors u are analogous to blank. Column-factor v are analogous to,
+blank, and ratings matrix R is analogous to, blank. Choose the answer that
+best fills in the blanks. The correct answer is C. We're solving for the row-factors u
+with which the column-factors of V. We are solving for
+the latent variable embedding waste, which is analagous to what beta
+represents in linear regression. The coefficients or
+weights are predictive variables. In linear regression, our predictors
+are often denoted by the matrix X, which this case are our column-factors V,
+which are holding the fix for this cycle. Lastly, whether solving for ρ factors or
+column factors, our ratings matrix R is analogous to labels of linear
+regression, usually denoted y. Now, since we are solving for vectors, we
+are not using the entire ratings matrix R, we are only using the Ith row of
+the ratings matrix when solving for the Ith row factor. Remember, when solving for
+the column factors for the next half cycle of the ALS
+algorithm the variable analogies flip. With v now being solved for like beta,
+u is now fixed like the predictors x, and y is still the ratings matrix, but now the jth column of it is being used
+to solve for the jth column factor. All of this happening with factors
+that represent the user and item embeddings into
+k-dimensional spaces for both.

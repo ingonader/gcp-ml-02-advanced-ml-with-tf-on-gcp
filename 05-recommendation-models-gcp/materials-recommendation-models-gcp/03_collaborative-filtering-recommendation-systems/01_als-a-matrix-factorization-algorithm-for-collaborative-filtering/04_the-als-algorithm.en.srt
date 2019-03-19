@@ -1,0 +1,445 @@
+1
+00:00:01,160 --> 00:00:04,770
+So how do we create
+a TensorFlow model to use WALS?
+
+2
+00:00:04,770 --> 00:00:07,540
+Well, fortunately,
+there's a WALS Estimator.
+
+3
+00:00:07,540 --> 00:00:10,960
+Using this, we simply just need to
+structure the inputs correctly, so
+
+4
+00:00:10,960 --> 00:00:14,510
+we feed in the estimator, and
+it takes care of most of the rest.
+
+5
+00:00:14,510 --> 00:00:16,310
+This begins with
+the training_input function,
+
+6
+00:00:16,310 --> 00:00:18,430
+where we simply define our features.
+
+7
+00:00:18,430 --> 00:00:21,320
+But wait, aren't they usually labels?
+
+8
+00:00:21,320 --> 00:00:25,100
+In this case, we are alternating
+some of our features has labels,
+
+9
+00:00:25,100 --> 00:00:28,420
+that is where the alternating
+comes from in alternating squares.
+
+10
+00:00:28,420 --> 00:00:31,430
+We fixed the rows and install for
+the columns, and it takes the columns and
+
+11
+00:00:31,430 --> 00:00:32,910
+install for the rows.
+
+12
+00:00:32,910 --> 00:00:37,700
+The rows might begin as our features,
+where we're predicting the columns, and
+
+13
+00:00:37,700 --> 00:00:42,050
+compare it with the actual column values
+as our labels from the radia matrix, and
+
+14
+00:00:42,050 --> 00:00:43,640
+vice versa when alternating.
+
+15
+00:00:44,710 --> 00:00:48,400
+Also, remember the W in WALS is for
+Weighted.
+
+16
+00:00:48,400 --> 00:00:51,410
+That means we can customize our problem,
+it's not just for
+
+17
+00:00:51,410 --> 00:00:53,480
+managing missing observations.
+
+18
+00:00:53,480 --> 00:00:56,950
+We can add weights for
+specific entries if we want.
+
+19
+00:00:56,950 --> 00:01:01,700
+One reason might be to encode our profit
+margin on items and use that as a weight.
+
+20
+00:01:01,700 --> 00:01:04,790
+This way, more profitable items
+will be recommended more.
+
+21
+00:01:05,900 --> 00:01:07,150
+We're ignoring this, here.
+
+22
+00:01:07,150 --> 00:01:08,340
+But if you wanted to,
+
+23
+00:01:08,340 --> 00:01:11,690
+it's just another the key in the features
+dictionary that you can add.
+
+24
+00:01:11,690 --> 00:01:15,860
+Note here that input rows and
+input columns are both from a batch.
+
+25
+00:01:15,860 --> 00:01:17,590
+Not all the rows.
+
+26
+00:01:17,590 --> 00:01:19,370
+We'll dive deeper into this later, but
+
+27
+00:01:19,370 --> 00:01:21,419
+now, let's take a look
+at the ALS algorithm.
+
+28
+00:01:22,940 --> 00:01:26,010
+Here is the pseudocode for
+the alternating least squares algorithm.
+
+29
+00:01:26,010 --> 00:01:30,850
+Remember, with matrix factorization,
+we iteratively learn U and V,
+
+30
+00:01:30,850 --> 00:01:34,900
+which are multiplied together, hopefully
+reconstructs a close approximation to our
+
+31
+00:01:34,900 --> 00:01:38,420
+original user item interaction matrix,
+however, it won't be perfect.
+
+32
+00:01:39,470 --> 00:01:42,780
+With alternating least squares,
+we can get very close, though.
+
+33
+00:01:42,780 --> 00:01:45,540
+Let's walk through it a bit to
+build a deeper intuition of what is
+
+34
+00:01:45,540 --> 00:01:46,510
+happening under the hood.
+
+35
+00:01:48,130 --> 00:01:51,240
+First, we initialize the u and
+v factor matrices.
+
+36
+00:01:51,240 --> 00:01:53,240
+These are our learned row and
+column factors,
+
+37
+00:01:53,240 --> 00:01:58,450
+which based on our previous examples,
+could be the users u and movies for v.
+
+38
+00:01:58,450 --> 00:02:00,670
+Just as how we would
+normally treat an embedding,
+
+39
+00:02:00,670 --> 00:02:03,340
+these start of as typically random,
+normal noise.
+
+40
+00:02:03,340 --> 00:02:06,730
+Our goal is to calculate these
+two embeddings simultaneously.
+
+41
+00:02:07,880 --> 00:02:10,530
+Next, we're going to enter a loop
+that will run until we reach
+
+42
+00:02:10,530 --> 00:02:13,780
+the law's conversion,
+usually within some tolerance.
+
+43
+00:02:13,780 --> 00:02:15,960
+This is our alternation loop.
+
+44
+00:02:15,960 --> 00:02:19,109
+Let's enter and see just exactly
+what is alternating back and forth.
+
+45
+00:02:20,610 --> 00:02:23,850
+In the first phase of the alternation,
+we are solving for the row factors u
+
+46
+00:02:23,850 --> 00:02:28,240
+by looping through all the rows,
+which in our example, would be the users.
+
+47
+00:02:28,240 --> 00:02:30,240
+Does the equation look familiar?
+
+48
+00:02:30,240 --> 00:02:31,200
+Well, of course.
+
+49
+00:02:31,200 --> 00:02:33,890
+It's the ordinary least
+squares normal equation
+
+50
+00:02:33,890 --> 00:02:37,440
+with L-curve regularization added,
+with regularization constant lambda.
+
+51
+00:02:38,450 --> 00:02:42,100
+We are used to seeing this with x's and
+y's, but it's essentially the same.
+
+52
+00:02:42,100 --> 00:02:45,970
+This means that the Ui's we are solving
+for are analogous to the coefficients, or
+
+53
+00:02:45,970 --> 00:02:48,610
+weight factor learned
+from linear regression.
+
+54
+00:02:49,830 --> 00:02:55,400
+The normal equation's gram matrix is using
+v, our column factors, instead of x.
+
+55
+00:02:55,400 --> 00:02:58,390
+Admini auto regularization,
+we then take the inverse,
+
+56
+00:02:58,390 --> 00:03:02,740
+as usual, which gives us the inverse
+regularized grand matrix.
+
+57
+00:03:02,740 --> 00:03:07,220
+Last but not the least, we multiply by the
+moment matrix to find out weight factors.
+
+58
+00:03:07,220 --> 00:03:11,445
+As before, our usual access from
+a place for the column factors B, and
+
+59
+00:03:11,445 --> 00:03:17,520
+instead of our labels, y, we had the ithro
+of the radiance matrix, r, as our labels.
+
+60
+00:03:17,520 --> 00:03:18,380
+Now that we have solved for
+
+61
+00:03:18,380 --> 00:03:22,120
+all the row factors using
+the column factors as features, and
+
+62
+00:03:22,120 --> 00:03:27,110
+the ready matrix rows as our labels, we're
+going to alternate gears and do the same.
+
+63
+00:03:27,110 --> 00:03:29,820
+But now, we will iterate over
+all the columns and solve for
+
+64
+00:03:29,820 --> 00:03:33,150
+all the column factors using the row
+factors that we have just solved for
+
+65
+00:03:33,150 --> 00:03:37,083
+as our features, and
+the radiance matrix columns as our labels.
+
+66
+00:03:38,200 --> 00:03:40,980
+ALS is an alternating
+least squares algorithm.
+
+67
+00:03:40,980 --> 00:03:44,850
+In ordinary least squares, we have the
+analytic solution of the normal equation.
+
+68
+00:03:44,850 --> 00:03:49,000
+Beta equals the inverse of X transpose X,
+plus lambda,
+
+69
+00:03:49,000 --> 00:03:53,530
+times the identity matrix,
+all multiplied by X transpose Y.
+
+70
+00:03:53,530 --> 00:03:57,930
+In ALS, during the row-factor solving
+phase, where we fix column-factors,
+
+71
+00:03:57,930 --> 00:04:00,715
+row factors u are analogous to blank.
+
+72
+00:04:00,715 --> 00:04:04,360
+Column-factor v are analogous to,
+blank, and
+
+73
+00:04:04,360 --> 00:04:07,550
+ratings matrix R is analogous to, blank.
+
+74
+00:04:07,550 --> 00:04:09,520
+Choose the answer that
+best fills in the blanks.
+
+75
+00:04:10,630 --> 00:04:12,510
+The correct answer is C.
+
+76
+00:04:12,510 --> 00:04:15,590
+We're solving for the row-factors u
+with which the column-factors of V.
+
+77
+00:04:15,590 --> 00:04:19,410
+We are solving for
+the latent variable embedding waste,
+
+78
+00:04:19,410 --> 00:04:22,610
+which is analagous to what beta
+represents in linear regression.
+
+79
+00:04:22,610 --> 00:04:26,010
+The coefficients or
+weights are predictive variables.
+
+80
+00:04:26,010 --> 00:04:29,580
+In linear regression, our predictors
+are often denoted by the matrix X,
+
+81
+00:04:29,580 --> 00:04:34,340
+which this case are our column-factors V,
+which are holding the fix for this cycle.
+
+82
+00:04:35,720 --> 00:04:39,810
+Lastly, whether solving for ρ factors or
+column factors, our ratings matrix
+
+83
+00:04:39,810 --> 00:04:44,490
+R is analogous to labels of linear
+regression, usually denoted y.
+
+84
+00:04:44,490 --> 00:04:49,380
+Now, since we are solving for vectors, we
+are not using the entire ratings matrix R,
+
+85
+00:04:49,380 --> 00:04:52,670
+we are only using the Ith row of
+the ratings matrix when solving for
+
+86
+00:04:52,670 --> 00:04:54,040
+the Ith row factor.
+
+87
+00:04:55,440 --> 00:04:57,720
+Remember, when solving for
+the column factors for
+
+88
+00:04:57,720 --> 00:05:02,350
+the next half cycle of the ALS
+algorithm the variable analogies flip.
+
+89
+00:05:02,350 --> 00:05:07,060
+With v now being solved for like beta,
+u is now fixed like the predictors x, and
+
+90
+00:05:07,060 --> 00:05:08,770
+y is still the ratings matrix, but
+
+91
+00:05:08,770 --> 00:05:12,650
+now the jth column of it is being used
+to solve for the jth column factor.
+
+92
+00:05:13,660 --> 00:05:16,970
+All of this happening with factors
+that represent the user and
+
+93
+00:05:16,970 --> 00:05:19,840
+item embeddings into
+k-dimensional spaces for both.

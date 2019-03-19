@@ -1,0 +1,115 @@
+1
+00:00:00,000 --> 00:00:03,930
+Now, we can make the best recommendation for
+
+2
+00:00:03,930 --> 00:00:06,540
+our user based on their user feature vector and
+
+3
+00:00:06,540 --> 00:00:09,960
+the features of the unrated unseen movies in our database.
+
+4
+00:00:09,960 --> 00:00:14,835
+To do this, we'll use a similarity measure like we described previously.
+
+5
+00:00:14,835 --> 00:00:19,230
+Basically, we'll compute the dot product to measure the similarity between
+
+6
+00:00:19,230 --> 00:00:23,925
+our user and all the remaining unranked movies in our database.
+
+7
+00:00:23,925 --> 00:00:29,235
+The movie with the greatest similarity measure is our top recommendation for our user.
+
+8
+00:00:29,235 --> 00:00:32,190
+The dot product is found by taking the component
+
+9
+00:00:32,190 --> 00:00:35,805
+wise product across each dimension and adding the results.
+
+10
+00:00:35,805 --> 00:00:38,790
+That is we multiply the user feature vector
+
+11
+00:00:38,790 --> 00:00:42,495
+component-wise with the movie feature vector for each movie,
+
+12
+00:00:42,495 --> 00:00:47,085
+and then sum row-wise to compute the dot product.
+
+13
+00:00:47,085 --> 00:00:53,075
+This gives us the dot product similarity between our user and each of the four movies.
+
+14
+00:00:53,075 --> 00:00:56,680
+We'll use these values to make our recommendations.
+
+15
+00:00:56,680 --> 00:01:00,155
+Because Star Wars has the greatest similarity measure,
+
+16
+00:01:00,155 --> 00:01:02,180
+that will be our top recommendation,
+
+17
+00:01:02,180 --> 00:01:03,755
+followed by the Incredibles,
+
+18
+00:01:03,755 --> 00:01:07,080
+and then The Dark Knight, and lastly, Memento.
+
+19
+00:01:07,370 --> 00:01:12,555
+In the last quiz, we computed this to be the user feature vector for that user.
+
+20
+00:01:12,555 --> 00:01:14,805
+Using this user feature vector,
+
+21
+00:01:14,805 --> 00:01:18,870
+which movie would be our top recommendation for this user?
+
+22
+00:01:18,940 --> 00:01:23,770
+Remember, these are the movie feature vectors for the three movies.
+
+23
+00:01:23,770 --> 00:01:26,605
+The answer here is, again, Star Wars.
+
+24
+00:01:26,605 --> 00:01:29,880
+Do you know what movie to recommend second?
+
+25
+00:01:30,580 --> 00:01:32,870
+To come to that conclusion,
+
+26
+00:01:32,870 --> 00:01:36,310
+we take the dot product of our user feature vector with each movie.
+
+27
+00:01:36,310 --> 00:01:39,185
+We find that Star Wars has the greatest similarity measure.
+
+28
+00:01:39,185 --> 00:01:41,090
+So, it's our top recommendation.
+
+29
+00:01:41,090 --> 00:01:44,420
+Next, would be Blue, and lastly, Shrek.
