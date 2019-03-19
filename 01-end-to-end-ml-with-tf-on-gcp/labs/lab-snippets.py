@@ -91,6 +91,8 @@ arguments = args.__dict__
 n = 10
 npa = np.zeros(n)
 npa.shape  # (n,)
+type(npa)
+
 
 dat_tmp = pd.DataFrame(npa, npa)
 dat_tmp.shape  # (n, 1)
