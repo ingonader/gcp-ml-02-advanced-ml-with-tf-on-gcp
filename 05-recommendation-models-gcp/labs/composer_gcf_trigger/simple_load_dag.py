@@ -43,7 +43,7 @@ YESTERDAY = datetime.datetime.combine(
 SUCCESS_TAG = 'success'
 FAILURE_TAG = 'failure'
 
-# An Airflow variable called gcs_completion_bucket is required.
+# An Airflow variable called gcp_completion_bucket is required.
 # This variable will contain the name of the bucket to move the processed
 # file to.
 
@@ -51,8 +51,8 @@ FAILURE_TAG = 'failure'
 # we are only looking for files with the exact name usa_names.csv (you can specify wildcards if you like)
 INPUT_BUCKET_CSV = 'gs://'+models.Variable.get('gcp_input_location')+'/usa_names.csv' 
 
-# TODO: Populate the models.Variable.get() with the actual variable name for your output bucket
-COMPLETION_BUCKET = 'gs://'+models.Variable.get('')
+# TODO (done): Populate the models.Variable.get() with the actual variable name for your output bucket
+COMPLETION_BUCKET = 'gs://'+models.Variable.get('gcp_output_location')
 
 DS_TAG = '{{ ds }}'
 DATAFLOW_FILE = os.path.join(
@@ -65,13 +65,13 @@ DEFAULT_DAG_ARGS = {
     'start_date': YESTERDAY,
     'retries': 2,
 
-    # TODO: Populate the models.Variable.get() with the variable name for your GCP Project
-    'project_id': models.Variable.get(''),
+    # TODO (done): Populate the models.Variable.get() with the variable name for your GCP Project
+    'project_id': models.Variable.get('gcp_project'),  ## [[?]] or use a separate name, like gcp_project_id?
     'dataflow_default_options': {
         'project': models.Variable.get('gcp_project'),
 
-        # TODO: Populate the models.Variable.get() with the variable name for temp location
-        'temp_location': 'gs://'+models.Variable.get(''),
+        # TODO (done): Populate the models.Variable.get() with the variable name for temp location
+        'temp_location': 'gs://'+models.Variable.get('gcp_temp_location'),
         'runner': 'DataflowRunner'
     }
 }
@@ -112,25 +112,26 @@ def move_to_completion_bucket(target_bucket, target_infix, **kwargs):
 # input_field_names: Comma separated field names for the delimited input file.
 #                  e.g. state,gender,year,name,number,created_date
 
-# TODO: Name the DAG id GcsToBigQueryTriggered
-with models.DAG(dag_id='',
+# TODO (done): Name the DAG id GcsToBigQueryTriggered
+with models.DAG(dag_id='GcsToBigQueryTriggered',
                 description='A DAG triggered by an external Cloud Function',
-                schedule_interval=None, default_args=DEFAULT_DAG_ARGS) as dag:
+                schedule_interval=None, 
+                default_args=DEFAULT_DAG_ARGS) as dag:
     # Args required for the Dataflow job.
     job_args = {
         'input': INPUT_BUCKET_CSV,
 
-        # TODO: Populate the models.Variable.get() with the variable name for BQ table
-        'output': 'gs://'+models.Variable.get(''),
+        # TODO (done): Populate the models.Variable.get() with the variable name for BQ table
+        'output': 'gs://'+models.Variable.get('gcp_bq_target_table'),
 
-        # TODO: Populate the models.Variable.get() with the variable name for input field names
-        'fields': models.Variable.get(''),
+        # TODO (done): Populate the models.Variable.get() with the variable name for input field names
+        'fields': models.Variable.get('gcp_input_field_names'),
         'load_dt': DS_TAG
     }
 
     # Main Dataflow task that will process and load the input delimited file.
-    # TODO: Specify the type of operator we need to call to invoke DataFlow
-    dataflow_task = dataflow_operator.DataFlowPythonSomething(
+    # TODO (done): Specify the type of operator we need to call to invoke DataFlow
+    dataflow_task = dataflow_operator.DataFlowPythonOperator(
         task_id="process-delimited-and-push",
         py_file=DATAFLOW_FILE,
         options=job_args)
@@ -142,7 +143,7 @@ with models.DAG(dag_id='',
                                                        # A success_tag is used to move
                                                        # the input file to a success
                                                        # prefixed folder.
-                                                       op_args=[models.Variable.get('gcs_completion_bucket'), SUCCESS_TAG],
+                                                       op_args=[models.Variable.get('gcp_completion_bucket'), SUCCESS_TAG],
                                                        provide_context=True,
                                                        trigger_rule=TriggerRule.ALL_SUCCESS)
 
@@ -151,7 +152,7 @@ with models.DAG(dag_id='',
                                                        # A failure_tag is used to move
                                                        # the input file to a failure
                                                        # prefixed folder.
-                                                       op_args=[models.Variable.get('gcs_completion_bucket'), FAILURE_TAG],
+                                                       op_args=[models.Variable.get('gcp_completion_bucket'), FAILURE_TAG],
                                                        provide_context=True,
                                                        trigger_rule=TriggerRule.ALL_FAILED)
 
