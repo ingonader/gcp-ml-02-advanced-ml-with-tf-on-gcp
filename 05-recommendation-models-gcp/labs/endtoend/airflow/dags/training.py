@@ -1,3 +1,4 @@
+
 # Copyright 2018 Google Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,15 +50,15 @@ PROJECT_ID = _get_project_id()
 # Data set constants, used in BigQuery tasks.  You can change these
 # to conform to your data.
 
-# TODO: Specify your BigQuery dataset name and table name
-DATASET = ''
-TABLE_NAME = ''
+# TODO (done): Specify your BigQuery dataset name and table name
+DATASET = 'GA360_test'
+TABLE_NAME = 'ga_sessions_sample'
 ARTICLE_CUSTOM_DIMENSION = '10'
 
-# TODO: Confirm bucket name and region
+# TODO (done): Confirm bucket name and region
 # GCS bucket names and region, can also be changed.
 BUCKET = 'gs://recserve_' + PROJECT_ID
-REGION = 'us-east1'
+REGION = 'europe-west1'
 
 # The code package name comes from the model code in the wals_ml_engine
 # directory of the solution code base.
@@ -78,12 +79,12 @@ default_args = {
 # Default schedule interval using cronjob syntax - can be customized here
 # or in the Airflow console.
 
-# TODO: Specify a schedule interval in CRON syntax to run once a day at 2100 hours (9pm)
+# TODO (done): Specify a schedule interval in CRON syntax to run once a day at 2100 hours (9pm)
 # Reference: https://airflow.apache.org/scheduler.html
-schedule_interval = '' # example '00 XX 0 0 0'
+schedule_interval = '00 21 * * *' # example '00 XX 0 0 0'
 
-# TODO: Title your DAG to be recommendations_training_v1
-dag = DAG('', 
+# TODO (done): Title your DAG to be recommendations_training_v1
+dag = DAG('recommendations_training_v1', 
           default_args=default_args,
           schedule_interval=schedule_interval)
 
@@ -119,21 +120,21 @@ FROM(
 
 bql = bql.format(ARTICLE_CUSTOM_DIMENSION, PROJECT_ID, DATASET, TABLE_NAME)
 
-# TODO: Complete the BigQueryOperator task to truncate the table if it already exists before writing
+# TODO (done): Complete the BigQueryOperator task to truncate the table if it already exists before writing
 # Reference: https://airflow.apache.org/integration.html#bigqueryoperator
-t1 = BigQuerySomething( # correct the operator name
+t1 = BigQueryOperator( # correct the operator name
     task_id='bq_rec_training_data',
     bql=bql,
     destination_dataset_table='%s.recommendation_events' % DATASET,
-    write_disposition='WRITE_T_______', # specify to truncate on writes
+    write_disposition='WRITE_TRUNCATE', # specify to truncate on writes
     dag=dag)
 
 # BigQuery training data export to GCS
 
-# TODO: Fill in the missing operator name for task #2 which
+# TODO (done): Fill in the missing operator name for task #2 which
 # takes a BigQuery dataset and table as input and exports it to GCS as a CSV
 training_file = BUCKET + '/data/recommendation_events.csv'
-t2 = BigQueryToCloudSomethingSomething( # correct the name
+t2 = BigQueryToCloudStorageOperator( # correct the name
     task_id='bq_export_op',
     source_project_dataset_table='%s.recommendation_events' % DATASET,
     destination_cloud_storage_uris=[training_file],
@@ -153,11 +154,11 @@ training_args = ['--job-dir', job_dir,
                  '--data-type', 'web_views',
                  '--use-optimized']
 
-# TODO: Fill in the missing operator name for task #3 which will
+# TODO (done): Fill in the missing operator name for task #3 which will
 # start a new training job to Cloud ML Engine
 # Reference: https://airflow.apache.org/integration.html#cloud-ml-engine
 # https://cloud.google.com/ml-engine/docs/tensorflow/machine-types
-t3 = MLEngineSomethingSomething( # complete the name
+t3 = MLEngineTrainingOperator( # complete the name
     task_id='ml_engine_training_op',
     project_id=PROJECT_ID,
     job_id=job_id,
@@ -181,7 +182,7 @@ t4 = AppEngineVersionOperator(
     dag=dag
 )
 
-# TODO: Be sure to set_upstream dependencies for all tasks
+# TODO (done): Be sure to set_upstream dependencies for all tasks
 t2.set_upstream(t1)
 t3.set_upstream(t2)
-t4.set_upstream(t) # complete
+t4.set_upstream(t3) # complete
