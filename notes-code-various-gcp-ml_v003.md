@@ -104,15 +104,15 @@ BUCKET = project_name
 #BUCKET = BUCKET.replace("qwiklabs-gcp-", "inna-bckt-")
 REGION = 'europe-west1'  ## note: Cloud ML Engine not availabe in europe-west3!
 
+print(PROJECT)
+print(BUCKET)
+print(REGION)
+
 # set environment variables:
 os.environ['BUCKET'] = BUCKET
 os.environ['PROJECT'] = PROJECT
 os.environ['REGION'] = REGION
 os.environ['TFVERSION'] = '1.8'
-
-print(PROJECT)
-print(BUCKET)
-print(REGION)
 
 #print("gsutil mb -l {0} gs://{1}".format(REGION, BUCKET))
 
@@ -289,6 +289,39 @@ FROM
 WHERE year > 2000
 ) 
 WHERE MOD(hashmonth, 10) < 8  -- alias can only be used via subquery
+```
+
+
+
+## local terminal
+
+
+
+* add GCP account to local gcloud tools:
+
+```bash
+nano ~/.config/gcloud/configurations/config_gcp-training
+```
+
+* then
+
+```bash
+gcloud auth list
+gcloud config set account google2802239_student@qwiklabs.net
+gcloud auth login google2802239_student@qwiklabs.net
+```
+
+* then gsutils can be used to copy stuff, for example:
+
+```bash
+gsutil -m cp -r gs://qwiklabs-gcp-ca86714dede2236a/hybrid_recommendation/preproc/* ./preproc
+
+```
+
+* or just make it public (in gcp terminal, that is)? — NOT TESTED
+
+```
+gsutil defacl ch -u AllUsers:R gs://yourbucket
 ```
 
 
