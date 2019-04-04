@@ -35,13 +35,14 @@ certificate-of-specializations/*
 ## ignore specific stuff:
 ## ''''''''''''''''''''''''''''''''''''''''''''''''''''' ##
 02-gcp-production-ml-systems/kubeflow-examples/
-
+tmp-cloud-storage/
 
 
 
 ## ============================================================================= ##
 # Created by https://www.gitignore.io/api/video,macos,python,jupyternotebook
 # Edit at https://www.gitignore.io/?templates=video,macos,python,jupyternotebook
+# see below for exceptions
 ## ============================================================================= ##
 
 ### JupyterNotebook ###
@@ -226,3 +227,9 @@ pip-selfcheck.json
 *.wmv
 
 # End of https://www.gitignore.io/api/video,macos,python,jupyternotebook
+
+## ====================================================== ##
+## exceptions
+## ====================================================== ##
+
+!05-recommendation-models-gcp/labs/endtoend/scripts/
